@@ -17,13 +17,13 @@ pub fn to_html(source: &str) -> String {
 #[wasm_bindgen(js_name = toHtmlFull)]
 pub fn to_html_full(source: &str) -> String {
     use carve::{
-        Autolink, Citations, Details, ExternalLinks, HeadingPermalinks, ListTable, MathBlock,
-        Mermaid, Options, TabNormalize, Wikilinks,
+        Autolink, Citations, Details, ExternalLinks, FencedRender, HeadingPermalinks, ListTable,
+        MathBlock, Options, TabNormalize, Wikilinks,
     };
     // `Options` borrows each extension, so they must outlive it; bind locals.
     let tab_normalize = TabNormalize::new();
     let details = Details::new();
-    let mermaid = Mermaid::new();
+    let mermaid = FencedRender::mermaid();
     let wikilinks = Wikilinks::new();
     let autolink = Autolink::new();
     let list_table = ListTable::new();
