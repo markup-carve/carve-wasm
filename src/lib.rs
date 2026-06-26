@@ -7,9 +7,9 @@ pub fn to_html(source: &str) -> String {
 
 /// Render with the demo-useful built-in Carve extensions enabled
 /// (tab-normalize, details, Mermaid, wikilinks, autolink, list-table,
-/// math-block, heading-permalinks, citations, external-links). Lets the WASM
-/// engine match an extensions-on host (e.g. the docs Playground) instead of the
-/// core-only `toHtml`.
+/// math-block, heading-permalinks, citations, code-callouts, external-links).
+/// Lets the WASM engine match an extensions-on host (e.g. the docs Playground)
+/// instead of the core-only `toHtml`.
 ///
 /// Deliberately excludes table-of-contents (it auto-injects a TOC, which
 /// clutters a preview). The code-group / tabs extensions are also absent
@@ -17,8 +17,8 @@ pub fn to_html(source: &str) -> String {
 #[wasm_bindgen(js_name = toHtmlFull)]
 pub fn to_html_full(source: &str) -> String {
     use carve::{
-        Autolink, Citations, Details, ExternalLinks, FencedRender, HeadingPermalinks, ListTable,
-        MathBlock, Options, TabNormalize, Wikilinks,
+        Autolink, Citations, CodeCallouts, Details, ExternalLinks, FencedRender,
+        HeadingPermalinks, ListTable, MathBlock, Options, TabNormalize, Wikilinks,
     };
     // `Options` borrows each extension, so they must outlive it; bind locals.
     let tab_normalize = TabNormalize::new();
@@ -30,6 +30,7 @@ pub fn to_html_full(source: &str) -> String {
     let math_block = MathBlock::new();
     let heading_permalinks = HeadingPermalinks::new();
     let citations = Citations::new();
+    let code_callouts = CodeCallouts::new();
     let external_links = ExternalLinks::new();
     let options = Options::new()
         .with_extension(&tab_normalize)
@@ -41,6 +42,7 @@ pub fn to_html_full(source: &str) -> String {
         .with_extension(&math_block)
         .with_extension(&heading_permalinks)
         .with_extension(&citations)
+        .with_extension(&code_callouts)
         .with_extension(&external_links);
     carve::to_html_with_options(source, &options)
 }
@@ -69,5 +71,13 @@ mod tests {
         let html = crate::to_html_full(src);
         assert!(html.contains("<table"), "expected a <table>, got: {html}");
         assert!(!html.contains("class=\"list-table\""));
+    }
+
+    #[test]
+    fn full_enables_code_callouts_extension() {
+        let src = "``` rust\nlet x = 1; // <1>\n```\n\n<1> Assign x.\n";
+        let html = crate::to_html_full(src);
+        assert!(html.contains("class=\"callout\""), "expected callout bubble, got: {html}");
+        assert!(html.contains("class=\"callouts\""), "expected callouts list, got: {html}");
     }
 }
