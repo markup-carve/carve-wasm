@@ -21,10 +21,13 @@ npm install @markup-carve/carve-wasm
 
 Renders Carve markup to HTML with no extensions enabled.
 
-```js
-import init, { toHtml } from '@markup-carve/carve-wasm'
+The published package is the **bundler** target (webpack, Vite, Rollup, ...):
+the wasm initializes automatically, so the exports are synchronous - no `init()`
+call.
 
-await init()
+```js
+import { toHtml } from '@markup-carve/carve-wasm'
+
 const html = toHtml('# Hello, Carve!')
 document.body.innerHTML = html
 ```
@@ -37,9 +40,8 @@ list-table, math blocks, heading permalinks, citations, code callouts, and
 external-link decoration.
 
 ```js
-import init, { toHtmlFull } from '@markup-carve/carve-wasm'
+import { toHtmlFull } from '@markup-carve/carve-wasm'
 
-await init()
 const html = toHtmlFull('# Hello\n\n``` mermaid\ngraph TD; A-->B\n```\n')
 document.body.innerHTML = html
 ```
@@ -50,9 +52,8 @@ The package ships `.d.ts` declarations. Types are inferred automatically when
 imported from `@markup-carve/carve-wasm`.
 
 ```ts
-import init, { toHtml, toHtmlFull, version } from '@markup-carve/carve-wasm'
+import { toHtml, toHtmlFull, version } from '@markup-carve/carve-wasm'
 
-await init()
 console.log(`carve-wasm v${version()}`)
 const html: string = toHtml('_Hello_')
 ```
@@ -63,19 +64,18 @@ const html: string = toHtml('_Hello_')
 |--------|-----------|-------------|
 | `toHtml` | `(source: string) => string` | Core renderer, no extensions |
 | `toHtmlFull` | `(source: string) => string` | Core + common extensions (matches playground) |
-| `version` | `() => string` | Returns the carve-rs version string |
+| `version` | `() => string` | Returns the carve-wasm package version |
 
 ## Build
 
+The published package uses the **bundler** target (matching the release
+workflow):
+
 ```bash
 cargo test
-wasm-pack build --target web --scope markup-carve
+wasm-pack build --target bundler --scope markup-carve
 ```
 
-`wasm-pack` emits the browser package into `pkg/`.
-
-To build the Node.js target instead:
-
-```bash
-wasm-pack build --target nodejs --scope markup-carve
-```
+`wasm-pack` emits the package into `pkg/`. For a no-bundler / `<script type=module>`
+setup use `--target web` (which exports a default `init()` you must `await`
+before calling the renderers); for Node use `--target nodejs`.
