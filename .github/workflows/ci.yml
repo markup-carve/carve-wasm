@@ -18,3 +18,21 @@ jobs:
         run: cargo test
       - name: Check WASM target
         run: cargo check --target wasm32-unknown-unknown
+
+      # `cargo test` exercises the NATIVE build of the wrapper; it never proves
+      # the wasm package users actually load works. Build the real artifact and
+      # drive it through the JS API, so a stale or broken engine fails here
+      # instead of shipping (carve-go's embedded engine went months stale with
+      # a fully green suite for exactly this reason).
+      - name: Install wasm-pack
+        uses: jetli/wasm-pack-action@v0.4.0
+
+      - name: Build the wasm package
+        run: wasm-pack build --target nodejs
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Test the wasm artifact through its JS API
+        run: node tests/smoke.mjs
