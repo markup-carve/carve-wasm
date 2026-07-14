@@ -46,6 +46,33 @@ const html = toHtmlFull('# Hello\n\n``` mermaid\ngraph TD; A-->B\n```\n')
 document.body.innerHTML = html
 ```
 
+### Symbols
+
+A `:name:` symbol renders its literal `:name:` source unless the name is in the
+**symbols map**. Pass one as a plain object (or a `Map`) to `toHtmlWithSymbols`,
+or as the optional second argument of `toHtmlFull`:
+
+```js
+import { toHtmlWithSymbols } from '@markup-carve/carve-wasm'
+
+toHtmlWithSymbols('Ship it :rocket:', { rocket: '🚀' })
+// => '<p>Ship it 🚀</p>'
+
+toHtmlWithSymbols('Ship it :rocket: :shrug:', { rocket: '🚀' })
+// => '<p>Ship it 🚀 :shrug:</p>'   (an unmapped name stays literal)
+```
+
+The word-boundary guard is unaffected by an active map: `a:b:c`, `10:30:` and
+`me@example.com` never become symbols. Names and values must both be strings; a
+non-string value throws a `TypeError`.
+
+> **Security: symbol values are TRUSTED RAW output.**
+> A mapped value is inserted into the output **unescaped** - the same trust
+> class as a static `renderers` callback. `{ b: '<b>x</b>' }` emits a real
+> `<b>` element, not escaped text. This is deliberate (processor configuration
+> is trusted). **Never build a symbols map out of untrusted / user-supplied
+> input.**
+
 ### TypeScript
 
 The package ships `.d.ts` declarations. Types are inferred automatically when
@@ -63,7 +90,8 @@ const html: string = toHtml('_Hello_')
 | Export | Signature | Description |
 |--------|-----------|-------------|
 | `toHtml` | `(source: string) => string` | Core renderer, no extensions |
-| `toHtmlFull` | `(source: string) => string` | Core + common extensions (matches playground) |
+| `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
+| `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
 | `version` | `() => string` | Returns the carve-wasm package version |
 
 ## Build
