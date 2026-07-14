@@ -80,4 +80,35 @@ mod tests {
         assert!(html.contains("class=\"callout\""), "expected callout bubble, got: {html}");
         assert!(html.contains("class=\"callouts\""), "expected callouts list, got: {html}");
     }
+
+    // The engine is tracked as a git dependency on carve-rs `main` with no
+    // pinned rev, and Cargo.lock is not committed here — so these tests are
+    // what actually holds the engine's current language surface in place.
+
+    #[test]
+    fn superscript_and_subscript_are_braced_only() {
+        // Bare `^x^` / `,x,` are literal text; only the braced forms mark up.
+        let html = crate::to_html("a ^2^ b and H,2,O");
+        assert!(!html.contains("<sup>"), "bare ^x^ must stay literal, got: {html}");
+        assert!(!html.contains("<sub>"), "bare ,x, must stay literal, got: {html}");
+
+        let html = crate::to_html("x{^2^} and H{,2,}O");
+        assert!(html.contains("<sup>2</sup>"), "expected a <sup>, got: {html}");
+        assert!(html.contains("<sub>2</sub>"), "expected a <sub>, got: {html}");
+    }
+
+    #[test]
+    fn symbol_inline_is_recognized_with_a_word_boundary_guard() {
+        // An unmapped symbol renders its `:name:` source, but it is a real
+        // Symbol node — attaching attributes proves it parsed as one.
+        let html = crate::to_html(":smile:{.emoji}");
+        assert!(
+            html.contains("<span class=\"emoji\">:smile:</span>"),
+            "expected a symbol span, got: {html}"
+        );
+
+        // The leading word-boundary guard keeps these literal (no span).
+        let html = crate::to_html("a:b:c and 10:30: and me@example.com");
+        assert!(!html.contains("<span"), "guarded colons must stay literal, got: {html}");
+    }
 }
