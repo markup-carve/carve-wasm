@@ -132,6 +132,29 @@ pub fn to_html_full(source: &str, symbols: Option<js_sys::Object>) -> Result<Str
     Ok(render_full(source, &symbol_pairs(symbols)?))
 }
 
+/// Parse Carve source and return its AST as a JSON string.
+///
+/// The PART 12 exchange shape (https://markup-carve.github.io/carve/ast-json):
+/// the same tree every Carve engine publishes, so a consumer written against
+/// one implementation reads another's output. The root carries exactly `type`,
+/// `children` and `srcByteLength`; frontmatter and footnote definitions are
+/// block nodes inside `children`, not root fields.
+///
+/// Returns a STRING rather than a JS object: the caller runs `JSON.parse`, which
+/// is what a browser does natively and faster than building the object graph
+/// across the wasm boundary one property at a time. It also keeps the bytes
+/// available for a caller that stores or forwards them.
+///
+/// Position tracking is on for this entry point and nowhere else. PART 12 §4
+/// lets an engine gate tracking behind a parse option but requires the
+/// serialized form to carry it, and rendering would pay for spans nobody reads.
+#[wasm_bindgen(js_name = parseJson)]
+pub fn parse_json(source: &str) -> String {
+    let mut options = carve::Options::new();
+    options.positions = true;
+    carve::to_json(&carve::parse_with_options(source, &options))
+}
+
 #[wasm_bindgen]
 pub fn version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
