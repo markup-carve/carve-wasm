@@ -165,6 +165,52 @@ browser does natively and faster than building the object graph across the wasm
 boundary one property at a time - and it keeps the bytes available for a caller
 that stores or forwards them.
 
+## carve-rs dependency pin
+
+`Cargo.toml` pins an exact carve-rs commit, and `Cargo.lock` is committed
+alongside it:
+
+```toml
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "..." }
+```
+
+Read the current revision out of `Cargo.toml` rather than from a copy here - a
+revision quoted in prose goes stale the first time someone bumps the manifest
+without noticing the duplicate.
+
+The engine is published as `carve-lang` (carve-rs renamed it from `carve`), so a
+pin at any revision past that rename needs `package = "carve-lang"` as above.
+
+The crate previously tracked carve-rs' default branch with no committed lock.
+That never went stale, but it went the other way: every build resolved whatever
+had landed upstream since, so the published package could carry an engine no CI
+run here had ever built, and two clones a day apart could disagree. The pin
+makes an engine change a reviewable line in a diff.
+
+When bumping the `rev`, regenerate and commit `Cargo.lock` in the same change.
+The lock records the resolved revision plus the rest of the tree; leaving it
+behind gives every fresh clone a dirty working tree on its first build and lets
+the package resolve to an engine other than the one that was tested.
+
+```sh
+cargo update -p carve-lang --precise <sha>   # or edit the rev and re-lock
+cargo test && wasm-pack build --target nodejs && node tests/smoke.mjs
+```
+
+Regenerate the whole lock MSRV-aware, or it will quietly break the `rust-version`
+this crate advertises. A plain `cargo generate-lockfile` on a current toolchain
+picks the newest `wasm-bindgen`, which needs a newer Rust than the 1.75 declared
+above - fine while CI only runs `stable`, and a hard failure for anyone actually
+building on the floor:
+
+```sh
+CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback cargo generate-lockfile
+```
+
+Nothing in CI catches this today, since the workflow uses `stable` only. Adding
+a 1.75 job (carve-rs has one) would turn it from a review question into a build
+failure.
+
 ## Build
 
 The published package uses the **bundler** target (matching the release
