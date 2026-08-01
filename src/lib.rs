@@ -45,11 +45,11 @@ fn symbol_pairs(symbols: Option<js_sys::Object>) -> Result<SymbolPairs, JsValue>
 }
 
 /// Render with the core (no-extension) profile plus the given symbol map.
-fn render_core(source: &str, symbols: &SymbolPairs) -> String {
-    if symbols.is_empty() {
+fn render_core(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
+    if symbols.is_empty() && sections {
         return carve::to_html(source);
     }
-    let mut options = carve::Options::new();
+    let mut options = carve::Options::new().with_sections(sections);
     for (name, value) in symbols {
         options = options.with_symbol(name.clone(), value.clone());
     }
@@ -57,7 +57,7 @@ fn render_core(source: &str, symbols: &SymbolPairs) -> String {
 }
 
 /// Render with the demo-useful built-in extension set plus the given symbol map.
-fn render_full(source: &str, symbols: &SymbolPairs) -> String {
+fn render_full(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
     use carve::{
         Autolink, CarveExtension, Citations, CodeCallouts, Details, ExternalLinks, FencedRender,
         HeadingPermalinks, ListTable, MathBlock, Options, TabNormalize, Wikilinks,
@@ -77,7 +77,7 @@ fn render_full(source: &str, symbols: &SymbolPairs) -> String {
         Box::new(CodeCallouts::new()),
         Box::new(ExternalLinks::new()),
     ];
-    let mut options = Options::new();
+    let mut options = Options::new().with_sections(sections);
     for ext in &owned {
         options = options.with_extension(ext.as_ref());
     }
@@ -111,7 +111,7 @@ pub fn to_html_with_symbols(
     source: &str,
     symbols: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
-    Ok(render_core(source, &symbol_pairs(symbols)?))
+    Ok(render_core(source, &symbol_pairs(symbols)?, true))
 }
 
 /// Render with the demo-useful built-in Carve extensions enabled
@@ -129,7 +129,7 @@ pub fn to_html_with_symbols(
 /// are emitted UNESCAPED, so never feed it untrusted input.
 #[wasm_bindgen(js_name = toHtmlFull)]
 pub fn to_html_full(source: &str, symbols: Option<js_sys::Object>) -> Result<String, JsValue> {
-    Ok(render_full(source, &symbol_pairs(symbols)?))
+    Ok(render_full(source, &symbol_pairs(symbols)?, true))
 }
 
 /// Parse Carve source and return its AST as a JSON string.
@@ -155,6 +155,98 @@ pub fn parse_json(source: &str) -> String {
     carve::to_json(&carve::parse_with_options(source, &options))
 }
 
+/// Read one boolean field out of a JS options object.
+///
+/// Absent, `undefined` and `null` all mean "not set", so a caller can pass a
+/// partially-filled object. A present-but-non-boolean value throws a JS
+/// `TypeError` rather than being coerced: `{ sections: "false" }` is a mistake
+/// worth surfacing, and JS truthiness would read that string as `true` - the
+/// opposite of what was written.
+fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsValue> {
+    let value = js_sys::Reflect::get(options, &JsValue::from_str(key))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(None);
+    }
+    value.as_bool().map(Some).ok_or_else(|| {
+        JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: `{key}` must be a boolean"
+        )))
+    })
+}
+
+/// Render with an options object, the general form of the three shorthands
+/// above.
+///
+/// ```js
+/// toHtmlWithOptions('# A\n\np\n', { sections: false })
+/// // '<h1 id="A">A</h1>\n<p>p</p>'
+///
+/// toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: true })
+/// ```
+///
+/// Every field is optional:
+///
+/// * `sections` (default `true`) - wrap each top-level heading, and the content
+///   following it up to the next same-or-shallower heading, in a
+///   `<section id="…">` (spec PART 9 §13). `false` renders headings flat with
+///   the id back on the `<h*>` and the former section children as siblings.
+///   For a host whose CSS or JS assumes rendered blocks are direct children of
+///   the content container - the `.stack > * + *` spacing idiom,
+///   `:first-child`, `nth-child()` counting, `element.children` walks - the
+///   wrapper is the one output change a clean source migration still breaks.
+/// * `symbols` - the same map as [`to_html_with_symbols`], with the same
+///   TRUSTED-RAW contract: mapped values are emitted UNESCAPED, so never build
+///   it from untrusted input.
+/// * `full` (default `false`) - enable the same built-in extension set as
+///   [`to_html_full`] instead of rendering core-only.
+///
+/// An unrecognized key is ignored: the object is configuration, and a caller
+/// who mistypes one deserves the render to still work. A wrong TYPE on a key
+/// that is recognized does throw, because that changes behavior silently.
+///
+/// Turning sections off changes nothing else. Ids, collision dedup, `</#id>`
+/// crossrefs, implicit `[Heading][]` references and heading numbering all
+/// resolve against the slug rather than the element carrying it, and the
+/// endnotes `<section role="doc-endnotes">` is a separate construct that is
+/// still emitted.
+#[wasm_bindgen(js_name = toHtmlWithOptions)]
+pub fn to_html_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    let Some(options) = options else {
+        return Ok(carve::to_html(source));
+    };
+    let value: JsValue = options.clone().into();
+    if value.is_null() || value.is_undefined() {
+        return Ok(carve::to_html(source));
+    }
+
+    let sections = bool_field(&options, "sections")?.unwrap_or(true);
+    let full = bool_field(&options, "full")?.unwrap_or(false);
+    // A wrong-typed `symbols` must THROW, not quietly render without symbols:
+    // `dyn_into().ok()` would turn `{ symbols: "rocket" }` into `None` and lose
+    // the caller's map with no signal. Absent / null / undefined still mean
+    // "no symbols".
+    let symbols = js_sys::Reflect::get(&options, &JsValue::from_str("symbols"))?;
+    let symbols = if symbols.is_undefined() || symbols.is_null() {
+        None
+    } else {
+        Some(symbols.dyn_into::<js_sys::Object>().map_err(|_| {
+            JsValue::from(js_sys::TypeError::new(
+                "carve: `symbols` must be an object or a Map",
+            ))
+        })?)
+    };
+    let pairs = symbol_pairs(symbols)?;
+
+    Ok(if full {
+        render_full(source, &pairs, sections)
+    } else {
+        render_core(source, &pairs, sections)
+    })
+}
+
 #[wasm_bindgen]
 pub fn version() -> String {
     env!("CARGO_PKG_VERSION").to_string()
@@ -173,6 +265,48 @@ mod tests {
             .collect()
     }
 
+    // PART 9 §13: the wrapper is on by default and `sections: false` removes it,
+    // putting the id back on the <h*>. A heading inside a container is not
+    // wrapped either way, which is the shape the flat form matches.
+    #[test]
+    fn sections_off_emits_no_wrapper() {
+        let none = SymbolPairs::new();
+        assert_eq!(
+            render_core("# A\n\np\n", &none, true),
+            "<section id=\"A\">\n  <h1>A</h1>\n  <p>p</p>\n</section>"
+        );
+        assert_eq!(
+            render_core("# A\n\np\n", &none, false),
+            "<h1 id=\"A\">A</h1>\n<p>p</p>"
+        );
+    }
+
+    #[test]
+    fn sections_off_leaves_container_headings_alone() {
+        let none = SymbolPairs::new();
+        let src = "> # Quoted\n>\n> Quoted body.\n";
+        assert_eq!(
+            render_core(src, &none, false),
+            render_core(src, &none, true)
+        );
+    }
+
+    // The flag composes with the other two axes rather than being exclusive
+    // with them, which the symbols-empty fast path inside render_core makes
+    // easy to get wrong.
+    #[test]
+    fn sections_off_composes_with_symbols_and_extensions() {
+        let map = symbols(&[("rocket", "🚀")]);
+        let core = render_core("# A\n\n:rocket:\n", &map, false);
+        assert!(core.starts_with("<h1 id=\"A\">A</h1>"), "{core}");
+        assert!(core.contains('🚀'), "{core}");
+        assert!(!core.contains("<section"), "{core}");
+
+        let full = render_full("# A\n\n:rocket:\n", &map, false);
+        assert!(full.contains('🚀'), "{full}");
+        assert!(!full.contains("<section"), "{full}");
+    }
+
     #[test]
     fn renders_html() {
         assert!(crate::to_html("# Hello").contains("<h1>Hello</h1>"));
@@ -180,14 +314,18 @@ mod tests {
 
     #[test]
     fn full_enables_mermaid_extension() {
-        let html = render_full("``` mermaid\ngraph TD; A-->B\n```\n", &SymbolPairs::new());
+        let html = render_full(
+            "``` mermaid\ngraph TD; A-->B\n```\n",
+            &SymbolPairs::new(),
+            true,
+        );
         assert!(html.contains("<pre class=\"mermaid\">"));
     }
 
     #[test]
     fn full_enables_list_table_extension() {
         let src = "{header-rows=1}\n::: list-table \"Quarterly results\"\n- - Region\n  - Notes\n- - EMEA\n  - Strong quarter.\n:::\n";
-        let html = render_full(src, &SymbolPairs::new());
+        let html = render_full(src, &SymbolPairs::new(), true);
         assert!(html.contains("<table"), "expected a <table>, got: {html}");
         assert!(!html.contains("class=\"list-table\""));
     }
@@ -195,7 +333,7 @@ mod tests {
     #[test]
     fn full_enables_code_callouts_extension() {
         let src = "``` rust\nlet x = 1; // <1>\n```\n\n<1> Assign x.\n";
-        let html = render_full(src, &SymbolPairs::new());
+        let html = render_full(src, &SymbolPairs::new(), true);
         assert!(
             html.contains("class=\"callout\""),
             "expected callout bubble, got: {html}"
@@ -256,7 +394,7 @@ mod tests {
     fn mapped_symbol_renders_its_value() {
         let map = symbols(&[("rocket", "🚀")]);
 
-        let html = render_core("Ship it :rocket:", &map);
+        let html = render_core("Ship it :rocket:", &map, true);
         assert!(
             html.contains("Ship it 🚀"),
             "expected the mapped value, got: {html}"
@@ -267,7 +405,7 @@ mod tests {
         );
 
         // The same map flows through the extensions-on entry point.
-        let html = render_full("Ship it :rocket:", &map);
+        let html = render_full("Ship it :rocket:", &map, true);
         assert!(
             html.contains("🚀"),
             "expected the mapped value, got: {html}"
@@ -276,7 +414,7 @@ mod tests {
 
     #[test]
     fn plus_one_is_a_valid_symbol_name() {
-        let html = render_core("nice :+1:", &symbols(&[("+1", "👍")]));
+        let html = render_core("nice :+1:", &symbols(&[("+1", "👍")]), true);
         assert!(
             html.contains("nice 👍"),
             "expected :+1: to map, got: {html}"
@@ -285,7 +423,11 @@ mod tests {
 
     #[test]
     fn unmapped_symbol_stays_literal_with_a_map_active() {
-        let html = render_core(":rocket: and :unmapped:", &symbols(&[("rocket", "🚀")]));
+        let html = render_core(
+            ":rocket: and :unmapped:",
+            &symbols(&[("rocket", "🚀")]),
+            true,
+        );
         assert!(
             html.contains("🚀"),
             "expected the mapped value, got: {html}"
@@ -304,7 +446,7 @@ mod tests {
             ("30", "MAPPED-30"),
             ("example", "MAPPED-EX"),
         ]);
-        let html = render_core("a:b:c and 10:30: and me@example.com", &map);
+        let html = render_core("a:b:c and 10:30: and me@example.com", &map, true);
         assert!(
             html.contains("a:b:c") && html.contains("10:30:") && html.contains("me@example.com"),
             "guarded colons must stay literal, got: {html}"
@@ -319,7 +461,7 @@ mod tests {
     fn mapped_value_is_trusted_raw_output_not_escaped() {
         // Documented contract: a symbol value is inserted RAW (same trust class
         // as the renderers map), so markup comes through as markup.
-        let html = render_core(":bold:", &symbols(&[("bold", "<b>x</b>")]));
+        let html = render_core(":bold:", &symbols(&[("bold", "<b>x</b>")]), true);
         assert!(
             html.contains("<b>x</b>"),
             "symbol value must be emitted raw, got: {html}"

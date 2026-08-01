@@ -73,6 +73,47 @@ non-string value throws a `TypeError`.
 > is trusted). **Never build a symbols map out of untrusted / user-supplied
 > input.**
 
+### Section wrappers
+
+A top-level heading is wrapped, along with the content following it up to the
+next same-or-shallower heading, in a `<section>` carrying the heading's id (spec
+PART 9 §13). Only the id moves - `{#install .featured}` gives
+`<section id="install"><h2 class="featured">` - and a heading inside a
+blockquote, div or list item is not wrapped at all.
+
+`toHtmlWithOptions` is the general entry point, and `sections: false` renders
+headings flat with the id back on the `<h*>`:
+
+```js
+import { toHtmlWithOptions } from '@markup-carve/carve-wasm'
+
+toHtmlWithOptions('# A\n\np\n', { sections: false })
+// '<h1 id="A">A</h1>\n<p>p</p>'
+
+toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: true })
+```
+
+Every field is optional - `sections` (default `true`), `symbols` (same trusted-raw
+contract as `toHtmlWithSymbols`), and `full` (default `false`, enabling the same
+extension set as `toHtmlFull`). Omitting the object, or passing `null`, renders
+with defaults, so the three shorthands above remain the zero-config forms.
+
+An unrecognized key is ignored, because the object is configuration and a typo
+should not break a render. A recognized key with the wrong type throws a
+`TypeError` instead of being coerced: JS truthiness would read
+`{ sections: 'false' }` as `true`, the opposite of what was written.
+
+This exists for a host whose CSS or JS assumes rendered blocks are direct
+children of the content container - the `.stack > * + *` spacing idiom,
+`:first-child`, `nth-child()` counting, `element.children` walks - all of which
+stop matching once a wrapper sits in between. It is the one output change that
+breaks a document whose *source* migrated cleanly.
+
+Nothing else changes: ids, collision dedup, `</#id>` cross-references, implicit
+`[Heading][]` references and heading numbering all resolve against the slug
+rather than the element carrying it. The endnotes
+`<section role="doc-endnotes">` is a separate construct and is still emitted.
+
 ### TypeScript
 
 The package ships `.d.ts` declarations. Types are inferred automatically when
@@ -92,6 +133,7 @@ const html: string = toHtml('_Hello_')
 | `toHtml` | `(source: string) => string` | Core renderer, no extensions |
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
+| `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form: `{ sections?, symbols?, full? }`, every field optional |
 | `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
 | `version` | `() => string` | Returns the carve-wasm package version |
 
