@@ -92,7 +92,36 @@ const html: string = toHtml('_Hello_')
 | `toHtml` | `(source: string) => string` | Core renderer, no extensions |
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
+| `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
 | `version` | `() => string` | Returns the carve-wasm package version |
+
+### The parsed AST
+
+`parseJson` returns the document as a JSON string - the [PART 12 exchange
+shape](https://markup-carve.github.io/carve/ast-json), the same tree every Carve
+engine publishes, so a consumer written against one implementation reads
+another's output.
+
+```js
+import { parseJson } from '@markup-carve/carve-wasm'
+
+const ast = JSON.parse(parseJson('# Title\n\nBody[^a].\n\n[^a]: note\n'))
+ast.children.map((n) => n.type) // ['heading', 'paragraph', 'footnote']
+ast.children[0].pos             // { startLine: 1, startColumn: 1, ... }
+```
+
+The root carries exactly `type`, `children` and `srcByteLength`; frontmatter and
+footnote definitions are block nodes inside `children`, not root fields. Every
+node except the root carries `pos` when the engine could place it - 1-based
+lines and columns, 0-based offsets, ends exclusive, counted in Unicode
+**codepoints**, not bytes or UTF-16 units. A node the engine could not place,
+such as reassembled table-cell text, carries no `pos` at all rather than an
+invented one.
+
+A string rather than a JS object: the caller runs `JSON.parse`, which the
+browser does natively and faster than building the object graph across the wasm
+boundary one property at a time - and it keeps the bytes available for a caller
+that stores or forwards them.
 
 ## Build
 
