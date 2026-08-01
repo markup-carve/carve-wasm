@@ -3,7 +3,7 @@
 // wasm package works -- which is how a stale engine can pass CI (the embedded
 // engine in carve-go did exactly that for months).
 import assert from 'node:assert/strict'
-import { parseJson, toHtml } from '../pkg/carve_wasm.js'
+import { parseJson, toHtml, toHtmlWithOptions } from '../pkg/carve_wasm.js'
 
 const cases = [
   // Superscript/subscript are braced-only: a bare `^` / `,` is literal text.
@@ -29,6 +29,50 @@ for (const [src, want] of cases) {
 }
 assert.equal(failed, 0, `${failed} wasm artifact case(s) failed`)
 console.log(`wasm artifact: ${cases.length}/${cases.length} cases pass`)
+
+// The `sections` option, through the artifact. `cargo test` covers the Rust
+// renderers directly; only this proves the option survives the wasm-bindgen
+// boundary, where a boolean has to cross as a JS value.
+assert.equal(
+  toHtmlWithOptions('# A\n\np\n', { sections: false }).trim(),
+  '<h1 id="A">A</h1>\n<p>p</p>',
+)
+// Omitted, null and an empty object all mean "defaults", so a caller may pass a
+// partially-filled object.
+for (const opts of [undefined, null, {}, { sections: true }]) {
+  assert.equal(
+    toHtmlWithOptions('# A\n', opts).trim(),
+    '<section id="A">\n  <h1>A</h1>\n</section>',
+    `defaults expected for ${JSON.stringify(opts) ?? 'undefined'}`,
+  )
+}
+// Composes with the other two fields rather than being exclusive with them.
+const composed = toHtmlWithOptions('# A\n\n:rocket:\n', {
+  sections: false,
+  symbols: { rocket: '🚀' },
+  full: true,
+}).trim()
+// `full: true` enables heading permalinks, so the <h1> carries an anchor after
+// its text - the id must still be on the <h1> itself, which is where that
+// anchor's own href points (markup-carve/carve-rs#379).
+assert.ok(composed.startsWith('<h1 id="A">A '), composed)
+assert.ok(composed.includes('href="#A"'), composed)
+assert.ok(composed.includes('🚀'), composed)
+assert.ok(!composed.includes('<section'), composed)
+// A recognized key with the wrong TYPE throws rather than being coerced: JS
+// truthiness would read the string "false" as true, the opposite of what was
+// written. An UNrecognized key is ignored - config typos should not break a
+// render.
+assert.throws(() => toHtmlWithOptions('# A\n', { sections: 'false' }), TypeError)
+// Same contract for `symbols`: a wrong type throws instead of quietly rendering
+// without the map, which would lose the caller's configuration silently.
+assert.throws(() => toHtmlWithOptions('# A\n', { symbols: 'rocket' }), TypeError)
+assert.throws(() => toHtmlWithOptions('# A\n', { symbols: 1 }), TypeError)
+assert.equal(
+  toHtmlWithOptions('# A\n', { sctions: false }).trim(),
+  '<section id="A">\n  <h1>A</h1>\n</section>',
+)
+console.log('wasm artifact: sections option passes')
 
 // The PART 12 exchange shape, through the same artifact. A binding that can only
 // render is unusable for an editor, a linter or a converter - they need the tree.
