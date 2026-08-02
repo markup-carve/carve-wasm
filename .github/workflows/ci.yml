@@ -36,3 +36,34 @@ jobs:
 
       - name: Test the wasm artifact through its JS API
         run: node tests/smoke.mjs
+
+  # The lockfile is committed, so ONE resolution now serves every consumer -
+  # including anyone on the `rust-version` this crate advertises. That is what
+  # makes an MSRV job load-bearing rather than ceremony: while the manifest
+  # tracked carve-rs unpinned with no lock, a 1.75 consumer got MSRV-aware
+  # resolution from their own cargo and nothing here could break them. Pinning
+  # took that freedom away.
+  #
+  # `--locked` is the whole point. Without it cargo may re-resolve and quietly
+  # succeed, which is exactly the shape of check that cannot fail. A plain
+  # `cargo generate-lockfile` picks wasm-bindgen 0.2.126 (requires Rust 1.77);
+  # regenerate with CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback and this
+  # job stays green.
+  msrv:
+    name: Build on the declared MSRV
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read rust-version from Cargo.toml
+        id: msrv
+        run: |
+          version=$(grep -m1 '^rust-version' Cargo.toml | cut -d'"' -f2)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "declared MSRV: $version"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.msrv.outputs.version }}
+          targets: wasm32-unknown-unknown
+      - run: cargo build --locked --all-targets
+      - run: cargo test --locked
+      - run: cargo check --locked --target wasm32-unknown-unknown
