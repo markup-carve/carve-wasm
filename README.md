@@ -195,7 +195,19 @@ the package resolve to an engine other than the one that was tested.
 ```sh
 cargo update -p carve-lang --precise <sha>   # or edit the rev and re-lock
 cargo test && wasm-pack build --target nodejs && node tests/smoke.mjs
+CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node tests/corpus.mjs
 ```
+
+That last line is the one that can tell a drifted pin from a current one.
+`smoke.mjs` asserts hand-written expectations, which a stale engine satisfies
+happily; `corpus.mjs` renders all ~530 mandatory spec documents through the
+**built** artifact and requires byte-identical HTML. Without `CARVE_SPEC_CORPUS`
+it prints a notice and exits 0, so a checkout without the spec repo still runs
+the suite. CI always sets it.
+
+It measures the binding as much as the engine: carve-rs is corpus-checked
+upstream, but that says nothing about whether the wasm-bindgen layer drops a
+field or mangles an option on the way through.
 
 Regenerate the whole lock MSRV-aware, or it will quietly break the `rust-version`
 this crate advertises. A plain `cargo generate-lockfile` on a current toolchain
