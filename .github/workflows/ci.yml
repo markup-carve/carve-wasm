@@ -18,6 +18,52 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Which carve-rs is this package running, and is that a revision that really
+  # exists on `main`? Nothing here read the pin before: no `rev-list`, no
+  # `merge-base`, no reference to it at all. Part of why that looked guarded is
+  # that the pin is hard to find, because the engine crate publishes as
+  # `carve-lang`, not `carve` (the name was taken on crates.io), and this
+  # manifest spells the dependency key `carve` while the lockfile names the
+  # package `carve-lang`.
+  #
+  # The corpus job below answers whether a drifted pin MATTERS; it is blind to
+  # any engine change no corpus document exercises (markup-carve/carve-rs#449 is
+  # the concrete case, where openers past the nesting cap were discarded and the
+  # rendered HTML was byte-identical either way). This job answers whether the
+  # pin is real, and it keeps asserting that with the pin sitting exactly on the
+  # engine's tip.
+  #
+  # It is deliberately NOT a distance check. carve-rs merges continuously, so
+  # "fail when behind main" would be red from the moment any PR opens there and
+  # unclearable by the action it recommends. The lag is printed as a number;
+  # only AGE can fail this job.
+  engine-pin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # fetch-depth: 0 is required. The guard runs `merge-base --is-ancestor`
+      # against main, which needs the history to be there.
+      - name: Check out carve-rs
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve-rs
+          path: carve-rs
+          fetch-depth: 0
+
+      # --max-age-days 14: since this manifest started naming an exact `rev`,
+      # the pin has been bumped every one to two days, so fourteen is several
+      # times the observed cadence -- wide enough that a quiet fortnight is not
+      # a false alarm, tight enough to catch a pin left to rot, which is the
+      # failure the comments in this file already record happening in the
+      # sibling bindings. Age rather than commit count, because age is what
+      # bumping the pin clears.
+      - name: Check the pinned engine revision
+        run: |
+          python3 carve-rs/tools/check-engine-pin.py \
+            --engine carve-rs --github --max-age-days 14 \
+            --form cargo --manifest Cargo.toml --lock Cargo.lock
+
   test:
     runs-on: ubuntu-latest
     steps:
