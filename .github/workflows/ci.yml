@@ -76,6 +76,15 @@ jobs:
       - name: Check WASM target
         run: cargo check --target wasm32-unknown-unknown
 
+      - name: Check crate payload
+        run: |
+          cargo package --list > package-files.txt
+          if grep -Eq '^(\.github/|\.gitignore$|tests/)' package-files.txt; then
+            echo "development-only files entered the crate payload"
+            cat package-files.txt
+            exit 1
+          fi
+
       # `cargo test` exercises the NATIVE build of the wrapper; it never proves
       # the wasm package users actually load works. Build the real artifact and
       # drive it through the JS API, so a stale or broken engine fails here
