@@ -183,6 +183,7 @@ fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
                 carve::HtmlImportDiagnosticCode::StyleUnmapped => "style-unmapped",
                 carve::HtmlImportDiagnosticCode::TableDegraded => "table-degraded",
                 carve::HtmlImportDiagnosticCode::RawPreserved => "raw-preserved",
+                carve::HtmlImportDiagnosticCode::DiagnosticsTruncated => "diagnostics-truncated",
             };
             let severity = match diagnostic.severity {
                 carve::HtmlImportSeverity::Info => "info",
