@@ -17,6 +17,16 @@ npm install @markup-carve/carve-wasm
 
 ## Usage
 
+### HTML migration
+
+`htmlToCarve(html, mode)` returns `{ value, report }`, using the same HTML5
+import policy and canonical writer as carve-rs. Modes are `safe` (default),
+`semantic`, and trusted-only `roundtrip`.
+
+```js
+const { value, report } = htmlToCarve('<p>Hello <strong>world</strong></p>', 'safe')
+```
+
 ### Core renderer
 
 Renders Carve markup to HTML with no extensions enabled.

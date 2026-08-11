@@ -155,6 +155,78 @@ pub fn parse_json(source: &str) -> String {
     carve::to_json(&carve::parse_with_options(source, &options))
 }
 
+fn html_import_mode(value: Option<String>) -> Result<carve::HtmlImportMode, JsValue> {
+    match value.as_deref().unwrap_or("safe") {
+        "safe" => Ok(carve::HtmlImportMode::Safe),
+        "semantic" => Ok(carve::HtmlImportMode::Semantic),
+        "roundtrip" => Ok(carve::HtmlImportMode::Roundtrip),
+        other => Err(JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: unknown HTML import mode `{other}`"
+        )))),
+    }
+}
+
+fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
+    let mode = match report.mode {
+        carve::HtmlImportMode::Safe => "safe",
+        carve::HtmlImportMode::Semantic => "semantic",
+        carve::HtmlImportMode::Roundtrip => "roundtrip",
+    };
+    let diagnostics = report
+        .diagnostics
+        .iter()
+        .map(|diagnostic| {
+            let code = match diagnostic.code {
+                carve::HtmlImportDiagnosticCode::ElementDropped => "element-dropped",
+                carve::HtmlImportDiagnosticCode::ElementUnwrapped => "element-unwrapped",
+                carve::HtmlImportDiagnosticCode::AttributeDropped => "attribute-dropped",
+                carve::HtmlImportDiagnosticCode::StyleUnmapped => "style-unmapped",
+                carve::HtmlImportDiagnosticCode::TableDegraded => "table-degraded",
+                carve::HtmlImportDiagnosticCode::RawPreserved => "raw-preserved",
+            };
+            let severity = match diagnostic.severity {
+                carve::HtmlImportSeverity::Info => "info",
+                carve::HtmlImportSeverity::Warning => "warning",
+                carve::HtmlImportSeverity::Error => "error",
+            };
+            format!(
+                "{{\"code\":\"{code}\",\"message\":{:?},\"severity\":\"{severity}\"{}}}",
+                diagnostic.message,
+                diagnostic
+                    .path
+                    .as_ref()
+                    .map(|path| format!(",\"path\":{path:?}"))
+                    .unwrap_or_default()
+            )
+        })
+        .collect::<Vec<_>>()
+        .join(",");
+    format!("{{\"mode\":\"{mode}\",\"adapter\":\"generic\",\"diagnostics\":[{diagnostics}]}}")
+}
+
+/// Import HTML through the Rust HTML5 DOM and canonical Carve writer.
+///
+/// Returns `{ value, report }`; `report.diagnostics` makes every lossy import
+/// decision observable. `roundtrip` is only safe for Carve-produced HTML.
+#[wasm_bindgen(js_name = htmlToCarve)]
+pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
+    let options = carve::HtmlImportOptions {
+        mode: html_import_mode(mode)?,
+        ..Default::default()
+    };
+    let result = carve::html_to_carve(source, &options)
+        .map_err(|error| JsValue::from_str(&format!("carve: HTML import failed: {error:?}")))?;
+    let object = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &object,
+        &JsValue::from_str("value"),
+        &JsValue::from_str(&result.value),
+    )?;
+    let report = js_sys::JSON::parse(&html_import_report_json(&result.report))?;
+    js_sys::Reflect::set(&object, &JsValue::from_str("report"), &report)?;
+    Ok(object.into())
+}
+
 /// Read one boolean field out of a JS options object.
 ///
 /// Absent, `undefined` and `null` all mean "not set", so a caller can pass a
@@ -254,7 +326,7 @@ pub fn version() -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{render_core, render_full, SymbolPairs};
+    use super::{html_import_report_json, render_core, render_full, SymbolPairs};
 
     /// Build the lowered symbol map the JS bridge produces (the `js_sys`
     /// conversion itself only runs inside a JS host).
@@ -263,6 +335,15 @@ mod tests {
             .iter()
             .map(|(k, v)| ((*k).to_string(), (*v).to_string()))
             .collect()
+    }
+
+    #[test]
+    fn html_import_report_is_json() {
+        let result =
+            carve::html_to_carve("<p onclick=\"x()\">safe</p>", &Default::default()).unwrap();
+        let report = html_import_report_json(&result.report);
+        assert!(report.contains("\"attribute-dropped\""));
+        assert!(report.contains("\"mode\":\"safe\""));
     }
 
     // PART 9 §13: the wrapper is on by default and `sections: false` removes it,
