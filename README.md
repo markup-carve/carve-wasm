@@ -42,12 +42,35 @@ const html = toHtml('# Hello, Carve!')
 document.body.innerHTML = html
 ```
 
-### Full renderer (extensions on)
+### Extensions
 
-`toHtmlFull` enables the same set of extensions as the playground: tab
-normalisation, `<details>` fences, Mermaid diagrams, wikilinks, autolink,
-list-table, math blocks, heading permalinks, citations, code callouts, and
-external-link decoration.
+`extensions()` reports every extension this build accepts. The list comes from
+the engine, so it cannot fall behind what the engine has:
+
+```js
+import { extensions, toHtmlWithOptions } from '@markup-carve/carve-wasm'
+
+extensions()
+// ['autolink', 'citations', 'code-callouts', 'code-group', ...]
+
+toHtmlWithOptions(src, { extensions: ['glossary', 'table-of-contents'] })
+```
+
+Names are kebab-case; snake_case (`math_block`) is accepted too. An unknown name
+throws, because an ignored extension renders as missing behavior that looks
+like a Carve bug.
+
+### Full renderer (preview set)
+
+`toHtmlFull` enables the preview set the playground uses: tab normalisation,
+`<details>` fences, Mermaid diagrams, wikilinks, autolink, list-table, math
+blocks, heading permalinks, citations, code callouts, external-link decoration,
+code groups, and tabs.
+
+It is a curated subset rather than everything registered. Extensions that
+rewrite a document that never asked - `heading-numbers` numbers every heading,
+`table-of-contents` injects a TOC - are wrong for a preview. Name them
+explicitly through `toHtmlWithOptions` when you want them.
 
 ```js
 import { toHtmlFull } from '@markup-carve/carve-wasm'
@@ -104,9 +127,10 @@ toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: tru
 ```
 
 Every field is optional - `sections` (default `true`), `symbols` (same trusted-raw
-contract as `toHtmlWithSymbols`), and `full` (default `false`, enabling the same
-extension set as `toHtmlFull`). Omitting the object, or passing `null`, renders
-with defaults, so the three shorthands above remain the zero-config forms.
+contract as `toHtmlWithSymbols`), `extensions` (an array of names; takes
+precedence over `full`), and `full` (default `false`, enabling the preview set).
+Omitting the object, or passing `null`, renders with defaults, so the three
+shorthands above remain the zero-config forms.
 
 An unrecognized key is ignored, because the object is configuration and a typo
 should not break a render. A recognized key with the wrong type throws a
