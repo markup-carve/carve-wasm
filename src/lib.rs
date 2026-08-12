@@ -56,28 +56,56 @@ fn render_core(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
     carve::to_html_with_options(source, &options)
 }
 
-/// Render with the demo-useful built-in extension set plus the given symbol map.
-fn render_full(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
-    use carve::{
-        Autolink, CarveExtension, Citations, CodeCallouts, Details, ExternalLinks, FencedRender,
-        HeadingPermalinks, ListTable, MathBlock, Options, TabNormalize, Wikilinks,
-    };
+/// The preview extension set behind `full: true`.
+///
+/// These are registry keys, resolved through the engine rather than
+/// constructed here, so a rename upstream fails
+/// `preview_set_names_are_all_registered` instead of silently dropping an
+/// extension from every `full` render.
+///
+/// It is a curated subset on purpose, not "everything registered". Extensions
+/// that rewrite a document whether or not it asks - `heading-numbers` numbers
+/// every heading, `table-of-contents` injects a TOC - would change the output
+/// of a preview that never opted in. Everything here only acts on syntax the
+/// document actually contains.
+const PREVIEW_EXTENSIONS: &[&str] = &[
+    "tab-normalize",
+    "details",
+    "fenced-render",
+    "wikilinks",
+    "autolink",
+    "list-table",
+    "math-block",
+    "heading-permalinks",
+    "citations",
+    "code-callouts",
+    "external-links",
+    "code-group",
+    "tabs",
+];
+
+/// Build owned extension instances for the given registry keys.
+///
+/// Unknown keys are skipped rather than erroring: the caller-facing entry
+/// points validate names and report them, while the internal preview set is
+/// covered by a test.
+fn build_extensions(keys: &[String]) -> Vec<Box<dyn carve::CarveExtension>> {
+    keys.iter()
+        .filter_map(|key| carve::extensions::registry::by_key(key))
+        .collect()
+}
+
+/// Render with the named extensions plus the given symbol map.
+fn render_with_extensions(
+    source: &str,
+    keys: &[String],
+    symbols: &SymbolPairs,
+    sections: bool,
+) -> String {
     // `Options` borrows each extension, so the owned boxes must outlive it;
     // they live in this frame, alongside the render call.
-    let owned: Vec<Box<dyn CarveExtension>> = vec![
-        Box::new(TabNormalize::new()),
-        Box::new(Details::new()),
-        Box::new(FencedRender::mermaid()),
-        Box::new(Wikilinks::new()),
-        Box::new(Autolink::new()),
-        Box::new(ListTable::new()),
-        Box::new(MathBlock::new()),
-        Box::new(HeadingPermalinks::new()),
-        Box::new(Citations::new()),
-        Box::new(CodeCallouts::new()),
-        Box::new(ExternalLinks::new()),
-    ];
-    let mut options = Options::new().with_sections(sections);
+    let owned = build_extensions(keys);
+    let mut options = carve::Options::new().with_sections(sections);
     for ext in &owned {
         options = options.with_extension(ext.as_ref());
     }
@@ -85,6 +113,26 @@ fn render_full(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
         options = options.with_symbol(name.clone(), value.clone());
     }
     carve::to_html_with_options(source, &options)
+}
+
+/// Render with the preview extension set plus the given symbol map.
+fn render_full(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
+    let keys: Vec<String> = PREVIEW_EXTENSIONS
+        .iter()
+        .map(|k| (*k).to_string())
+        .collect();
+    render_with_extensions(source, &keys, symbols, sections)
+}
+
+/// Every extension name this build accepts, in registry order.
+///
+/// Taken from the engine, so a new extension is reachable as soon as the pin
+/// moves. Nothing here lists names.
+#[wasm_bindgen(js_name = extensions)]
+pub fn extensions() -> Vec<String> {
+    carve::extensions::registry::keys()
+        .map(str::to_string)
+        .collect()
 }
 
 #[wasm_bindgen(js_name = toHtml)]
@@ -114,15 +162,14 @@ pub fn to_html_with_symbols(
     Ok(render_core(source, &symbol_pairs(symbols)?, true))
 }
 
-/// Render with the demo-useful built-in Carve extensions enabled
-/// (tab-normalize, details, Mermaid, wikilinks, autolink, list-table,
-/// math-block, heading-permalinks, citations, code-callouts, external-links).
-/// Lets the WASM engine match an extensions-on host (e.g. the docs Playground)
-/// instead of the core-only `toHtml`.
+/// Render with the preview extension set enabled (`PREVIEW_EXTENSIONS`), so the
+/// WASM engine matches an extensions-on host such as the docs Playground rather
+/// than the core-only `toHtml`.
 ///
-/// Deliberately excludes table-of-contents (it auto-injects a TOC, which
-/// clutters a preview). The code-group / tabs extensions are also absent
-/// because carve-rs does not implement them.
+/// The set is curated, not "everything the engine has": `heading-numbers` and
+/// `table-of-contents` rewrite a document that never asked for it, which is
+/// wrong for a preview. Callers who want an exact set pass `extensions` to
+/// `toHtmlWithOptions`, and `extensions()` reports what this build accepts.
 ///
 /// The optional second argument is the same **symbols map** as
 /// [`to_html_with_symbols`], with the same trusted-raw contract: mapped values
@@ -270,8 +317,13 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 /// * `symbols` - the same map as [`to_html_with_symbols`], with the same
 ///   TRUSTED-RAW contract: mapped values are emitted UNESCAPED, so never build
 ///   it from untrusted input.
-/// * `full` (default `false`) - enable the same built-in extension set as
-///   [`to_html_full`] instead of rendering core-only.
+/// * `extensions` - an array of extension names to enable, e.g.
+///   `["glossary", "table-of-contents"]`. `extensions()` reports what this
+///   build accepts. An unknown name throws: a silently ignored extension would
+///   render as missing behavior that looks like a Carve bug. Takes precedence
+///   over `full`.
+/// * `full` (default `false`) - enable the preview extension set instead of
+///   rendering core-only.
 ///
 /// An unrecognized key is ignored: the object is configuration, and a caller
 /// who mistypes one deserves the render to still work. A wrong TYPE on a key
@@ -297,6 +349,7 @@ pub fn to_html_with_options(
 
     let sections = bool_field(&options, "sections")?.unwrap_or(true);
     let full = bool_field(&options, "full")?.unwrap_or(false);
+    let named = extension_names_field(&options)?;
     // A wrong-typed `symbols` must THROW, not quietly render without symbols:
     // `dyn_into().ok()` would turn `{ symbols: "rocket" }` into `None` and lose
     // the caller's map with no signal. Absent / null / undefined still mean
@@ -313,11 +366,48 @@ pub fn to_html_with_options(
     };
     let pairs = symbol_pairs(symbols)?;
 
-    Ok(if full {
-        render_full(source, &pairs, sections)
-    } else {
-        render_core(source, &pairs, sections)
+    Ok(match (named, full) {
+        // An explicit list wins over the preview set: a caller who names
+        // extensions has said exactly what they want.
+        (Some(keys), _) => render_with_extensions(source, &keys, &pairs, sections),
+        (None, true) => render_full(source, &pairs, sections),
+        (None, false) => render_core(source, &pairs, sections),
     })
+}
+
+/// Read the `extensions` option: absent, or an array of registry names.
+///
+/// An unknown name THROWS rather than being skipped. A mistyped extension is
+/// not configuration noise - the render would silently lack the behavior the
+/// caller asked for, and the output would look like a Carve bug.
+fn extension_names_field(options: &js_sys::Object) -> Result<Option<Vec<String>>, JsValue> {
+    let value = js_sys::Reflect::get(options, &JsValue::from_str("extensions"))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(None);
+    }
+    let array = value.dyn_into::<js_sys::Array>().map_err(|_| {
+        JsValue::from(js_sys::TypeError::new(
+            "carve: `extensions` must be an array of extension names",
+        ))
+    })?;
+    let mut keys = Vec::with_capacity(array.length() as usize);
+    for entry in array.iter() {
+        let name = entry.as_string().ok_or_else(|| {
+            JsValue::from(js_sys::TypeError::new(
+                "carve: each entry in `extensions` must be a string",
+            ))
+        })?;
+        // Registry keys are kebab-case; accept snake_case too, the way the
+        // Python and Ruby bindings do.
+        let key = name.trim().to_ascii_lowercase().replace('_', "-");
+        if carve::extensions::registry::by_key(&key).is_none() {
+            return Err(JsValue::from(js_sys::TypeError::new(&format!(
+                "carve: unknown extension \"{name}\" (see extensions())"
+            ))));
+        }
+        keys.push(key);
+    }
+    Ok(Some(keys))
 }
 
 #[wasm_bindgen]
@@ -327,7 +417,10 @@ pub fn version() -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{html_import_report_json, render_core, render_full, SymbolPairs};
+    use super::{
+        extensions, html_import_report_json, render_core, render_full, render_with_extensions,
+        SymbolPairs, PREVIEW_EXTENSIONS,
+    };
 
     /// Build the lowered symbol map the JS bridge produces (the `js_sys`
     /// conversion itself only runs inside a JS host).
@@ -410,6 +503,45 @@ mod tests {
         let html = render_full(src, &SymbolPairs::new(), true);
         assert!(html.contains("<table"), "expected a <table>, got: {html}");
         assert!(!html.contains("class=\"list-table\""));
+    }
+
+    #[test]
+    fn preview_set_names_are_all_registered() {
+        // The preview set is the one place a name is still written down here.
+        // If the engine renames or drops one, that extension would silently
+        // stop applying to every `full` render; this fails instead.
+        for key in PREVIEW_EXTENSIONS {
+            assert!(
+                carve::extensions::registry::by_key(key).is_some(),
+                "preview set names {key:?}, which the engine does not register"
+            );
+        }
+    }
+
+    #[test]
+    fn extensions_reports_what_the_engine_registers() {
+        let names = extensions();
+        // Reachable now, and unreachable before this binding read the registry:
+        // there was no name-based entry point at all.
+        for expected in ["glossary", "index", "table-of-contents", "heading-numbers"] {
+            assert!(names.contains(&expected.to_string()), "missing {expected}");
+        }
+    }
+
+    #[test]
+    fn named_extensions_render() {
+        let src = "# Heading\n";
+        let keys = vec!["heading-permalinks".to_string()];
+        let html = render_with_extensions(src, &keys, &SymbolPairs::new(), true);
+        assert!(html.contains("class=\"permalink\""), "got: {html}");
+    }
+
+    #[test]
+    fn an_unnamed_render_is_unaffected_by_the_registry() {
+        // Core stays core: reading the registry must not enable anything.
+        let src = "# Heading\n";
+        let core = render_core(src, &SymbolPairs::new(), true);
+        assert!(!core.contains("class=\"permalink\""), "got: {core}");
     }
 
     #[test]
