@@ -14,10 +14,17 @@
 // The corpus path comes from CARVE_SPEC_CORPUS. Unset, this exits 0 with a
 // notice, so a plain checkout without the spec repo still runs the suite; CI
 // always sets it.
+//
+// WHICH built artifact is a parameter too - see tests/engine.mjs. Unset it is
+// `../pkg`, exactly as before; the release gate points CARVE_WASM_PKG at the
+// unpacked npm tarball so this same file, with this same population
+// derivation, measures the bytes about to be published. One derivation, two
+// callers: two spellings of "how big is the corpus" that could disagree would
+// be its own defect.
 import assert from 'node:assert/strict'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { toHtml, parseJson } from '../pkg/carve_wasm.js'
+import { toHtml, parseJson, packageUnderTest } from './engine.mjs'
 
 const CORPUS = process.env.CARVE_SPEC_CORPUS
 
@@ -166,7 +173,7 @@ assert.equal(
   0,
   `${mismatches.length}/${names.length} corpus documents differ: ${mismatches.slice(0, 10).join(', ')}`,
 )
-console.log(`corpus: ${names.length}/${names.length} documents byte-identical through the wasm artifact`)
+console.log(`corpus: ${names.length}/${names.length} documents byte-identical through the wasm artifact at ${packageUnderTest}`)
 
 // ---------------------------------------------------------------------------
 // The same corpus, through `parseJson` rather than `toHtml`.

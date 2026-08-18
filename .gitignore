@@ -1,3 +1,4 @@
 target/
 pkg/
+release-artifact/
 *.log

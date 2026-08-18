@@ -5,12 +5,23 @@ on:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
+# The publish is split off from the build so that it can be REACHED only
+# through a gate. This file used to be one job: `wasm-pack build` followed
+# directly by `npm publish`, with nothing between them that could return a
+# non-zero exit code. Whatever the build produced went to the registry, and a
+# registry publish is not retractable in any useful sense - it is indexed
+# within minutes, and a deprecate or an unpublish is itself a public event.
+#
+# Ordering inside one job would not be enough. Steps in a job are only as
+# blocking as their `if:` and `continue-on-error:` say they are, and a step
+# added between them later inherits nothing. A separate job named in `needs:`
+# cannot be reached at all while the gate fails, which is the property being
+# bought here.
 jobs:
-  publish:
+  # Everything that decides whether this tag is publishable.
+  verify:
+    name: Gate the release on the packed artifact
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v4
 
@@ -24,10 +35,92 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
 
+      # The corpus is the only check that can tell a drifted engine pin from a
+      # current one; smoke.mjs asserts hand-written expectations, which a stale
+      # engine satisfies happily. The gate script refuses to run without it
+      # rather than skipping, so a spec checkout that failed to appear fails the
+      # release instead of certifying it.
+      - name: Check out the spec corpus
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve
+          path: spec
+
+      # The tag is the version being published, so it is the version the
+      # package must carry. A mismatch publishes a number nobody asked for, and
+      # like everything else on this path it cannot be taken back.
+      - name: The tag and the package version have to agree
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          declared=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
+          echo "tag: $tag, Cargo.toml: $declared"
+          if [ "$tag" != "$declared" ]; then
+            echo "tag $GITHUB_REF_NAME does not match the version in Cargo.toml ($declared)"
+            exit 1
+          fi
+
+      # The exact command the publish is about, so the gate measures the
+      # bundler package users install rather than a differently-targeted build
+      # of the same source.
       - name: Build wasm package
         run: wasm-pack build --target bundler --scope markup-carve
+
+      # Packs `pkg/` with `npm pack`, unpacks the tarball, and runs
+      # tests/smoke.mjs and tests/corpus.mjs against the UNPACKED tree. A file
+      # the generated `files` list leaves out never reaches the registry and
+      # never reaches these tests either, so the two cannot disagree. Non-zero
+      # on any divergence; the corpus population is derived from the spec's
+      # example pages, so a truncated corpus fails here rather than passing
+      # over a subset.
+      - name: Gate
+        env:
+          CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
+        run: node scripts/verify-release-artifact.mjs
+
+      # Hand the VERIFIED files to the publish job rather than letting it build
+      # its own. A second build would be a second artifact, and the one that was
+      # measured would not be the one uploaded.
+      - name: Upload the verified package
+        uses: actions/upload-artifact@v4
+        with:
+          name: verified-package
+          path: release-artifact/package/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish to npm
+    # Not reachable while `verify` fails, cancels, or is skipped.
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Download the verified package
+        uses: actions/download-artifact@v4
+        with:
+          name: verified-package
+          path: pkg
+
+      # Cheap restatement of what the gate already proved, because this job
+      # gets its files over the network: an empty or partial download would
+      # otherwise publish a package with no payload in it.
+      - name: The downloaded package is the whole package
+        working-directory: pkg
+        run: |
+          ls -l
+          for file in package.json carve_wasm.js carve_wasm_bg.js carve_wasm_bg.wasm; do
+            test -s "$file" || { echo "verified package is missing $file"; exit 1; }
+          done
 
       - name: Publish to npm
         working-directory: pkg
