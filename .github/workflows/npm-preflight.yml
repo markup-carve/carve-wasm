@@ -59,11 +59,25 @@ jobs:
             exit 1
           fi
 
+          # REPORTED, not fatal, and the first run is why. This endpoint is
+          # /-/org/markup-carve/package, an ORGANIZATION READ - not a package
+          # write - and the credential answered 403 "You may not perform that
+          # action with these credentials" while an ANONYMOUS GET of the same
+          # URL returns all four packages in the scope. A credential with fewer
+          # rights than a stranger on an org endpoint is the signature of a
+          # granular access token, which is information rather than a verdict:
+          # a granular token scoped to every package in the organization is
+          # refused here too, and it can publish perfectly well.
+          #
+          # Failing on it would have been a false negative talking someone out
+          # of a release, which is the same class of harm as the spec-main gate
+          # this repository just re-aimed. It also cut the run short before the
+          # two probes below, which are the ones that carry the answer.
           echo
           echo "== packages this credential sees in the scope"
           if ! npm access list packages @markup-carve; then
-            echo "::error::the credential authenticates but cannot read the @markup-carve scope, so it certainly cannot publish into it." >&2
-            exit 1
+            echo "  REFUSED. Note that an anonymous reader is NOT refused here, so this is about"
+            echo "  the credential's kind and not about the scope being unreachable. See below."
           fi
 
           echo
