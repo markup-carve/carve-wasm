@@ -219,7 +219,26 @@ const walk = (node, visit) => {
   }
 }
 
-const trees = names.map((name) => JSON.parse(parseJson(readFileSync(join(CORPUS, name), 'utf8'))))
+// Named, one document at a time, rather than as a bare `map`. A parse that
+// throws inside the wasm module - a stack overflow on a deeply nested document
+// is the case on record - otherwise ends the run with a stack of
+// `wasm://wasm/...` frames and no document name anywhere in it, so the only way
+// to find the input was to bisect the corpus by hand on a runner. The name is
+// the whole diagnosis, and it costs one try/catch.
+const trees = names.map((name) => {
+  const source = readFileSync(join(CORPUS, name), 'utf8')
+  try {
+    return JSON.parse(parseJson(source))
+  } catch (error) {
+    throw new Error(
+      `parseJson failed on ${name} (${source.length} bytes): ${error.message}. ` +
+        'The HTML half of this file passed over the same document, so this is the AST path ' +
+        'specifically - a wasm-side failure such as a stack overflow on deep nesting, or ' +
+        'output that is not JSON.',
+      { cause: error },
+    )
+  }
+})
 
 const produced = new Set()
 for (const tree of trees) walk(tree, (node) => produced.add(node.type))
