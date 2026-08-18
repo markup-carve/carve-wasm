@@ -1,0 +1,6 @@
+[target.wasm32-unknown-unknown]
+# The engine accepts documents nested to its specified cap. AST JSON encoding
+# recursively visits that bounded tree; wasm-ld's 1 MiB default stack is too
+# small for the deepest valid corpus document even though HTML rendering fits.
+# Two MiB covers the cap and keeps parseJson aligned with the native bindings.
+rustflags = ["-C", "link-arg=-zstack-size=2097152"]
