@@ -270,3 +270,33 @@ wasm-pack build --target bundler --scope markup-carve
 `wasm-pack` emits the package into `pkg/`. For a no-bundler / `<script type=module>`
 setup use `--target web` (which exports a default `init()` you must `await`
 before calling the renderers); for Node use `--target nodejs`.
+
+Point the test suite at any built package with `CARVE_WASM_PKG`, rather than
+only at `pkg/`:
+
+```sh
+CARVE_WASM_PKG=some/other/pkg node tests/smoke.mjs
+```
+
+Both wasm-pack targets load. Unset, it is `pkg/`, so nothing changes for the
+ordinary loop.
+
+## Release
+
+Publishing is gated. `.github/workflows/release.yml` has two jobs, and
+`publish` declares `verify` in `needs:`, so it cannot start while the gate
+fails. The gate is `scripts/verify-release-artifact.mjs`, and it is runnable by
+hand against a local build:
+
+```sh
+wasm-pack build --target bundler --scope markup-carve
+CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node scripts/verify-release-artifact.mjs
+```
+
+It runs `npm pack` and drives `tests/smoke.mjs` and `tests/corpus.mjs` at the
+UNPACKED tarball, not at `pkg/`. The difference matters: npm uploads what the
+generated `files` list names, so a payload file left out of it would never
+reach the registry and would never have been tested either. The corpus
+population comes from the spec's example pages, so a truncated corpus fails
+here instead of passing over a subset, and an unset `CARVE_SPEC_CORPUS` is
+refused rather than skipped.

@@ -3,7 +3,7 @@
 // wasm package works -- which is how a stale engine can pass CI (the embedded
 // engine in carve-go did exactly that for months).
 import assert from 'node:assert/strict'
-import { parseJson, toHtml, toHtmlWithOptions } from '../pkg/carve_wasm.js'
+import { parseJson, toHtml, toHtmlWithOptions } from './engine.mjs'
 
 const cases = [
   // Superscript/subscript are braced-only: a bare `^` / `,` is literal text.
