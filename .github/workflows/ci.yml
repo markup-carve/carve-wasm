@@ -109,16 +109,78 @@ jobs:
       # a current one, and it measures the BINDING too: the engine being
       # corpus-checked upstream says nothing about whether wasm-bindgen loses
       # something on the way through.
-      - name: Check out the spec corpus
+      #
+      # AGAINST THE SPEC COMMIT THE PINNED ENGINE PINS, not against spec main.
+      # That difference is deliberate and it is a NARROWING, so it is worth
+      # stating why.
+      #
+      # This used to check out markup-carve/carve at its default branch, which
+      # asks: is this package conformant with the spec as it stands right now?
+      # carve-wasm cannot answer yes to that by any change of its own. The spec
+      # adds documents continuously - it gained corpus category 367 on
+      # 2026-08-18 - and an engine implements them some time later. In between,
+      # every pull request here is red for a reason that has nothing to do with
+      # its diff, and the fix lives in another repository. A gate in that state
+      # teaches every reader to skip it, and a gate nobody reads is a check that
+      # cannot fail arriving by a different road (markup-carve/carve#755).
+      #
+      # It was not hypothetical. The same spec-main checkout in release.yml
+      # stopped the sibling binding carve-py mid-release: v0.1.1 built all three
+      # wheels and published its GitHub release, then skipped the PyPI upload
+      # over two category-367 documents that do not exist at the spec commit
+      # that release pins and that no engine revision available that day
+      # rendered. PyPI went on serving the version the security fix was for.
+      #
+      # The question this repository CAN answer, and the only one it can act on,
+      # is whether the package is as conformant as the engine it was built from.
+      # scripts/pinned-spec-commit.py resolves that: the carve-rs revision
+      # Cargo.toml pins, cross-checked against what Cargo.lock resolved, and
+      # that revision's tests/spec gitlink. Bumping the pin is the action that
+      # clears a failure here, and it is an action taken in this repository.
+      #
+      # WHAT THIS DOES NOT BUY, said plainly: a package that is simply OLD, with
+      # the pin and the engine agreeing on a carve-rs from a month ago, passes
+      # here. That is what corpus-drift below reports, and it is why deleting
+      # corpus-drift would turn this into a loosening rather than a re-aiming.
+      - name: Check out carve-rs
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve-rs
+          path: carve-rs
+          # fetch-depth: 0 so the pinned revision can be read as a tree. A
+          # shallow clone has the tip's tree and nothing else, and the pin is
+          # deliberately not required to be the tip.
+          fetch-depth: 0
+
+      - name: Resolve the spec commit the pinned engine pins
+        id: pin
+        run: |
+          spec="$(python3 scripts/pinned-spec-commit.py \
+            --engine carve-rs --manifest Cargo.toml --lock Cargo.lock)"
+          echo "spec=$spec" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the spec corpus that engine was written against
         uses: actions/checkout@v4
         with:
           repository: markup-carve/carve
+          ref: ${{ steps.pin.outputs.spec }}
           path: spec
 
       - name: Corpus
         env:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
         run: node tests/corpus.mjs
+
+      # For corpus-drift below. It measures the SAME wasm package this job
+      # gated rather than building a second one: two builds would be two
+      # artifacts, and the drift number would be about the one nothing else
+      # looked at.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ci-pkg
+          path: pkg/
+          if-no-files-found: error
+          retention-days: 7
 
   # The lockfile is committed, so ONE resolution now serves every consumer -
   # including anyone on the `rust-version` this crate advertises. That is what
@@ -150,3 +212,76 @@ jobs:
       - run: cargo build --locked --all-targets
       - run: cargo test --locked
       - run: cargo check --locked --target wasm32-unknown-unknown
+
+  # The same corpus comparison against spec MAIN, REPORTED and not gated.
+  #
+  # This is the other half of re-aiming the corpus gate above, and it is not
+  # optional. The question that gate no longer asks - how far is this package
+  # from the spec as it stands today - is still worth knowing; it is simply not
+  # something a pull request here can fix, so it must not block one. Deleting
+  # this job would leave the drift invisible and turn the re-aiming into a
+  # loosening. carve-go carries the identical pair for the identical reason.
+  #
+  # The schedule at the top of this file is what makes it useful: the spec moves
+  # without a commit here, so a push-triggered run alone would report the state
+  # of the day someone last touched this repository.
+  #
+  # IT IS NOT A CHECK THAT CANNOT FAIL. It never fails ON the number, but it
+  # fails when it did not MEASURE one: a corpus that moved, a spec layout this
+  # no longer finds, a package that will not load. Those are the ways a
+  # reporting job silently becomes decoration, and the guard against them is
+  # requiring evidence of a measurement rather than an exit status - the run has
+  # to have logged either a divergence count or a byte-identical count.
+  corpus-drift:
+    name: Report the drift against spec main
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out the spec corpus at main
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve
+          path: spec
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Download the wasm package the corpus gate ran over
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-pkg
+          path: pkg
+
+      - name: Report the drift
+        env:
+          CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
+        run: |
+          set -uo pipefail
+          # tests/corpus.mjs exits non-zero on divergence. Here divergence is
+          # the thing being reported, so the exit status is discarded and the
+          # LOG is what is read; a run that logged no count at all still fails
+          # below.
+          node tests/corpus.mjs > drift.log 2>&1 || true
+          cat drift.log
+          spec="$(git -C spec rev-parse --short HEAD)"
+          diverging="$(grep -oE '[0-9]+/[0-9]+ corpus documents differ' drift.log | tail -1 || true)"
+          identical="$(grep -oE '[0-9]+/[0-9]+ documents byte-identical' drift.log | tail -1 || true)"
+          if [ -n "$diverging" ]; then
+            headline="$diverging at spec main ($spec)"
+          elif [ -n "$identical" ]; then
+            headline="0 diverging, $identical at spec main ($spec)"
+          else
+            echo "::error::the drift run logged neither a divergence count nor a byte-identical count, so nothing was measured" >&2
+            tail -40 drift.log >&2
+            exit 1
+          fi
+          echo "$headline"
+          echo "::notice::$headline"
+          {
+            echo "## The published package against spec main"
+            echo
+            echo "$headline"
+          } >> "$GITHUB_STEP_SUMMARY"
