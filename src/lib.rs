@@ -230,6 +230,15 @@ fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
                 carve::HtmlImportDiagnosticCode::StyleUnmapped => "style-unmapped",
                 carve::HtmlImportDiagnosticCode::TableDegraded => "table-degraded",
                 carve::HtmlImportDiagnosticCode::RawPreserved => "raw-preserved",
+                // Added by the engine after the previous pin. The match is
+                // deliberately exhaustive rather than a `_` arm: relaying a new
+                // code under a guessed spelling, or dropping it, is worse than
+                // failing to build, and this is the only place that would
+                // notice. Spellings copied from `report_vocabulary!` in
+                // carve-rs `src/html_import.rs`, which is what the spec's
+                // resources/html-import-schema.json admits.
+                carve::HtmlImportDiagnosticCode::StructureUnspellable => "structure-unspellable",
+                carve::HtmlImportDiagnosticCode::EncodingAssumed => "encoding-assumed",
                 carve::HtmlImportDiagnosticCode::DiagnosticsTruncated => "diagnostics-truncated",
             };
             let severity = match diagnostic.severity {
