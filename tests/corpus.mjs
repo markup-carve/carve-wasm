@@ -21,7 +21,27 @@ import { toHtml, parseJson } from '../pkg/carve_wasm.js'
 
 const CORPUS = process.env.CARVE_SPEC_CORPUS
 
+// The skip above is a convenience for a local checkout without the spec repo.
+// In CI it is a hole: this whole file is reached through one `env:` block in
+// ci.yml, and if that block is deleted, renamed, or moved to a job that does
+// not check the spec out, every assertion below stops running and the step
+// still exits 0. The job goes green having compared nothing, which is the
+// variant-1 dead check from markup-carve/carve#755 - the same shape hugo-carve
+// shipped, where ci.yml skipped the corpus test in silence.
+//
+// So the skip is allowed exactly where it is useful and refused where it is
+// dangerous. A CI runner that reaches this file without a corpus is a wiring
+// failure, and it fails here rather than being reported as a pass.
+const IN_CI = process.env.GITHUB_ACTIONS === 'true' || process.env.CI === 'true'
+
 if (!CORPUS) {
+  assert.ok(
+    !IN_CI,
+    'CARVE_SPEC_CORPUS is unset in a CI run. This file is the only check that measures the ' +
+      'built wasm artifact against the spec, and without the corpus it asserts nothing. Set it ' +
+      'from the spec checkout (see the "Check out the spec corpus" step in ' +
+      '.github/workflows/ci.yml); do not let this run report success.',
+  )
   console.log('corpus: skipped (CARVE_SPEC_CORPUS not set - see .github/workflows/ci.yml)')
   process.exit(0)
 }
