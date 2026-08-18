@@ -1,0 +1,77 @@
+name: npm preflight
+
+# Manual only. It publishes nothing and changes nothing; it answers one
+# question that cannot be answered from outside this repository.
+#
+# WHY IT EXISTS. `@markup-carve/carve-wasm` does not exist on npm - this
+# repository has never been released, and its draft v0.1.0 would be the first
+# publish under that name. The scope holds four other packages, and the
+# credential the release uses is the organization secret NPM_TOKEN.
+#
+# Creating a package is not the same permission as publishing a new version of
+# one that already exists. If NPM_TOKEN is a granular token restricted to
+# selected packages, the very first `npm publish` fails with
+#
+#   E404 Not Found - PUT https://registry.npmjs.org/@markup-carve%2fcarve-wasm
+#
+# which npm returns for "no permission on a package that does not exist" and
+# for "no such scope" alike, so the message does not say which. Finding that
+# out during a release means a tag exists, a draft is published, and the
+# registry has nothing - the state carve-py spent this afternoon in for a
+# different reason.
+#
+# Nothing here can be established from the outside: the public registry answers
+# the same package list to an anonymous reader as it does to the token, so the
+# list proves nothing about the credential. This asks the registry AS the
+# credential instead.
+on:
+  workflow_dispatch:
+
+jobs:
+  credential:
+    name: What the publish credential can write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Every command below is a read. None of them creates, changes or
+      # deprecates anything, and the token reaches no third-party action.
+      - name: Ask the registry as the credential
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -uo pipefail
+          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+            echo "::error::NPM_TOKEN is not readable from this repository, so the release could not authenticate at all."
+            exit 1
+          fi
+
+          echo "== npm whoami (is the credential valid at all)"
+          npm whoami || echo "  whoami FAILED: the token is expired, revoked, or not a publish credential"
+
+          echo
+          echo "== packages this credential sees in the scope"
+          npm access list packages @markup-carve || echo "  listing FAILED"
+
+          echo
+          echo "== npm token list (classic automation tokens can read this; granular tokens cannot)"
+          if npm token list >/dev/null 2>&1; then
+            echo "  SUCCEEDED -> classic automation token. It carries the owner's publish rights,"
+            echo "  which include creating a new package in a scope the owner administers."
+          else
+            echo "  REFUSED -> granular access token. Its package grants are fixed at creation:"
+            echo "  if @markup-carve/carve-wasm is not among them, or the token is not scoped to"
+            echo "  'all packages in @markup-carve', the first publish will fail with E404 and no"
+            echo "  change here can fix it. Widen the token at npmjs.com before tagging."
+          fi
+
+          echo
+          echo "== does the package already exist"
+          if npm view @markup-carve/carve-wasm version >/dev/null 2>&1; then
+            echo "  yes -> a release would be a new version, not a package create"
+          else
+            echo "  no -> the first release is a package CREATE, which is the permission in question"
+          fi

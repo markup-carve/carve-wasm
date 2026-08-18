@@ -41,10 +41,64 @@ jobs:
       # engine satisfies happily. The gate script refuses to run without it
       # rather than skipping, so a spec checkout that failed to appear fails the
       # release instead of certifying it.
-      - name: Check out the spec corpus
+      #
+      # AGAINST THE SPEC COMMIT THE PINNED ENGINE PINS, not against spec main.
+      # This is a deliberate NARROWING of what this gate refuses, and it is the
+      # reason the gate exists at all rather than being switched off.
+      #
+      # It used to check out markup-carve/carve at its default branch, which
+      # asks whether the package is conformant with the spec as it stands right
+      # now. No change in this repository can answer yes to that: the spec adds
+      # documents continuously and an engine implements them some time later, so
+      # between those two moments the gate cannot pass by construction, and a
+      # gate that cannot pass gets skipped - the "check that cannot fail" of
+      # markup-carve/carve#755 arriving from the opposite direction.
+      #
+      # It is what stopped the sibling binding carve-py mid-release. Its v0.1.1
+      # built all three wheels and published its GitHub release, then skipped
+      # the PyPI upload over two documents from corpus category 367, which does
+      # not exist at the spec commit that release pins and which no engine
+      # revision available that day rendered. PyPI went on serving the version
+      # the security fix was for. This repository's first release would have
+      # met the same wall.
+      #
+      # So it now holds the package to the spec the engine inside it was written
+      # against: scripts/pinned-spec-commit.py reads the carve-rs revision
+      # Cargo.toml pins, cross-checks it against what Cargo.lock resolved, and
+      # takes that revision's tests/spec gitlink. Every input is pinned in this
+      # repository, so the answer cannot change while this repository does not,
+      # and a failure is cleared by bumping the pin - an action taken here.
+      #
+      # WHAT IT STILL REFUSES, unchanged: a package whose engine renders any of
+      # the documents that engine claims to implement differently, a corpus that
+      # is truncated or stale relative to what the spec's example pages declare,
+      # and a `files` list that leaves a payload file out of the tarball.
+      #
+      # WHAT MOVED TO NON-BLOCKING: how far this package is from spec MAIN. That
+      # is reported by the corpus-drift job in ci.yml, on every push, every pull
+      # request and a daily schedule.
+      - name: Check out carve-rs
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve-rs
+          path: carve-rs
+          # fetch-depth: 0 so the pinned revision can be read as a tree. A
+          # shallow clone has the tip's tree and nothing else, and the pin is
+          # deliberately not required to be the tip.
+          fetch-depth: 0
+
+      - name: Resolve the spec commit the pinned engine pins
+        id: pin
+        run: |
+          spec="$(python3 scripts/pinned-spec-commit.py \
+            --engine carve-rs --manifest Cargo.toml --lock Cargo.lock)"
+          echo "spec=$spec" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the spec corpus that engine was written against
         uses: actions/checkout@v4
         with:
           repository: markup-carve/carve
+          ref: ${{ steps.pin.outputs.spec }}
           path: spec
 
       # The tag is the version being published, so it is the version the
