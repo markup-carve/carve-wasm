@@ -49,12 +49,22 @@ jobs:
             exit 1
           fi
 
+          # This one is fatal rather than reported. A preflight that finishes
+          # green having proved the release cannot authenticate is a check that
+          # cannot fail, which is the shape this repository's other jobs carry
+          # comments about; it would be worse than not running at all.
           echo "== npm whoami (is the credential valid at all)"
-          npm whoami || echo "  whoami FAILED: the token is expired, revoked, or not a publish credential"
+          if ! npm whoami; then
+            echo "::error::the credential does not authenticate to the registry at all - expired, revoked, or not a publish token. No release can publish until it is replaced." >&2
+            exit 1
+          fi
 
           echo
           echo "== packages this credential sees in the scope"
-          npm access list packages @markup-carve || echo "  listing FAILED"
+          if ! npm access list packages @markup-carve; then
+            echo "::error::the credential authenticates but cannot read the @markup-carve scope, so it certainly cannot publish into it." >&2
+            exit 1
+          fi
 
           echo
           echo "== npm token list (classic automation tokens can read this; granular tokens cannot)"
