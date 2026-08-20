@@ -180,10 +180,20 @@ jobs:
           ref: ${{ steps.pin.outputs.spec }}
           path: spec
 
+      # The corpus runs with explicit stack headroom. `parseJson` recurses once
+      # per nesting level and the engine accepts 200 levels, so the deepest
+      # document sits close to what a host gives a Node process - close enough
+      # that this job flipped from green to red on an unchanged commit, in a
+      # context where the same artifact needs only 300KB measured on its own.
+      #
+      # Headroom, not a fix, and deliberately not hidden: how little room is left
+      # is what tests/deep-nesting.mjs measures, and it fails when the floor
+      # approaches Node's default. markup-carve/carve-rs#1160 removes the
+      # recursion; when that lands, this flag goes.
       - name: Corpus
         env:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
-        run: node tests/corpus.mjs
+        run: node --stack-size=4000 tests/corpus.mjs
 
       # For corpus-drift below. It measures the SAME wasm package this job
       # gated rather than building a second one: two builds would be two
@@ -278,7 +288,7 @@ jobs:
           # the thing being reported, so the exit status is discarded and the
           # LOG is what is read; a run that logged no count at all still fails
           # below.
-          node tests/corpus.mjs > drift.log 2>&1 || true
+          node --stack-size=4000 tests/corpus.mjs > drift.log 2>&1 || true
           cat drift.log
           spec="$(git -C spec rev-parse --short HEAD)"
           diverging="$(grep -oE '[0-9]+/[0-9]+ corpus documents differ' drift.log | tail -1 || true)"
