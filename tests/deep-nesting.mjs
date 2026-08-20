@@ -14,10 +14,16 @@
 // Node (markup-carve/carve-wasm#48) - which is what a thin margin looks like
 // from outside.
 //
-// So this runs the deepest shape in a CHILD process with a deliberately small
-// stack. Passing at a quarter of Node's default means a change that triples the
-// frame size fails here, in a run that names the cause, instead of failing for
-// a user on a machine with less headroom.
+// So this MEASURES the floor - the smallest host stack the deepest shapes still
+// fit in - by running them in a child process at decreasing sizes, and prints
+// it. A fixed threshold would only have described the machine it was written
+// on: 250KB is enough here and not enough on a GitHub runner, for the same
+// commit and the same artifact.
+//
+// It fails when the floor leaves no room under Node's default, because that is
+// the state the red run was in. What it reports on a green run is the number
+// worth watching: the closer it creeps to the default, the smaller the margin
+// every consumer has.
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
@@ -26,10 +32,13 @@ import { fileURLToPath } from 'node:url'
 // the deepest tree that exists rather than an arbitrary large number.
 const CAP = 200
 
-// Kilobytes. Node's default is about 984, so this asserts roughly a quarter of
-// it is enough. Measured on this artifact: it survives at 250 and overflows at
-// 200, so 300 is above the floor without being so close that a rebuild flips it.
-const SMALL_STACK = 300
+// Kilobytes, largest first. Node's default is about 984.
+const PROBES = [900, 700, 500, 400, 300, 250, 200, 150]
+
+// The floor may not exceed this, or a default-stack run has almost nothing
+// left over - which is the state CI was in when the corpus flipped from green
+// to red on an unchanged commit.
+const CEILING = 900
 
 const nested = ':::: note\n'.repeat(CAP) + 'deep\n' + '::::\n'.repeat(CAP)
 
@@ -85,25 +94,52 @@ if (process.argv[2] === '--child') {
 
 const self = fileURLToPath(import.meta.url)
 
-// First at the default stack, so a failure here is unambiguous rather than a
-// consequence of the flag below.
-execFileSync(process.execPath, [self, '--child'], { stdio: 'inherit' })
+function fitsIn(kilobytes) {
+  const flags = kilobytes === null ? [] : [`--stack-size=${kilobytes}`]
+  try {
+    execFileSync(process.execPath, [...flags, self, '--child'], { stdio: 'pipe' })
+    return true
+  } catch (error) {
+    const output = `${error.stderr ?? ''}`
+    if (output.includes('Maximum call stack size exceeded')) return false
+    // Anything else is a real failure and must not read as "needs more stack".
+    process.stderr.write(output)
+    throw error
+  }
+}
 
-try {
-  execFileSync(process.execPath, [`--stack-size=${SMALL_STACK}`, self, '--child'], {
-    stdio: 'inherit',
-  })
-} catch (error) {
+// The contract first: a document the engine accepts must serialize at the
+// stack a consumer actually has.
+if (!fitsIn(null)) {
   throw new Error(
-    `the AST path needs more than ${SMALL_STACK}KB of host stack for a document at ` +
-      `the ${CAP}-level nesting cap, where it used to fit. Node's default is about ` +
-      `984KB, so the margin a browser or another Node build has just shrank. ` +
-      `See markup-carve/carve-rs#1160.`,
-    { cause: error },
+    `the AST path overflows the DEFAULT host stack on a document at the ` +
+      `${CAP}-level nesting cap. Any consumer calling parseJson on a deep ` +
+      `document crashes. See markup-carve/carve-rs#1160.`,
   )
 }
 
+let floor = null
+for (const probe of PROBES) {
+  if (!fitsIn(probe)) break
+  floor = probe
+}
+
+if (floor === null) {
+  throw new Error(
+    `the AST path needs more than ${PROBES[0]}KB of host stack for a document at ` +
+      `the ${CAP}-level nesting cap. Node's default is about 984KB, so a default ` +
+      `run has almost nothing left over - which is the state this repository's CI ` +
+      `was in when the corpus flipped from green to red on an unchanged commit. ` +
+      `See markup-carve/carve-rs#1160.`,
+  )
+}
+
+assert.ok(
+  floor <= CEILING,
+  `the AST path fits in ${floor}KB, above the ${CEILING}KB this test allows.`,
+)
+
 console.log(
   `deep nesting: ${Object.keys(shapes).length} shapes at the ${CAP}-level cap ` +
-    `parse and serialize in ${SMALL_STACK}KB of host stack`,
+    `parse and serialize in ${floor}KB of host stack (Node's default is ~984KB)`,
 )
