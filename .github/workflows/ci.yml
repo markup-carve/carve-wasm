@@ -92,6 +92,12 @@ jobs:
       # a fully green suite for exactly this reason).
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          # Pinned, because without it the action installs whatever "latest"
+          # means on the day - so the artifact this repository ships is rebuilt
+          # by a tool nothing here records, and two runs of the same commit are
+          # not the same build.
+          version: 'v0.15.0'
 
       - name: Build the wasm package
         run: wasm-pack build --target nodejs
@@ -102,6 +108,14 @@ jobs:
 
       - name: Test the wasm artifact through its JS API
         run: node tests/smoke.mjs
+
+      # How much host stack the AST path needs, measured rather than assumed.
+      # This job flipped from green to red on one commit with an identical
+      # toolchain (markup-carve/carve-wasm#48); the walk recurses once per
+      # nesting level and the host owns that stack, so the margin is the thing
+      # to watch until markup-carve/carve-rs#1160 removes the recursion.
+      - name: Measure the stack margin of the AST path
+        run: node tests/deep-nesting.mjs
 
       # smoke.mjs asserts HAND-WRITTEN expectations, which a drifted engine pin
       # satisfies happily -- that is how carve-py's pin sat months behind with
@@ -166,10 +180,20 @@ jobs:
           ref: ${{ steps.pin.outputs.spec }}
           path: spec
 
+      # The corpus runs with explicit stack headroom. `parseJson` recurses once
+      # per nesting level and the engine accepts 200 levels, so the deepest
+      # document sits close to what a host gives a Node process - close enough
+      # that this job flipped from green to red on an unchanged commit, in a
+      # context where the same artifact needs only 300KB measured on its own.
+      #
+      # Headroom, not a fix, and deliberately not hidden: how little room is left
+      # is what tests/deep-nesting.mjs measures, and it fails when the floor
+      # approaches Node's default. markup-carve/carve-rs#1160 removes the
+      # recursion; when that lands, this flag goes.
       - name: Corpus
         env:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
-        run: node tests/corpus.mjs
+        run: node --stack-size=4000 tests/corpus.mjs
 
       # For corpus-drift below. It measures the SAME wasm package this job
       # gated rather than building a second one: two builds would be two
@@ -264,7 +288,7 @@ jobs:
           # the thing being reported, so the exit status is discarded and the
           # LOG is what is read; a run that logged no count at all still fails
           # below.
-          node tests/corpus.mjs > drift.log 2>&1 || true
+          node --stack-size=4000 tests/corpus.mjs > drift.log 2>&1 || true
           cat drift.log
           spec="$(git -C spec rev-parse --short HEAD)"
           diverging="$(grep -oE '[0-9]+/[0-9]+ corpus documents differ' drift.log | tail -1 || true)"

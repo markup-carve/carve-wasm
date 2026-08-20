@@ -114,7 +114,15 @@ const env = { ...process.env, CARVE_WASM_PKG: unpacked }
 const suite = [
   ['tests/smoke.mjs', 'the hand-written API cases'],
   ['tests/corpus.mjs', 'the spec corpus, every document, byte-identical'],
+  ['tests/deep-nesting.mjs', 'how much host stack the AST path needs'],
 ]
+
+// `parseJson` recurses once per nesting level and the engine accepts 200
+// levels, so the deepest corpus document sits close to what a host gives a Node
+// process. The corpus run gets explicit headroom; how little is left over is
+// what tests/deep-nesting.mjs measures, and markup-carve/carve-rs#1160 is what
+// removes the recursion.
+const STACK = ['--stack-size=4000']
 
 for (const [file, what] of suite) {
   console.log(`\nrelease gate: ${file} - ${what}`)
