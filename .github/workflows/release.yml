@@ -31,6 +31,12 @@ jobs:
 
       - name: Install wasm-pack
         uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          # Pinned, because without it the action installs whatever "latest"
+          # means on the day - so the artifact this repository ships is rebuilt
+          # by a tool nothing here records, and two runs of the same commit are
+          # not the same build.
+          version: 'v0.15.0'
 
       - uses: actions/setup-node@v4
         with:
