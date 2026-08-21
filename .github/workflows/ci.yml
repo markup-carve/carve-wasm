@@ -64,6 +64,33 @@ jobs:
             --engine carve-rs --github --max-age-days 14 \
             --form cargo --manifest Cargo.toml --lock Cargo.lock
 
+      # The sibling binding's pin as a FLOOR. The age check above passes on a
+      # pin bumped inside its window however far behind a sibling it is, and
+      # the corpus job is aimed at the spec commit the pinned engine pins - so
+      # an old pin and an old spec agree with each other and stay green
+      # together. That combination let this pin sit 28 commits behind carve-rb's
+      # with everything green (markup-carve/carve-wasm#51): two bindings of one
+      # engine rendering the same document differently, reported by nothing.
+      #
+      # A floor, not a leash. It is deliberately NOT a distance check against
+      # carve-rs main, which merges continuously and would be red from the
+      # moment any pull request opens there - the reasoning carve-rs' own
+      # check-engine-pin.py writes down. A sibling's pin moves only when someone
+      # bumps it deliberately, and being behind it is cleared by the action this
+      # step recommends.
+      - name: Check out carve-rb
+        uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve-rb
+          path: carve-rb
+
+      - name: Check the pin against the sibling binding's floor
+        run: |
+          python3 scripts/check-engine-floor.py \
+            --engine carve-rs --manifest Cargo.toml --lock Cargo.lock \
+            --sibling-name carve-rb --sibling-manifest carve-rb/ext/carve/Cargo.toml \
+            --changelog CHANGELOG.md
+
   test:
     runs-on: ubuntu-latest
     steps:
