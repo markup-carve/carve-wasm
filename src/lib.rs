@@ -503,7 +503,15 @@ mod tests {
             &SymbolPairs::new(),
             true,
         );
-        assert!(html.contains("<pre class=\"mermaid\">"));
+        // The hydration element carries the accessible name the engine gives a
+        // diagram fence (PART 9 §16a, carve-rs #1187): an image with no name is
+        // skipped by a reader entirely, so the role and the label are written
+        // together. Asserted whole rather than by class alone - a substring that
+        // stops at the class would pass again if the name were dropped.
+        assert!(
+            html.contains("<pre class=\"mermaid\" role=\"img\" aria-label=\"mermaid\">"),
+            "expected the named mermaid hydration element, got: {html}"
+        );
     }
 
     #[test]

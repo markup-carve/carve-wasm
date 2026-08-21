@@ -232,6 +232,23 @@ cargo test && wasm-pack build --target nodejs && node tests/smoke.mjs
 CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node tests/corpus.mjs
 ```
 
+`scripts/check-engine-floor.py` is what notices a pin left behind. CI runs it
+against the revision carve-rb embeds:
+
+```sh
+python3 scripts/check-engine-floor.py \
+    --engine <carve-rs checkout> --manifest Cargo.toml --lock Cargo.lock \
+    --sibling-name carve-rb --sibling-manifest <carve-rb>/ext/carve/Cargo.toml \
+    --changelog CHANGELOG.md
+```
+
+It fails when this pin is a strict ancestor of the sibling's, and it also fails
+when the `[Unreleased]` changelog section names a revision the build does not
+embed - a revision quoted in prose is a second copy of the pin, and the second
+copy is the one nothing else reads. A floor rather than a leash: it is
+deliberately not a distance check against carve-rs `main`, which merges
+continuously and would be red from the moment any pull request opens there.
+
 That last line is the one that can tell a drifted pin from a current one.
 `smoke.mjs` asserts hand-written expectations, which a stale engine satisfies
 happily; `corpus.mjs` renders all ~530 mandatory spec documents through the

@@ -2,3 +2,7 @@ target/
 pkg/
 release-artifact/
 *.log
+
+# Python bytecode from the checker scripts.
+__pycache__/
+*.pyc
