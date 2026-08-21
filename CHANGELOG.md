@@ -17,10 +17,11 @@ version a reader can be upgrading from.
 - WebAssembly bindings for the Carve parser and HTML renderer: `toHtml`, the
   extension surface, the `sections` option, the static render mode, and the
   parsed AST.
-- Embeds carve-rs `0.1.3` (`a33c42ade077467733435322a66cce7957cd491c`), which
-  includes the PART 9 §25 fix where a list-valued URL attribute is probed at
-  every candidate rather than at its head - `srcset="safe.png 1x,
-  javascript:alert(1) 2x"` used to pass on its second entry.
+- Embeds carve-rs at `9705274c` (crate version `0.1.3`, 33 commits past the
+  `0.1.3` tag), which includes the PART 9 §25 fix where a list-valued URL
+  attribute is probed at every candidate rather than at its head -
+  `srcset="safe.png 1x, javascript:alert(1) 2x"` used to pass on its second
+  entry.
 - The publish is gated: `.github/workflows/release.yml` runs
   `scripts/verify-release-artifact.mjs` against the packed npm tarball and the
   publish job declares that gate in `needs:`, so a tarball that renders the spec
