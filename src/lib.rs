@@ -140,6 +140,26 @@ pub fn to_html(source: &str) -> String {
     carve::to_html(source)
 }
 
+#[wasm_bindgen(js_name = toMarkdown)]
+pub fn to_markdown(source: &str) -> String {
+    carve::to_markdown(source)
+}
+
+#[wasm_bindgen(js_name = toPlainText)]
+pub fn to_plain_text(source: &str) -> String {
+    carve::to_plain_text(source)
+}
+
+#[wasm_bindgen(js_name = toAnsi)]
+pub fn to_ansi(source: &str) -> String {
+    carve::to_ansi(source)
+}
+
+#[wasm_bindgen(js_name = toCarve)]
+pub fn to_carve(source: &str) -> String {
+    carve::to_carve(source)
+}
+
 /// Render with the core profile and a **symbols map**: `{ rocket: "🚀" }` (a
 /// plain object or a `Map`). A `:name:` symbol whose name is in the map renders
 /// the mapped value; an unmapped `:name:` stays literal `:name:` text, and the
@@ -494,6 +514,15 @@ mod tests {
     #[test]
     fn renders_html() {
         assert!(crate::to_html("# Hello").contains("<h1>Hello</h1>"));
+    }
+
+    #[test]
+    fn exposes_every_core_render_target() {
+        let source = "# Hello\n\nBody\n";
+        assert!(crate::to_markdown(source).contains("# Hello"));
+        assert!(crate::to_plain_text(source).contains("Hello"));
+        assert!(crate::to_ansi(source).contains("Hello"));
+        assert_eq!(crate::to_carve("# Hello\n\n\nBody"), source);
     }
 
     #[test]
