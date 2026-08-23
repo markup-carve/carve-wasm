@@ -150,6 +150,21 @@ assert.deepEqual(
     'stopped checking.',
 )
 
+// A REFUSAL IS RECORDED WITH ITS REASON, AND THE REASON IS COMPARED. Matching on
+// the filename alone would let the nesting cap's deliberate `DepthLimit` turn
+// into a wasm panic or a binding error and still read as the recorded defense
+// firing - a ledger entry that has stopped describing what it names.
+const changedRefusals = refused
+  .filter((result) => refusedNames.has(result.name) && ledger.refused[result.name] !== result.detail)
+  .map((result) => `${result.name}: recorded ${JSON.stringify(ledger.refused[result.name])}, `
+    + `now ${JSON.stringify(result.detail)}`)
+assert.deepEqual(
+  changedRefusals, [],
+  `${changedRefusals.length} recorded refusal(s) now fail for a different reason: `
+    + `${changedRefusals.join('; ')}. The ledger records WHY a document is refused, so a defense `
+    + 'firing and a new defect are not the same entry.',
+)
+
 const staleRefusals = [...refusedNames].filter((name) => !refused.some((result) => result.name === name))
 assert.deepEqual(
   staleRefusals, [],
