@@ -114,6 +114,7 @@ const env = { ...process.env, CARVE_WASM_PKG: unpacked }
 const suite = [
   ['tests/smoke.mjs', 'the hand-written API cases'],
   ['tests/corpus.mjs', 'the spec corpus, every document, byte-identical'],
+  ['tests/roundtrip.mjs', "HTML this artifact produced, read back through htmlToCarve's roundtrip mode"],
   ['tests/deep-nesting.mjs', 'how much host stack the AST path needs'],
 ]
 
