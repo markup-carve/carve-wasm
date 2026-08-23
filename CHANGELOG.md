@@ -11,7 +11,7 @@ their own.
 
 ### Changed
 
-- Embeds carve-rs at `85514c6b` instead of `9705274c`, 44 commits later and past the revision carve-rb embeds, so the two bindings of this engine no longer render the same document differently (#51). What a reader sees change: rendered elements say what they are called (PART 9 §16a) - the footnote section, footnote backlinks, task-list checkboxes, math spans, admonitions and diagram fences all gain an accessible name; `<thead>` and `<tfoot>` write one row per line like `<tbody>` always did; a table cell's marker run ends at a space; and the doubled run is the canonical arrow. Measured through the built artifact: 1341/1341 mandatory corpus documents byte-identical, up from 227 diverging.
+- Embeds carve-rs at `9cf16d05` instead of `9705274c`, 105 commits later and 32 past the revision carve-rb embeds, so the two bindings of this engine no longer render the same document differently (#51, #56). On top of what `85514c6b` already carried - rendered elements saying what they are called (PART 9 §16a), `<thead>` and `<tfoot>` writing one row per line, a table cell's marker run ending at a space - this run is mostly the HTML importer: a deletion, a math span and a div's content survive an import, an import rebuilds the container the renderer wrote and takes the labels map the HTML was rendered with, and a container's span ends where its markup does. Measured through the built artifact: 1371/1371 mandatory corpus documents byte-identical at the spec commit this engine pins.
 
 ### Added
 
