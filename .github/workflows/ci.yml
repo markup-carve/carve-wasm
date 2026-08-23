@@ -222,6 +222,19 @@ jobs:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
         run: node --stack-size=4000 tests/corpus.mjs
 
+      # The REVERSE direction, which nothing here measured until
+      # markup-carve/carve-wasm#53. Every job above renders `.crv` forward and
+      # compares against a committed golden; `htmlToCarve`'s `roundtrip` mode is
+      # documented as safe only for Carve-produced HTML, and no test produced
+      # such HTML. This one carves each corpus document, imports the result
+      # back, and re-renders - so the mode is measured against the only input it
+      # claims to handle. It reads the same CARVE_SPEC_CORPUS, and refuses the
+      # same skip in CI, through tests/corpus-source.mjs.
+      - name: Round trip through the HTML importer
+        env:
+          CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
+        run: node --stack-size=4000 tests/roundtrip.mjs
+
       # For corpus-drift below. It measures the SAME wasm package this job
       # gated rather than building a second one: two builds would be two
       # artifacts, and the drift number would be about the one nothing else
