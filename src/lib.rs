@@ -536,6 +536,16 @@ mod tests {
     }
 
     #[test]
+    fn marker_attributes_do_not_move_the_content_column() {
+        let source = "-{title=\"😀\"} [x] a\n  # h\n";
+        let html = crate::to_html(source);
+        assert!(html.contains("<h1 id=\"h\">h</h1>"), "{html}");
+        let canonical = crate::to_carve(source);
+        assert_eq!(canonical, "-{title=😀} [x] a\n  # h\n");
+        assert_eq!(crate::to_html(&canonical), html);
+    }
+
+    #[test]
     fn exposes_every_core_render_target() {
         let source = "# Hello\n\nBody\n";
         assert!(crate::to_markdown(source).contains("# Hello"));
