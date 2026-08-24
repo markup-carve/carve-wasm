@@ -105,6 +105,7 @@ jobs:
 
       - name: Check crate payload
         run: |
+          set -euo pipefail
           cargo package --list > package-files.txt
           if grep -Eq '^(\.github/|\.gitignore$|tests/)' package-files.txt; then
             echo "development-only files entered the crate payload"
