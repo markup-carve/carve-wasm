@@ -17,7 +17,7 @@ crate-type = ["cdylib", "rlib"]
 # the default branch made every build resolve whatever had landed since,
 # so the published package could carry an engine no CI run here had ever
 # built. Bump it deliberately: see "carve-rs dependency pin" in the README.
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "f2fbb24c559a0c1856cd5b604660a6c8f03278de" }
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "4bb927af763b2df09231abe44a50b2cd44d41004" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 
