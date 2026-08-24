@@ -1,17 +1,14 @@
 {
-  "$comment": "Documents that do NOT survive carveToHtml -> htmlToCarve(roundtrip) -> carveToHtml unchanged, and the ones the import refuses outright. Data, not a skip list: tests/roundtrip.mjs fails on a divergence that is NOT here AND on an entry here that has started surviving. Regenerate with UPDATE_ROUNDTRIP_LEDGER=1 node --stack-size=4000 tests/roundtrip.mjs, and say in the commit message what moved. The recurring classes, so a reviewer can size a diff without reading 500 names: inline whitespace collapses through the DOM (a double space, a soft line break); boolean attributes come back spelled out (disabled -> disabled=\"\"); a rendered construct comes back as the raw HTML that produced it rather than as its Carve spelling (task-list checkboxes); and per-cell table alignment has no home in the Carve table syntax the writer emits, so it is dropped. Added when the engine pin moved to carve-rs 9cf16d05: an attribute-less div unwraps to its content on import (carve-rs#1269, ruled on carve#1578), so a bare ::: box does not come back and neither does anything that depended on it wrapping; and a figure div's bracket label comes back as a labelled paragraph, which renders as a figure group rather than a figure div (carve-rs#1310, one document). The f2fbb24c pin adds five known divergences: generated endnotes are not reconstructed from rendered HTML, an authored heading ID remains explicit, and three container/list layout distinctions have no equivalent in the imported HTML tree.",
+  "$comment": "Documents that do NOT survive carveToHtml -> htmlToCarve(roundtrip) -> carveToHtml unchanged, and the ones the import refuses outright. Data, not a skip list: tests/roundtrip.mjs fails on a divergence that is NOT here AND on an entry here that has started surviving. Regenerate with UPDATE_ROUNDTRIP_LEDGER=1 node --stack-size=4000 tests/roundtrip.mjs, and say in the commit message what moved. The recurring classes, so a reviewer can size a diff without reading 500 names: inline whitespace collapses through the DOM (a double space, a soft line break); boolean attributes come back spelled out (disabled -> disabled=\"\"); a rendered construct comes back as the raw HTML that produced it rather than as its Carve spelling (task-list checkboxes); and per-cell table alignment has no home in the Carve table syntax the writer emits, so it is dropped. Added when the engine pin moved to carve-rs 9cf16d05: an attribute-less div unwraps to its content on import (carve-rs#1269, ruled on carve#1578), so a bare ::: box does not come back and neither does anything that depended on it wrapping; and a figure div's bracket label comes back as a labelled paragraph, which renders as a figure group rather than a figure div (carve-rs#1310, one document). The f2fbb24c pin adds five known divergences: generated endnotes are not reconstructed from rendered HTML, an authored heading ID remains explicit, and three container/list layout distinctions have no equivalent in the imported HTML tree. The 4bb927af pin REMOVES ten and adds none. A task item comes back a task item instead of as the raw checkbox HTML that rendered it (carve-rs#1366, with the content-column readings in carve-rs#1364 and carve-rs#1374), which clears eight documents including the one whose marker carries an attribute block; and a grouping label keeps its div fence (carve-rs#1322), which clears two. Nothing was added for the heading-id round trip that carve-rs#1324 broke: carve-rs#1355 reads an id's position and value to tell a generated one from an authored one, so roundtrip mode stopped re-emitting a derived id as authored and the two documents it cost never needed an entry.",
   "diverges": [
     "01-emphasis.crv",
     "03-links-9.crv",
-    "05-lists-12.crv",
     "05-lists-13.crv",
     "05-lists-16.crv",
     "05-lists-17.crv",
     "05-lists-2.crv",
     "05-lists-21.crv",
     "05-lists-8.crv",
-    "06-task-lists-2.crv",
-    "06-task-lists.crv",
     "09-tables-3.crv",
     "101-table-header-cell-rowspan.crv",
     "108-security-hardening-2.crv",
@@ -49,7 +46,6 @@
     "141-trailing-whitespace-boundaries.crv",
     "143-post-blank-list-continuation-content-column-model-4.crv",
     "143-post-blank-list-continuation-content-column-model-5.crv",
-    "144-nested-item-looseness-does-not-propagate-to-the-outer-item-3.crv",
     "145-definition-list-as-a-first-class-block-opener-3.crv",
     "146-table-as-a-block-opener-in-a-list-item-2.crv",
     "148-colon-fence-as-a-block-opener-in-a-list-item-3.crv",
@@ -325,7 +321,6 @@
     "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-2.crv",
     "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-5.crv",
     "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-6.crv",
-    "363-a-task-item-s-checkbox-is-not-decided-by-its-first-block.crv",
     "364-only-lazy-folding-demotes-a-marker-line-colon-opener-2.crv",
     "365-a-blank-line-before-a-sibling-marker-separates-the-items-whatever-consumed-it-2.crv",
     "365-a-blank-line-before-a-sibling-marker-separates-the-items-whatever-consumed-it-3.crv",
@@ -367,8 +362,6 @@
     "388-an-empty-brace-pair-is-not-a-construct-2.crv",
     "389-a-boolean-attribute-does-not-start-with-an-underscore-2.crv",
     "389-a-boolean-attribute-does-not-start-with-an-underscore-3.crv",
-    "393-an-engine-written-shape-says-what-it-is-called-3.crv",
-    "393-an-engine-written-shape-says-what-it-is-called-4.crv",
     "393-an-engine-written-shape-says-what-it-is-called-7.crv",
     "394-a-leading-escaped-caret-keeps-its-escape.crv",
     "401-a-marker-at-an-item-content-column-opens-a-sublist-first-in-the-item-or-not-3.crv",
@@ -377,8 +370,6 @@
     "407-one-consumed-boolean-spells-the-looseness-no-blank-line-can-2.crv",
     "41-line-blocks-6.crv",
     "41-line-blocks-8.crv",
-    "42-admonitions-7.crv",
-    "42-admonitions-8.crv",
     "45-inline-extensions-13.crv",
     "45-inline-extensions-5.crv",
     "45-inline-extensions-9.crv",
@@ -431,8 +422,7 @@
     "88-list-continuation-marker-5.crv",
     "88-list-continuation-marker-6.crv",
     "88-list-continuation-marker.crv",
-    "89-block-attribute-lines-2.crv",
-    "90-list-item-attributes-4.crv"
+    "89-block-attribute-lines-2.crv"
   ],
   "refused": {
     "182-openers-past-the-nesting-cap-are-one-paragraph.crv": "carve: HTML import failed: DepthLimit"

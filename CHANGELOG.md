@@ -17,8 +17,13 @@ their own.
 
 ### Changed
 
-- Advances the embedded carve-rs revision from `9cf16d05` to `f2fbb24c`,
-  matching the current sibling binding floor.
+- Advances the embedded carve-rs revision from `9cf16d05` to `4bb927af`,
+  matching the current sibling binding floor. Ten documents that used to come
+  back rendering differently through the HTML importer now survive it: a task
+  item comes back a task item rather than as the checkbox HTML that rendered it
+  (carve-rs#1366, carve-rs#1364, carve-rs#1374), and a grouping label keeps its
+  div fence (carve-rs#1322). Measured through the built artifact: 1394/1394
+  corpus documents byte-identical at the spec commit this engine pins.
 - Embeds carve-rs at `9cf16d05` instead of `9705274c`, 105 commits later and 32 past the revision carve-rb embeds, so the two bindings of this engine no longer render the same document differently (#51, #56). On top of what `85514c6b` already carried - rendered elements saying what they are called (PART 9 §16a), `<thead>` and `<tfoot>` writing one row per line, a table cell's marker run ending at a space - this run is mostly the HTML importer: a deletion, a math span and a div's content survive an import, an import rebuilds the container the renderer wrote and takes the labels map the HTML was rendered with, and a container's span ends where its markup does. Measured through the built artifact: 1371/1371 mandatory corpus documents byte-identical at the spec commit this engine pins.
 
 ### Added
