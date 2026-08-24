@@ -258,6 +258,7 @@ fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
                 // carve-rs `src/html_import.rs`, which is what the spec's
                 // resources/html-import-schema.json admits.
                 carve::HtmlImportDiagnosticCode::StructureUnspellable => "structure-unspellable",
+                carve::HtmlImportDiagnosticCode::StructureSplit => "structure-split",
                 carve::HtmlImportDiagnosticCode::EncodingAssumed => "encoding-assumed",
                 carve::HtmlImportDiagnosticCode::DiagnosticsTruncated => "diagnostics-truncated",
             };

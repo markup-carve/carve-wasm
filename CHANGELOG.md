@@ -17,6 +17,8 @@ their own.
 
 ### Changed
 
+- Advances the embedded carve-rs revision from `9cf16d05` to `f2fbb24c`,
+  matching the current sibling binding floor.
 - Embeds carve-rs at `9cf16d05` instead of `9705274c`, 105 commits later and 32 past the revision carve-rb embeds, so the two bindings of this engine no longer render the same document differently (#51, #56). On top of what `85514c6b` already carried - rendered elements saying what they are called (PART 9 §16a), `<thead>` and `<tfoot>` writing one row per line, a table cell's marker run ending at a space - this run is mostly the HTML importer: a deletion, a math span and a div's content survive an import, an import rebuilds the container the renderer wrote and takes the labels map the HTML was rendered with, and a container's span ends where its markup does. Measured through the built artifact: 1371/1371 mandatory corpus documents byte-identical at the spec commit this engine pins.
 
 ### Added
