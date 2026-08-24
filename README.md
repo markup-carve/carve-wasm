@@ -27,6 +27,10 @@ import policy and canonical writer as carve-rs. Modes are `safe` (default),
 const { value, report } = htmlToCarve('<p>Hello <strong>world</strong></p>', 'safe')
 ```
 
+Portable migration code can use `fromHtml(html, mode)` and
+`fromMarkdown(markdown)`. Both return `{ value, report }`; Markdown carries an
+empty diagnostics list because the engine migrates the document whole.
+
 ### Core renderer
 
 Renders Carve markup to HTML with no extensions enabled.

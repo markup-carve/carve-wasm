@@ -11,6 +11,7 @@ their own.
 
 ### Added
 
+- Shared `fromHtml` and `fromMarkdown` migration entry points with reports.
 - `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve`, completing the core
   carve-rs render-target surface exposed by the WASM package.
 

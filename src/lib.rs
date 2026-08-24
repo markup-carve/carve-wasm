@@ -304,6 +304,24 @@ pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsVa
     Ok(object.into())
 }
 
+#[wasm_bindgen(js_name = fromHtml)]
+pub fn from_html(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
+    html_to_carve(source, mode)
+}
+
+#[wasm_bindgen(js_name = fromMarkdown)]
+pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
+    let object = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &object,
+        &JsValue::from_str("value"),
+        &JsValue::from_str(&carve::markdown_to_carve(source)),
+    )?;
+    let report = js_sys::JSON::parse(r#"{"sourceFormat":"markdown","diagnostics":[]}"#)?;
+    js_sys::Reflect::set(&object, &JsValue::from_str("report"), &report)?;
+    Ok(object.into())
+}
+
 /// Read one boolean field out of a JS options object.
 ///
 /// Absent, `undefined` and `null` all mean "not set", so a caller can pass a
