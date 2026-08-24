@@ -446,6 +446,6 @@
   ],
   "refused": {
     "182-openers-past-the-nesting-cap-are-one-paragraph.crv": "carve: HTML import failed: DepthLimit",
-    "217-a-heading-id-keeps-a-non-ascii-space.crv": "SyntaxError: Bad Unicode escape in JSON at position 229 (line 1 column 230)"
+    "217-a-heading-id-keeps-a-non-ascii-space.crv": "SyntaxError: Bad Unicode escape in JSON at position 229"
   }
 }
