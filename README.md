@@ -38,6 +38,8 @@ call.
 ```js
 import { toHtml } from '@markup-carve/carve-wasm'
 
+// The other core targets are toMarkdown, toPlainText, toAnsi, and toCarve.
+
 const html = toHtml('# Hello, Carve!')
 document.body.innerHTML = html
 ```

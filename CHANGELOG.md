@@ -15,6 +15,11 @@ their own.
 
 ### Added
 
+- `toMarkdown`, `toPlainText`, `toAnsi` and `toCarve`, so every core render
+  target the embedded engine already understood is reachable from JavaScript
+  (#54). `toHtml` and the AST entry points are unchanged, and no rebuild and no
+  engine bump is involved: the flags were inside the shipped artifact and had no
+  binding.
 - `scripts/check-engine-floor.py`, run by CI, fails when the engine pin falls behind the revision carve-rb embeds. The age check passes on a pin bumped inside its window however far behind a sibling it is, and the corpus gate is aimed at the spec commit the pinned engine pins, so an old pin and an old spec stay green together - which is how this pin got 28 commits behind (#51).
 
 ## [0.1.0] - 2026-08-18
