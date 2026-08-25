@@ -13,6 +13,7 @@ their own.
 
 ### Added
 
+- Checked `to*WithReport` exports for every render target (markup-carve/carve#1728), with bounded positioned losses and strict refusal.
 - Shared `fromHtml` and `fromMarkdown` migration entry points with reports.
 - `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve`, completing the core
   carve-rs render-target surface exposed by the WASM package.
