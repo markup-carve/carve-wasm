@@ -160,6 +160,138 @@ pub fn to_carve(source: &str) -> String {
     carve::to_carve(source)
 }
 
+fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, JsValue> {
+    let object = js_sys::Object::new();
+    js_sys::Reflect::set(&object, &"value".into(), &result.value.into())?;
+    js_sys::Reflect::set(
+        &object,
+        &"totalLosses".into(),
+        &(result.total_losses as f64).into(),
+    )?;
+    js_sys::Reflect::set(&object, &"truncated".into(), &result.truncated.into())?;
+    let losses = js_sys::Array::new();
+    for loss in result.losses {
+        let item = js_sys::Object::new();
+        js_sys::Reflect::set(&item, &"code".into(), &loss.code.into())?;
+        js_sys::Reflect::set(&item, &"format".into(), &loss.format.into())?;
+        js_sys::Reflect::set(&item, &"target".into(), &loss.target.as_str().into())?;
+        js_sys::Reflect::set(&item, &"nodeType".into(), &loss.node_type.as_str().into())?;
+        js_sys::Reflect::set(&item, &"message".into(), &loss.message.into())?;
+        if let Some(pos) = loss.pos {
+            let value = js_sys::Object::new();
+            for (key, number) in [
+                ("startLine", pos.start_line),
+                ("endLine", pos.end_line),
+                ("startColumn", pos.start_column),
+                ("endColumn", pos.end_column),
+                ("startOffset", pos.start_offset),
+                ("endOffset", pos.end_offset),
+            ] {
+                js_sys::Reflect::set(&value, &key.into(), &(number as f64).into())?;
+            }
+            js_sys::Reflect::set(&item, &"pos".into(), &value)?;
+        }
+        losses.push(&item);
+    }
+    js_sys::Reflect::set(&object, &"losses".into(), &losses)?;
+    Ok(object.into())
+}
+
+fn checked_options(strict: Option<bool>, maximum: Option<u32>) -> carve::CheckedRenderOptions {
+    carve::CheckedRenderOptions {
+        strict: strict.unwrap_or(false),
+        max_losses: maximum.map_or(carve::DEFAULT_MAX_RENDER_LOSSES, |value| value as usize),
+    }
+}
+
+fn checked_result(
+    result: Result<carve::RenderResult<String>, carve::RenderLossError>,
+) -> Result<JsValue, JsValue> {
+    match result {
+        Ok(result) => render_report_to_js(result),
+        Err(error) => {
+            let message = error.to_string();
+            let report = carve::RenderResult {
+                value: String::new(),
+                losses: error.losses,
+                total_losses: error.total_losses,
+                truncated: error.truncated,
+            };
+            let exception = js_sys::Error::new(&message);
+            js_sys::Reflect::set(&exception, &"name".into(), &"RenderLossError".into())?;
+            let encoded = render_report_to_js(report)?;
+            for key in ["losses", "totalLosses", "truncated"] {
+                js_sys::Reflect::set(
+                    &exception,
+                    &key.into(),
+                    &js_sys::Reflect::get(&encoded, &key.into())?,
+                )?;
+            }
+            Err(exception.into())
+        }
+    }
+}
+
+#[wasm_bindgen(js_name = toHtmlWithReport)]
+pub fn to_html_with_report(
+    source: &str,
+    strict: Option<bool>,
+    maximum: Option<u32>,
+) -> Result<JsValue, JsValue> {
+    checked_result(carve::to_html_with_report(
+        source,
+        checked_options(strict, maximum),
+    ))
+}
+
+#[wasm_bindgen(js_name = toMarkdownWithReport)]
+pub fn to_markdown_with_report(
+    source: &str,
+    strict: Option<bool>,
+    maximum: Option<u32>,
+) -> Result<JsValue, JsValue> {
+    checked_result(carve::to_markdown_with_report(
+        source,
+        checked_options(strict, maximum),
+    ))
+}
+
+#[wasm_bindgen(js_name = toPlainTextWithReport)]
+pub fn to_plain_text_with_report(
+    source: &str,
+    strict: Option<bool>,
+    maximum: Option<u32>,
+) -> Result<JsValue, JsValue> {
+    checked_result(carve::to_plain_text_with_report(
+        source,
+        checked_options(strict, maximum),
+    ))
+}
+
+#[wasm_bindgen(js_name = toAnsiWithReport)]
+pub fn to_ansi_with_report(
+    source: &str,
+    strict: Option<bool>,
+    maximum: Option<u32>,
+) -> Result<JsValue, JsValue> {
+    checked_result(carve::to_ansi_with_report(
+        source,
+        checked_options(strict, maximum),
+    ))
+}
+
+#[wasm_bindgen(js_name = toCarveWithReport)]
+pub fn to_carve_with_report(
+    source: &str,
+    strict: Option<bool>,
+    maximum: Option<u32>,
+) -> Result<JsValue, JsValue> {
+    checked_result(carve::to_carve_with_report(
+        source,
+        checked_options(strict, maximum),
+    ))
+}
+
 /// Render with the core profile and a **symbols map**: `{ rocket: "🚀" }` (a
 /// plain object or a `Map`). A `:name:` symbol whose name is in the map renders
 /// the mapped value; an unmapped `:name:` stays literal `:name:` text, and the
@@ -247,6 +379,7 @@ fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
                 carve::HtmlImportDiagnosticCode::ElementDropped => "element-dropped",
                 carve::HtmlImportDiagnosticCode::ElementUnwrapped => "element-unwrapped",
                 carve::HtmlImportDiagnosticCode::AttributeDropped => "attribute-dropped",
+                carve::HtmlImportDiagnosticCode::AttributePreserved => "attribute-preserved",
                 carve::HtmlImportDiagnosticCode::StyleUnmapped => "style-unmapped",
                 carve::HtmlImportDiagnosticCode::TableDegraded => "table-degraded",
                 carve::HtmlImportDiagnosticCode::RawPreserved => "raw-preserved",

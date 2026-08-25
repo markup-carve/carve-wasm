@@ -174,6 +174,11 @@ const html: string = toHtml('_Hello_')
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
 | `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form: `{ sections?, symbols?, full? }`, every field optional |
+| `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded `raw-format-dropped` losses; strict mode throws `RenderLossError` |
+| `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
+| `toPlainTextWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked plain-text render |
+| `toAnsiWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked ANSI render |
+| `toCarveWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked canonical Carve render (lossless) |
 | `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
 | `version` | `() => string` | Returns the carve-wasm package version |
 

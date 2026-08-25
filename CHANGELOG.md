@@ -11,12 +11,14 @@ their own.
 
 ### Added
 
+- Checked `to*WithReport` exports for every render target (markup-carve/carve#1728), with bounded positioned losses and strict refusal.
 - Shared `fromHtml` and `fromMarkdown` migration entry points with reports.
 - `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve`, completing the core
   carve-rs render-target surface exposed by the WASM package.
 
 ### Changed
 
+- Advances the embedded carve-rs revision to `7219b3df` for checked render-loss reporting.
 - Advances the embedded carve-rs revision from `9cf16d05` to `f5e2a888`,
   matching the current sibling binding floor. Ten documents that used to come
   back rendering differently through the HTML importer now survive it: a task
