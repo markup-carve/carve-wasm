@@ -79,6 +79,11 @@ const NAMES = [
   'toHtmlFull',
   'toHtmlWithOptions',
   'toHtmlWithSymbols',
+  'toHtmlWithReport',
+  'toMarkdownWithReport',
+  'toPlainTextWithReport',
+  'toAnsiWithReport',
+  'toCarveWithReport',
   'version',
 ]
 const missing = NAMES.filter((name) => typeof engine[name] !== 'function')
@@ -94,6 +99,11 @@ export const {
   toHtmlFull,
   toHtmlWithOptions,
   toHtmlWithSymbols,
+  toHtmlWithReport,
+  toMarkdownWithReport,
+  toPlainTextWithReport,
+  toAnsiWithReport,
+  toCarveWithReport,
   version,
 } = engine
 
