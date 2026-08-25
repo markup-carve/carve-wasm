@@ -3,7 +3,7 @@
 // wasm package works -- which is how a stale engine can pass CI (the embedded
 // engine in carve-go did exactly that for months).
 import assert from 'node:assert/strict'
-import { parseJson, toHtml, toHtmlWithOptions } from './engine.mjs'
+import { parseJson, toHtml, toHtmlWithOptions, toHtmlWithReport } from './engine.mjs'
 
 const cases = [
   // Superscript/subscript are braced-only: a bare `^` / `,` is literal text.
@@ -29,6 +29,18 @@ for (const [src, want] of cases) {
 }
 assert.equal(failed, 0, `${failed} wasm artifact case(s) failed`)
 console.log(`wasm artifact: ${cases.length}/${cases.length} cases pass`)
+
+const checked = toHtmlWithReport('`x`{=latex}', false, 1)
+assert.equal(checked.value, '<p></p>')
+assert.deepEqual(checked.losses.map(({ code, format, target, nodeType }) => ({ code, format, target, nodeType })), [
+  { code: 'raw-format-dropped', format: 'latex', target: 'html', nodeType: 'inline' },
+])
+assert.equal(checked.losses[0].pos.startLine, 1)
+assert.throws(
+  () => toHtmlWithReport('`x`{=latex}', true, 1),
+  (error) => error.name === 'RenderLossError' && error.totalLosses === 1 && error.losses.length === 1,
+)
+console.log('wasm artifact: checked render losses pass')
 
 // The `sections` option, through the artifact. `cargo test` covers the Rust
 // renderers directly; only this proves the option survives the wasm-bindgen
