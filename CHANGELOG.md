@@ -9,6 +9,8 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-27
+
 ### Added
 
 - Shared `fromHtml` and `fromMarkdown` migration entry points with reports.
@@ -17,8 +19,8 @@ their own.
 
 ### Changed
 
-- Advances the embedded carve-rs revision from `9cf16d05` to `f5e2a888`,
-  matching the current sibling binding floor. Ten documents that used to come
+- Advances the embedded carve-rs revision from `9cf16d05` to released 0.1.4
+  (`2e9c43f2`), matching the current sibling binding floor. Documents that used to come
   back rendering differently through the HTML importer now survive it: a task
   item comes back a task item rather than as the checkbox HTML that rendered it
   (carve-rs#1366, carve-rs#1364, carve-rs#1374), and a grouping label keeps its
@@ -55,5 +57,6 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/markup-carve/carve-wasm/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/markup-carve/carve-wasm/releases/tag/v0.1.0

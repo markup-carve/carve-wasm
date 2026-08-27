@@ -247,6 +247,7 @@ fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
                 carve::HtmlImportDiagnosticCode::ElementDropped => "element-dropped",
                 carve::HtmlImportDiagnosticCode::ElementUnwrapped => "element-unwrapped",
                 carve::HtmlImportDiagnosticCode::AttributeDropped => "attribute-dropped",
+                carve::HtmlImportDiagnosticCode::AttributePreserved => "attribute-preserved",
                 carve::HtmlImportDiagnosticCode::StyleUnmapped => "style-unmapped",
                 carve::HtmlImportDiagnosticCode::TableDegraded => "table-degraded",
                 carve::HtmlImportDiagnosticCode::RawPreserved => "raw-preserved",
