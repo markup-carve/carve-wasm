@@ -9,6 +9,13 @@ their own.
 
 ## [Unreleased]
 
+### Added
+
+- Optional capability features and a rendering-only web build profile. The
+  full API remains enabled by default; `--no-default-features` keeps the HTML
+  renderers used by the Playground while cutting the measured gzip payload
+  roughly in half (#67).
+
 ### Changed
 
 - Advances the embedded carve-rs revision to `da45f9d2`, matching the current

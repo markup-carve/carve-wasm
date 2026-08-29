@@ -140,26 +140,31 @@ pub fn to_html(source: &str) -> String {
     carve::to_html(source)
 }
 
+#[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toMarkdown)]
 pub fn to_markdown(source: &str) -> String {
     carve::to_markdown(source)
 }
 
+#[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toPlainText)]
 pub fn to_plain_text(source: &str) -> String {
     carve::to_plain_text(source)
 }
 
+#[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toAnsi)]
 pub fn to_ansi(source: &str) -> String {
     carve::to_ansi(source)
 }
 
+#[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toCarve)]
 pub fn to_carve(source: &str) -> String {
     carve::to_carve(source)
 }
 
+#[cfg(feature = "reports")]
 fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, JsValue> {
     let object = js_sys::Object::new();
     js_sys::Reflect::set(&object, &"value".into(), &result.value.into())?;
@@ -197,6 +202,7 @@ fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, J
     Ok(object.into())
 }
 
+#[cfg(feature = "reports")]
 fn checked_options(strict: Option<bool>, maximum: Option<u32>) -> carve::CheckedRenderOptions {
     carve::CheckedRenderOptions {
         strict: strict.unwrap_or(false),
@@ -204,6 +210,7 @@ fn checked_options(strict: Option<bool>, maximum: Option<u32>) -> carve::Checked
     }
 }
 
+#[cfg(feature = "reports")]
 fn checked_result(
     result: Result<carve::RenderResult<String>, carve::RenderLossError>,
 ) -> Result<JsValue, JsValue> {
@@ -232,6 +239,7 @@ fn checked_result(
     }
 }
 
+#[cfg(feature = "reports")]
 #[wasm_bindgen(js_name = toHtmlWithReport)]
 pub fn to_html_with_report(
     source: &str,
@@ -244,6 +252,7 @@ pub fn to_html_with_report(
     ))
 }
 
+#[cfg(feature = "reports")]
 #[wasm_bindgen(js_name = toMarkdownWithReport)]
 pub fn to_markdown_with_report(
     source: &str,
@@ -256,6 +265,7 @@ pub fn to_markdown_with_report(
     ))
 }
 
+#[cfg(feature = "reports")]
 #[wasm_bindgen(js_name = toPlainTextWithReport)]
 pub fn to_plain_text_with_report(
     source: &str,
@@ -268,6 +278,7 @@ pub fn to_plain_text_with_report(
     ))
 }
 
+#[cfg(feature = "reports")]
 #[wasm_bindgen(js_name = toAnsiWithReport)]
 pub fn to_ansi_with_report(
     source: &str,
@@ -280,6 +291,7 @@ pub fn to_ansi_with_report(
     ))
 }
 
+#[cfg(feature = "reports")]
 #[wasm_bindgen(js_name = toCarveWithReport)]
 pub fn to_carve_with_report(
     source: &str,
@@ -347,6 +359,7 @@ pub fn to_html_full(source: &str, symbols: Option<js_sys::Object>) -> Result<Str
 /// Position tracking is on for this entry point and nowhere else. PART 12 §4
 /// lets an engine gate tracking behind a parse option but requires the
 /// serialized form to carry it, and rendering would pay for spans nobody reads.
+#[cfg(feature = "ast-json")]
 #[wasm_bindgen(js_name = parseJson)]
 pub fn parse_json(source: &str) -> String {
     let mut options = carve::Options::new();
@@ -354,6 +367,7 @@ pub fn parse_json(source: &str) -> String {
     carve::to_json(&carve::parse_with_options(source, &options))
 }
 
+#[cfg(feature = "html-import")]
 fn html_import_mode(value: Option<String>) -> Result<carve::HtmlImportMode, JsValue> {
     match value.as_deref().unwrap_or("safe") {
         "safe" => Ok(carve::HtmlImportMode::Safe),
@@ -365,6 +379,7 @@ fn html_import_mode(value: Option<String>) -> Result<carve::HtmlImportMode, JsVa
     }
 }
 
+#[cfg(feature = "html-import")]
 fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
     let mode = match report.mode {
         carve::HtmlImportMode::Safe => "safe",
@@ -419,6 +434,7 @@ fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
 ///
 /// Returns `{ value, report }`; `report.diagnostics` makes every lossy import
 /// decision observable. `roundtrip` is only safe for Carve-produced HTML.
+#[cfg(feature = "html-import")]
 #[wasm_bindgen(js_name = htmlToCarve)]
 pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
     let options = carve::HtmlImportOptions {
@@ -438,11 +454,13 @@ pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsVa
     Ok(object.into())
 }
 
+#[cfg(feature = "html-import")]
 #[wasm_bindgen(js_name = fromHtml)]
 pub fn from_html(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
     html_to_carve(source, mode)
 }
 
+#[cfg(feature = "markdown-import")]
 #[wasm_bindgen(js_name = fromMarkdown)]
 pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
     let object = js_sys::Object::new();
@@ -599,9 +617,12 @@ pub fn version() -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        extensions, html_import_report_json, render_core, render_full, render_with_extensions,
-        SymbolPairs, PREVIEW_EXTENSIONS,
+        extensions, render_core, render_full, render_with_extensions, SymbolPairs,
+        PREVIEW_EXTENSIONS,
     };
+
+    #[cfg(feature = "html-import")]
+    use super::html_import_report_json;
 
     /// Build the lowered symbol map the JS bridge produces (the `js_sys`
     /// conversion itself only runs inside a JS host).
@@ -612,6 +633,7 @@ mod tests {
             .collect()
     }
 
+    #[cfg(feature = "html-import")]
     #[test]
     fn html_import_report_is_json() {
         let result =
@@ -668,6 +690,7 @@ mod tests {
         assert!(crate::to_html("# Hello").contains("<h1>Hello</h1>"));
     }
 
+    #[cfg(feature = "other-renderers")]
     #[test]
     fn marker_attributes_do_not_move_the_content_column() {
         let source = "-{title=\"😀\"} [x] a\n  # h\n";
@@ -678,6 +701,7 @@ mod tests {
         assert_eq!(crate::to_html(&canonical), html);
     }
 
+    #[cfg(feature = "other-renderers")]
     #[test]
     fn exposes_every_core_render_target() {
         let source = "# Hello\n\nBody\n";
