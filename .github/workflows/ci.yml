@@ -100,6 +100,8 @@ jobs:
           targets: wasm32-unknown-unknown
       - name: Test Rust wrapper
         run: cargo test
+      - name: Test rendering-only Rust wrapper
+        run: cargo test --no-default-features
       - name: Check WASM target
         run: cargo check --target wasm32-unknown-unknown
 
@@ -136,6 +138,32 @@ jobs:
 
       - name: Test the wasm artifact through its JS API
         run: node tests/smoke.mjs
+
+      # The docs Playground only renders Carve. Keep proving that its build
+      # profile both works in a browser-style module and leaves every API the
+      # host does not call unreachable.
+      - name: Build the rendering-only web package
+        run: wasm-pack build --target web --release --out-dir pkg-render . --no-default-features
+
+      - name: Test the rendering-only web package
+        env:
+          CARVE_WASM_PKG: pkg-render
+        run: |
+          node tests/render-only.mjs
+          gzip -9cn pkg/carve_wasm_bg.wasm > "$RUNNER_TEMP/full.wasm.gz"
+          gzip -9cn pkg-render/carve_wasm_bg.wasm > "$RUNNER_TEMP/render.wasm.gz"
+          full_bytes=$(wc -c < "$RUNNER_TEMP/full.wasm.gz")
+          render_bytes=$(wc -c < "$RUNNER_TEMP/render.wasm.gz")
+          echo "full wasm: $full_bytes bytes gzip"
+          echo "rendering-only wasm: $render_bytes bytes gzip"
+          if [ "$render_bytes" -gt 600000 ]; then
+            echo "::error::rendering-only wasm grew past its 600000-byte gzip budget ($render_bytes bytes)"
+            exit 1
+          fi
+          if [ $((render_bytes * 100)) -ge $((full_bytes * 60)) ]; then
+            echo "::error::rendering-only wasm is no longer at least 40% smaller than the full artifact"
+            exit 1
+          fi
 
       # How much host stack the AST path needs, measured rather than assumed.
       # This job flipped from green to red on one commit with an identical

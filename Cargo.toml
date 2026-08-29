@@ -12,6 +12,23 @@ include = ["/src/**/*", "/Cargo.toml", "/README.md", "/LICENSE"]
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[features]
+# Keep the published package's API backward-compatible. Browser hosts that only
+# render Carve to HTML can omit every other capability with
+# `--no-default-features`.
+default = [
+    "ast-json",
+    "html-import",
+    "markdown-import",
+    "other-renderers",
+    "reports",
+]
+ast-json = []
+html-import = []
+markdown-import = []
+other-renderers = []
+reports = []
+
 [dependencies]
 # Pinned to an exact carve-rs commit, the same way carve-rb pins it. Tracking
 # the default branch made every build resolve whatever had landed since,
