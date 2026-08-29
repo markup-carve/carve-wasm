@@ -9,6 +9,16 @@ their own.
 
 ## [Unreleased]
 
+### Changed
+
+- Advances the embedded carve-rs revision to `da45f9d2`, matching the current
+  carve-rb floor. Djot migration now preserves table continuations
+  (carve-rs#1478), empty external-link targets are omitted (carve-rs#1479),
+  titled media emits one title attribute (carve-rs#1481), authored task states
+  survive format cycles and extended states name themselves in HTML
+  (carve-rs#1485, carve-rs#1486), and a colon followed by a space and a tab no
+  longer opens a description (carve-rs#1488).
+
 ## [0.1.1] - 2026-08-27
 
 ### Added
