@@ -212,6 +212,28 @@ try {
 }
 ```
 
+### Editing a tree, and reading one back
+
+`parseJson` serializes a document out. `astJsonToHtml` renders one back, and
+`astJsonToCarve` writes one back as source, so a host that reads the tree in
+order to change something can display and save the result without a server.
+
+```js
+const tree = JSON.parse(parseJson(source))
+tree.children.unshift({ type: 'heading', level: 1, children: [{ type: 'text', value: 'Added' }] })
+const html = astJsonToHtml(JSON.stringify(tree), { full: true })
+const carve = astJsonToCarve(JSON.stringify(tree))
+```
+
+A tree carrying something no Carve source can spell is refused by
+`astJsonToCarve` rather than written approximately, and an invalid tree throws
+from either.
+
+`lintCarve` returns the degradation diagnostics as
+`{ line, column, rule, message, start, end }`, with the rule ids carve-js and
+carve-php use for the same triggers. Offsets are BYTE offsets into the source,
+matching the engine.
+
 ### TypeScript
 
 The package ships `.d.ts` declarations. Types are inferred automatically when
@@ -238,6 +260,13 @@ const html: string = toHtml('_Hello_')
 | `toAnsiWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked ANSI render |
 | `toCarveWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked canonical Carve render (lossless) |
 | `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
+| `astJsonToHtml` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document; takes the same options object |
+| `astJsonToCarve` | `(json: string) => string` | Write an AST-JSON document back as canonical Carve source |
+| `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share |
+| `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
+| `needsReview` | `(source: string, currentVersion: string) => boolean` | Whether the stamp predates `currentVersion`; unstamped counts as yes |
+| `fromDjot` | `(source: string) => string` | Convert Djot source to Carve |
+| `fromBbcode` | `(source: string) => string` | Convert BBCode source to Carve; throws past the engine's size cap |
 | `version` | `() => string` | Returns the carve-wasm package version |
 
 ### The parsed AST
@@ -388,8 +417,11 @@ features are:
 | `html-import` | `htmlToCarve`, `fromHtml` |
 | `markdown-import` | `fromMarkdown` |
 | `reports` | all five `*WithReport` renderers |
-| `ast-json` | `parseJson` |
+| `ast-json` | `parseJson`, `astJsonToHtml`, `astJsonToCarve` |
 | `other-renderers` | the basic Markdown, plain-text, ANSI, and Carve renderers |
+| `lint` | `lintCarve` |
+| `stamp` | `readStamp`, `needsReview` |
+| `other-imports` | `fromDjot`, `fromBbcode` |
 
 Use a separate output directory as above if a full build also exists in the
 checkout.
