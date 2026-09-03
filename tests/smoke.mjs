@@ -86,6 +86,32 @@ assert.equal(
 )
 console.log('wasm artifact: sections option passes')
 
+// The `rawHtml` option, through the artifact. This is the switch that lets a
+// host render a document it did not author: a passthrough is the one construct
+// that can put author-controlled markup on the host's origin.
+const RAW_SOURCE = '```=html\n<img src=x onerror=alert(1)>\n```\n\nan `<b>x</b>`{=html} span\n'
+const rawOn = toHtmlWithOptions(RAW_SOURCE, {}).trim()
+assert.ok(rawOn.includes('<img src=x onerror=alert(1)>'), rawOn)
+assert.ok(rawOn.includes('<b>x</b>'), rawOn)
+const rawOff = toHtmlWithOptions(RAW_SOURCE, { rawHtml: false }).trim()
+assert.ok(rawOff.includes('&lt;img src=x onerror=alert(1)&gt;'), rawOff)
+assert.ok(!rawOff.includes('<img src=x'), rawOff)
+assert.ok(rawOff.includes('&lt;b&gt;x&lt;/b&gt;'), rawOff)
+// Composes with the extension path, which builds its options separately, and
+// leaves the symbol map's TRUSTED-RAW contract alone: `rawHtml` is about the
+// document's passthrough, not about what the host configured.
+const rawFull = toHtmlWithOptions('```=html\n<b>raw</b>\n```\n\n:bold:\n', {
+  rawHtml: false,
+  full: true,
+  symbols: { bold: '<b>x</b>' },
+}).trim()
+assert.ok(rawFull.includes('&lt;b&gt;raw&lt;/b&gt;'), rawFull)
+assert.ok(rawFull.includes('<b>x</b>'), rawFull)
+// Same wrong-type contract as the other booleans.
+assert.throws(() => toHtmlWithOptions('# A\n', { rawHtml: 'false' }), TypeError)
+console.log('wasm artifact: rawHtml option passes')
+
+
 // The PART 12 exchange shape, through the same artifact. A binding that can only
 // render is unusable for an editor, a linter or a converter - they need the tree.
 const ast = JSON.parse(parseJson('---\ntitle: T\n---\n\nBody[^a].\n\n[^a]: note\n'))
