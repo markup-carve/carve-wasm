@@ -134,9 +134,9 @@ toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: tru
 
 Every field is optional - `sections` (default `true`), `symbols` (same trusted-raw
 contract as `toHtmlWithSymbols`), `extensions` (an array of names; takes
-precedence over `full`), and `full` (default `false`, enabling the preview set).
-Omitting the object, or passing `null`, renders with defaults, so the three
-shorthands above remain the zero-config forms.
+precedence over `full`), `full` (default `false`, enabling the preview set), and
+`rawHtml` (default `true`). Omitting the object, or passing `null`, renders with
+defaults, so the three shorthands above remain the zero-config forms.
 
 An unrecognized key is ignored, because the object is configuration and a typo
 should not break a render. A recognized key with the wrong type throws a
@@ -153,6 +153,24 @@ Nothing else changes: ids, collision dedup, `</#id>` cross-references, implicit
 `[Heading][]` references and heading numbering all resolve against the slug
 rather than the element carrying it. The endnotes
 `<section role="doc-endnotes">` is a separate construct and is still emitted.
+
+### Rendering a document you did not write
+
+`rawHtml: false` renders an explicit passthrough - the `=html` raw block and the
+`` `…`{=html} `` inline raw span - as escaped text instead of markup. It is the
+switch carve-js spells `allowRawHtml`.
+
+```js
+toHtmlWithOptions(fromTheReader, { rawHtml: false })
+```
+
+Reach for it whenever the document comes from somewhere other than the person
+running the page: a shared link, a comment field, a pasted file. A passthrough is
+the one construct that puts author-controlled markup on your origin, so leaving
+it on for a document a reader supplied is a way to run their script.
+
+The symbols map is unaffected and stays TRUSTED-RAW either way - it is
+configuration the host wrote, not content the document carries.
 
 ### TypeScript
 
@@ -173,7 +191,7 @@ const html: string = toHtml('_Hello_')
 | `toHtml` | `(source: string) => string` | Core renderer, no extensions |
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
-| `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form: `{ sections?, symbols?, full? }`, every field optional |
+| `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form: `{ sections?, symbols?, extensions?, full?, rawHtml? }`, every field optional |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded `raw-format-dropped` losses; strict mode throws `RenderLossError` |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
 | `toPlainTextWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked plain-text render |

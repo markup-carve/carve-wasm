@@ -44,12 +44,40 @@ fn symbol_pairs(symbols: Option<js_sys::Object>) -> Result<SymbolPairs, JsValue>
     Ok(pairs)
 }
 
+/// The two render switches the JS options object exposes.
+///
+/// A pair of bare `bool` parameters would be indistinguishable at every call
+/// site, and both default to `true`, so a transposed pair renders wrongly and
+/// silently.
+#[derive(Clone, Copy)]
+struct RenderFlags {
+    sections: bool,
+    raw_html: bool,
+}
+
+impl Default for RenderFlags {
+    fn default() -> Self {
+        Self {
+            sections: true,
+            raw_html: true,
+        }
+    }
+}
+
+impl RenderFlags {
+    fn apply(self, options: carve::Options<'_>) -> carve::Options<'_> {
+        options
+            .with_sections(self.sections)
+            .with_raw_html(self.raw_html)
+    }
+}
+
 /// Render with the core (no-extension) profile plus the given symbol map.
-fn render_core(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
-    if symbols.is_empty() && sections {
+fn render_core(source: &str, symbols: &SymbolPairs, flags: RenderFlags) -> String {
+    if symbols.is_empty() && flags.sections && flags.raw_html {
         return carve::to_html(source);
     }
-    let mut options = carve::Options::new().with_sections(sections);
+    let mut options = flags.apply(carve::Options::new());
     for (name, value) in symbols {
         options = options.with_symbol(name.clone(), value.clone());
     }
@@ -100,12 +128,12 @@ fn render_with_extensions(
     source: &str,
     keys: &[String],
     symbols: &SymbolPairs,
-    sections: bool,
+    flags: RenderFlags,
 ) -> String {
     // `Options` borrows each extension, so the owned boxes must outlive it;
     // they live in this frame, alongside the render call.
     let owned = build_extensions(keys);
-    let mut options = carve::Options::new().with_sections(sections);
+    let mut options = flags.apply(carve::Options::new());
     for ext in &owned {
         options = options.with_extension(ext.as_ref());
     }
@@ -116,12 +144,12 @@ fn render_with_extensions(
 }
 
 /// Render with the preview extension set plus the given symbol map.
-fn render_full(source: &str, symbols: &SymbolPairs, sections: bool) -> String {
+fn render_full(source: &str, symbols: &SymbolPairs, flags: RenderFlags) -> String {
     let keys: Vec<String> = PREVIEW_EXTENSIONS
         .iter()
         .map(|k| (*k).to_string())
         .collect();
-    render_with_extensions(source, &keys, symbols, sections)
+    render_with_extensions(source, &keys, symbols, flags)
 }
 
 /// Every extension name this build accepts, in registry order.
@@ -323,7 +351,11 @@ pub fn to_html_with_symbols(
     source: &str,
     symbols: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
-    Ok(render_core(source, &symbol_pairs(symbols)?, true))
+    Ok(render_core(
+        source,
+        &symbol_pairs(symbols)?,
+        RenderFlags::default(),
+    ))
 }
 
 /// Render with the preview extension set enabled (`PREVIEW_EXTENSIONS`), so the
@@ -340,7 +372,11 @@ pub fn to_html_with_symbols(
 /// are emitted UNESCAPED, so never feed it untrusted input.
 #[wasm_bindgen(js_name = toHtmlFull)]
 pub fn to_html_full(source: &str, symbols: Option<js_sys::Object>) -> Result<String, JsValue> {
-    Ok(render_full(source, &symbol_pairs(symbols)?, true))
+    Ok(render_full(
+        source,
+        &symbol_pairs(symbols)?,
+        RenderFlags::default(),
+    ))
 }
 
 /// Parse Carve source and return its AST as a JSON string.
@@ -501,6 +537,8 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 /// // '<h1 id="A">A</h1>\n<p>p</p>'
 ///
 /// toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: true })
+///
+/// toHtmlWithOptions(untrusted, { rawHtml: false })
 /// ```
 ///
 /// Every field is optional:
@@ -523,6 +561,12 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 ///   over `full`.
 /// * `full` (default `false`) - enable the preview extension set instead of
 ///   rendering core-only.
+/// * `rawHtml` (default `true`) - render an explicit passthrough - the `=html`
+///   raw block and the `` `…`{=html} `` inline raw span - as markup. `false`
+///   emits it as escaped text instead, the same switch carve-js spells
+///   `allowRawHtml`. A host that renders a document it did not author (a shared
+///   link, a comment field, anything a reader supplies) wants `false`: without
+///   it a passthrough is a way to run script on the host's origin.
 ///
 /// An unrecognized key is ignored: the object is configuration, and a caller
 /// who mistypes one deserves the render to still work. A wrong TYPE on a key
@@ -546,7 +590,10 @@ pub fn to_html_with_options(
         return Ok(carve::to_html(source));
     }
 
-    let sections = bool_field(&options, "sections")?.unwrap_or(true);
+    let flags = RenderFlags {
+        sections: bool_field(&options, "sections")?.unwrap_or(true),
+        raw_html: bool_field(&options, "rawHtml")?.unwrap_or(true),
+    };
     let full = bool_field(&options, "full")?.unwrap_or(false);
     let named = extension_names_field(&options)?;
     // A wrong-typed `symbols` must THROW, not quietly render without symbols:
@@ -568,9 +615,9 @@ pub fn to_html_with_options(
     Ok(match (named, full) {
         // An explicit list wins over the preview set: a caller who names
         // extensions has said exactly what they want.
-        (Some(keys), _) => render_with_extensions(source, &keys, &pairs, sections),
-        (None, true) => render_full(source, &pairs, sections),
-        (None, false) => render_core(source, &pairs, sections),
+        (Some(keys), _) => render_with_extensions(source, &keys, &pairs, flags),
+        (None, true) => render_full(source, &pairs, flags),
+        (None, false) => render_core(source, &pairs, flags),
     })
 }
 
@@ -617,9 +664,17 @@ pub fn version() -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        extensions, render_core, render_full, render_with_extensions, SymbolPairs,
+        extensions, render_core, render_full, render_with_extensions, RenderFlags, SymbolPairs,
         PREVIEW_EXTENSIONS,
     };
+
+    /// Sections off, everything else at its default.
+    fn no_sections() -> RenderFlags {
+        RenderFlags {
+            sections: false,
+            ..RenderFlags::default()
+        }
+    }
 
     #[cfg(feature = "html-import")]
     use super::html_import_report_json;
@@ -650,11 +705,11 @@ mod tests {
     fn sections_off_emits_no_wrapper() {
         let none = SymbolPairs::new();
         assert_eq!(
-            render_core("# A\n\np\n", &none, true),
+            render_core("# A\n\np\n", &none, RenderFlags::default()),
             "<section id=\"A\">\n  <h1>A</h1>\n  <p>p</p>\n</section>"
         );
         assert_eq!(
-            render_core("# A\n\np\n", &none, false),
+            render_core("# A\n\np\n", &none, no_sections()),
             "<h1 id=\"A\">A</h1>\n<p>p</p>"
         );
     }
@@ -664,8 +719,8 @@ mod tests {
         let none = SymbolPairs::new();
         let src = "> # Quoted\n>\n> Quoted body.\n";
         assert_eq!(
-            render_core(src, &none, false),
-            render_core(src, &none, true)
+            render_core(src, &none, no_sections()),
+            render_core(src, &none, RenderFlags::default())
         );
     }
 
@@ -675,14 +730,68 @@ mod tests {
     #[test]
     fn sections_off_composes_with_symbols_and_extensions() {
         let map = symbols(&[("rocket", "🚀")]);
-        let core = render_core("# A\n\n:rocket:\n", &map, false);
+        let core = render_core("# A\n\n:rocket:\n", &map, no_sections());
         assert!(core.starts_with("<h1 id=\"A\">A</h1>"), "{core}");
         assert!(core.contains('🚀'), "{core}");
         assert!(!core.contains("<section"), "{core}");
 
-        let full = render_full("# A\n\n:rocket:\n", &map, false);
+        let full = render_full("# A\n\n:rocket:\n", &map, no_sections());
         assert!(full.contains('🚀'), "{full}");
         assert!(!full.contains("<section"), "{full}");
+    }
+
+    // A passthrough is the one construct that can put author-controlled markup
+    // on the host's origin, so the switch has to reach BOTH spellings - the
+    // block and the inline span - and it has to survive the extension and
+    // symbol paths, which build their options separately.
+    #[test]
+    fn raw_html_off_escapes_both_passthrough_spellings() {
+        let none = SymbolPairs::new();
+        let src = "```=html\n<img src=x onerror=alert(1)>\n```\n\nan `<b>x</b>`{=html} span\n";
+        let flags = RenderFlags {
+            raw_html: false,
+            ..RenderFlags::default()
+        };
+
+        let on = render_core(src, &none, RenderFlags::default());
+        assert!(on.contains("<img src=x onerror=alert(1)>"), "{on}");
+        assert!(on.contains("<b>x</b>"), "{on}");
+
+        let off = render_core(src, &none, flags);
+        assert!(off.contains("&lt;img src=x onerror=alert(1)&gt;"), "{off}");
+        assert!(!off.contains("<img src=x"), "{off}");
+        assert!(off.contains("&lt;b&gt;x&lt;/b&gt;"), "{off}");
+    }
+
+    #[test]
+    fn raw_html_off_composes_with_sections_symbols_and_extensions() {
+        let map = symbols(&[("rocket", "\u{1f680}")]);
+        let src = "# A\n\n:rocket:\n\n```=html\n<b>raw</b>\n```\n";
+        let flags = RenderFlags {
+            sections: false,
+            raw_html: false,
+        };
+
+        let core = render_core(src, &map, flags);
+        assert!(core.contains('\u{1f680}'), "{core}");
+        assert!(!core.contains("<section"), "{core}");
+        assert!(core.contains("&lt;b&gt;raw&lt;/b&gt;"), "{core}");
+
+        let full = render_full(src, &map, flags);
+        assert!(full.contains("&lt;b&gt;raw&lt;/b&gt;"), "{full}");
+    }
+
+    // The symbols map keeps its TRUSTED-RAW contract either way: `rawHtml` is
+    // about the document's passthrough, not about what the host configured.
+    #[test]
+    fn raw_html_off_leaves_the_symbol_map_trusted() {
+        let map = symbols(&[("bold", "<b>x</b>")]);
+        let flags = RenderFlags {
+            raw_html: false,
+            ..RenderFlags::default()
+        };
+        let html = render_core(":bold:", &map, flags);
+        assert!(html.contains("<b>x</b>"), "{html}");
     }
 
     #[test]
@@ -716,7 +825,7 @@ mod tests {
         let html = render_full(
             "``` mermaid\ngraph TD; A-->B\n```\n",
             &SymbolPairs::new(),
-            true,
+            RenderFlags::default(),
         );
         // The hydration element carries the accessible name the engine gives a
         // diagram fence (PART 9 §16a, carve-rs #1187): an image with no name is
@@ -732,7 +841,7 @@ mod tests {
     #[test]
     fn full_enables_list_table_extension() {
         let src = "{header-rows=1}\n::: list-table \"Quarterly results\"\n- - Region\n  - Notes\n- - EMEA\n  - Strong quarter.\n:::\n";
-        let html = render_full(src, &SymbolPairs::new(), true);
+        let html = render_full(src, &SymbolPairs::new(), RenderFlags::default());
         assert!(html.contains("<table"), "expected a <table>, got: {html}");
         assert!(!html.contains("class=\"list-table\""));
     }
@@ -764,7 +873,7 @@ mod tests {
     fn named_extensions_render() {
         let src = "# Heading\n";
         let keys = vec!["heading-permalinks".to_string()];
-        let html = render_with_extensions(src, &keys, &SymbolPairs::new(), true);
+        let html = render_with_extensions(src, &keys, &SymbolPairs::new(), RenderFlags::default());
         assert!(html.contains("class=\"permalink\""), "got: {html}");
     }
 
@@ -772,14 +881,14 @@ mod tests {
     fn an_unnamed_render_is_unaffected_by_the_registry() {
         // Core stays core: reading the registry must not enable anything.
         let src = "# Heading\n";
-        let core = render_core(src, &SymbolPairs::new(), true);
+        let core = render_core(src, &SymbolPairs::new(), RenderFlags::default());
         assert!(!core.contains("class=\"permalink\""), "got: {core}");
     }
 
     #[test]
     fn full_enables_code_callouts_extension() {
         let src = "``` rust\nlet x = 1; // <1>\n```\n\n<1> Assign x.\n";
-        let html = render_full(src, &SymbolPairs::new(), true);
+        let html = render_full(src, &SymbolPairs::new(), RenderFlags::default());
         assert!(
             html.contains("class=\"callout\""),
             "expected callout bubble, got: {html}"
@@ -840,7 +949,7 @@ mod tests {
     fn mapped_symbol_renders_its_value() {
         let map = symbols(&[("rocket", "🚀")]);
 
-        let html = render_core("Ship it :rocket:", &map, true);
+        let html = render_core("Ship it :rocket:", &map, RenderFlags::default());
         assert!(
             html.contains("Ship it 🚀"),
             "expected the mapped value, got: {html}"
@@ -851,7 +960,7 @@ mod tests {
         );
 
         // The same map flows through the extensions-on entry point.
-        let html = render_full("Ship it :rocket:", &map, true);
+        let html = render_full("Ship it :rocket:", &map, RenderFlags::default());
         assert!(
             html.contains("🚀"),
             "expected the mapped value, got: {html}"
@@ -860,7 +969,11 @@ mod tests {
 
     #[test]
     fn plus_one_is_a_valid_symbol_name() {
-        let html = render_core("nice :+1:", &symbols(&[("+1", "👍")]), true);
+        let html = render_core(
+            "nice :+1:",
+            &symbols(&[("+1", "👍")]),
+            RenderFlags::default(),
+        );
         assert!(
             html.contains("nice 👍"),
             "expected :+1: to map, got: {html}"
@@ -872,7 +985,7 @@ mod tests {
         let html = render_core(
             ":rocket: and :unmapped:",
             &symbols(&[("rocket", "🚀")]),
-            true,
+            RenderFlags::default(),
         );
         assert!(
             html.contains("🚀"),
@@ -892,7 +1005,11 @@ mod tests {
             ("30", "MAPPED-30"),
             ("example", "MAPPED-EX"),
         ]);
-        let html = render_core("a:b:c and 10:30: and me@example.com", &map, true);
+        let html = render_core(
+            "a:b:c and 10:30: and me@example.com",
+            &map,
+            RenderFlags::default(),
+        );
         assert!(
             html.contains("a:b:c") && html.contains("10:30:") && html.contains("me@example.com"),
             "guarded colons must stay literal, got: {html}"
@@ -907,7 +1024,11 @@ mod tests {
     fn mapped_value_is_trusted_raw_output_not_escaped() {
         // Documented contract: a symbol value is inserted RAW (same trust class
         // as the renderers map), so markup comes through as markup.
-        let html = render_core(":bold:", &symbols(&[("bold", "<b>x</b>")]), true);
+        let html = render_core(
+            ":bold:",
+            &symbols(&[("bold", "<b>x</b>")]),
+            RenderFlags::default(),
+        );
         assert!(
             html.contains("<b>x</b>"),
             "symbol value must be emitted raw, got: {html}"
