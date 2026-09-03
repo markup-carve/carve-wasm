@@ -42,6 +42,13 @@ for (const name of [
   'toAnsiWithReport',
   'toCarve',
   'toCarveWithReport',
+  'astJsonToHtml',
+  'astJsonToCarve',
+  'lintCarve',
+  'readStamp',
+  'needsReview',
+  'fromDjot',
+  'fromBbcode',
 ]) {
   assert.equal(wasm[name], undefined, `${name} should not be exported`)
 }

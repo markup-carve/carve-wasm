@@ -84,6 +84,13 @@ const NAMES = [
   'toPlainTextWithReport',
   'toAnsiWithReport',
   'toCarveWithReport',
+  'astJsonToHtml',
+  'astJsonToCarve',
+  'lintCarve',
+  'readStamp',
+  'needsReview',
+  'fromDjot',
+  'fromBbcode',
   'version',
 ]
 const missing = NAMES.filter((name) => typeof engine[name] !== 'function')
@@ -104,6 +111,13 @@ export const {
   toPlainTextWithReport,
   toAnsiWithReport,
   toCarveWithReport,
+  astJsonToHtml,
+  astJsonToCarve,
+  lintCarve,
+  readStamp,
+  needsReview,
+  fromDjot,
+  fromBbcode,
   version,
 } = engine
 

@@ -576,6 +576,196 @@ fn profile_violation_error(error: carve::ProfileViolationError) -> JsValue {
     js_error.into()
 }
 
+/// Structural types for the entry points that return objects.
+///
+/// wasm-bindgen types a `JsValue` return as `any`, which hands a TypeScript
+/// caller nothing. These are declared here and referenced by
+/// `unchecked_return_type` on the functions below.
+#[wasm_bindgen(typescript_custom_section)]
+const TS_APPEND_CONTENT: &'static str = r#"
+export interface LintWarning {
+  /** 1-based line number. */
+  line: number;
+  /** 1-based column number. */
+  column: number;
+  /** Stable rule id, shared with carve-js and carve-php. */
+  rule: string;
+  message: string;
+  /** 0-based BYTE offset into the source, inclusive. */
+  start: number;
+  /** 0-based BYTE offset into the source, exclusive. */
+  end: number;
+}
+
+export interface Stamp {
+  /** The spec version the document was last processed under. */
+  version: string;
+  /** The engine that wrote the marker, when it recorded one. */
+  generatedBy: string | null;
+}
+"#;
+
+/// A thrown JS `Error`, not a thrown string.
+///
+/// `JsValue::from_str` throws the string itself, so `error.message` is
+/// undefined in the catch block and a host's normal error handling misses it.
+/// The older entry points in this file still do that; new ones do not.
+fn js_error(message: String) -> JsValue {
+    js_sys::Error::new(&message).into()
+}
+
+/// Render an AST-JSON document (PART 12) to HTML.
+///
+/// The other half of `parseJson`. A host that reads the tree in a browser does
+/// it to CHANGE something, and until now there was no way to render the result:
+/// the binding could serialize a tree out and not take one back.
+///
+/// Takes the same options object as [`to_html_with_options`], so an edited tree
+/// renders under the profile, labels and switches the host already configured.
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(js_name = astJsonToHtml)]
+pub fn ast_json_to_html(json: &str, options: Option<js_sys::Object>) -> Result<String, JsValue> {
+    let doc = carve::from_json(json)
+        .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
+    let Some(request) = RenderRequest::read(options)? else {
+        return carve::render_html(&doc)
+            .map_err(|error| js_error(format!("carve: render refused: {error:?}")));
+    };
+    let owned = request.extension_boxes();
+    let engine_options = request.engine_options(&owned);
+    // Through the engine's own preparation, not straight into the renderer.
+    // `render_html_with_options` renders a tree AS GIVEN: it applies neither the
+    // profile filter nor the `before_render` hooks, both of which live in this
+    // step. Skipping it would make one options object mean two different things
+    // - a profile that filters on the source path and does nothing here, and
+    // extensions that transform there and are ignored here.
+    let prepared =
+        carve::prepare_document_for_render(doc, &engine_options, engine_options.mode, true)
+            .map_err(profile_violation_error)?;
+    carve::render_html_with_options(&prepared, &engine_options)
+        .map_err(|error| js_error(format!("carve: render refused: {error:?}")))
+}
+
+/// Render an AST-JSON document (PART 12) back to canonical Carve source.
+///
+/// The round trip a host needs to SAVE an edited tree, rather than only display
+/// it. A tree holding something no Carve source can spell is refused rather
+/// than written approximately.
+#[cfg(all(feature = "ast-json", feature = "other-renderers"))]
+#[wasm_bindgen(js_name = astJsonToCarve)]
+pub fn ast_json_to_carve(json: &str) -> Result<String, JsValue> {
+    let doc = carve::from_json(json)
+        .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
+    carve::render_carve(&doc)
+        .map_err(|error| js_error(format!("carve: cannot write this tree: {error:?}")))
+}
+
+/// Lint a document for the degradations PART 15 describes.
+///
+/// Returns an array of `{ line, column, rule, message, start, end }`. The rule
+/// ids are shared with carve-js and carve-php, so the same trigger reports the
+/// same id everywhere. Offsets are BYTE offsets into the source, matching the
+/// engine.
+///
+/// Built as JS objects rather than a JSON string: a message carries arbitrary
+/// document text, and hand-rolled JSON escaping is where that goes wrong.
+#[cfg(feature = "lint")]
+#[wasm_bindgen(js_name = lintCarve, unchecked_return_type = "LintWarning[]")]
+pub fn lint_carve(source: &str) -> Result<JsValue, JsValue> {
+    let warnings = js_sys::Array::new();
+    for warning in carve::lint_carve(source) {
+        let entry = js_sys::Object::new();
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("line"),
+            &JsValue::from_f64(warning.line as f64),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("column"),
+            &JsValue::from_f64(warning.column as f64),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("rule"),
+            &JsValue::from_str(warning.rule),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("message"),
+            &JsValue::from_str(&warning.message),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("start"),
+            &JsValue::from_f64(warning.start as f64),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("end"),
+            &JsValue::from_f64(warning.end as f64),
+        )?;
+        warnings.push(&entry.into());
+    }
+    Ok(warnings.into())
+}
+
+/// Read a document's provenance marker: `{ version, generatedBy }`, or `null`.
+#[cfg(feature = "stamp")]
+#[wasm_bindgen(js_name = readStamp, unchecked_return_type = "Stamp | null")]
+pub fn read_stamp(source: &str) -> Result<JsValue, JsValue> {
+    let Some(stamp) = carve::read_stamp(source) else {
+        return Ok(JsValue::NULL);
+    };
+    let object = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &object,
+        &JsValue::from_str("version"),
+        &JsValue::from_str(&stamp.version),
+    )?;
+    js_sys::Reflect::set(
+        &object,
+        &JsValue::from_str("generatedBy"),
+        &stamp
+            .generated_by
+            .as_deref()
+            .map(JsValue::from_str)
+            .unwrap_or(JsValue::NULL),
+    )?;
+    Ok(object.into())
+}
+
+/// Whether a document was last processed under an older spec version than
+/// `currentVersion`. An unstamped document counts as needing review.
+#[cfg(feature = "stamp")]
+#[wasm_bindgen(js_name = needsReview)]
+pub fn needs_review(source: &str, current_version: &str) -> bool {
+    carve::needs_review(source, current_version)
+}
+
+/// Convert Djot source to Carve.
+///
+/// Carve diverges from Djot deliberately - the emphasis delimiters are swapped,
+/// among others - so a Djot document is not Carve source and pasting one in
+/// renders wrongly rather than failing.
+#[cfg(feature = "other-imports")]
+#[wasm_bindgen(js_name = fromDjot)]
+pub fn from_djot(source: &str) -> String {
+    carve::djot_to_carve(source)
+}
+
+/// Convert BBCode source to Carve.
+///
+/// Rejects input past the engine's `BBCODE_MAX_INPUT_LENGTH` rather than
+/// working on it: the importer's cost is superlinear in places, and a browser
+/// host cannot afford to find that out on the main thread.
+#[cfg(feature = "other-imports")]
+#[wasm_bindgen(js_name = fromBbcode)]
+pub fn from_bbcode(source: &str) -> Result<String, JsValue> {
+    carve::bbcode_to_carve(source)
+        .map_err(|error| js_error(format!("carve: BBCode import failed: {error:?}")))
+}
+
 /// Read one boolean field out of a JS options object.
 ///
 /// Absent, `undefined` and `null` all mean "not set", so a caller can pass a
@@ -667,53 +857,113 @@ pub fn to_html_with_options(
     source: &str,
     options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
-    let Some(options) = options else {
+    let Some(request) = RenderRequest::read(options)? else {
         return Ok(carve::to_html(source));
     };
-    let value: JsValue = options.clone().into();
-    if value.is_null() || value.is_undefined() {
-        return Ok(carve::to_html(source));
+    request.render(source).map_err(profile_violation_error)
+}
+
+/// One options object, parsed once.
+///
+/// Read as a whole rather than field by field at each entry point: a second
+/// reader is a second place for a key to be spelled differently, or left out.
+struct RenderRequest {
+    config: RenderConfig,
+    symbols: SymbolPairs,
+    named: Option<Vec<String>>,
+    full: bool,
+}
+
+impl RenderRequest {
+    /// `None` when the caller passed nothing at all, which is the engine's own
+    /// default render and takes its fast path.
+    fn read(options: Option<js_sys::Object>) -> Result<Option<Self>, JsValue> {
+        let Some(options) = options else {
+            return Ok(None);
+        };
+        let value: JsValue = options.clone().into();
+        if value.is_null() || value.is_undefined() {
+            return Ok(None);
+        }
+
+        let config = RenderConfig {
+            sections: bool_field(&options, "sections")?.unwrap_or(true),
+            raw_html: bool_field(&options, "rawHtml")?.unwrap_or(true),
+            source_lines: bool_field(&options, "sourceLine")?.unwrap_or(false),
+            positions: bool_field(&options, "positions")?.unwrap_or(false),
+            lowercase_heading_ids: bool_field(&options, "lowercaseHeadingIds")?.unwrap_or(false),
+            ascii_heading_ids: ascii_heading_ids_field(&options)?,
+            smart_typography: smart_typography_field(&options)?,
+            mode: mode_field(&options)?,
+            profile: profile_field(&options)?,
+            profile_base_host: string_field(&options, "profileBaseHost")?,
+            labels: string_map_field(&options, "labels")?,
+        };
+        let full = bool_field(&options, "full")?.unwrap_or(false);
+        let named = extension_names_field(&options)?;
+        // A wrong-typed `symbols` must THROW, not quietly render without
+        // symbols: `dyn_into().ok()` would turn `{ symbols: "rocket" }` into
+        // `None` and lose the caller's map with no signal. Absent / null /
+        // undefined still mean "no symbols".
+        let symbols = js_sys::Reflect::get(&options, &JsValue::from_str("symbols"))?;
+        let symbols = if symbols.is_undefined() || symbols.is_null() {
+            None
+        } else {
+            Some(symbols.dyn_into::<js_sys::Object>().map_err(|_| {
+                JsValue::from(js_sys::TypeError::new(
+                    "carve: `symbols` must be an object or a Map",
+                ))
+            })?)
+        };
+
+        Ok(Some(Self {
+            config,
+            symbols: symbol_pairs(symbols)?,
+            named,
+            full,
+        }))
     }
 
-    let config = RenderConfig {
-        sections: bool_field(&options, "sections")?.unwrap_or(true),
-        raw_html: bool_field(&options, "rawHtml")?.unwrap_or(true),
-        source_lines: bool_field(&options, "sourceLine")?.unwrap_or(false),
-        positions: bool_field(&options, "positions")?.unwrap_or(false),
-        lowercase_heading_ids: bool_field(&options, "lowercaseHeadingIds")?.unwrap_or(false),
-        ascii_heading_ids: ascii_heading_ids_field(&options)?,
-        smart_typography: smart_typography_field(&options)?,
-        mode: mode_field(&options)?,
-        profile: profile_field(&options)?,
-        profile_base_host: string_field(&options, "profileBaseHost")?,
-        labels: string_map_field(&options, "labels")?,
-    };
-    let full = bool_field(&options, "full")?.unwrap_or(false);
-    let named = extension_names_field(&options)?;
-    // A wrong-typed `symbols` must THROW, not quietly render without symbols:
-    // `dyn_into().ok()` would turn `{ symbols: "rocket" }` into `None` and lose
-    // the caller's map with no signal. Absent / null / undefined still mean
-    // "no symbols".
-    let symbols = js_sys::Reflect::get(&options, &JsValue::from_str("symbols"))?;
-    let symbols = if symbols.is_undefined() || symbols.is_null() {
-        None
-    } else {
-        Some(symbols.dyn_into::<js_sys::Object>().map_err(|_| {
-            JsValue::from(js_sys::TypeError::new(
-                "carve: `symbols` must be an object or a Map",
-            ))
-        })?)
-    };
-    let pairs = symbol_pairs(symbols)?;
-
-    match (named, full) {
-        // An explicit list wins over the preview set: a caller who names
-        // extensions has said exactly what they want.
-        (Some(keys), _) => render_with_extensions(source, &keys, &pairs, &config),
-        (None, true) => render_full(source, &pairs, &config),
-        (None, false) => render_core(source, &pairs, &config),
+    fn render(&self, source: &str) -> Result<String, carve::ProfileViolationError> {
+        match (&self.named, self.full) {
+            // An explicit list wins over the preview set: a caller who names
+            // extensions has said exactly what they want.
+            (Some(keys), _) => render_with_extensions(source, keys, &self.symbols, &self.config),
+            (None, true) => render_full(source, &self.symbols, &self.config),
+            (None, false) => render_core(source, &self.symbols, &self.config),
+        }
     }
-    .map_err(profile_violation_error)
+
+    /// The engine options this request describes, for an entry point that
+    /// takes a TREE and so cannot go through the source-rendering helpers.
+    fn engine_options<'a>(
+        &'a self,
+        owned: &'a [Box<dyn carve::CarveExtension>],
+    ) -> carve::Options<'a> {
+        let mut options = self.config.apply(carve::Options::new());
+        for ext in owned {
+            options = options.with_extension(ext.as_ref());
+        }
+        for (name, value) in &self.symbols {
+            options = options.with_symbol(name.clone(), value.clone());
+        }
+        options
+    }
+
+    /// The extension boxes this request needs, owned by the caller's frame
+    /// because `Options` borrows them.
+    fn extension_boxes(&self) -> Vec<Box<dyn carve::CarveExtension>> {
+        match (&self.named, self.full) {
+            (Some(keys), _) => build_extensions(keys),
+            (None, true) => build_extensions(
+                &PREVIEW_EXTENSIONS
+                    .iter()
+                    .map(|k| (*k).to_string())
+                    .collect::<Vec<_>>(),
+            ),
+            (None, false) => Vec::new(),
+        }
+    }
 }
 
 /// Read one string field out of a JS options object.

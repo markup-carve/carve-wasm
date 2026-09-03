@@ -3,7 +3,19 @@
 // wasm package works -- which is how a stale engine can pass CI (the embedded
 // engine in carve-go did exactly that for months).
 import assert from 'node:assert/strict'
-import { parseJson, toHtml, toHtmlWithOptions, toHtmlWithReport } from './engine.mjs'
+import {
+  astJsonToCarve,
+  astJsonToHtml,
+  fromBbcode,
+  fromDjot,
+  lintCarve,
+  needsReview,
+  parseJson,
+  readStamp,
+  toHtml,
+  toHtmlWithOptions,
+  toHtmlWithReport,
+} from './engine.mjs'
 
 const cases = [
   // Superscript/subscript are braced-only: a bare `^` / `,` is literal text.
@@ -156,6 +168,52 @@ assert.throws(() => toHtmlWithOptions('# A\n', { mode: 'nope' }), TypeError)
 assert.throws(() => toHtmlWithOptions('# A\n', { labels: 'Hinweis' }), TypeError)
 assert.throws(() => toHtmlWithOptions('# A\n', { sourceLine: 'yes' }), TypeError)
 console.log('wasm artifact: profile, editor and output-shaping options pass')
+
+// The round trip. `parseJson` writes a tree out; until `astJsonToHtml` there was
+// no way to render an edited one back, which is the reason to read a tree in a
+// browser at all.
+const treeSource = '# Title\n\nBody with _emphasis_.\n'
+const tree = parseJson(treeSource)
+assert.ok(astJsonToHtml(tree).includes('<h1'), 'a tree should render')
+assert.equal(astJsonToCarve(tree).trim(), treeSource.trim())
+// The options object reaches the tree path too, so an edited tree renders under
+// the switches the host already configured.
+assert.ok(!astJsonToHtml(tree, { sections: false }).includes('<section'))
+assert.throws(() => astJsonToHtml('{"type":"nope"}'), Error)
+
+// One options object has to mean the same thing on both paths. The tree
+// renderer applies neither the profile filter nor the before-render hooks by
+// itself, so rendering a tree straight through it made `profile` silently
+// inert and `full` silently do nothing - the same call, two safety postures.
+const parityDoc = '# H\n\ntext\n'
+assert.equal(
+  astJsonToHtml(parseJson(parityDoc), { full: true }),
+  toHtmlWithOptions(parityDoc, { full: true }),
+)
+const parityTable = '| a | b |\n|---|---|\n| 1 | 2 |\n'
+const treeFiltered = astJsonToHtml(parseJson(parityTable), { profile: 'minimal' })
+assert.equal(treeFiltered, toHtmlWithOptions(parityTable, { profile: 'minimal' }))
+assert.ok(!treeFiltered.includes('<table'), 'the profile has to filter on the tree path too')
+
+// The linter, with the rule ids carve-js and carve-php share.
+assert.deepEqual(lintCarve('# Fine\n\ntext\n'), [])
+const warnings = lintCarve('# Heading\n\n{.orphan}\n')
+assert.equal(warnings.length, 1, 'a block attribute reaching no block should warn')
+assert.equal(warnings[0].rule, 'unattached-block-attribute')
+for (const key of ['line', 'column', 'rule', 'message', 'start', 'end']) {
+  assert.ok(key in warnings[0], `a warning should carry ${key}`)
+}
+
+// Provenance.
+assert.equal(readStamp('# Plain\n'), null)
+assert.equal(needsReview('# Plain\n', '1.0.0'), true)
+
+// The importers that had no binding. Djot swaps the emphasis delimiters, which
+// is exactly why pasting Djot in as Carve renders wrongly rather than failing.
+assert.ok(fromDjot('_em_ and *strong*\n').includes('/em/'))
+assert.ok(fromBbcode('[b]bold[/b]').includes('*bold*'))
+console.log('wasm artifact: tree, lint, stamp and importer entry points pass')
+
 
 
 

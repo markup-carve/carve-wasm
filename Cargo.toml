@@ -19,15 +19,22 @@ crate-type = ["cdylib", "rlib"]
 default = [
     "ast-json",
     "html-import",
+    "lint",
     "markdown-import",
+    "other-imports",
     "other-renderers",
     "reports",
+    "stamp",
 ]
 ast-json = []
 html-import = []
+lint = []
 markdown-import = []
+# The importers a Markdown-shaped host does not need: Djot and BBCode.
+other-imports = []
 other-renderers = []
 reports = []
+stamp = []
 
 [dependencies]
 # Pinned to an exact carve-rs commit, the same way carve-rb pins it. Tracking
