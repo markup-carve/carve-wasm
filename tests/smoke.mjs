@@ -111,6 +111,53 @@ assert.ok(rawFull.includes('<b>x</b>'), rawFull)
 assert.throws(() => toHtmlWithOptions('# A\n', { rawHtml: 'false' }), TypeError)
 console.log('wasm artifact: rawHtml option passes')
 
+// The profile, through the artifact. A rejection has to ARRIVE as an error: the
+// engine's infallible entry point turns one into an empty string, which a
+// caller cannot tell from a document that rendered to nothing.
+const rejected = (() => {
+  try {
+    return { html: toHtmlWithOptions('| a | b |\n|---|---|\n| 1 | 2 |\n', { profile: 'minimal' }) }
+  } catch (error) {
+    return { error }
+  }
+})()
+if (rejected.error) {
+  assert.equal(rejected.error.name, 'ProfileViolationError')
+  assert.ok(Array.isArray(rejected.error.violations), 'violations should be an array')
+  assert.ok(rejected.error.violations.length > 0, 'violations should not be empty')
+} else {
+  assert.notEqual(rejected.html, '', 'a rejection must not arrive as an empty string')
+}
+assert.ok(toHtmlWithOptions('# A\n', { profile: 'full' }).includes('<h1'))
+assert.throws(() => toHtmlWithOptions('# A\n', { profile: 'nope' }), TypeError)
+
+// Editor-preview switches.
+assert.ok(!toHtmlWithOptions('# A\n\np\n', {}).includes('data-source-line'))
+assert.ok(toHtmlWithOptions('# A\n\np\n', { sourceLine: true }).includes('data-source-line'))
+
+// Output-shaping switches: the i18n seam, typography, and the slug policy.
+assert.ok(toHtmlWithOptions('::: note\nbody\n:::\n', {}).includes('Note'))
+assert.ok(
+  toHtmlWithOptions('::: note\nbody\n:::\n', {
+    labels: { admonitionNote: 'Hinweis' },
+  }).includes('Hinweis'),
+)
+assert.ok(toHtmlWithOptions('a...b\n', { smartTypography: 'source' }).includes('a...b'))
+assert.ok(
+  toHtmlWithOptions('# Grüße Alle\n', {
+    lowercaseHeadingIds: true,
+    asciiHeadingIds: 'strict',
+  }).includes('id="grusse-alle"'),
+)
+// `mode: 'static'` is accepted and renders; what it flattens is the engine's
+// business, covered there.
+assert.ok(toHtmlWithOptions('# A\n', { mode: 'static' }).includes('<h1'))
+assert.throws(() => toHtmlWithOptions('# A\n', { mode: 'nope' }), TypeError)
+assert.throws(() => toHtmlWithOptions('# A\n', { labels: 'Hinweis' }), TypeError)
+assert.throws(() => toHtmlWithOptions('# A\n', { sourceLine: 'yes' }), TypeError)
+console.log('wasm artifact: profile, editor and output-shaping options pass')
+
+
 
 // The PART 12 exchange shape, through the same artifact. A binding that can only
 // render is unusable for an editor, a linter or a converter - they need the tree.

@@ -44,44 +44,90 @@ fn symbol_pairs(symbols: Option<js_sys::Object>) -> Result<SymbolPairs, JsValue>
     Ok(pairs)
 }
 
-/// The two render switches the JS options object exposes.
+/// The render switches the JS options object exposes.
 ///
-/// A pair of bare `bool` parameters would be indistinguishable at every call
-/// site, and both default to `true`, so a transposed pair renders wrongly and
-/// silently.
-#[derive(Clone, Copy)]
-struct RenderFlags {
+/// One struct rather than a parameter per switch: they all default one way,
+/// they would all sit last in three near-identical helper signatures, and a
+/// transposed pair of bools would compile, render wrongly, and read correctly
+/// at the call site.
+#[derive(Debug, Clone, PartialEq)]
+struct RenderConfig {
     sections: bool,
     raw_html: bool,
+    source_lines: bool,
+    positions: bool,
+    lowercase_heading_ids: bool,
+    ascii_heading_ids: carve::AsciiHeadingIds,
+    smart_typography: carve::SmartTypographyMode,
+    mode: carve::Mode,
+    profile: Option<carve::Profile>,
+    profile_base_host: Option<String>,
+    /// Ordered rather than a map so a render is reproducible from the object
+    /// the caller passed, in the order they wrote it.
+    labels: Vec<(String, String)>,
 }
 
-impl Default for RenderFlags {
+impl Default for RenderConfig {
     fn default() -> Self {
         Self {
             sections: true,
             raw_html: true,
+            source_lines: false,
+            positions: false,
+            lowercase_heading_ids: false,
+            ascii_heading_ids: carve::AsciiHeadingIds::default(),
+            smart_typography: carve::SmartTypographyMode::default(),
+            mode: carve::Mode::default(),
+            profile: None,
+            profile_base_host: None,
+            labels: Vec::new(),
         }
     }
 }
 
-impl RenderFlags {
-    fn apply(self, options: carve::Options<'_>) -> carve::Options<'_> {
-        options
+impl RenderConfig {
+    fn apply<'a>(&self, options: carve::Options<'a>) -> carve::Options<'a> {
+        let mut options = options
             .with_sections(self.sections)
             .with_raw_html(self.raw_html)
+            .with_source_lines(self.source_lines)
+            .with_positions(self.positions)
+            .with_lowercase_heading_ids(self.lowercase_heading_ids)
+            .with_ascii_heading_ids(self.ascii_heading_ids)
+            .with_mode(self.mode);
+        // No `with_` builder for this one upstream; the field is public.
+        options.smart_typography = self.smart_typography;
+        if let Some(profile) = &self.profile {
+            options = options.with_profile(profile.clone());
+        }
+        if let Some(host) = &self.profile_base_host {
+            options = options.with_profile_base_host(host.clone());
+        }
+        for (key, value) in &self.labels {
+            options = options.with_label(key.clone(), value.clone());
+        }
+        options
     }
 }
 
 /// Render with the core (no-extension) profile plus the given symbol map.
-fn render_core(source: &str, symbols: &SymbolPairs, flags: RenderFlags) -> String {
-    if symbols.is_empty() && flags.sections && flags.raw_html {
-        return carve::to_html(source);
+fn render_core(
+    source: &str,
+    symbols: &SymbolPairs,
+    config: &RenderConfig,
+) -> Result<String, carve::ProfileViolationError> {
+    // `carve::to_html` takes a layout fast path the options form does not, so
+    // the default render keeps it. The guard is one equality against `Default`
+    // rather than a list of fields, because a list is what a new switch gets
+    // left out of.
+    if symbols.is_empty() && *config == RenderConfig::default() {
+        return Ok(carve::to_html(source));
     }
-    let mut options = flags.apply(carve::Options::new());
+    let mut options = config.apply(carve::Options::new());
     for (name, value) in symbols {
         options = options.with_symbol(name.clone(), value.clone());
     }
-    carve::to_html_with_options(source, &options)
+    carve::try_to_html_with_options(source, &options)
 }
 
 /// The preview extension set behind `full: true`.
@@ -128,28 +174,32 @@ fn render_with_extensions(
     source: &str,
     keys: &[String],
     symbols: &SymbolPairs,
-    flags: RenderFlags,
-) -> String {
+    config: &RenderConfig,
+) -> Result<String, carve::ProfileViolationError> {
     // `Options` borrows each extension, so the owned boxes must outlive it;
     // they live in this frame, alongside the render call.
     let owned = build_extensions(keys);
-    let mut options = flags.apply(carve::Options::new());
+    let mut options = config.apply(carve::Options::new());
     for ext in &owned {
         options = options.with_extension(ext.as_ref());
     }
     for (name, value) in symbols {
         options = options.with_symbol(name.clone(), value.clone());
     }
-    carve::to_html_with_options(source, &options)
+    carve::try_to_html_with_options(source, &options)
 }
 
 /// Render with the preview extension set plus the given symbol map.
-fn render_full(source: &str, symbols: &SymbolPairs, flags: RenderFlags) -> String {
+fn render_full(
+    source: &str,
+    symbols: &SymbolPairs,
+    config: &RenderConfig,
+) -> Result<String, carve::ProfileViolationError> {
     let keys: Vec<String> = PREVIEW_EXTENSIONS
         .iter()
         .map(|k| (*k).to_string())
         .collect();
-    render_with_extensions(source, &keys, symbols, flags)
+    render_with_extensions(source, &keys, symbols, config)
 }
 
 /// Every extension name this build accepts, in registry order.
@@ -351,11 +401,8 @@ pub fn to_html_with_symbols(
     source: &str,
     symbols: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
-    Ok(render_core(
-        source,
-        &symbol_pairs(symbols)?,
-        RenderFlags::default(),
-    ))
+    render_core(source, &symbol_pairs(symbols)?, &RenderConfig::default())
+        .map_err(profile_violation_error)
 }
 
 /// Render with the preview extension set enabled (`PREVIEW_EXTENSIONS`), so the
@@ -372,11 +419,8 @@ pub fn to_html_with_symbols(
 /// are emitted UNESCAPED, so never feed it untrusted input.
 #[wasm_bindgen(js_name = toHtmlFull)]
 pub fn to_html_full(source: &str, symbols: Option<js_sys::Object>) -> Result<String, JsValue> {
-    Ok(render_full(
-        source,
-        &symbol_pairs(symbols)?,
-        RenderFlags::default(),
-    ))
+    render_full(source, &symbol_pairs(symbols)?, &RenderConfig::default())
+        .map_err(profile_violation_error)
 }
 
 /// Parse Carve source and return its AST as a JSON string.
@@ -510,6 +554,28 @@ pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
     Ok(object.into())
 }
 
+/// Turn a profile rejection into a JS `Error` a caller can act on.
+///
+/// The message is the engine's, and `violations` carries them one per entry so
+/// a host can report which construct was refused without parsing prose. The
+/// `name` is set so `error.name === 'ProfileViolationError'` works the way it
+/// does in carve-js.
+fn profile_violation_error(error: carve::ProfileViolationError) -> JsValue {
+    let js_error = js_sys::Error::new(&error.to_string());
+    js_error.set_name("ProfileViolationError");
+    let violations = js_sys::Array::new();
+    for violation in &error.violations {
+        violations.push(&JsValue::from_str(&violation.message()));
+    }
+    // Best effort: a failed property set must not mask the rejection itself.
+    let _ = js_sys::Reflect::set(
+        &js_error,
+        &JsValue::from_str("violations"),
+        &violations.into(),
+    );
+    js_error.into()
+}
+
 /// Read one boolean field out of a JS options object.
 ///
 /// Absent, `undefined` and `null` all mean "not set", so a caller can pass a
@@ -567,6 +633,25 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 ///   `allowRawHtml`. A host that renders a document it did not author (a shared
 ///   link, a comment field, anything a reader supplies) wants `false`: without
 ///   it a passthrough is a way to run script on the host's origin.
+/// * `profile` - one of `"full"`, `"article"`, `"comment"`, `"minimal"`. The
+///   rest of the untrusted-input story: input length, denied constructs, link
+///   policy. A document the profile REJECTS throws a `ProfileViolationError`
+///   carrying `violations`, rather than resolving to an empty string.
+/// * `profileBaseHost` - the host counted as internal when the profile's link
+///   policy distinguishes internal from external links.
+/// * `mode` - `"interactive"` (default) or `"static"`, the self-contained form
+///   for print, PDF and archival: no client scripts.
+/// * `sourceLine` (default `false`) - stamp top-level blocks with
+///   `data-source-line`, for editor preview scroll-sync.
+/// * `positions` (default `false`) - keep source offsets on the nodes.
+/// * `labels` - override the engine-written strings (admonition names, the
+///   endnotes heading, backlink text) for a page that is not in English. These
+///   are TEXT and are escaped where they land, unlike `symbols`.
+/// * `smartTypography` - `"glyph"` (default) resolves `...` to an ellipsis,
+///   `"source"` keeps the author's run.
+/// * `lowercaseHeadingIds` (default `false`) and `asciiHeadingIds`
+///   (`"off"` (default), `"fold"`, `"strict"`) - the slug policy, for a host
+///   whose anchors have to match another generator's.
 ///
 /// An unrecognized key is ignored: the object is configuration, and a caller
 /// who mistypes one deserves the render to still work. A wrong TYPE on a key
@@ -590,9 +675,18 @@ pub fn to_html_with_options(
         return Ok(carve::to_html(source));
     }
 
-    let flags = RenderFlags {
+    let config = RenderConfig {
         sections: bool_field(&options, "sections")?.unwrap_or(true),
         raw_html: bool_field(&options, "rawHtml")?.unwrap_or(true),
+        source_lines: bool_field(&options, "sourceLine")?.unwrap_or(false),
+        positions: bool_field(&options, "positions")?.unwrap_or(false),
+        lowercase_heading_ids: bool_field(&options, "lowercaseHeadingIds")?.unwrap_or(false),
+        ascii_heading_ids: ascii_heading_ids_field(&options)?,
+        smart_typography: smart_typography_field(&options)?,
+        mode: mode_field(&options)?,
+        profile: profile_field(&options)?,
+        profile_base_host: string_field(&options, "profileBaseHost")?,
+        labels: string_map_field(&options, "labels")?,
     };
     let full = bool_field(&options, "full")?.unwrap_or(false);
     let named = extension_names_field(&options)?;
@@ -612,13 +706,140 @@ pub fn to_html_with_options(
     };
     let pairs = symbol_pairs(symbols)?;
 
-    Ok(match (named, full) {
+    match (named, full) {
         // An explicit list wins over the preview set: a caller who names
         // extensions has said exactly what they want.
-        (Some(keys), _) => render_with_extensions(source, &keys, &pairs, flags),
-        (None, true) => render_full(source, &pairs, flags),
-        (None, false) => render_core(source, &pairs, flags),
+        (Some(keys), _) => render_with_extensions(source, &keys, &pairs, &config),
+        (None, true) => render_full(source, &pairs, &config),
+        (None, false) => render_core(source, &pairs, &config),
+    }
+    .map_err(profile_violation_error)
+}
+
+/// Read one string field out of a JS options object.
+fn string_field(options: &js_sys::Object, key: &str) -> Result<Option<String>, JsValue> {
+    let value = js_sys::Reflect::get(options, &JsValue::from_str(key))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(None);
+    }
+    value.as_string().map(Some).ok_or_else(|| {
+        JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: `{key}` must be a string"
+        )))
     })
+}
+
+/// Read a name-to-string map, in the order the caller wrote it.
+///
+/// Unlike `symbols`, these values are TEXT: the engine escapes a label where it
+/// lands, so a host may feed this from a translation catalog.
+fn string_map_field(options: &js_sys::Object, key: &str) -> Result<Vec<(String, String)>, JsValue> {
+    let value = js_sys::Reflect::get(options, &JsValue::from_str(key))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(Vec::new());
+    }
+    let object = value.dyn_into::<js_sys::Object>().map_err(|_| {
+        JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: `{key}` must be an object"
+        )))
+    })?;
+    let mut pairs = Vec::new();
+    for entry in js_sys::Object::entries(&object).iter() {
+        let entry: js_sys::Array = entry.into();
+        let name = entry.get(0).as_string().ok_or_else(|| {
+            JsValue::from(js_sys::TypeError::new(&format!(
+                "carve: every key in `{key}` must be a string"
+            )))
+        })?;
+        let text = entry.get(1).as_string().ok_or_else(|| {
+            JsValue::from(js_sys::TypeError::new(&format!(
+                "carve: every value in `{key}` must be a string"
+            )))
+        })?;
+        pairs.push((name, text));
+    }
+    Ok(pairs)
+}
+
+/// Read a string field and map it through `accept`, naming the alternatives in
+/// the error the way the sibling bindings do.
+fn enum_field<T>(
+    options: &js_sys::Object,
+    key: &str,
+    accepted: &str,
+    accept: impl Fn(&str) -> Option<T>,
+) -> Result<Option<T>, JsValue> {
+    let Some(name) = string_field(options, key)? else {
+        return Ok(None);
+    };
+    accept(&name).map(Some).ok_or_else(|| {
+        JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: unknown `{key}` {name:?} (supported: {accepted})"
+        )))
+    })
+}
+
+fn mode_field(options: &js_sys::Object) -> Result<carve::Mode, JsValue> {
+    Ok(enum_field(
+        options,
+        "mode",
+        "\"interactive\", \"static\"",
+        |name| match name {
+            "interactive" => Some(carve::Mode::Interactive),
+            "static" => Some(carve::Mode::Static),
+            _ => None,
+        },
+    )?
+    .unwrap_or_default())
+}
+
+fn smart_typography_field(options: &js_sys::Object) -> Result<carve::SmartTypographyMode, JsValue> {
+    Ok(enum_field(
+        options,
+        "smartTypography",
+        "\"glyph\", \"source\"",
+        |name| match name {
+            "glyph" => Some(carve::SmartTypographyMode::Glyph),
+            "source" => Some(carve::SmartTypographyMode::Source),
+            _ => None,
+        },
+    )?
+    .unwrap_or_default())
+}
+
+fn ascii_heading_ids_field(options: &js_sys::Object) -> Result<carve::AsciiHeadingIds, JsValue> {
+    Ok(enum_field(
+        options,
+        "asciiHeadingIds",
+        "\"off\", \"fold\", \"strict\"",
+        |name| match name {
+            "off" => Some(carve::AsciiHeadingIds::Off),
+            "fold" => Some(carve::AsciiHeadingIds::Fold),
+            "strict" => Some(carve::AsciiHeadingIds::Strict),
+            _ => None,
+        },
+    )?
+    .unwrap_or_default())
+}
+
+/// Read the `profile` option: one of the engine's four presets, by name.
+///
+/// Named rather than constructed, matching carve-rb. A profile assembled field
+/// by field across the wasm boundary would be a second way to spell a security
+/// posture, and the presets are what the spec and the other bindings describe.
+fn profile_field(options: &js_sys::Object) -> Result<Option<carve::Profile>, JsValue> {
+    enum_field(
+        options,
+        "profile",
+        "\"full\", \"article\", \"comment\", \"minimal\"",
+        |name| match name {
+            "full" => Some(carve::Profile::full()),
+            "article" => Some(carve::Profile::article()),
+            "comment" => Some(carve::Profile::comment()),
+            "minimal" => Some(carve::Profile::minimal()),
+            _ => None,
+        },
+    )
 }
 
 /// Read the `extensions` option: absent, or an array of registry names.
@@ -664,15 +885,15 @@ pub fn version() -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        extensions, render_core, render_full, render_with_extensions, RenderFlags, SymbolPairs,
+        extensions, render_core, render_full, render_with_extensions, RenderConfig, SymbolPairs,
         PREVIEW_EXTENSIONS,
     };
 
     /// Sections off, everything else at its default.
-    fn no_sections() -> RenderFlags {
-        RenderFlags {
+    fn no_sections() -> RenderConfig {
+        RenderConfig {
             sections: false,
-            ..RenderFlags::default()
+            ..RenderConfig::default()
         }
     }
 
@@ -705,11 +926,11 @@ mod tests {
     fn sections_off_emits_no_wrapper() {
         let none = SymbolPairs::new();
         assert_eq!(
-            render_core("# A\n\np\n", &none, RenderFlags::default()),
+            render_core("# A\n\np\n", &none, &RenderConfig::default()).unwrap(),
             "<section id=\"A\">\n  <h1>A</h1>\n  <p>p</p>\n</section>"
         );
         assert_eq!(
-            render_core("# A\n\np\n", &none, no_sections()),
+            render_core("# A\n\np\n", &none, &no_sections()).unwrap(),
             "<h1 id=\"A\">A</h1>\n<p>p</p>"
         );
     }
@@ -719,8 +940,8 @@ mod tests {
         let none = SymbolPairs::new();
         let src = "> # Quoted\n>\n> Quoted body.\n";
         assert_eq!(
-            render_core(src, &none, no_sections()),
-            render_core(src, &none, RenderFlags::default())
+            render_core(src, &none, &no_sections()).unwrap(),
+            render_core(src, &none, &RenderConfig::default()).unwrap()
         );
     }
 
@@ -730,12 +951,12 @@ mod tests {
     #[test]
     fn sections_off_composes_with_symbols_and_extensions() {
         let map = symbols(&[("rocket", "🚀")]);
-        let core = render_core("# A\n\n:rocket:\n", &map, no_sections());
+        let core = render_core("# A\n\n:rocket:\n", &map, &no_sections()).unwrap();
         assert!(core.starts_with("<h1 id=\"A\">A</h1>"), "{core}");
         assert!(core.contains('🚀'), "{core}");
         assert!(!core.contains("<section"), "{core}");
 
-        let full = render_full("# A\n\n:rocket:\n", &map, no_sections());
+        let full = render_full("# A\n\n:rocket:\n", &map, &no_sections()).unwrap();
         assert!(full.contains('🚀'), "{full}");
         assert!(!full.contains("<section"), "{full}");
     }
@@ -748,16 +969,16 @@ mod tests {
     fn raw_html_off_escapes_both_passthrough_spellings() {
         let none = SymbolPairs::new();
         let src = "```=html\n<img src=x onerror=alert(1)>\n```\n\nan `<b>x</b>`{=html} span\n";
-        let flags = RenderFlags {
+        let config = RenderConfig {
             raw_html: false,
-            ..RenderFlags::default()
+            ..RenderConfig::default()
         };
 
-        let on = render_core(src, &none, RenderFlags::default());
+        let on = render_core(src, &none, &RenderConfig::default()).unwrap();
         assert!(on.contains("<img src=x onerror=alert(1)>"), "{on}");
         assert!(on.contains("<b>x</b>"), "{on}");
 
-        let off = render_core(src, &none, flags);
+        let off = render_core(src, &none, &config).unwrap();
         assert!(off.contains("&lt;img src=x onerror=alert(1)&gt;"), "{off}");
         assert!(!off.contains("<img src=x"), "{off}");
         assert!(off.contains("&lt;b&gt;x&lt;/b&gt;"), "{off}");
@@ -767,17 +988,18 @@ mod tests {
     fn raw_html_off_composes_with_sections_symbols_and_extensions() {
         let map = symbols(&[("rocket", "\u{1f680}")]);
         let src = "# A\n\n:rocket:\n\n```=html\n<b>raw</b>\n```\n";
-        let flags = RenderFlags {
+        let config = RenderConfig {
             sections: false,
             raw_html: false,
+            ..RenderConfig::default()
         };
 
-        let core = render_core(src, &map, flags);
+        let core = render_core(src, &map, &config).unwrap();
         assert!(core.contains('\u{1f680}'), "{core}");
         assert!(!core.contains("<section"), "{core}");
         assert!(core.contains("&lt;b&gt;raw&lt;/b&gt;"), "{core}");
 
-        let full = render_full(src, &map, flags);
+        let full = render_full(src, &map, &config).unwrap();
         assert!(full.contains("&lt;b&gt;raw&lt;/b&gt;"), "{full}");
     }
 
@@ -786,12 +1008,108 @@ mod tests {
     #[test]
     fn raw_html_off_leaves_the_symbol_map_trusted() {
         let map = symbols(&[("bold", "<b>x</b>")]);
-        let flags = RenderFlags {
+        let config = RenderConfig {
             raw_html: false,
-            ..RenderFlags::default()
+            ..RenderConfig::default()
         };
-        let html = render_core(":bold:", &map, flags);
+        let html = render_core(":bold:", &map, &config).unwrap();
         assert!(html.contains("<b>x</b>"), "{html}");
+    }
+
+    // The profile is the other half of rendering a document from a stranger:
+    // `rawHtml: false` stops a passthrough, the profile caps size and denies
+    // constructs. The helper has to REPORT a rejection - the infallible engine
+    // entry point turns one into an empty string, which a caller cannot tell
+    // from a document that rendered to nothing.
+    #[test]
+    fn a_profile_rejection_is_an_error_not_an_empty_string() {
+        let config = RenderConfig {
+            profile: Some(carve::Profile::minimal()),
+            ..RenderConfig::default()
+        };
+        let src = "| a | b |\n|---|---|\n| 1 | 2 |\n";
+        let rejected = render_core(src, &SymbolPairs::new(), &config);
+        match rejected {
+            Err(error) => assert!(!error.violations.is_empty()),
+            Ok(html) => assert!(
+                !html.is_empty(),
+                "a rejection must not reach the caller as an empty string"
+            ),
+        }
+    }
+
+    #[test]
+    fn a_profile_renders_what_it_allows() {
+        let config = RenderConfig {
+            profile: Some(carve::Profile::full()),
+            ..RenderConfig::default()
+        };
+        let html = render_core("# A\n\np\n", &SymbolPairs::new(), &config).unwrap();
+        assert!(html.contains("<h1"), "{html}");
+    }
+
+    #[test]
+    fn source_lines_and_positions_are_opt_in() {
+        let none = SymbolPairs::new();
+        let src = "# A\n\np\n";
+        assert!(!render_core(src, &none, &RenderConfig::default())
+            .unwrap()
+            .contains("data-source-line"));
+        let config = RenderConfig {
+            source_lines: true,
+            ..RenderConfig::default()
+        };
+        assert!(render_core(src, &none, &config)
+            .unwrap()
+            .contains("data-source-line"));
+    }
+
+    // The `labels` map is the engine's i18n seam (PART 9 §16a): admonition
+    // names, the endnotes heading, backlink text. A non-English page renders
+    // English furniture without it.
+    #[test]
+    fn labels_replace_the_generated_string() {
+        let none = SymbolPairs::new();
+        let src = "::: note\nbody\n:::\n";
+        let english = render_core(src, &none, &RenderConfig::default()).unwrap();
+        assert!(english.contains("Note"), "{english}");
+
+        let config = RenderConfig {
+            labels: vec![("admonitionNote".to_string(), "Hinweis".to_string())],
+            ..RenderConfig::default()
+        };
+        let german = render_core(src, &none, &config).unwrap();
+        assert!(german.contains("Hinweis"), "{german}");
+    }
+
+    #[test]
+    fn smart_typography_source_keeps_the_authors_run() {
+        let none = SymbolPairs::new();
+        let config = RenderConfig {
+            smart_typography: carve::SmartTypographyMode::Source,
+            ..RenderConfig::default()
+        };
+        let src = "a...b\n";
+        let glyph = render_core(src, &none, &RenderConfig::default()).unwrap();
+        let source = render_core(src, &none, &config).unwrap();
+        assert_ne!(glyph, source, "{glyph} vs {source}");
+        assert!(source.contains("a...b"), "{source}");
+    }
+
+    #[test]
+    fn the_heading_id_policy_is_configurable() {
+        let none = SymbolPairs::new();
+        let src = "# Grüße Alle\n";
+        let plain = render_core(src, &none, &RenderConfig::default()).unwrap();
+        assert!(plain.contains("Grüße"), "{plain}");
+
+        let config = RenderConfig {
+            lowercase_heading_ids: true,
+            ascii_heading_ids: carve::AsciiHeadingIds::Strict,
+            ..RenderConfig::default()
+        };
+        let folded = render_core(src, &none, &config).unwrap();
+        assert!(folded.contains("id=\"grusse-alle\""), "{folded}");
     }
 
     #[test]
@@ -825,8 +1143,9 @@ mod tests {
         let html = render_full(
             "``` mermaid\ngraph TD; A-->B\n```\n",
             &SymbolPairs::new(),
-            RenderFlags::default(),
-        );
+            &RenderConfig::default(),
+        )
+        .unwrap();
         // The hydration element carries the accessible name the engine gives a
         // diagram fence (PART 9 §16a, carve-rs #1187): an image with no name is
         // skipped by a reader entirely, so the role and the label are written
@@ -841,7 +1160,7 @@ mod tests {
     #[test]
     fn full_enables_list_table_extension() {
         let src = "{header-rows=1}\n::: list-table \"Quarterly results\"\n- - Region\n  - Notes\n- - EMEA\n  - Strong quarter.\n:::\n";
-        let html = render_full(src, &SymbolPairs::new(), RenderFlags::default());
+        let html = render_full(src, &SymbolPairs::new(), &RenderConfig::default()).unwrap();
         assert!(html.contains("<table"), "expected a <table>, got: {html}");
         assert!(!html.contains("class=\"list-table\""));
     }
@@ -873,7 +1192,9 @@ mod tests {
     fn named_extensions_render() {
         let src = "# Heading\n";
         let keys = vec!["heading-permalinks".to_string()];
-        let html = render_with_extensions(src, &keys, &SymbolPairs::new(), RenderFlags::default());
+        let html =
+            render_with_extensions(src, &keys, &SymbolPairs::new(), &RenderConfig::default())
+                .unwrap();
         assert!(html.contains("class=\"permalink\""), "got: {html}");
     }
 
@@ -881,14 +1202,14 @@ mod tests {
     fn an_unnamed_render_is_unaffected_by_the_registry() {
         // Core stays core: reading the registry must not enable anything.
         let src = "# Heading\n";
-        let core = render_core(src, &SymbolPairs::new(), RenderFlags::default());
+        let core = render_core(src, &SymbolPairs::new(), &RenderConfig::default()).unwrap();
         assert!(!core.contains("class=\"permalink\""), "got: {core}");
     }
 
     #[test]
     fn full_enables_code_callouts_extension() {
         let src = "``` rust\nlet x = 1; // <1>\n```\n\n<1> Assign x.\n";
-        let html = render_full(src, &SymbolPairs::new(), RenderFlags::default());
+        let html = render_full(src, &SymbolPairs::new(), &RenderConfig::default()).unwrap();
         assert!(
             html.contains("class=\"callout\""),
             "expected callout bubble, got: {html}"
@@ -949,7 +1270,7 @@ mod tests {
     fn mapped_symbol_renders_its_value() {
         let map = symbols(&[("rocket", "🚀")]);
 
-        let html = render_core("Ship it :rocket:", &map, RenderFlags::default());
+        let html = render_core("Ship it :rocket:", &map, &RenderConfig::default()).unwrap();
         assert!(
             html.contains("Ship it 🚀"),
             "expected the mapped value, got: {html}"
@@ -960,7 +1281,7 @@ mod tests {
         );
 
         // The same map flows through the extensions-on entry point.
-        let html = render_full("Ship it :rocket:", &map, RenderFlags::default());
+        let html = render_full("Ship it :rocket:", &map, &RenderConfig::default()).unwrap();
         assert!(
             html.contains("🚀"),
             "expected the mapped value, got: {html}"
@@ -972,8 +1293,9 @@ mod tests {
         let html = render_core(
             "nice :+1:",
             &symbols(&[("+1", "👍")]),
-            RenderFlags::default(),
-        );
+            &RenderConfig::default(),
+        )
+        .unwrap();
         assert!(
             html.contains("nice 👍"),
             "expected :+1: to map, got: {html}"
@@ -985,8 +1307,9 @@ mod tests {
         let html = render_core(
             ":rocket: and :unmapped:",
             &symbols(&[("rocket", "🚀")]),
-            RenderFlags::default(),
-        );
+            &RenderConfig::default(),
+        )
+        .unwrap();
         assert!(
             html.contains("🚀"),
             "expected the mapped value, got: {html}"
@@ -1008,8 +1331,9 @@ mod tests {
         let html = render_core(
             "a:b:c and 10:30: and me@example.com",
             &map,
-            RenderFlags::default(),
-        );
+            &RenderConfig::default(),
+        )
+        .unwrap();
         assert!(
             html.contains("a:b:c") && html.contains("10:30:") && html.contains("me@example.com"),
             "guarded colons must stay literal, got: {html}"
@@ -1027,8 +1351,9 @@ mod tests {
         let html = render_core(
             ":bold:",
             &symbols(&[("bold", "<b>x</b>")]),
-            RenderFlags::default(),
-        );
+            &RenderConfig::default(),
+        )
+        .unwrap();
         assert!(
             html.contains("<b>x</b>"),
             "symbol value must be emitted raw, got: {html}"

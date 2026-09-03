@@ -132,11 +132,25 @@ toHtmlWithOptions('# A\n\np\n', { sections: false })
 toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: true })
 ```
 
-Every field is optional - `sections` (default `true`), `symbols` (same trusted-raw
-contract as `toHtmlWithSymbols`), `extensions` (an array of names; takes
-precedence over `full`), `full` (default `false`, enabling the preview set), and
-`rawHtml` (default `true`). Omitting the object, or passing `null`, renders with
+Every field is optional. Omitting the object, or passing `null`, renders with
 defaults, so the three shorthands above remain the zero-config forms.
+
+| Field | Default | What it does |
+|---|---|---|
+| `sections` | `true` | Wrap each top-level heading and its content in a `<section>` |
+| `symbols` | none | `:name:` to value, TRUSTED-RAW (see above) |
+| `extensions` | none | Array of registry names; takes precedence over `full` |
+| `full` | `false` | Enable the preview extension set |
+| `rawHtml` | `true` | Emit an explicit passthrough as markup; `false` escapes it |
+| `profile` | none | `full` / `article` / `comment` / `minimal`; rejection throws |
+| `profileBaseHost` | none | The host the profile's link policy counts as internal |
+| `mode` | `interactive` | `static` renders the self-contained form: no client scripts |
+| `sourceLine` | `false` | Stamp top-level blocks with `data-source-line` |
+| `positions` | `false` | Keep source offsets on the nodes |
+| `labels` | none | Override engine-written strings, for a page not in English |
+| `smartTypography` | `glyph` | `source` keeps the author's run instead of the glyph |
+| `lowercaseHeadingIds` | `false` | Lowercase the generated heading ids |
+| `asciiHeadingIds` | `off` | `fold` transliterates, `strict` guarantees ASCII |
 
 An unrecognized key is ignored, because the object is configuration and a typo
 should not break a render. A recognized key with the wrong type throws a
@@ -172,6 +186,32 @@ it on for a document a reader supplied is a way to run their script.
 The symbols map is unaffected and stays TRUSTED-RAW either way - it is
 configuration the host wrote, not content the document carries.
 
+### Rendering with a profile
+
+`rawHtml: false` closes the passthrough vector. It does not cap input length,
+deny a construct, or constrain link schemes - that is what a profile is for, and
+the four presets match the ones the spec and the sibling bindings describe.
+
+```js
+toHtmlWithOptions(fromTheReader, { profile: 'comment', rawHtml: false })
+```
+
+**A rejected document throws.** The engine's infallible entry point turns a
+profile rejection - input past `max_length`, or a denied construct when the
+action is Error - into an EMPTY STRING, and a caller cannot tell that from a
+document that legitimately rendered to nothing. This binding renders through the
+fallible one, so a rejection arrives as an `Error` whose `name` is
+`ProfileViolationError` and whose `violations` array carries one message per
+refused construct.
+
+```js
+try {
+  html = toHtmlWithOptions(fromTheReader, { profile: 'comment' })
+} catch (error) {
+  if (error.name === 'ProfileViolationError') report(error.violations)
+}
+```
+
 ### TypeScript
 
 The package ships `.d.ts` declarations. Types are inferred automatically when
@@ -191,7 +231,7 @@ const html: string = toHtml('_Hello_')
 | `toHtml` | `(source: string) => string` | Core renderer, no extensions |
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
-| `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form: `{ sections?, symbols?, extensions?, full?, rawHtml? }`, every field optional |
+| `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form; see the options table above. Throws `ProfileViolationError` when a profile rejects the document |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded `raw-format-dropped` losses; strict mode throws `RenderLossError` |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
 | `toPlainTextWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked plain-text render |
