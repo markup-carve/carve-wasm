@@ -9,8 +9,27 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-09-04
+
 ### Added
 
+- `rawHtml` on the `toHtmlWithOptions` object: `false` renders an explicit
+  passthrough - the `=html` block and the `` `…`{=html} `` span - as escaped
+  text. The switch carve-js spells `allowRawHtml`, and the one a host needs to
+  render a document it did not author (#70, #71).
+- `profile` (`full` / `article` / `comment` / `minimal`) and `profileBaseHost`,
+  for the rest of that story: input length, denied constructs, link policy. A
+  rejected document THROWS an `Error` named `ProfileViolationError` carrying
+  `violations`, where the engine's infallible entry point would have returned an
+  empty string (#73, #77).
+- `mode`, `sourceLine`, `positions`, `labels`, `smartTypography`,
+  `lowercaseHeadingIds` and `asciiHeadingIds` on the same object, closing the
+  gap to the options carve-rb already passed (#74, #75, #77).
+- `astJsonToHtml` and `astJsonToCarve`, which take an AST-JSON document back in.
+  `parseJson` could write a tree out and nothing could render or save an edited
+  one (#76, #78).
+- `lintCarve`, `readStamp`, `needsReview`, `fromDjot` and `fromBbcode` - engine
+  capabilities that had no binding at all (#76, #78).
 - Optional capability features and a rendering-only web build profile. The
   full API remains enabled by default; `--no-default-features` keeps the HTML
   renderers used by the Playground while cutting the measured gzip payload
@@ -75,6 +94,7 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/markup-carve/carve-wasm/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/markup-carve/carve-wasm/releases/tag/v0.1.0
