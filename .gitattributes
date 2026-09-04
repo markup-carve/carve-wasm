@@ -10,6 +10,7 @@
 *.webp binary
 
 /.github export-ignore
+/docs export-ignore
 /.gitattributes export-ignore
 /.gitignore export-ignore
 /tests export-ignore
