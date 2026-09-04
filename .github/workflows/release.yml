@@ -155,7 +155,14 @@ jobs:
     needs: verify
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # `write`, not `read`, and the gate below is the whole reason: a DRAFT
+      # release is invisible to a caller without push access, so under
+      # `contents: read` the listing comes back without it and the gate reports
+      # "no release" for a draft that is sitting right there with notes in it.
+      # It went unnoticed through 0.1.0 and 0.1.1 because both were published
+      # before their tags were pushed, and a published release IS visible with
+      # `read` (#80).
+      contents: write
       id-token: write
     steps:
       # GATE: the notes are not the workflow's to write. A CHANGELOG entry is
@@ -171,17 +178,28 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
-            --jq "[.[] | select(.tag_name == \"$GITHUB_REF_NAME\")] | first")"
-          if [ -z "$release" ]; then
+          # Slurped with `jq -s`, not with `gh --jq`. `gh api --paginate`
+          # applies its own `--jq` to EACH PAGE, so once this repository has
+          # more than one page of releases the filter emits one result per page
+          # - the match on one, `null` on the others - and everything below
+          # would be reading a two-line string. Here `gh` returns the raw pages
+          # and one jq pass flattens them. `--arg` rather than interpolation,
+          # so the tag never has to survive two levels of quoting.
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            | jq -s --arg tag "$GITHUB_REF_NAME" \
+                '[.[][] | select(.tag_name == $tag)] | first')"
+          if [ -z "$release" ] || [ "$release" = "null" ]; then
             echo "::error::no release for $GITHUB_REF_NAME. Write the notes first:" \
                  "gh release create $GITHUB_REF_NAME --draft --notes-file NOTES.md"
+            echo "::error::if a draft DOES exist, this job could not see it -" \
+                 "check that the job still declares contents: write (#80)"
             exit 1
           fi
           body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
           [ -n "$body" ] \
             || { echo "::error::the release for $GITHUB_REF_NAME has no notes"; exit 1; }
           printf '%s' "$release" | jq -r '"draft=\(.draft) tag=\(.tag_name)"'
+          printf '%s' "$release" | jq -er '.id' > "$RUNNER_TEMP/release-id"
 
       - uses: actions/checkout@v4
 
@@ -212,3 +230,32 @@ jobs:
         run: npm publish --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # A registry publish is not finished until the release page exists. The
+      # tag is pushed, CI publishes, the registry answers 200, and "released"
+      # feels done - while `/releases` shows nothing, so a reader has no notes
+      # and no changelog for the version they just installed. Doing it here
+      # rather than by hand also means the draft stops being a thing someone
+      # has to remember to publish at the right moment.
+      #
+      # Last, deliberately: a draft that stays a draft is recoverable, and one
+      # published beside a failed npm publish is not.
+      - name: Publish the release notes
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          id="$(cat "$RUNNER_TEMP/release-id")"
+          case "$id" in
+            ''|*[!0-9]*)
+              echo "::error::release id is not a number: [$id]"; exit 1 ;;
+          esac
+          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT
+          # and GitHub replaces the tag with a generated `untagged-*`
+          # placeholder, because a draft's tag is a string on the object rather
+          # than a git ref - so the field has nothing to fall back to.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
+            -f tag_name="$GITHUB_REF_NAME" -F draft=false --jq '"published \(.tag_name)"'
+          # Read it back: exit status does not tell you whether the tag survived.
+          gh api "repos/$GITHUB_REPOSITORY/releases/$id" \
+            --jq '"draft=\(.draft) tag=\(.tag_name)"'
