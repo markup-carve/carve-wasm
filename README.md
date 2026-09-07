@@ -48,6 +48,20 @@ const html = toHtml('# Hello, Carve!')
 document.body.innerHTML = html
 ```
 
+### Source-preserving patches
+
+Tools can prepare canonical formatting as stale-safe UTF-8 byte edits:
+
+```js
+const patch = toCarvePatch(source)
+const formatted = applySourcePatch(source, patch)
+```
+
+`createSourcePatch(source, replacement, kind, code)` prepares the same wire
+shape for another complete replacement. Its ranges are UTF-8 byte offsets. The
+fingerprint and byte length catch accidental staleness; they are not a
+cryptographic signature. Treat a patch as trusted edit instructions.
+
 ### Extensions
 
 `extensions()` reports every extension this build accepts. The list comes from
@@ -267,6 +281,9 @@ const html: string = toHtml('_Hello_')
 | `needsReview` | `(source: string, currentVersion: string) => boolean` | Whether the stamp predates `currentVersion`; unstamped counts as yes |
 | `fromDjot` | `(source: string) => string` | Convert Djot source to Carve |
 | `fromBbcode` | `(source: string) => string` | Convert BBCode source to Carve; throws past the engine's size cap |
+| `createSourcePatch` | `(source, replacement, kind, code) => SourcePatch` | Build a minimal UTF-8 byte-range patch |
+| `toCarvePatch` | `(source: string) => SourcePatch` | Preview canonical formatting as a patch |
+| `applySourcePatch` | `(source: string, patch: SourcePatch) => string` | Validate and apply trusted patch instructions |
 | `version` | `() => string` | Returns the carve-wasm package version |
 
 ### The parsed AST

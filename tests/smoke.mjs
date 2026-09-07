@@ -6,6 +6,8 @@ import assert from 'node:assert/strict'
 import {
   astJsonToCarve,
   astJsonToHtml,
+  applySourcePatch,
+  createSourcePatch,
   fromBbcode,
   fromDjot,
   lintCarve,
@@ -15,6 +17,7 @@ import {
   toHtml,
   toHtmlWithOptions,
   toHtmlWithReport,
+  toCarvePatch,
 } from './engine.mjs'
 
 const cases = [
@@ -41,6 +44,23 @@ for (const [src, want] of cases) {
 }
 assert.equal(failed, 0, `${failed} wasm artifact case(s) failed`)
 console.log(`wasm artifact: ${cases.length}/${cases.length} cases pass`)
+
+const source = 'see → here'
+const sourcePatch = createSourcePatch(source, 'see ⇒ here', 'quick-fix', 'arrow-style')
+assert.equal(sourcePatch.sourceBytes, Buffer.byteLength(source))
+assert.equal(sourcePatch.edits[0].kind, 'quick-fix')
+assert.equal(applySourcePatch(source, sourcePatch), 'see ⇒ here')
+assert.throws(() => applySourcePatch('stale', sourcePatch))
+assert.equal(applySourcePatch('# Title   ', toCarvePatch('# Title   ')), '# Title\n')
+for (const kind of ['formatting', 'syntax-migration', 'quick-fix', 'refactor']) {
+  const wire = JSON.parse(JSON.stringify(createSourcePatch('a', 'b', kind, 'smoke-test')))
+  assert.equal(wire.edits[0].kind, kind)
+  assert.equal(applySourcePatch('a', wire), 'b')
+}
+assert.deepEqual(createSourcePatch('same', 'same', 'refactor', 'no-op').edits, [])
+assert.throws(() => createSourcePatch('a', 'b', 'unknown', 'bad-kind'), TypeError)
+assert.throws(() => createSourcePatch('a', 'b', 'refactor', ''), TypeError)
+console.log('wasm artifact: source patches pass')
 
 const checked = toHtmlWithReport('`x`{=latex}', false, 1)
 assert.equal(checked.value, '<p></p>')

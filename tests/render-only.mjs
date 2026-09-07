@@ -49,6 +49,9 @@ for (const name of [
   'needsReview',
   'fromDjot',
   'fromBbcode',
+  'createSourcePatch',
+  'toCarvePatch',
+  'applySourcePatch',
 ]) {
   assert.equal(wasm[name], undefined, `${name} should not be exported`)
 }

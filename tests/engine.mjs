@@ -91,6 +91,9 @@ const NAMES = [
   'needsReview',
   'fromDjot',
   'fromBbcode',
+  'createSourcePatch',
+  'applySourcePatch',
+  'toCarvePatch',
   'version',
 ]
 const missing = NAMES.filter((name) => typeof engine[name] !== 'function')
@@ -118,6 +121,9 @@ export const {
   needsReview,
   fromDjot,
   fromBbcode,
+  createSourcePatch,
+  applySourcePatch,
+  toCarvePatch,
   version,
 } = engine
 
