@@ -48,6 +48,7 @@ features are:
 | `lint` | `lintCarve` |
 | `stamp` | `readStamp`, `needsReview` |
 | `other-imports` | `fromDjot`, `fromBbcode` |
+| `source-patches` | `createSourcePatch`, `toCarvePatch`, `applySourcePatch` |
 
 Use a separate output directory as above if a full build also exists in the
 checkout.

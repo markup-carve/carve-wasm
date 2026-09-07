@@ -9,6 +9,13 @@ their own.
 
 ## [Unreleased]
 
+### Added
+
+- Source-preserving patch creation, canonical-format preview, and safe
+  application through `createSourcePatch`, `toCarvePatch`, and
+  `applySourcePatch`, over the shared Rust engine wire contract.
+
+
 ## [0.1.2] - 2026-09-04
 
 ### Added

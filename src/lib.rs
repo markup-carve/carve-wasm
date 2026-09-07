@@ -1,5 +1,8 @@
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "source-patches")]
+mod source_patch;
+
 /// A `name -> value` symbol map, already lowered out of JS.
 type SymbolPairs = Vec<(String, String)>;
 
@@ -240,6 +243,63 @@ pub fn to_ansi(source: &str) -> String {
 #[wasm_bindgen(js_name = toCarve)]
 pub fn to_carve(source: &str) -> String {
     carve::to_carve(source)
+}
+
+#[cfg(feature = "source-patches")]
+fn edit_kind(kind: &str) -> Result<source_patch::SourceEditKind, JsValue> {
+    match kind {
+        "formatting" => Ok(source_patch::SourceEditKind::Formatting),
+        "syntax-migration" => Ok(source_patch::SourceEditKind::SyntaxMigration),
+        "quick-fix" => Ok(source_patch::SourceEditKind::QuickFix),
+        "refactor" => Ok(source_patch::SourceEditKind::Refactor),
+        _ => Err(js_sys::TypeError::new("carve: unknown source patch edit kind").into()),
+    }
+}
+
+#[cfg(feature = "source-patches")]
+/// Build the smallest single UTF-8 byte-range replacement between two sources.
+#[wasm_bindgen(js_name = createSourcePatch, unchecked_return_type = "SourcePatch")]
+pub fn create_source_patch(
+    source: &str,
+    replacement: &str,
+    kind: &str,
+    code: &str,
+) -> Result<JsValue, JsValue> {
+    if code.is_empty() {
+        return Err(js_sys::TypeError::new("carve: source patch code must not be empty").into());
+    }
+    serde_wasm_bindgen::to_value(&source_patch::create(
+        source,
+        replacement,
+        edit_kind(kind)?,
+        code,
+    ))
+    .map_err(|error| js_error(format!("carve: cannot create source patch: {error}")))
+}
+
+#[cfg(feature = "source-patches")]
+/// Preview canonical formatting as a source-preserving patch.
+#[wasm_bindgen(js_name = toCarvePatch, unchecked_return_type = "SourcePatch")]
+pub fn to_carve_patch(source: &str) -> Result<JsValue, JsValue> {
+    serde_wasm_bindgen::to_value(&source_patch::create(
+        source,
+        &carve::to_carve(source),
+        source_patch::SourceEditKind::Formatting,
+        "canonical-format",
+    ))
+    .map_err(|error| js_error(format!("carve: cannot create formatting patch: {error}")))
+}
+
+#[cfg(feature = "source-patches")]
+#[wasm_bindgen(js_name = applySourcePatch)]
+/// Apply a trusted patch after its source length and fingerprint still match.
+pub fn apply_source_patch(source: &str, patch: JsValue) -> Result<String, JsValue> {
+    let patch =
+        serde_wasm_bindgen::from_value::<source_patch::SourcePatch>(patch).map_err(|error| {
+            js_sys::TypeError::new(&format!("carve: invalid source patch: {error}"))
+        })?;
+    source_patch::apply(source, &patch)
+        .map_err(|error| js_error(format!("carve: cannot apply source patch: {error}")))
 }
 
 #[cfg(feature = "reports")]
@@ -602,6 +662,25 @@ export interface Stamp {
   version: string;
   /** The engine that wrote the marker, when it recorded one. */
   generatedBy: string | null;
+}
+
+export type SourceEditKind = "formatting" | "syntax-migration" | "quick-fix" | "refactor";
+export interface SourceEdit {
+  /** Inclusive UTF-8 byte offset. */
+  start: number;
+  /** Exclusive UTF-8 byte offset. */
+  end: number;
+  replacement: string;
+  kind: SourceEditKind;
+  code: string;
+}
+export interface SourceSuggestion extends SourceEdit { message: string; }
+export interface SourcePatch {
+  version: 1;
+  sourceFingerprint: string;
+  sourceBytes: number;
+  edits: SourceEdit[];
+  unresolved: SourceSuggestion[];
 }
 "#;
 
@@ -1612,5 +1691,22 @@ mod tests {
             !html.contains("&lt;b&gt;"),
             "symbol value must NOT be escaped, got: {html}"
         );
+    }
+
+    #[cfg(feature = "source-patches")]
+    #[test]
+    fn the_pinned_engine_prepares_utf8_source_patches() {
+        let source = "see → here";
+        let patch = crate::source_patch::create(
+            source,
+            "see ⇒ here",
+            crate::source_patch::SourceEditKind::Refactor,
+            "unicode",
+        );
+        assert_eq!(
+            crate::source_patch::apply(source, &patch).unwrap(),
+            "see ⇒ here"
+        );
+        assert!(crate::source_patch::apply("stale", &patch).is_err());
     }
 }
