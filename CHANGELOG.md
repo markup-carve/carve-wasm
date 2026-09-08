@@ -9,6 +9,8 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-09-08
+
 ### Added
 
 - Source-preserving patch creation, canonical-format preview, and safe
@@ -112,7 +114,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/markup-carve/carve-wasm/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/markup-carve/carve-wasm/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/markup-carve/carve-wasm/releases/tag/v0.1.0
