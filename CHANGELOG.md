@@ -15,6 +15,17 @@ their own.
   application through `createSourcePatch`, `toCarvePatch`, and
   `applySourcePatch`, over the shared Rust engine wire contract.
 
+### Fixed
+
+- Advances the embedded carve-rs revision to released 0.1.5 (`56cb3536`, from
+  `da45f9d2`). A lone `|` line no longer panics, closing an unauthenticated
+  one-byte denial of service for an embedder rendering untrusted Carve
+  (carve#1554). The same range also brings parse-parity fixes it carries:
+  comment leaf spans, emptied definition descriptions, footnote nesting, a
+  nested item's leading fence, and all-blank and lone-pipe table rows. Measured
+  through the built artifact: 1685/1685 corpus documents byte-identical at the
+  spec commit this engine pins.
+
 
 ## [0.1.2] - 2026-09-04
 
