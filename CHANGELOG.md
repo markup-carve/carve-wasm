@@ -9,6 +9,18 @@ their own.
 
 ## [Unreleased]
 
+### Added
+
+- Version 2 importer-fidelity reports for HTML and Markdown, plus additive
+  `migrateDjot` and `migrateBbcode` entry points that retain the legacy string
+  converter APIs.
+
+### Changed
+
+- Pinned the Rust engine to its importer-fidelity v2 implementation. Markdown
+  and the new report-returning Djot/BBCode APIs fail closed when fidelity is
+  not yet assessed at construct level.
+
 ## [0.1.3] - 2026-09-08
 
 ### Added

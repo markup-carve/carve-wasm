@@ -8,8 +8,12 @@ import {
   astJsonToHtml,
   applySourcePatch,
   createSourcePatch,
+  htmlToCarve,
   fromBbcode,
   fromDjot,
+  fromMarkdown,
+  migrateBbcode,
+  migrateDjot,
   lintCarve,
   needsReview,
   parseJson,
@@ -230,8 +234,27 @@ assert.equal(needsReview('# Plain\n', '1.0.0'), true)
 
 // The importers that had no binding. Djot swaps the emphasis delimiters, which
 // is exactly why pasting Djot in as Carve renders wrongly rather than failing.
+for (const result of [migrateDjot('_em_ and *strong*\n'), migrateBbcode('[b]bold[/b]')]) {
+  assert.equal(result.report.schemaVersion, 2)
+  assert.deepEqual(
+    result.report.diagnostics.map(({ code, fidelity, confidence }) => ({ code, fidelity, confidence })),
+    [{ code: 'fidelity-unverified', fidelity: 'dropped', confidence: 'fallback' }],
+  )
+}
 assert.ok(fromDjot('_em_ and *strong*\n').includes('/em/'))
 assert.ok(fromBbcode('[b]bold[/b]').includes('*bold*'))
+const htmlMigration = htmlToCarve('<p onclick="x()">safe</p>', 'safe')
+assert.equal(htmlMigration.report.schemaVersion, 2)
+assert.equal(htmlMigration.report.sourceFormat, 'html')
+assert.equal(htmlMigration.report.mode, 'safe')
+assert.equal(htmlMigration.report.adapter, 'generic')
+assert.ok(htmlMigration.report.diagnostics.some(({ code, fidelity, confidence }) =>
+  code === 'attribute-dropped' && fidelity === 'dropped' && confidence === 'exact'))
+const markdownMigration = fromMarkdown('**bold**')
+assert.deepEqual(
+  markdownMigration.report.diagnostics.map(({ code, fidelity, confidence }) => ({ code, fidelity, confidence })),
+  [{ code: 'fidelity-unverified', fidelity: 'dropped', confidence: 'fallback' }],
+)
 console.log('wasm artifact: tree, lint, stamp and importer entry points pass')
 
 

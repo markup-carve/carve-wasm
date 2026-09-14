@@ -28,8 +28,11 @@ const { value, report } = htmlToCarve('<p>Hello <strong>world</strong></p>', 'sa
 ```
 
 Portable migration code can use `fromHtml(html, mode)` and
-`fromMarkdown(markdown)`. Both return `{ value, report }`; Markdown carries an
-empty diagnostics list because the engine migrates the document whole.
+`fromMarkdown(markdown)`. Both return `{ value, report }`. Version 2 reports use
+the shared fidelity vocabulary. Markdown, Djot, and BBCode conservatively emit
+`fidelity-unverified` as `dropped` / `fallback` until their importers expose
+construct-level outcomes; an empty diagnostic list is therefore never used to
+imply fidelity that was not assessed.
 
 ### Core renderer
 
@@ -280,7 +283,9 @@ const html: string = toHtml('_Hello_')
 | `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
 | `needsReview` | `(source: string, currentVersion: string) => boolean` | Whether the stamp predates `currentVersion`; unstamped counts as yes |
 | `fromDjot` | `(source: string) => string` | Convert Djot source to Carve |
+| `migrateDjot` | `(source: string) => { value, report }` | Convert Djot with a v2 fidelity report |
 | `fromBbcode` | `(source: string) => string` | Convert BBCode source to Carve; throws past the engine's size cap |
+| `migrateBbcode` | `(source: string) => { value, report }` | Convert BBCode with a v2 fidelity report; throws past the engine's size cap |
 | `createSourcePatch` | `(source, replacement, kind, code) => SourcePatch` | Build a minimal UTF-8 byte-range patch |
 | `toCarvePatch` | `(source: string) => SourcePatch` | Preview canonical formatting as a patch |
 | `applySourcePatch` | `(source: string, patch: SourcePatch) => string` | Validate and apply trusted patch instructions |

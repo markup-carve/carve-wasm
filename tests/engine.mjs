@@ -74,6 +74,7 @@ const engine = await load()
 const NAMES = [
   'extensions',
   'htmlToCarve',
+  'fromMarkdown',
   'parseJson',
   'toHtml',
   'toHtmlFull',
@@ -91,6 +92,8 @@ const NAMES = [
   'needsReview',
   'fromDjot',
   'fromBbcode',
+  'migrateDjot',
+  'migrateBbcode',
   'createSourcePatch',
   'applySourcePatch',
   'toCarvePatch',
@@ -104,6 +107,7 @@ if (missing.length > 0) {
 export const {
   extensions,
   htmlToCarve,
+  fromMarkdown,
   parseJson,
   toHtml,
   toHtmlFull,
@@ -121,6 +125,8 @@ export const {
   needsReview,
   fromDjot,
   fromBbcode,
+  migrateDjot,
+  migrateBbcode,
   createSourcePatch,
   applySourcePatch,
   toCarvePatch,
