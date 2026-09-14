@@ -47,7 +47,7 @@ features are:
 | `other-renderers` | the basic Markdown, plain-text, ANSI, and Carve renderers |
 | `lint` | `lintCarve` |
 | `stamp` | `readStamp`, `needsReview` |
-| `other-imports` | `fromDjot`, `fromBbcode` |
+| `other-imports` | `fromDjot`, `fromBbcode`, `migrateDjot`, `migrateBbcode` |
 | `source-patches` | `createSourcePatch`, `toCarvePatch`, `applySourcePatch` |
 
 Use a separate output directory as above if a full build also exists in the

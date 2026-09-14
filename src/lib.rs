@@ -519,98 +519,99 @@ fn html_import_mode(value: Option<String>) -> Result<carve::HtmlImportMode, JsVa
     }
 }
 
-#[cfg(feature = "html-import")]
-fn html_import_report_json(report: &carve::HtmlImportReport) -> String {
-    let mode = match report.mode {
-        carve::HtmlImportMode::Safe => "safe",
-        carve::HtmlImportMode::Semantic => "semantic",
-        carve::HtmlImportMode::Roundtrip => "roundtrip",
-    };
-    let diagnostics = report
-        .diagnostics
-        .iter()
-        .map(|diagnostic| {
-            let code = match diagnostic.code {
-                carve::HtmlImportDiagnosticCode::ElementDropped => "element-dropped",
-                carve::HtmlImportDiagnosticCode::ElementUnwrapped => "element-unwrapped",
-                carve::HtmlImportDiagnosticCode::AttributeDropped => "attribute-dropped",
-                carve::HtmlImportDiagnosticCode::AttributePreserved => "attribute-preserved",
-                carve::HtmlImportDiagnosticCode::StyleUnmapped => "style-unmapped",
-                carve::HtmlImportDiagnosticCode::TableDegraded => "table-degraded",
-                carve::HtmlImportDiagnosticCode::RawPreserved => "raw-preserved",
-                // Added by the engine after the previous pin. The match is
-                // deliberately exhaustive rather than a `_` arm: relaying a new
-                // code under a guessed spelling, or dropping it, is worse than
-                // failing to build, and this is the only place that would
-                // notice. Spellings copied from `report_vocabulary!` in
-                // carve-rs `src/html_import.rs`, which is what the spec's
-                // resources/html-import-schema.json admits.
-                carve::HtmlImportDiagnosticCode::StructureUnspellable => "structure-unspellable",
-                carve::HtmlImportDiagnosticCode::EncodingAssumed => "encoding-assumed",
-                carve::HtmlImportDiagnosticCode::DiagnosticsTruncated => "diagnostics-truncated",
-            };
-            let severity = match diagnostic.severity {
-                carve::HtmlImportSeverity::Info => "info",
-                carve::HtmlImportSeverity::Warning => "warning",
-                carve::HtmlImportSeverity::Error => "error",
-            };
-            format!(
-                "{{\"code\":\"{code}\",\"message\":{:?},\"severity\":\"{severity}\"{}}}",
-                diagnostic.message,
-                diagnostic
-                    .path
-                    .as_ref()
-                    .map(|path| format!(",\"path\":{path:?}"))
-                    .unwrap_or_default()
-            )
-        })
-        .collect::<Vec<_>>()
-        .join(",");
-    format!("{{\"mode\":\"{mode}\",\"adapter\":\"generic\",\"diagnostics\":[{diagnostics}]}}")
-}
-
 /// Import HTML through the Rust HTML5 DOM and canonical Carve writer.
 ///
 /// Returns `{ value, report }`; `report.diagnostics` makes every lossy import
 /// decision observable. `roundtrip` is only safe for Carve-produced HTML.
 #[cfg(feature = "html-import")]
-#[wasm_bindgen(js_name = htmlToCarve)]
+#[wasm_bindgen(js_name = htmlToCarve, unchecked_return_type = "MigrationResult")]
 pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
     let options = carve::HtmlImportOptions {
         mode: html_import_mode(mode)?,
         ..Default::default()
     };
-    let result = carve::html_to_carve(source, &options)
+    let result = carve::migrate_html(source, &options)
         .map_err(|error| JsValue::from_str(&format!("carve: HTML import failed: {error:?}")))?;
+    migration_result_to_js(result)
+}
+
+#[cfg(any(
+    feature = "html-import",
+    feature = "markdown-import",
+    feature = "other-imports"
+))]
+fn migration_result_to_js(result: carve::MigrationResult) -> Result<JsValue, JsValue> {
     let object = js_sys::Object::new();
     js_sys::Reflect::set(
         &object,
         &JsValue::from_str("value"),
         &JsValue::from_str(&result.value),
     )?;
-    let report = js_sys::JSON::parse(&html_import_report_json(&result.report))?;
+    let report = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &report,
+        &JsValue::from_str("schemaVersion"),
+        &JsValue::from_f64(result.report.schema_version as f64),
+    )?;
+    js_sys::Reflect::set(
+        &report,
+        &JsValue::from_str("sourceFormat"),
+        &JsValue::from_str(result.report.source_format.as_str()),
+    )?;
+    if let Some(mode) = result.report.mode {
+        js_sys::Reflect::set(
+            &report,
+            &JsValue::from_str("mode"),
+            &JsValue::from_str(mode.as_str()),
+        )?;
+    }
+    if let Some(adapter) = result.report.adapter {
+        js_sys::Reflect::set(
+            &report,
+            &JsValue::from_str("adapter"),
+            &JsValue::from_str(adapter.as_str()),
+        )?;
+    }
+    let diagnostics = js_sys::Array::new();
+    for item in result.report.diagnostics {
+        let diagnostic = js_sys::Object::new();
+        for (key, value) in [
+            ("code", item.code.as_str()),
+            ("message", item.message.as_str()),
+            ("severity", item.severity.as_str()),
+            ("fidelity", item.fidelity.as_str()),
+            ("confidence", item.confidence.as_str()),
+        ] {
+            js_sys::Reflect::set(
+                &diagnostic,
+                &JsValue::from_str(key),
+                &JsValue::from_str(value),
+            )?;
+        }
+        if let Some(path) = item.path {
+            js_sys::Reflect::set(
+                &diagnostic,
+                &JsValue::from_str("path"),
+                &JsValue::from_str(&path),
+            )?;
+        }
+        diagnostics.push(&diagnostic);
+    }
+    js_sys::Reflect::set(&report, &JsValue::from_str("diagnostics"), &diagnostics)?;
     js_sys::Reflect::set(&object, &JsValue::from_str("report"), &report)?;
     Ok(object.into())
 }
 
 #[cfg(feature = "html-import")]
-#[wasm_bindgen(js_name = fromHtml)]
+#[wasm_bindgen(js_name = fromHtml, unchecked_return_type = "MigrationResult")]
 pub fn from_html(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
     html_to_carve(source, mode)
 }
 
 #[cfg(feature = "markdown-import")]
-#[wasm_bindgen(js_name = fromMarkdown)]
+#[wasm_bindgen(js_name = fromMarkdown, unchecked_return_type = "MigrationResult")]
 pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
-    let object = js_sys::Object::new();
-    js_sys::Reflect::set(
-        &object,
-        &JsValue::from_str("value"),
-        &JsValue::from_str(&carve::markdown_to_carve(source)),
-    )?;
-    let report = js_sys::JSON::parse(r#"{"sourceFormat":"markdown","diagnostics":[]}"#)?;
-    js_sys::Reflect::set(&object, &JsValue::from_str("report"), &report)?;
-    Ok(object.into())
+    migration_result_to_js(carve::migrate_markdown(source))
 }
 
 /// Turn a profile rejection into a JS `Error` a caller can act on.
@@ -662,6 +663,25 @@ export interface Stamp {
   /** The engine that wrote the marker, when it recorded one. */
   generatedBy: string | null;
 }
+
+export type MigrationFidelity = "preserved" | "normalized" | "degraded" | "dropped";
+export type MigrationConfidence = "exact" | "inferred" | "fallback";
+export interface MigrationDiagnostic {
+  code: string;
+  message: string;
+  severity: "info" | "warning" | "error";
+  fidelity: MigrationFidelity;
+  confidence: MigrationConfidence;
+  path?: string;
+}
+export interface MigrationReport {
+  schemaVersion: 2;
+  sourceFormat: string;
+  mode?: string;
+  adapter?: string;
+  diagnostics: MigrationDiagnostic[];
+}
+export interface MigrationResult { value: string; report: MigrationReport; }
 
 export type SourceEditKind = "formatting" | "syntax-migration" | "quick-fix" | "refactor";
 export interface SourceEdit {
@@ -832,6 +852,13 @@ pub fn from_djot(source: &str) -> String {
     carve::djot_to_carve(source)
 }
 
+/// Convert Djot and retain a conservative v2 fidelity report.
+#[cfg(feature = "other-imports")]
+#[wasm_bindgen(js_name = migrateDjot, unchecked_return_type = "MigrationResult")]
+pub fn migrate_djot(source: &str) -> Result<JsValue, JsValue> {
+    migration_result_to_js(carve::migrate_djot(source))
+}
+
 /// Convert BBCode source to Carve.
 ///
 /// Rejects input past the engine's `BBCODE_MAX_INPUT_LENGTH` rather than
@@ -842,6 +869,16 @@ pub fn from_djot(source: &str) -> String {
 pub fn from_bbcode(source: &str) -> Result<String, JsValue> {
     carve::bbcode_to_carve(source)
         .map_err(|error| js_error(format!("carve: BBCode import failed: {error:?}")))
+}
+
+/// Convert BBCode and retain a conservative v2 fidelity report.
+#[cfg(feature = "other-imports")]
+#[wasm_bindgen(js_name = migrateBbcode, unchecked_return_type = "MigrationResult")]
+pub fn migrate_bbcode(source: &str) -> Result<JsValue, JsValue> {
+    migration_result_to_js(
+        carve::migrate_bbcode(source)
+            .map_err(|error| js_error(format!("carve: BBCode import failed: {error:?}")))?,
+    )
 }
 
 /// Read one boolean field out of a JS options object.
@@ -1225,9 +1262,6 @@ mod tests {
         }
     }
 
-    #[cfg(feature = "html-import")]
-    use super::html_import_report_json;
-
     /// Build the lowered symbol map the JS bridge produces (the `js_sys`
     /// conversion itself only runs inside a JS host).
     fn symbols(pairs: &[(&str, &str)]) -> SymbolPairs {
@@ -1235,16 +1269,6 @@ mod tests {
             .iter()
             .map(|(k, v)| ((*k).to_string(), (*v).to_string()))
             .collect()
-    }
-
-    #[cfg(feature = "html-import")]
-    #[test]
-    fn html_import_report_is_json() {
-        let result =
-            carve::html_to_carve("<p onclick=\"x()\">safe</p>", &Default::default()).unwrap();
-        let report = html_import_report_json(&result.report);
-        assert!(report.contains("\"attribute-dropped\""));
-        assert!(report.contains("\"mode\":\"safe\""));
     }
 
     // PART 9 §13: the wrapper is on by default and `sections: false` removes it,

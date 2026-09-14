@@ -49,6 +49,8 @@ for (const name of [
   'needsReview',
   'fromDjot',
   'fromBbcode',
+  'migrateDjot',
+  'migrateBbcode',
   'createSourcePatch',
   'toCarvePatch',
   'applySourcePatch',
