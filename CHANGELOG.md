@@ -23,6 +23,11 @@ their own.
 - Pinned the Rust engine to its importer-fidelity v2 implementation. Markdown
   and the new report-returning Djot/BBCode APIs fail closed when fidelity is
   not yet assessed at construct level.
+- Advances the embedded carve-rs revision to `be5e0970` (from `9a0c421d`).
+  Markdown output escapes a literal tilde and an underscore pair the line would
+  pair (carve-rs#1641, carve-rs#1653), and a bare closer inside a braced inline
+  no longer opens a strike (carve-rs#1638). HTML output over the spec corpus is
+  unchanged.
 
 ## [0.1.3] - 2026-09-08
 
