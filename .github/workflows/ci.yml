@@ -104,12 +104,14 @@ jobs:
   # release.yml builds the published npm package from it. A lint that fires on
   # the host and not on wasm would be about a build nobody ships.
   #
-  # DEFAULT features, which is the configuration that ships. The crate has no
-  # `cfg(not(feature = ...))` anywhere, so this compiles a superset of every
-  # other feature selection - with one exception that is the point of
-  # markup-carve/carve-wasm#88: three items used only from feature-gated blocks
-  # are dead under `--no-default-features`, and gating on that selection too
-  # would land this job red.
+  # Two selections, not one. DEFAULT features is what ships, and because the
+  # crate has no `cfg(not(feature = ...))` anywhere it compiles a superset of
+  # every other selection - so a lint that fires only when something is ABSENT
+  # cannot be seen there. `--no-default-features` is the rendering-only package
+  # the docs Playground is built from, and it is where a dead item shows up:
+  # `js_error`, `engine_options` and `extension_boxes` each have callers only
+  # inside feature-gated blocks. Linting both is what keeps their `cfg` lists
+  # honest as gated entry points come and go.
   rust-lint:
     name: Rust format and lint
     runs-on: ubuntu-latest
@@ -123,6 +125,8 @@ jobs:
         run: cargo fmt --check
       - name: Lint the target that ships
         run: cargo clippy --target wasm32-unknown-unknown --all-targets -- -D warnings
+      - name: Lint the rendering-only selection
+        run: cargo clippy --target wasm32-unknown-unknown --all-targets --no-default-features -- -D warnings
 
   test:
     runs-on: ubuntu-latest
