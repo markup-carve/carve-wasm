@@ -91,6 +91,39 @@ jobs:
             --sibling-name carve-rb --sibling-manifest carve-rb/ext/carve/Cargo.toml \
             --changelog CHANGELOG.md
 
+  # Nothing here ran the formatter or the linter, so the shape of this crate
+  # depended on whoever last ran rustfmt locally (markup-carve/carve-wasm#87).
+  #
+  # A SEPARATE job rather than steps on `test`, so a formatting failure does not
+  # swallow the build signal - `test` is the job that proves the wasm artifact
+  # loads, and that answer is worth having even on a run where the formatting is
+  # wrong.
+  #
+  # Clippy lints `wasm32-unknown-unknown` because that is the only target this
+  # package is ever compiled for: `test` checks it, `msrv` checks it, and
+  # release.yml builds the published npm package from it. A lint that fires on
+  # the host and not on wasm would be about a build nobody ships.
+  #
+  # DEFAULT features, which is the configuration that ships. The crate has no
+  # `cfg(not(feature = ...))` anywhere, so this compiles a superset of every
+  # other feature selection - with one exception that is the point of
+  # markup-carve/carve-wasm#88: three items used only from feature-gated blocks
+  # are dead under `--no-default-features`, and gating on that selection too
+  # would land this job red.
+  rust-lint:
+    name: Rust format and lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
+      - name: Check formatting
+        run: cargo fmt --check
+      - name: Lint the target that ships
+        run: cargo clippy --target wasm32-unknown-unknown --all-targets -- -D warnings
+
   test:
     runs-on: ubuntu-latest
     steps:
