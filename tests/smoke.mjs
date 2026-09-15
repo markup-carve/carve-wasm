@@ -6,6 +6,7 @@ import assert from 'node:assert/strict'
 import {
   astJsonToCarve,
   astJsonToHtml,
+  applyProfile,
   applySourcePatch,
   createSourcePatch,
   htmlToCarve,
@@ -240,6 +241,57 @@ const parityTable = '| a | b |\n|---|---|\n| 1 | 2 |\n'
 const treeFiltered = astJsonToHtml(parseJson(parityTable), { profile: 'minimal' })
 assert.equal(treeFiltered, toHtmlWithOptions(parityTable, { profile: 'minimal' }))
 assert.ok(!treeFiltered.includes('<table'), 'the profile has to filter on the tree path too')
+
+// The filter on its own, with the tree kept. Until now a host could only get a
+// profile applied on the way to HTML, and the HTML path discards what the filter
+// did.
+const denied = parseJson('a [home](https://example.com/x) b\n')
+const stripped = applyProfile(denied, 'minimal')
+assert.deepEqual(
+  stripped.violations.map(({ nodeType, reason }) => ({ nodeType, reason })),
+  [{ nodeType: 'link', reason: 'element_not_allowed' }],
+)
+assert.equal(
+  stripped.violations[0].reasonDescription,
+  'Links are disabled in this minimal context.',
+)
+assert.equal(
+  stripped.violations[0].message,
+  "'link' is not allowed: element_not_allowed (Links are disabled in this minimal context.)",
+)
+// A tree, not prose: the result feeds straight back into the entry points that
+// take one.
+assert.ok(!astJsonToHtml(stripped.json).includes('<a '), 'the link should be gone')
+assert.equal(astJsonToCarve(stripped.json).trim(), 'a home b')
+
+// A profile that denies nothing in this document reports nothing and changes
+// nothing.
+assert.deepEqual(applyProfile(denied, 'full').violations, [])
+assert.equal(astJsonToHtml(applyProfile(denied, 'full').json), astJsonToHtml(denied))
+
+// max_nesting is the filter's own bound, and it reports under a node type the
+// document never denied.
+const deep = applyProfile(parseJson('- a\n  - b\n    - c\n      - d\n'), 'minimal')
+assert.ok(
+  deep.violations.some(({ reason }) => reason === 'max_nesting_exceeded'),
+  'minimal caps nesting at 2',
+)
+
+// The typography switch reaches the degrade. `to_text` decides the spelling of
+// the text it substitutes, so a caller asking for the author's run has to get
+// the author's run out of the FILTER, not only out of the renderer.
+const dashed = parseJson('[x -- y](https://example.com/x)\n')
+assert.equal(astJsonToHtml(applyProfile(dashed, 'minimal').json), '<p>x – y</p>')
+assert.equal(
+  astJsonToHtml(applyProfile(dashed, 'minimal', { smartTypography: 'source' }).json),
+  '<p>x -- y</p>',
+)
+
+// Wrong types throw rather than being coerced, the way the render options do.
+assert.throws(() => applyProfile(denied, 'nope'), TypeError)
+assert.throws(() => applyProfile(denied, 'minimal', { smartTypography: 'nope' }), TypeError)
+assert.throws(() => applyProfile(denied, 'minimal', { profileBaseHost: 7 }), TypeError)
+assert.throws(() => applyProfile('{', 'full'), Error)
 
 // The linter, with the rule ids carve-js and carve-php share.
 assert.deepEqual(lintCarve('# Fine\n\ntext\n'), [])

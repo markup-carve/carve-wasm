@@ -44,6 +44,7 @@ for (const name of [
   'toCarveWithReport',
   'astJsonToHtml',
   'astJsonToCarve',
+  'applyProfile',
   'lintCarve',
   'readStamp',
   'needsReview',

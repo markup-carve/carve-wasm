@@ -231,6 +231,22 @@ try {
 }
 ```
 
+`applyProfile` runs the same filter over an AST-JSON document and hands back the
+filtered tree instead of HTML, for a host that wants to store, diff or re-render
+what the filter left. `violations` reports what it degraded or stripped, which
+the HTML path discards.
+
+```js
+const { json, violations } = applyProfile(parseJson(fromTheReader), 'comment')
+if (violations.length > 0) tell(violations.map((v) => v.message))
+const html = astJsonToHtml(json)
+```
+
+It reads `profileBaseHost` and `smartTypography` from its options object and
+nothing else. It does **not** enforce the profile's `max_length`, which the
+engine applies to the SOURCE bytes before a parse - a host filtering untrusted
+input still needs that bound on the way in.
+
 ### Editing a tree, and reading one back
 
 `parseJson` serializes a document out. `astJsonToHtml` renders one back, and
@@ -281,6 +297,7 @@ const html: string = toHtml('_Hello_')
 | `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
 | `astJsonToHtml` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document; takes the same options object |
 | `astJsonToCarve` | `(json: string) => string` | Write an AST-JSON document back as canonical Carve source |
+| `applyProfile` | `(json: string, profile: string, options?: object \| null) => ProfileFilterResult` | Filter an AST-JSON document through a profile, keeping the tree and what the filter did |
 | `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share |
 | `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
 | `needsReview` | `(source: string, currentVersion: string) => boolean` | Whether the stamp predates `currentVersion`; unstamped counts as yes |
