@@ -65,6 +65,12 @@ struct RenderConfig {
     mode: carve::Mode,
     profile: Option<carve::Profile>,
     profile_base_host: Option<String>,
+    /// The host's own URL templates for `@mention` and `#tag`. Absent, both
+    /// render as inert spans; present, the token name is percent-encoded into
+    /// `{name}` (`{user}` too, for a mention) and the result is sanitized.
+    /// Trusted configuration, not document content.
+    mention_url: Option<String>,
+    tag_url: Option<String>,
     /// Ordered rather than a map so a render is reproducible from the object
     /// the caller passed, in the order they wrote it.
     labels: Vec<(String, String)>,
@@ -83,6 +89,8 @@ impl Default for RenderConfig {
             mode: carve::Mode::default(),
             profile: None,
             profile_base_host: None,
+            mention_url: None,
+            tag_url: None,
             labels: Vec::new(),
         }
     }
@@ -105,6 +113,12 @@ impl RenderConfig {
         }
         if let Some(host) = &self.profile_base_host {
             options = options.with_profile_base_host(host.clone());
+        }
+        if let Some(template) = &self.mention_url {
+            options = options.with_mention_url(template.clone());
+        }
+        if let Some(template) = &self.tag_url {
+            options = options.with_tag_url(template.clone());
         }
         for (key, value) in &self.labels {
             options = options.with_label(key.clone(), value.clone());
@@ -968,6 +982,13 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 /// * `lowercaseHeadingIds` (default `false`) and `asciiHeadingIds`
 ///   (`"off"` (default), `"fold"`, `"strict"`) - the slug policy, for a host
 ///   whose anchors have to match another generator's.
+/// * `mentionUrl` and `tagUrl` - URL templates for `@mention` and `#tag`.
+///   Without them both render as inert spans, which is why a host that wants
+///   them linked has to say where to. The token name is percent-encoded into
+///   `{name}` - `{user}` works too for a mention - and the result goes through
+///   the same URL sanitizer as an authored link. These are the HOST's
+///   configuration, not the document's: the template is trusted, the name
+///   substituted into it is not.
 ///
 /// An unrecognized key is ignored: the object is configuration, and a caller
 /// who mistypes one deserves the render to still work. A wrong TYPE on a key
@@ -1023,6 +1044,8 @@ impl RenderRequest {
             mode: mode_field(&options)?,
             profile: profile_field(&options)?,
             profile_base_host: string_field(&options, "profileBaseHost")?,
+            mention_url: string_field(&options, "mentionUrl")?,
+            tag_url: string_field(&options, "tagUrl")?,
             labels: string_map_field(&options, "labels")?,
         };
         let full = bool_field(&options, "full")?.unwrap_or(false);
