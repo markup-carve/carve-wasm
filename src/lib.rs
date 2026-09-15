@@ -708,6 +708,17 @@ export interface SourcePatch {
 /// `JsValue::from_str` throws the string itself, so `error.message` is
 /// undefined in the catch block and a host's normal error handling misses it.
 /// The older entry points in this file still do that; new ones do not.
+///
+/// Every caller sits behind a feature gate, so this list is the union of
+/// theirs, and a new gated entry point that throws has to widen it. Forgetting
+/// fails the build for that selection rather than degrading quietly. CI lints
+/// the two selections that ship - default, and the rendering-only
+/// `--no-default-features` the docs Playground is built from.
+#[cfg(any(
+    feature = "ast-json",
+    feature = "other-imports",
+    feature = "source-patches"
+))]
 fn js_error(message: String) -> JsValue {
     js_sys::Error::new(&message).into()
 }
@@ -1051,6 +1062,9 @@ impl RenderRequest {
 
     /// The engine options this request describes, for an entry point that
     /// takes a TREE and so cannot go through the source-rendering helpers.
+    ///
+    /// `astJsonToHtml` is the only such entry point, and it is gated.
+    #[cfg(feature = "ast-json")]
     fn engine_options<'a>(
         &'a self,
         owned: &'a [Box<dyn carve::CarveExtension>],
@@ -1067,6 +1081,7 @@ impl RenderRequest {
 
     /// The extension boxes this request needs, owned by the caller's frame
     /// because `Options` borrows them.
+    #[cfg(feature = "ast-json")]
     fn extension_boxes(&self) -> Vec<Box<dyn carve::CarveExtension>> {
         match (&self.named, self.full) {
             (Some(keys), _) => build_extensions(keys),
