@@ -671,6 +671,22 @@ export interface LintWarning {
   end: number;
 }
 
+export interface ProfileViolation {
+  /** Canonical node type that was disallowed. */
+  nodeType: string;
+  /** Machine reason: element_not_allowed | max_nesting_exceeded | link_not_allowed | image_not_allowed. */
+  reason: string;
+  /** The profile's own wording for the denial, when it carries one. */
+  reasonDescription: string | null;
+  /** The engine's prose, the same text a thrown ProfileViolationError lists. */
+  message: string;
+}
+export interface ProfileFilterResult {
+  /** The filtered tree, as AST JSON. */
+  json: string;
+  violations: ProfileViolation[];
+}
+
 export interface Stamp {
   /** The spec version the document was last processed under. */
   version: string;
@@ -781,6 +797,93 @@ pub fn ast_json_to_carve(json: &str) -> Result<String, JsValue> {
         .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
     carve::render_carve(&doc)
         .map_err(|error| js_error(format!("carve: cannot write this tree: {error:?}")))
+}
+
+/// Apply a security profile to an AST-JSON document (PART 12), keeping the
+/// filtered tree.
+///
+/// The `profile` render option filters on the way to HTML and throws the result
+/// of the filtering away. This is the same pass with the tree kept, so a host
+/// that stores, diffs or re-renders an untrusted document does not have to
+/// render HTML and parse it back to get one.
+///
+/// `violations` reports what the filter degraded or stripped, which the HTML
+/// path cannot: a profile whose action is `error` throws instead, so a
+/// resolved call under `to-text` or `strip` is the only place this is visible.
+///
+/// Only `profileBaseHost` and `smartTypography` are read from `options`. The
+/// rest of the render options describe a renderer, and this is not one.
+///
+/// The profile's `max_length` is NOT enforced here: the engine applies it to the
+/// source bytes before a parse, and this entry point is handed a tree.
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(js_name = applyProfile, unchecked_return_type = "ProfileFilterResult")]
+pub fn apply_profile(
+    json: &str,
+    profile: &str,
+    options: Option<js_sys::Object>,
+) -> Result<JsValue, JsValue> {
+    let doc = carve::from_json(json)
+        .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
+    let profile = named_profile(profile)?;
+
+    let mut base_host = None;
+    let mut smart = carve::SmartTypographyMode::default();
+    if let Some(object) = options {
+        let value: JsValue = object.clone().into();
+        if !value.is_null() && !value.is_undefined() {
+            base_host = string_field(&object, "profileBaseHost")?;
+            smart = smart_typography_field(&object)?;
+        }
+    }
+
+    let filtered = carve::apply_profile_with_typography(doc, &profile, base_host.as_deref(), smart)
+        .map_err(profile_violation_error)?;
+
+    let violations = js_sys::Array::new();
+    for violation in &filtered.violations {
+        let entry = js_sys::Object::new();
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("nodeType"),
+            &JsValue::from_str(&violation.node_type),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("reason"),
+            &JsValue::from_str(&violation.reason),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("reasonDescription"),
+            &violation
+                .reason_description
+                .as_deref()
+                .map(JsValue::from_str)
+                .unwrap_or(JsValue::NULL),
+        )?;
+        // The engine's own formatting, so this reads identically to an entry in
+        // a thrown `ProfileViolationError`.
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("message"),
+            &JsValue::from_str(&violation.message()),
+        )?;
+        violations.push(&entry.into());
+    }
+
+    let result = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &result,
+        &JsValue::from_str("json"),
+        &JsValue::from_str(&carve::to_json(&filtered.doc)),
+    )?;
+    js_sys::Reflect::set(
+        &result,
+        &JsValue::from_str("violations"),
+        &violations.into(),
+    )?;
+    Ok(result.into())
 }
 
 /// Lint a document for the degradations PART 15 describes.
@@ -1225,24 +1328,36 @@ fn ascii_heading_ids_field(options: &js_sys::Object) -> Result<carve::AsciiHeadi
     .unwrap_or_default())
 }
 
-/// Read the `profile` option: one of the engine's four presets, by name.
-///
-/// Named rather than constructed, matching carve-rb. A profile assembled field
-/// by field across the wasm boundary would be a second way to spell a security
-/// posture, and the presets are what the spec and the other bindings describe.
+/// The engine's four presets, named rather than constructed. A profile
+/// assembled field by field across the wasm boundary would be a second way to
+/// spell a security posture, and the presets are what the spec and the other
+/// bindings describe.
+const PROFILE_NAMES: &str = "\"full\", \"article\", \"comment\", \"minimal\"";
+
+fn profile_by_name(name: &str) -> Option<carve::Profile> {
+    match name {
+        "full" => Some(carve::Profile::full()),
+        "article" => Some(carve::Profile::article()),
+        "comment" => Some(carve::Profile::comment()),
+        "minimal" => Some(carve::Profile::minimal()),
+        _ => None,
+    }
+}
+
+/// Read the `profile` option out of a render options object.
 fn profile_field(options: &js_sys::Object) -> Result<Option<carve::Profile>, JsValue> {
-    enum_field(
-        options,
-        "profile",
-        "\"full\", \"article\", \"comment\", \"minimal\"",
-        |name| match name {
-            "full" => Some(carve::Profile::full()),
-            "article" => Some(carve::Profile::article()),
-            "comment" => Some(carve::Profile::comment()),
-            "minimal" => Some(carve::Profile::minimal()),
-            _ => None,
-        },
-    )
+    enum_field(options, "profile", PROFILE_NAMES, profile_by_name)
+}
+
+/// Resolve a profile passed as an argument rather than an options key, with the
+/// same rejection an options object gets.
+#[cfg(feature = "ast-json")]
+fn named_profile(name: &str) -> Result<carve::Profile, JsValue> {
+    profile_by_name(name).ok_or_else(|| {
+        JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: unknown `profile` {name:?} (supported: {PROFILE_NAMES})"
+        )))
+    })
 }
 
 /// Read the `extensions` option: absent, or an array of registry names.
