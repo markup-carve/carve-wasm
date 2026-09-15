@@ -269,6 +269,31 @@ from either.
 carve-php use for the same triggers. Offsets are BYTE offsets into the source,
 matching the engine.
 
+### ProseMirror
+
+`toProseMirror(source)` converts Carve to the ProseMirror document shape, and
+`fromProseMirror(doc)` writes one back as canonical Carve source. ProseMirror
+runs in a browser and nowhere else, so this binding is the whole audience for
+the engine's bridge - without it a host wiring a Carve editor either round-trips
+to a server or reimplements the node mapping in JS, where it drifts from the
+engine's.
+
+```js
+const { json, dropped, degraded } = toProseMirror(source)
+editor.commands.setContent(JSON.parse(json))
+const saved = fromProseMirror(JSON.stringify(editor.getJSON()))
+```
+
+`json` is a JSON string, the same choice `parseJson` makes. The two maps are
+`Carve node type -> reason`: `dropped` where the content is gone (an
+abbreviation definition has no editor node), `degraded` where the text survives
+without its node type (a soft break becomes whitespace, smart typography
+resolves to the glyph). Both are empty for a document the model holds exactly.
+
+A payload the schema map does not describe is refused rather than written
+approximately. Round-tripping normalizes the source the way `toCarve` does, and
+the reported degradations do not come back - `a ... b` returns as `a … b`.
+
 ### TypeScript
 
 The package ships `.d.ts` declarations. Types are inferred automatically when
@@ -299,6 +324,8 @@ const html: string = toHtml('_Hello_')
 | `astJsonToCarve` | `(json: string) => string` | Write an AST-JSON document back as canonical Carve source |
 | `applyProfile` | `(json: string, profile: string, options?: object \| null) => ProfileFilterResult` | Filter an AST-JSON document through a profile, keeping the tree and what the filter did |
 | `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share |
+| `toProseMirror` | `(source: string) => ProseMirrorResult` | Convert to the ProseMirror document shape, with what the model could not hold |
+| `fromProseMirror` | `(doc: string) => string` | Convert a ProseMirror document back to canonical Carve source |
 | `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
 | `needsReview` | `(source: string, currentVersion: string) => boolean` | Whether the stamp predates `currentVersion`; unstamped counts as yes |
 | `fromDjot` | `(source: string) => string` | Convert Djot source to Carve |

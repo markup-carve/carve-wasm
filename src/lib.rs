@@ -731,6 +731,15 @@ export interface SourcePatch {
   edits: SourceEdit[];
   unresolved: SourceSuggestion[];
 }
+
+export interface ProseMirrorResult {
+  /** The ProseMirror document, JSON-encoded. */
+  json: string;
+  /** Carve node type -> why its content is gone. */
+  dropped: Record<string, string>;
+  /** Carve node type -> why its node type is gone while its text survives. */
+  degraded: Record<string, string>;
+}
 "#;
 
 /// A thrown JS `Error`, not a thrown string.
@@ -747,6 +756,7 @@ export interface SourcePatch {
 #[cfg(any(
     feature = "ast-json",
     feature = "other-imports",
+    feature = "prosemirror",
     feature = "source-patches"
 ))]
 fn js_error(message: String) -> JsValue {
@@ -1007,6 +1017,70 @@ pub fn migrate_bbcode(source: &str) -> Result<JsValue, JsValue> {
         carve::migrate_bbcode(source)
             .map_err(|error| js_error(format!("carve: BBCode import failed: {error:?}")))?,
     )
+}
+
+/// Lower a `type -> reason` map into a plain JS object.
+#[cfg(feature = "prosemirror")]
+fn reason_map(entries: &std::collections::BTreeMap<String, String>) -> Result<JsValue, JsValue> {
+    let object = js_sys::Object::new();
+    for (node_type, reason) in entries {
+        js_sys::Reflect::set(
+            &object,
+            &JsValue::from_str(node_type),
+            &JsValue::from_str(reason),
+        )?;
+    }
+    Ok(object.into())
+}
+
+/// Convert Carve source to the ProseMirror document shape.
+///
+/// ProseMirror runs in a browser and nowhere else, so this is the one engine
+/// capability whose whole audience sits behind a WASM binding. Without it a host
+/// wiring a Carve editor either round-trips to a server or reimplements the node
+/// mapping in JS, where it drifts from the engine's.
+///
+/// Returns `{ json, dropped, degraded }`. `json` is the ProseMirror document as
+/// a JSON string, the same choice `parseJson` makes and for the same reason.
+/// The two maps say what the ProseMirror model could not hold: `dropped` where
+/// the content is gone, `degraded` where the text survives without its node
+/// type. A silent conversion is the degradation shape `lintCarve` exists to
+/// avoid.
+#[cfg(feature = "prosemirror")]
+#[wasm_bindgen(js_name = toProseMirror, unchecked_return_type = "ProseMirrorResult")]
+pub fn to_prose_mirror(source: &str) -> Result<JsValue, JsValue> {
+    let converted = carve::to_prosemirror(&carve::parse(source));
+    let result = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &result,
+        &JsValue::from_str("json"),
+        &JsValue::from_str(&converted.json),
+    )?;
+    js_sys::Reflect::set(
+        &result,
+        &JsValue::from_str("dropped"),
+        &reason_map(&converted.dropped)?,
+    )?;
+    js_sys::Reflect::set(
+        &result,
+        &JsValue::from_str("degraded"),
+        &reason_map(&converted.degraded)?,
+    )?;
+    Ok(result.into())
+}
+
+/// Convert a ProseMirror document back to canonical Carve source.
+///
+/// The save half of the editor loop. A payload the schema map does not describe
+/// is refused rather than written approximately, so an editor extended with a
+/// node the bridge has never seen fails where it can be reported.
+#[cfg(feature = "prosemirror")]
+#[wasm_bindgen(js_name = fromProseMirror)]
+pub fn from_prose_mirror(doc: &str) -> Result<String, JsValue> {
+    let document = carve::from_prosemirror(doc)
+        .map_err(|error| js_error(format!("carve: invalid ProseMirror document: {error}")))?;
+    carve::render_carve(&document)
+        .map_err(|error| js_error(format!("carve: cannot write this tree: {error:?}")))
 }
 
 /// Read one boolean field out of a JS options object.
