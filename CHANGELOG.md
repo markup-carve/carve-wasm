@@ -14,6 +14,9 @@ their own.
 - Version 2 importer-fidelity reports for HTML and Markdown, plus additive
   `migrateDjot` and `migrateBbcode` entry points that retain the legacy string
   converter APIs.
+- `mentionUrl` and `tagUrl` on the render options object, the engine's URL
+  templates for `@mention` and `#tag`. Without them both render as inert spans,
+  where carve-js links them (#72, #97).
 
 ### Changed
 
