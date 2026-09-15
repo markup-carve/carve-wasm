@@ -1,0 +1,84 @@
+name: Gate permission probe
+
+# TEMPORARY. Measures what the release-draft gate can see under `contents:
+# read` versus `contents: write`, against the draft release this repository
+# already has. Read-only: it lists releases and runs the gate script, nothing
+# else. Not to be merged.
+
+on:
+  pull_request:
+
+jobs:
+  read-scope:
+    name: List releases with contents read
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: What this token can see
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            | jq -s '[.[][] | {tag_name, draft}]' | tee read.json
+          echo "drafts visible: $(jq '[.[]|select(.draft)]|length' read.json)"
+
+      - name: The gate script, verbatim, against the draft tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REF_NAME: v0.1.4
+        run: |
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$GITHUB_REF_NAME\")] | first")"
+          if [ -z "$release" ]; then
+            echo "GATE VERDICT: no release for $GITHUB_REF_NAME"
+            exit 0
+          fi
+          body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
+          [ -n "$body" ] || { echo "GATE VERDICT: release has no notes"; exit 0; }
+          echo "GATE VERDICT: pass"
+          printf '%s' "$release" | jq -r '"draft=\(.draft) tag=\(.tag_name)"'
+
+  write-scope:
+    name: List releases with contents write
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: What this token can see
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate \
+            | jq -s '[.[][] | {tag_name, draft}]' | tee write.json
+          echo "drafts visible: $(jq '[.[]|select(.draft)]|length' write.json)"
+
+      - name: The gate script, verbatim, against the draft tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REF_NAME: v0.1.4
+        run: |
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$GITHUB_REF_NAME\")] | first")"
+          if [ -z "$release" ]; then
+            echo "GATE VERDICT: no release for $GITHUB_REF_NAME"
+            exit 0
+          fi
+          body="$(printf '%s' "$release" | jq -r '.body // ""' | tr -d '[:space:]')"
+          [ -n "$body" ] || { echo "GATE VERDICT: release has no notes"; exit 0; }
+          echo "GATE VERDICT: pass"
+          printf '%s' "$release" | jq -r '"draft=\(.draft) tag=\(.tag_name)"'
+
+      - name: It still refuses a tag with no release at all
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REF_NAME: v99.99.99
+        run: |
+          release="$(gh api "repos/$GITHUB_REPOSITORY/releases" --paginate \
+            --jq "[.[] | select(.tag_name == \"$GITHUB_REF_NAME\")] | first")"
+          if [ -z "$release" ]; then
+            echo "GATE VERDICT: no release for $GITHUB_REF_NAME (correct refusal)"
+            exit 0
+          fi
+          echo "UNEXPECTED: found a release for a tag that does not exist"
+          exit 1
