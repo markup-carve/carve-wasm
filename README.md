@@ -168,6 +168,8 @@ defaults, so the three shorthands above remain the zero-config forms.
 | `smartTypography` | `glyph` | `source` keeps the author's run instead of the glyph |
 | `lowercaseHeadingIds` | `false` | Lowercase the generated heading ids |
 | `asciiHeadingIds` | `off` | `fold` transliterates, `strict` guarantees ASCII |
+| `mentionUrl` | none | URL template for `@mention`; `{name}` / `{user}` take the encoded name |
+| `tagUrl` | none | URL template for `#tag`; `{name}` takes the encoded name |
 
 An unrecognized key is ignored, because the object is configuration and a typo
 should not break a render. A recognized key with the wrong type throws a

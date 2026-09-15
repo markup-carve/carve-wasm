@@ -185,6 +185,28 @@ assert.ok(
     asciiHeadingIds: 'strict',
   }).includes('id="grusse-alle"'),
 )
+// Social-token URL templates. Without them a mention and a tag are inert spans,
+// which is the whole reason a host has to be able to say where they point.
+{
+  const bare = toHtmlWithOptions('Hi @ada and #rust\n', {})
+  assert.ok(!bare.includes('<a'), 'mentions and tags are inert without a template')
+  const linked = toHtmlWithOptions('Hi @ada and #rust\n', {
+    mentionUrl: 'https://example.com/users/{name}',
+    tagUrl: 'https://example.com/tags/{name}',
+  })
+  assert.ok(linked.includes('href="https://example.com/users/ada"'), linked)
+  assert.ok(linked.includes('href="https://example.com/tags/rust"'), linked)
+  // The name is the document's, not the host's: it is encoded into the
+  // template rather than concatenated onto it.
+  assert.ok(
+    toHtmlWithOptions('@a b\n', { mentionUrl: 'https://example.com/{user}' }).includes(
+      'href="https://example.com/a"',
+    ),
+  )
+}
+assert.throws(() => toHtmlWithOptions('# A\n', { mentionUrl: 7 }), TypeError)
+assert.throws(() => toHtmlWithOptions('# A\n', { tagUrl: 7 }), TypeError)
+
 // `mode: 'static'` is accepted and renders; what it flattens is the engine's
 // business, covered there.
 assert.ok(toHtmlWithOptions('# A\n', { mode: 'static' }).includes('<h1'))
