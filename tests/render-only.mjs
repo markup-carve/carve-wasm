@@ -45,6 +45,8 @@ for (const name of [
   'astJsonToHtml',
   'astJsonToCarve',
   'applyProfile',
+  'toProseMirror',
+  'fromProseMirror',
   'lintCarve',
   'readStamp',
   'needsReview',

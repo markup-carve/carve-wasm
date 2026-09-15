@@ -23,6 +23,7 @@ default = [
     "markdown-import",
     "other-imports",
     "other-renderers",
+    "prosemirror",
     "reports",
     "source-patches",
     "stamp",
@@ -34,6 +35,8 @@ markdown-import = []
 # The importers a Markdown-shaped host does not need: Djot and BBCode.
 other-imports = []
 other-renderers = []
+# The ProseMirror/CarveKit bridge. A rendering-only host does not edit.
+prosemirror = []
 reports = []
 source-patches = []
 stamp = []

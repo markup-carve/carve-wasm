@@ -12,6 +12,7 @@ import {
   htmlToCarve,
   fromBbcode,
   fromDjot,
+  fromProseMirror,
   fromMarkdown,
   migrateBbcode,
   migrateDjot,
@@ -22,6 +23,7 @@ import {
   toHtml,
   toHtmlWithOptions,
   toHtmlWithReport,
+  toProseMirror,
   toCarvePatch,
 } from './engine.mjs'
 
@@ -330,6 +332,64 @@ assert.deepEqual(
   [{ code: 'fidelity-unverified', fidelity: 'dropped', confidence: 'fallback' }],
 )
 console.log('wasm artifact: tree, lint, stamp and importer entry points pass')
+
+// The ProseMirror bridge. ProseMirror runs in a browser and nowhere else, so
+// this binding is the whole audience for the engine's bridge.
+const pm = toProseMirror('A *bold /and italic/* word.')
+// A JSON STRING, the same choice parseJson makes - the host parses it natively.
+assert.equal(typeof pm.json, 'string')
+assert.deepEqual(JSON.parse(pm.json), {
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: [
+        { type: 'text', text: 'A ' },
+        { type: 'text', text: 'bold ', marks: [{ type: 'bold' }] },
+        { type: 'text', text: 'and italic', marks: [{ type: 'bold' }, { type: 'italic' }] },
+        { type: 'text', text: ' word.' },
+      ],
+    },
+  ],
+})
+assert.deepEqual(pm.dropped, {})
+assert.deepEqual(pm.degraded, {})
+
+// A code block keeps its language as an attribute rather than in the text.
+const fenced = JSON.parse(toProseMirror('``` rust\nlet x = 1;\n```\n').json).content[0]
+assert.equal(fenced.type, 'codeBlock')
+assert.equal(fenced.attrs.language, 'rust')
+assert.deepEqual(fenced.content, [{ type: 'text', text: 'let x = 1;' }])
+
+// What the ProseMirror model cannot hold is REPORTED, not silently converted,
+// and the two maps say different things. `dropped` is content that is gone;
+// `degraded` is content that survives without its node type. A soft break
+// becomes whitespace, smart typography resolves to the glyph, so the author's
+// `...` does not survive the trip back - and an abbreviation definition has no
+// editor node at all.
+const softBreak = toProseMirror('left\nright')
+assert.equal(softBreak.degraded.soft_break, 'a soft break is whitespace in the ProseMirror model')
+assert.deepEqual(softBreak.dropped, {})
+assert.equal(
+  toProseMirror('a ... b').degraded.smart_punctuation,
+  'smart-typography output is lossy on reparse, so it is not modeled',
+)
+const abbreviated = toProseMirror('*[HTML]: HyperText Markup Language\n\nHTML is fine.\n')
+assert.deepEqual(abbreviated.dropped, {
+  abbreviation_def: "abbreviation definitions ride on the doc node's attrs",
+})
+assert.deepEqual(abbreviated.degraded, {})
+assert.equal(fromProseMirror(toProseMirror('a ... b').json), 'a … b\n')
+
+// The editor loop closes: source in, source back.
+const editable = 'A *bold /and italic/* word.\n\n- one\n- two\n\n> quoted\n'
+assert.equal(fromProseMirror(toProseMirror(editable).json), editable)
+
+// A payload the schema map does not describe is refused rather than written
+// approximately.
+assert.throws(() => fromProseMirror('{"type":"nope"}'), Error)
+assert.throws(() => fromProseMirror('{'), Error)
+console.log('wasm artifact: ProseMirror bridge passes')
 
 
 
