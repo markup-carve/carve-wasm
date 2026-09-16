@@ -17,6 +17,21 @@ their own.
 - `mentionUrl` and `tagUrl` on the render options object, the engine's URL
   templates for `@mention` and `#tag`. Without them both render as inert spans,
   where carve-js links them (#72, #97).
+- `applyProfile`, which runs a profile over an AST-JSON document and returns the
+  filtered tree alongside what the filter degraded or stripped. The HTML path
+  discards that (#100).
+- The ProseMirror bridge, `toProseMirror` and `fromProseMirror`, reporting per
+  node type what the editor model could not hold (#101).
+- `toHtmlWithRenderers`, taking `renderers.math` for `mode: 'static'` and
+  returning `{ html, rendererErrors }`. Static output carries no client scripts,
+  so a formula has to be typeset while the HTML is written (#106).
+- `toMarkdownWithOptions`, `toPlainTextWithOptions`, `toAnsiWithOptions`,
+  `toCarveWithOptions` and `parseJsonWithOptions`. The options object reached
+  HTML only, so a host had no way to hold an untrusted document to a `profile`
+  on any other target (#108).
+- `lintCarveWithOptions`, `lintAccessibility`, `stampCarve`, `sanitizeSvg`,
+  `parseLocator`, `parseSourceLayoutJson` and `markdownToAstJson` - engine
+  capability that had no binding (#109).
 
 ### Changed
 
