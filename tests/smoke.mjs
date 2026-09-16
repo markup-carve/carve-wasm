@@ -19,11 +19,20 @@ import {
   lintCarve,
   needsReview,
   parseJson,
+  parseJsonWithOptions,
   readStamp,
+  toAnsi,
+  toAnsiWithOptions,
+  toCarve,
+  toCarveWithOptions,
   toHtml,
   toHtmlWithOptions,
   toHtmlWithRenderers,
   toHtmlWithReport,
+  toMarkdown,
+  toMarkdownWithOptions,
+  toPlainText,
+  toPlainTextWithOptions,
   toProseMirror,
   toCarvePatch,
 } from './engine.mjs'
@@ -218,6 +227,75 @@ assert.throws(() => toHtmlWithOptions('# A\n', { mode: 'nope' }), TypeError)
 assert.throws(() => toHtmlWithOptions('# A\n', { labels: 'Hinweis' }), TypeError)
 assert.throws(() => toHtmlWithOptions('# A\n', { sourceLine: 'yes' }), TypeError)
 console.log('wasm artifact: profile, editor and output-shaping options pass')
+
+// The options object on the other four targets and on the tree export
+// (markup-carve/carve-wasm#108). Before this the same package rendered one
+// document safely to HTML and unsafely to Markdown, because `profile` had
+// nowhere to be passed.
+//
+// Each target is asserted on its own. A loop would report that SOMETHING lost
+// the profile, and which target lost it is the whole content.
+{
+  const DENIED = '# Heading\n\n![alt](x.png)\n'
+  const COMMENT = { profile: 'comment' }
+
+  // No options at all is the target's own entry point, unchanged.
+  assert.equal(toMarkdownWithOptions(DENIED), toMarkdown(DENIED))
+  assert.equal(toPlainTextWithOptions(DENIED), toPlainText(DENIED))
+  assert.equal(toAnsiWithOptions(DENIED), toAnsi(DENIED))
+  assert.equal(toCarveWithOptions(DENIED), toCarve(DENIED))
+  assert.equal(parseJsonWithOptions(DENIED), parseJson(DENIED))
+  // An object that says nothing must not cost the positions PART 12 §4
+  // requires the serialized form to carry.
+  assert.equal(parseJsonWithOptions(DENIED, {}), parseJson(DENIED))
+  assert.ok(parseJson(DENIED).includes('"startOffset"'))
+
+  // Under `comment` a heading is not a heading and an image is not an image.
+  assert.equal(toMarkdownWithOptions(DENIED, COMMENT), '# Heading\n\n[img: alt\\]\n')
+  assert.equal(toPlainTextWithOptions(DENIED, COMMENT), '# Heading\n\n[img: alt]\n')
+  assert.equal(toAnsiWithOptions(DENIED, COMMENT), '# Heading\n\n[img: alt]\n')
+  assert.equal(toCarveWithOptions(DENIED, COMMENT), '\\# Heading\n\n[img: alt]\n')
+  assert.ok(!parseJsonWithOptions(DENIED, COMMENT).includes('"heading"'))
+  assert.ok(parseJson(DENIED).includes('"heading"'))
+
+  // The length bound is the one profile rule that refuses outright, and a
+  // rejection has to ARRIVE as an error rather than as an empty string.
+  const long = 'a'.repeat(16 * 1024)
+  for (const [name, render] of [
+    ['toMarkdownWithOptions', toMarkdownWithOptions],
+    ['toPlainTextWithOptions', toPlainTextWithOptions],
+    ['toAnsiWithOptions', toAnsiWithOptions],
+    ['toCarveWithOptions', toCarveWithOptions],
+    ['parseJsonWithOptions', parseJsonWithOptions],
+  ]) {
+    let error
+    try {
+      render(long, { profile: 'minimal' })
+    } catch (caught) {
+      error = caught
+    }
+    assert.ok(error, `${name} must refuse a document past the profile's length bound`)
+    assert.equal(error.name, 'ProfileViolationError', name)
+    assert.match(error.violations[0], /maximum length/, name)
+  }
+
+  // `smartTypography` is the other option these targets read.
+  assert.equal(toMarkdownWithOptions('a ... b\n', { smartTypography: 'source' }), 'a ... b\n')
+  assert.equal(toMarkdownWithOptions('a ... b\n', {}), 'a … b\n')
+
+  // The one reader, so the same object gets the same contract everywhere: a
+  // recognized key with the wrong type throws, and `renderers` is refused
+  // because a bare string has nowhere to report a callback failure.
+  assert.throws(() => toMarkdownWithOptions('# A\n', { sections: 'false' }), TypeError)
+  assert.throws(() => toPlainTextWithOptions('# A\n', { profile: 'nope' }), TypeError)
+  assert.throws(() => toAnsiWithOptions('# A\n', { symbols: 'rocket' }), TypeError)
+  assert.throws(
+    () => toCarveWithOptions('# A\n', { renderers: { math: () => '' } }),
+    TypeError,
+  )
+  assert.throws(() => parseJsonWithOptions('# A\n', { labels: 'Hinweis' }), TypeError)
+}
+console.log('wasm artifact: the options object reaches every render target')
 
 // The static math renderer (markup-carve/carve-wasm#94).
 //
