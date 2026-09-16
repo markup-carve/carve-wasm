@@ -390,9 +390,21 @@ const html = astJsonToHtml(JSON.stringify(tree), { full: true })
 const carve = astJsonToCarve(JSON.stringify(tree))
 ```
 
+`astJsonToMarkdown`, `astJsonToPlainText` and `astJsonToAnsi` are the same seam
+for the other targets. Each takes the options object, and the profile filter and
+the `before_render` hooks run as they do on the HTML path. Without them a host
+holding a tree reached Markdown through `astJsonToCarve` and `toMarkdown`: a
+canonical write, a re-parse and a second render for one answer.
+
 A tree carrying something no Carve source can spell is refused by
 `astJsonToCarve` rather than written approximately, and an invalid tree throws
 from either.
+
+Ordering follows the tree. Section 7 orders collected definitions by source
+position, so a tree carrying spans prints its footnote and link definitions in
+source order and a tree carrying none prints them in label order.
+`toMarkdown` parses with positions on and always gets the first; these entry
+points get whatever their producer built.
 
 `lintCarve` returns the degradation diagnostics as
 `{ line, column, rule, message, start, end }`, with the rule ids carve-js and
@@ -640,6 +652,9 @@ const html: string = toHtml('_Hello_')
 | `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
 | `astJsonToHtml` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document; takes the same options object |
 | `astJsonToCarve` | `(json: string) => string` | Write an AST-JSON document back as canonical Carve source |
+| `astJsonToMarkdown` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to Markdown; takes the same options object |
+| `astJsonToPlainText` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to plain text |
+| `astJsonToAnsi` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to ANSI-styled text |
 | `applyProfile` | `(json: string, profile: string, options?: object \| null) => ProfileFilterResult` | Filter an AST-JSON document through a profile, keeping the tree and what the filter did |
 | `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share |
 | `lintCarveWithOptions` | `(source: string, options?: object \| null) => LintWarning[]` | The same linter for the extension set the host renders with |

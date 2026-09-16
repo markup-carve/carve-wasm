@@ -4,8 +4,11 @@
 // engine in carve-go did exactly that for months).
 import assert from 'node:assert/strict'
 import {
+  astJsonToAnsi,
   astJsonToCarve,
   astJsonToHtml,
+  astJsonToMarkdown,
+  astJsonToPlainText,
   applyProfile,
   applySourcePatch,
   createSourcePatch,
@@ -577,6 +580,61 @@ const parityTable = '| a | b |\n|---|---|\n| 1 | 2 |\n'
 const treeFiltered = astJsonToHtml(parseJson(parityTable), { profile: 'minimal' })
 assert.equal(treeFiltered, toHtmlWithOptions(parityTable, { profile: 'minimal' }))
 assert.ok(!treeFiltered.includes('<table'), 'the profile has to filter on the tree path too')
+
+// Markdown, plain text and ANSI from a tree. Without these a host holding AST
+// JSON reached Markdown through `astJsonToCarve` and then `toMarkdown`: a
+// canonical write, a re-parse and a second render for one answer.
+assert.equal(astJsonToMarkdown(tree), toMarkdown(treeSource))
+assert.equal(astJsonToPlainText(tree), toPlainText(treeSource))
+assert.equal(astJsonToAnsi(tree), toAnsi(treeSource))
+
+// The detour these replace, measured rather than asserted about: the same
+// answer, through a canonical write and a re-parse. It agrees here, so what
+// the direct call buys on this document is the two steps, not a different
+// result.
+assert.equal(astJsonToMarkdown(tree), toMarkdown(astJsonToCarve(tree)))
+
+// The options object comes along, and means the same thing here as on the
+// source path: the profile filter and the before-render hooks run.
+const treeLink = parseJson('a [home](https://example.com/x) b\n')
+assert.equal(
+  astJsonToMarkdown(treeLink, { profile: 'minimal' }),
+  toMarkdownWithOptions('a [home](https://example.com/x) b\n', { profile: 'minimal' }),
+)
+assert.ok(!astJsonToMarkdown(treeLink, { profile: 'minimal' }).includes(']('))
+assert.throws(() => astJsonToMarkdown('{"type":"nope"}'), Error)
+
+// The options reach the RENDERER too, not only the preparation ahead of it.
+// `smartTypography` is the one these targets read that changes their own
+// output, so an entry point handing the renderer no options renders glyphs
+// where the host asked for source.
+const typographySource = 'A "quoted" word -- and ... dots.\n'
+const typographyTree = parseJson(typographySource)
+assert.equal(
+  astJsonToMarkdown(typographyTree, { smartTypography: 'source' }),
+  toMarkdownWithOptions(typographySource, { smartTypography: 'source' }),
+)
+assert.ok(astJsonToMarkdown(typographyTree, { smartTypography: 'source' }).includes('--'))
+assert.ok(astJsonToPlainText(typographyTree, { smartTypography: 'source' }).includes('--'))
+assert.ok(astJsonToAnsi(typographyTree, { smartTypography: 'source' }).includes('--'))
+assert.ok(!astJsonToMarkdown(typographyTree, { smartTypography: 'glyph' }).includes('--'))
+
+// ORDERING FOLLOWS THE TREE. Section 7 orders collected definitions by source
+// position, so a tree carrying spans prints them in source order and a tree
+// carrying none prints them in label order. `toMarkdown` parses with positions
+// on and always gets the first; an entry point handed a tree gets whichever its
+// producer built.
+const notesSource = 'Text[^zeta] and[^alpha].\n\n[^zeta]: Zed note\n\n[^alpha]: Alpha note\n'
+const withSpans = parseJson(notesSource)
+assert.match(astJsonToMarkdown(withSpans), /\[\^zeta\]: Zed note\n\[\^alpha\]: Alpha note/)
+const stripPositions = (node) => {
+  if (!node || typeof node !== 'object') return node
+  delete node.pos
+  for (const value of Object.values(node)) stripPositions(value)
+  return node
+}
+const withoutSpans = JSON.stringify(stripPositions(JSON.parse(withSpans)))
+assert.match(astJsonToMarkdown(withoutSpans), /\[\^alpha\]: Alpha note\n\[\^zeta\]: Zed note/)
 
 // The filter on its own, with the tree kept. Until now a host could only get a
 // profile applied on the way to HTML, and the HTML path discards what the filter
