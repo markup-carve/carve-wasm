@@ -50,6 +50,8 @@ for (const name of [
   'parseSourceLayoutJson',
   'markdownToAstJson',
   'expandIncludes',
+  'parseSnapshot',
+  'reparse',
   'toHtmlWithReport',
   'toMarkdown',
   'toMarkdownWithOptions',

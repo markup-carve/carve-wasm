@@ -1195,6 +1195,117 @@ fn resolved_from_js(
     })
 }
 
+/// Parse a document and keep what a later [`reparse`] needs.
+///
+/// Returns one JSON object: `{ source, document, sourceLayout, changedSource,
+/// reusedPreviousTree }`. `document` is the PART 12 tree, `sourceLayout` the
+/// byte-exact record [`parse_source_layout_json`] produces, and
+/// `changedSource` the byte ranges this parse covered - the whole document, on
+/// a first parse.
+///
+/// The snapshot crosses as JSON rather than as a handle a host has to `free()`.
+/// Every other entry point here is a pure function that owns nothing, and the
+/// engine's own snapshot holds only the source, so there is no tree being kept
+/// alive in wasm memory for a handle to point at.
+#[cfg(all(feature = "ast-json", feature = "incremental"))]
+#[wasm_bindgen(js_name = parseSnapshot)]
+pub fn parse_snapshot(source: &str) -> String {
+    incremental_json(&carve::parse_snapshot(source), source)
+}
+
+/// Re-parse `source` with `changes` applied.
+///
+/// ```js
+/// const first = JSON.parse(parseSnapshot('# One\n'))
+/// const next = JSON.parse(reparse(first.source, '[{"range":[2,5],"replacement":"Two"}]'))
+/// ```
+///
+/// `changes` is a JSON array of `{ range: [start, end], replacement }`.
+///
+/// THE OFFSETS ARE UTF-8 BYTE OFFSETS, which is what `parseJson` positions and
+/// `createSourcePatch` ranges already mean. A browser editor counts UTF-16 code
+/// units, so a host holding a `selectionStart` converts before calling - an
+/// offset that lands inside a multi-byte character is refused rather than
+/// guessed at.
+///
+/// A malformed change THROWS: overlapping ranges, an end past the source, and a
+/// range that splits a code point are all a broken caller contract, not a
+/// result the caller asked for.
+///
+/// `reusedPreviousTree` says whether the parse reused any of the previous one.
+/// The pinned engine always reports `false` - it validates and applies the
+/// edits and then parses the whole source - so a host should read this as the
+/// engine's own answer rather than assume work was saved.
+#[cfg(all(feature = "ast-json", feature = "incremental"))]
+#[wasm_bindgen(js_name = reparse)]
+pub fn reparse(source: &str, changes: &str) -> Result<String, JsValue> {
+    let changes = text_changes_from_json(changes)?;
+    let previous = carve::parse_snapshot(source);
+    let result = carve::reparse(previous.snapshot, &changes)
+        .map_err(|error| type_error(&format!("carve: {error}")))?;
+    let applied = result.snapshot.source().to_string();
+    Ok(incremental_json(&result, &applied))
+}
+
+/// The one JSON object both incremental entry points return.
+#[cfg(all(feature = "ast-json", feature = "incremental"))]
+fn incremental_json(parse: &carve::IncrementalParse, source: &str) -> String {
+    let changed: Vec<serde_json::Value> = parse
+        .changed_source
+        .iter()
+        .map(|range| serde_json::json!([range.start, range.end]))
+        .collect();
+    // The two engine strings are already JSON, so they are spliced in as values
+    // rather than re-encoded as strings a caller would have to parse twice.
+    let document: serde_json::Value =
+        serde_json::from_str(&carve::to_json(&parse.document)).unwrap_or(serde_json::Value::Null);
+    let layout: serde_json::Value =
+        serde_json::from_str(&parse.source_layout_json).unwrap_or(serde_json::Value::Null);
+    serde_json::json!({
+        "source": source,
+        "document": document,
+        "sourceLayout": layout,
+        "changedSource": changed,
+        "reusedPreviousTree": parse.reused_previous_tree,
+    })
+    .to_string()
+}
+
+/// Read the `changes` argument: a JSON array of `{ range: [start, end],
+/// replacement }`.
+#[cfg(all(feature = "ast-json", feature = "incremental"))]
+fn text_changes_from_json(input: &str) -> Result<Vec<carve::TextChange>, JsValue> {
+    let value: serde_json::Value = serde_json::from_str(input)
+        .map_err(|error| type_error(&format!("carve: `changes` is not JSON: {error}")))?;
+    let array = value
+        .as_array()
+        .ok_or_else(|| type_error("carve: `changes` must be a JSON array"))?;
+    let mut changes = Vec::with_capacity(array.len());
+    for (index, entry) in array.iter().enumerate() {
+        let at = |what: &str| type_error(&format!("carve: `changes[{index}]` {what}"));
+        let range = entry
+            .get("range")
+            .and_then(|r| r.as_array())
+            .filter(|r| r.len() == 2)
+            .ok_or_else(|| at("needs a `range` of two byte offsets"))?;
+        let offset = |slot: usize| {
+            range[slot]
+                .as_u64()
+                .map(|n| n as usize)
+                .ok_or_else(|| at("range offsets must be non-negative integers"))
+        };
+        let replacement = entry
+            .get("replacement")
+            .and_then(|r| r.as_str())
+            .ok_or_else(|| at("needs a `replacement` string"))?;
+        changes.push(carve::TextChange {
+            range: offset(0)?..offset(1)?,
+            replacement: replacement.to_string(),
+        });
+    }
+    Ok(changes)
+}
+
 /// Render an AST-JSON document (PART 12) to HTML.
 ///
 /// The other half of `parseJson`. A host that reads the tree in a browser does
