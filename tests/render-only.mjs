@@ -52,6 +52,7 @@ for (const name of [
   'expandIncludes',
   'parseSnapshot',
   'reparse',
+  'mergeAst',
   'createAstPatch',
   'applyAstPatch',
   'createReversibleAstPatch',

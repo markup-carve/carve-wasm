@@ -45,6 +45,7 @@ import {
   expandIncludes,
   parseSnapshot,
   reparse,
+  mergeAst,
   createAstPatch,
   applyAstPatch,
   createReversibleAstPatch,
@@ -1096,3 +1097,101 @@ console.log('wasm artifact: incremental parse cases pass')
   assert.throws(() => applyReversibleAstPatch(one, '{"forward":[],"inverse":[]}'), /Fingerprint/)
 }
 console.log('wasm artifact: AST patch family cases pass')
+
+// Three-way merge (markup-carve/carve-wasm#113).
+//
+// A CONFLICT IS A VALUE. Two people editing one document is what this exists
+// for, so a conflict is the result the caller asked for rather than a broken
+// contract, and nothing here throws on one.
+{
+  const base = parseJson('# Title\n\nAlpha.\n')
+  const ours = parseJson('# Ours\n\nAlpha.\n')
+  const theirs = parseJson('# Title\n\nBeta.\n')
+
+  // Disjoint edits merge, and both sides survive - a merge that returned one
+  // side would pass a weaker assertion.
+  const clean = JSON.parse(mergeAst(base, ours, theirs))
+  assert.equal(clean.ok, true)
+  assert.deepEqual(clean.conflicts, [])
+  assert.deepEqual(clean.resolverErrors, [])
+  assert.equal(astJsonToCarve(JSON.stringify(clean.ast)), '# Ours\n\nBeta.\n')
+
+  // Both sides changing one thing conflicts, as a value.
+  const rival = parseJson('# Theirs\n\nAlpha.\n')
+  const conflicted = JSON.parse(mergeAst(base, ours, rival))
+  assert.equal(conflicted.ok, false)
+  assert.equal(conflicted.ast, null)
+  assert.ok(conflicted.conflicts.length > 0)
+  // carve-js's field names and reason vocabulary, so one contract reads across
+  // both engines.
+  const first = conflicted.conflicts[0]
+  assert.deepEqual(Object.keys(first).sort(), ['base', 'ours', 'path', 'reason', 'theirs'])
+  assert.equal(first.reason, 'both-changed')
+  assert.ok(first.path.startsWith('/'), first.path)
+  assert.equal(first.base, 'Title')
+  assert.equal(first.ours, 'Ours')
+  assert.equal(first.theirs, 'Theirs')
+
+  // The other two reason names, each from a shape that produces it. Without
+  // these the mapping could report every conflict as `both-changed`.
+  const reasons = (b, o, t) =>
+    JSON.parse(mergeAst(parseJson(b), parseJson(o), parseJson(t))).conflicts.map((c) => c.reason)
+  // One side deletes the paragraph the other edits.
+  assert.deepEqual(reasons('# T\n\nA.\n\nB.\n', '# T\n\nA.\n', '# T\n\nA.\n\nEdited.\n'), [
+    'delete-edit',
+  ])
+  // Both sides reorder the same list.
+  assert.deepEqual(reasons('- a\n- b\n- c\n', '- b\n- a\n- c\n', '- a\n- c\n- b\n'), [
+    'concurrent-sequence-edit',
+  ])
+
+  // THE RESOLVER, driven per side so a binding that always picked one would be
+  // caught. Each answer has to produce a different document.
+  const pick = (side) => {
+    const out = JSON.parse(mergeAst(base, ours, rival, { resolve: () => side }))
+    assert.equal(out.ok, true, side)
+    return astJsonToCarve(JSON.stringify(out.ast))
+  }
+  assert.equal(pick('ours'), '# Ours\n\nAlpha.\n')
+  assert.equal(pick('theirs'), '# Theirs\n\nAlpha.\n')
+  assert.equal(pick('base'), '# Title\n\nAlpha.\n')
+
+  // A `{ value }` answer replaces the field outright.
+  const replaced = JSON.parse(
+    mergeAst(base, ours, rival, { resolve: () => ({ value: 'Merged' }) }),
+  )
+  assert.equal(astJsonToCarve(JSON.stringify(replaced.ast)), '# Merged\n\nAlpha.\n')
+
+  // `null` leaves a conflict unresolved, and is NOT a failure.
+  const declined = JSON.parse(mergeAst(base, ours, rival, { resolve: () => null }))
+  assert.equal(declined.ok, false)
+  assert.deepEqual(declined.resolverErrors, [])
+
+  // AN ASYNC RESOLVER is reported rather than swallowed, and the conflict is
+  // left unresolved. A resolver that asks a server is exactly the one a browser
+  // host reaches for.
+  const promised = JSON.parse(mergeAst(base, ours, rival, { resolve: async () => 'ours' }))
+  assert.equal(promised.ok, false)
+  assert.match(promised.resolverErrors[0].message, /Promise/)
+  assert.ok(promised.resolverErrors[0].path.startsWith('/'), promised.resolverErrors[0].path)
+
+  // The other unreadable answers, each named.
+  const failing = (resolve) => JSON.parse(mergeAst(base, ours, rival, { resolve })).resolverErrors[0]
+  assert.match(
+    failing(() => {
+      throw new Error('resolver died')
+    }).message,
+    /resolver died/,
+  )
+  assert.match(failing(() => 'mine').message, /supported/)
+  assert.match(failing(() => 7).message, /number/)
+  assert.match(failing(() => ({})).message, /no `value`/)
+
+  // Bad input names WHICH tree was bad; three arguments is where that matters
+  // most.
+  assert.throws(() => mergeAst('nope', ours, theirs), /`base`/)
+  assert.throws(() => mergeAst(base, 'nope', theirs), /`ours`/)
+  assert.throws(() => mergeAst(base, ours, 'nope'), /`theirs`/)
+  assert.throws(() => mergeAst(base, ours, theirs, { resolve: 'nope' }), TypeError)
+}
+console.log('wasm artifact: three-way merge cases pass')
