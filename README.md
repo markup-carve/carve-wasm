@@ -45,7 +45,8 @@ call.
 ```js
 import { toHtml } from '@markup-carve/carve-wasm'
 
-// The other core targets are toMarkdown, toPlainText, toAnsi, and toCarve.
+// The other core targets are toMarkdown, toPlainText, toAnsi, and toCarve,
+// each with a *WithOptions form that takes the options object below.
 
 const html = toHtml('# Hello, Carve!')
 document.body.innerHTML = html
@@ -234,6 +235,27 @@ try {
 }
 ```
 
+**Every target takes the profile, not only HTML.** `toMarkdownWithOptions`,
+`toPlainTextWithOptions`, `toAnsiWithOptions`, `toCarveWithOptions` and
+`parseJsonWithOptions` read the same options object, so a document held to a
+profile on its way to HTML is held to it on its way to Markdown or into a stored
+tree. Without them a host could export the same untrusted document unfiltered.
+
+```js
+toMarkdownWithOptions(fromTheReader, { profile: 'comment' })
+```
+
+What those targets actually read is narrower than HTML's list: `profile` and
+`smartTypography` change their output, extensions run, and `symbols`, `labels`,
+`sections`, `sourceLine`, `mode` and the heading-id switches are HTML-side
+concerns the engine's other renderers do not consult. `renderers` is refused
+there as it is on `toHtmlWithOptions`.
+
+`toCarveWithOptions` is narrower again and reads `profile` alone. The canonical
+writer is parse-only by contract, so extensions and `smartTypography` are inert
+there; they are accepted rather than refused so that one options object can be
+handed to every target.
+
 `applyProfile` runs the same filter over an AST-JSON document and hands back the
 filtered tree instead of HTML, for a host that wants to store, diff or re-render
 what the filter left. `violations` reports what it degraded or stripped, which
@@ -381,6 +403,11 @@ const html: string = toHtml('_Hello_')
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
 | `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form; see the options table above. Throws `ProfileViolationError` when a profile rejects the document |
 | `toHtmlWithRenderers` | `(source: string, options?: object \| null) => StaticRenderResult` | The options object plus `renderers.math`, for `mode: 'static'`; returns `{ html, rendererErrors }` |
+| `toMarkdownWithOptions` | `(source: string, options?: object \| null) => string` | Markdown under the same options object. Throws `ProfileViolationError` when a profile rejects the document |
+| `toPlainTextWithOptions` | `(source: string, options?: object \| null) => string` | Plain text under the same options object |
+| `toAnsiWithOptions` | `(source: string, options?: object \| null) => string` | ANSI text under the same options object |
+| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` only |
+| `parseJsonWithOptions` | `(source: string, options?: object \| null) => string` | The AST as JSON under the same options object; positions are always on |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded `raw-format-dropped` losses; strict mode throws `RenderLossError` |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
 | `toPlainTextWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked plain-text render |

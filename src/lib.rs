@@ -189,12 +189,19 @@ fn build_extensions(keys: &[String]) -> Vec<Box<dyn carve::CarveExtension>> {
         .collect()
 }
 
-/// Render with the named extensions plus the given symbol map.
-fn render_with_extensions(
+/// One of the engine's fallible `try_to_*_with_options` entry points.
+///
+/// The five targets differ only in which of these is called, so the options an
+/// entry point was handed are assembled once and the target is a parameter.
+type TargetRender = fn(&str, &carve::Options<'_>) -> Result<String, carve::ProfileViolationError>;
+
+/// Render to one target with the named extensions plus the given symbol map.
+fn render_target(
     source: &str,
     keys: &[String],
     symbols: &SymbolPairs,
     config: &RenderConfig,
+    render: TargetRender,
 ) -> Result<String, carve::ProfileViolationError> {
     // `Options` borrows each extension, so the owned boxes must outlive it;
     // they live in this frame, alongside the render call.
@@ -206,7 +213,23 @@ fn render_with_extensions(
     for (name, value) in symbols {
         options = options.with_symbol(name.clone(), value.clone());
     }
-    carve::try_to_html_with_options(source, &options)
+    render(source, &options)
+}
+
+/// Render to HTML with the named extensions plus the given symbol map.
+fn render_with_extensions(
+    source: &str,
+    keys: &[String],
+    symbols: &SymbolPairs,
+    config: &RenderConfig,
+) -> Result<String, carve::ProfileViolationError> {
+    render_target(
+        source,
+        keys,
+        symbols,
+        config,
+        carve::try_to_html_with_options,
+    )
 }
 
 /// Render with the preview extension set plus the given symbol map.
@@ -522,6 +545,32 @@ pub fn parse_json(source: &str) -> String {
     let mut options = carve::Options::new();
     options.positions = true;
     carve::to_json(&carve::parse_with_options(source, &options))
+}
+
+/// Serialize the tree with the same options object as
+/// [`to_html_with_options`], so a host can export the tree of an untrusted
+/// document under the `profile` it renders that document with.
+///
+/// `positions` is not read: every serialized tree this binding produces carries
+/// them, as in [`parse_json`].
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(js_name = parseJsonWithOptions)]
+pub fn parse_json_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    let Some(mut request) = RenderRequest::read(options)? else {
+        return Ok(parse_json(source));
+    };
+    request.config.positions = true;
+    render_target(
+        source,
+        &request.extension_keys(),
+        &request.symbols,
+        &request.config,
+        carve::try_to_json_with_options,
+    )
+    .map_err(profile_violation_error)
 }
 
 #[cfg(feature = "html-import")]
@@ -1209,6 +1258,114 @@ pub fn to_html_with_options(
     request.render(source).map_err(profile_violation_error)
 }
 
+/// Read one options object and render it to a non-HTML target.
+///
+/// `plain` is the target's own no-options entry point, which keeps the fast
+/// path a caller who passed nothing already had.
+#[cfg(feature = "other-renderers")]
+fn render_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+    plain: fn(&str) -> String,
+    render: TargetRender,
+) -> Result<String, JsValue> {
+    let Some(request) = RenderRequest::read(options)? else {
+        return Ok(plain(source));
+    };
+    render_target(
+        source,
+        &request.extension_keys(),
+        &request.symbols,
+        &request.config,
+        render,
+    )
+    .map_err(profile_violation_error)
+}
+
+/// Render to Markdown with the same options object as
+/// [`to_html_with_options`].
+///
+/// `profile` is why this exists. Without it a host can hold an untrusted
+/// document to a profile on the way to HTML and not on the way to Markdown,
+/// out of one package: the max-length bound, the denied constructs and the
+/// link policy were all unreachable here. A document the profile rejects
+/// throws a `ProfileViolationError` rather than resolving to an empty string.
+///
+/// What these targets read is narrower than HTML's list: `profile` and
+/// `smartTypography` change the output and extensions run, while `symbols`
+/// (markup-carve/carve-rs#1668), `labels`, `sections`, `sourceLine`, `mode` and
+/// the heading-id switches are HTML-side concerns the engine's other renderers
+/// do not consult. `renderers` is refused for the reason
+/// [`to_html_with_options`] refuses it.
+///
+/// [`to_carve_with_options`] is narrower again and reads `profile` alone: the
+/// engine's canonical writer is parse-only by contract, so extensions and
+/// `smartTypography` are inert there. They are accepted rather than refused
+/// because one options object is meant to serve every target.
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toMarkdownWithOptions)]
+pub fn to_markdown_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    render_with_options(
+        source,
+        options,
+        carve::to_markdown,
+        carve::try_to_markdown_with_options,
+    )
+}
+
+/// Render to plain text with an options object. See
+/// [`to_markdown_with_options`].
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toPlainTextWithOptions)]
+pub fn to_plain_text_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    render_with_options(
+        source,
+        options,
+        carve::to_plain_text,
+        carve::try_to_plain_text_with_options,
+    )
+}
+
+/// Render to ANSI text with an options object. See
+/// [`to_markdown_with_options`].
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toAnsiWithOptions)]
+pub fn to_ansi_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    render_with_options(
+        source,
+        options,
+        carve::to_ansi,
+        carve::try_to_ansi_with_options,
+    )
+}
+
+/// Write canonical Carve with an options object.
+///
+/// `profile` is the only option this target reads; see
+/// [`to_markdown_with_options`] for why.
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toCarveWithOptions)]
+pub fn to_carve_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    render_with_options(
+        source,
+        options,
+        carve::to_carve,
+        carve::try_to_carve_with_options,
+    )
+}
+
 /// Render with a build-time math renderer, the option `mode: "static"` needs.
 ///
 /// Static output carries no client scripts, so a formula it contains has to be
@@ -1508,19 +1665,23 @@ impl RenderRequest {
         options
     }
 
+    /// The registry keys this request enables: an explicit list wins over the
+    /// preview set, exactly as in [`Self::render`].
+    fn extension_keys(&self) -> Vec<String> {
+        match (&self.named, self.full) {
+            (Some(keys), _) => keys.clone(),
+            (None, true) => PREVIEW_EXTENSIONS
+                .iter()
+                .map(|k| (*k).to_string())
+                .collect(),
+            (None, false) => Vec::new(),
+        }
+    }
+
     /// The extension boxes this request needs, owned by the caller's frame
     /// because `Options` borrows them.
     fn extension_boxes(&self) -> Vec<Box<dyn carve::CarveExtension>> {
-        match (&self.named, self.full) {
-            (Some(keys), _) => build_extensions(keys),
-            (None, true) => build_extensions(
-                &PREVIEW_EXTENSIONS
-                    .iter()
-                    .map(|k| (*k).to_string())
-                    .collect::<Vec<_>>(),
-            ),
-            (None, false) => Vec::new(),
-        }
+        build_extensions(&self.extension_keys())
     }
 }
 
@@ -1708,6 +1869,46 @@ mod tests {
         extensions, render_core, render_full, render_with_extensions, RenderConfig, SymbolPairs,
         PREVIEW_EXTENSIONS,
     };
+    #[cfg(any(feature = "other-renderers", feature = "ast-json"))]
+    use super::{profile_by_name, render_target};
+
+    /// The named profile, everything else at its default.
+    #[cfg(any(feature = "other-renderers", feature = "ast-json"))]
+    fn under_profile(name: &str) -> RenderConfig {
+        RenderConfig {
+            profile: profile_by_name(name),
+            ..RenderConfig::default()
+        }
+    }
+
+    /// The document the profile tests share: a heading and an image, both of
+    /// which `comment` denies.
+    #[cfg(feature = "other-renderers")]
+    const DENIED: &str = "# Heading\n\n![alt](x.png)\n";
+
+    #[cfg(feature = "other-renderers")]
+    fn filtered(render: super::TargetRender) -> String {
+        render_target(
+            DENIED,
+            &[],
+            &SymbolPairs::new(),
+            &under_profile("comment"),
+            render,
+        )
+        .unwrap()
+    }
+
+    #[cfg(feature = "other-renderers")]
+    fn unfiltered(render: super::TargetRender) -> String {
+        render_target(
+            DENIED,
+            &[],
+            &SymbolPairs::new(),
+            &RenderConfig::default(),
+            render,
+        )
+        .unwrap()
+    }
 
     /// Sections off, everything else at its default.
     fn no_sections() -> RenderConfig {
@@ -1933,6 +2134,169 @@ mod tests {
         let canonical = crate::to_carve(source);
         assert_eq!(canonical, "-{title=😀} [x] a\n  # h\n");
         assert_eq!(crate::to_html(&canonical), html);
+    }
+
+    // markup-carve/carve-wasm#108: the options object used to reach HTML only,
+    // so one package rendered the same document safely to HTML and unsafely to
+    // Markdown. Each target is driven on its own, and against its own
+    // no-profile render, so a failure names the target that lost the profile
+    // rather than reporting that something somewhere changed.
+    //
+    // Under `comment` a heading is not a heading and an image is not an image:
+    // both degrade to text, which is what these expectations pin.
+    #[cfg(feature = "other-renderers")]
+    #[test]
+    fn the_profile_reaches_the_markdown_target() {
+        assert_eq!(
+            filtered(carve::try_to_markdown_with_options),
+            "# Heading\n\n[img: alt\\]\n"
+        );
+        assert_eq!(
+            unfiltered(carve::try_to_markdown_with_options),
+            "# Heading\n\n![alt](x.png)\n"
+        );
+    }
+
+    #[cfg(feature = "other-renderers")]
+    #[test]
+    fn the_profile_reaches_the_plain_text_target() {
+        assert_eq!(
+            filtered(carve::try_to_plain_text_with_options),
+            "# Heading\n\n[img: alt]\n"
+        );
+        assert_eq!(
+            unfiltered(carve::try_to_plain_text_with_options),
+            "Heading\n\nalt\n"
+        );
+    }
+
+    #[cfg(feature = "other-renderers")]
+    #[test]
+    fn the_profile_reaches_the_ansi_target() {
+        assert_eq!(
+            filtered(carve::try_to_ansi_with_options),
+            "# Heading\n\n[img: alt]\n"
+        );
+        // The heading's own styling is what the filtered render no longer has.
+        assert!(unfiltered(carve::try_to_ansi_with_options).contains("\u{1b}[1m"));
+    }
+
+    #[cfg(feature = "other-renderers")]
+    #[test]
+    fn the_profile_reaches_the_carve_writer() {
+        // The `#` is escaped because it is text now, not a heading marker.
+        assert_eq!(
+            filtered(carve::try_to_carve_with_options),
+            "\\# Heading\n\n[img: alt]\n"
+        );
+        assert_eq!(
+            unfiltered(carve::try_to_carve_with_options),
+            "# Heading\n\n![alt](x.png)\n"
+        );
+    }
+
+    // The bound on the INPUT bytes, the one profile rule that refuses a render
+    // outright instead of degrading a node. `minimal` caps at 10,000.
+    #[cfg(feature = "other-renderers")]
+    #[test]
+    fn the_profile_length_bound_refuses_a_non_html_render() {
+        let long = "a".repeat(16 * 1024);
+        let error = render_target(
+            &long,
+            &[],
+            &SymbolPairs::new(),
+            &under_profile("minimal"),
+            carve::try_to_markdown_with_options,
+        )
+        .unwrap_err();
+        assert_eq!(error.violations.len(), 1);
+        assert_eq!(error.violations[0].reason, "max_length_exceeded");
+        assert!(render_target(
+            &long,
+            &[],
+            &SymbolPairs::new(),
+            &RenderConfig::default(),
+            carve::try_to_markdown_with_options,
+        )
+        .is_ok());
+    }
+
+    // `smartTypography` is the other option these targets genuinely read.
+    #[cfg(feature = "other-renderers")]
+    #[test]
+    fn smart_typography_reaches_the_markdown_target() {
+        let source = "a ... b\n";
+        let config = RenderConfig {
+            smart_typography: carve::SmartTypographyMode::Source,
+            ..RenderConfig::default()
+        };
+        assert_eq!(
+            render_target(
+                source,
+                &[],
+                &SymbolPairs::new(),
+                &config,
+                carve::try_to_markdown_with_options,
+            )
+            .unwrap(),
+            "a ... b\n"
+        );
+        assert_eq!(
+            render_target(
+                source,
+                &[],
+                &SymbolPairs::new(),
+                &RenderConfig::default(),
+                carve::try_to_markdown_with_options,
+            )
+            .unwrap(),
+            "a \u{2026} b\n"
+        );
+    }
+
+    // Serializing the tree of an untrusted document had the same hole.
+    #[cfg(feature = "ast-json")]
+    #[test]
+    fn the_profile_reaches_the_json_export() {
+        let config = RenderConfig {
+            positions: true,
+            ..under_profile("comment")
+        };
+        let json = render_target(
+            "# Heading\n",
+            &[],
+            &SymbolPairs::new(),
+            &config,
+            carve::try_to_json_with_options,
+        )
+        .unwrap();
+        assert!(!json.contains("\"heading\""), "{json}");
+        assert!(json.contains("Heading"), "{json}");
+        assert!(crate::parse_json("# Heading\n").contains("\"heading\""));
+    }
+
+    // The options form has to agree with `parseJson` when the object carries no
+    // switches, or a host gains a profile and loses the positions PART 12 §4
+    // requires the serialized form to carry.
+    #[cfg(feature = "ast-json")]
+    #[test]
+    fn the_json_options_form_matches_parse_json_by_default() {
+        let source = "# Heading\n\nBody\n";
+        let config = RenderConfig {
+            positions: true,
+            ..RenderConfig::default()
+        };
+        assert_eq!(
+            render_target(
+                source,
+                &[],
+                &SymbolPairs::new(),
+                &config,
+                carve::try_to_json_with_options,
+            )
+            .unwrap(),
+            crate::parse_json(source)
+        );
     }
 
     #[cfg(feature = "other-renderers")]
