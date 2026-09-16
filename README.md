@@ -27,6 +27,23 @@ import policy and canonical writer as carve-rs. Modes are `safe` (default),
 const { value, report } = htmlToCarve('<p>Hello <strong>world</strong></p>', 'safe')
 ```
 
+`htmlToAst(html, mode)` is the same importer returning the TREE instead of the
+source, so a host that wants a tree does not re-parse what the importer just
+wrote. It returns the same `{ value, report }` shape, with `value` holding AST
+JSON.
+
+```js
+const { value, report } = htmlToAst('<p>Hello <b>world</b></p>', 'safe')
+astJsonToHtml(value)
+```
+
+> **The report is not always identical, and the difference is the point.**
+> A loss only a WRITER takes is not reported by `htmlToAst`, because no writer
+> ran (PART 12 §16). A `<figure>` wrapping a table, or a table with an explicit
+> head/body/foot grouping, has no Carve spelling: `htmlToCarve` reports
+> `structure-unspellable` for it and `htmlToAst` does not, because the tree
+> keeps the thing the source would have lost.
+
 Portable migration code can use `fromHtml(html, mode)` and
 `fromMarkdown(markdown)`. Both return `{ value, report }`. Version 2 reports use
 the shared fidelity vocabulary. Markdown, Djot, and BBCode conservatively emit
@@ -632,6 +649,7 @@ const html: string = toHtml('_Hello_')
 | `parseLocator` | `(loc: string) => ParsedLocator` | Parse a citation locator into label, value and suffix |
 | `parseSourceLayoutJson` | `(source: string) => string` | The PART 12 §13 source-layout sidecar |
 | `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree, skipping the Carve-source round trip |
+| `htmlToAst` | `(html: string, mode?: string) => MigrationResult` | Import HTML straight to the tree; `{ value, report }` with the tree in `value` |
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
 | `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree }` |
 | `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |

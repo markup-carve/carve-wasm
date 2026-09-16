@@ -49,6 +49,7 @@ for (const name of [
   'parseJsonWithOptions',
   'parseSourceLayoutJson',
   'markdownToAstJson',
+  'htmlToAst',
   'expandIncludes',
   'parseSnapshot',
   'reparse',

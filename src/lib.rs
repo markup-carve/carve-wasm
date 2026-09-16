@@ -601,6 +601,65 @@ pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsVa
     migration_result_to_js(result)
 }
 
+/// Import HTML straight to the tree, as AST JSON.
+///
+/// `htmlToCarve` writes Carve SOURCE, so a host that wanted the tree had to
+/// re-parse what it had just written - two parses of one document to get one
+/// answer. This is the same importer without that round trip.
+///
+/// ```js
+/// const { value, report } = htmlToAst('<p>Hello <b>world</b></p>', 'safe')
+/// astJsonToHtml(value)
+/// ```
+///
+/// Returns the SAME `{ value, report }` shape `htmlToCarve` does, with `value`
+/// holding the tree instead of the source, in the same fidelity vocabulary. A
+/// third result shape for one importer is what that avoids.
+///
+/// The REPORT IS NOT ALWAYS IDENTICAL, and the difference is the point. A loss
+/// only a WRITER takes is not reported here, because no writer ran (PART 12
+/// §16): a `<figure>` wrapping a table, or a table with an explicit
+/// head/body/foot grouping, has no Carve spelling, so `htmlToCarve` reports
+/// `structure-unspellable` and this does not - the tree keeps the thing that
+/// would have been lost.
+///
+/// `mode` is spelled as it is there: `safe` (the default), `semantic`, and
+/// trusted-only `roundtrip`.
+#[cfg(all(feature = "html-import", feature = "ast-json"))]
+#[wasm_bindgen(js_name = htmlToAst, unchecked_return_type = "MigrationResult")]
+pub fn html_to_ast(source: &str, mode: Option<String>) -> Result<JsValue, JsValue> {
+    let options = carve::HtmlImportOptions {
+        mode: html_import_mode(mode)?,
+        ..Default::default()
+    };
+    let result = carve::html_to_ast(source, &options)
+        .map_err(|error| js_error(format!("carve: HTML import failed: {error:?}")))?;
+    // Through the same adapter `migrate_html` uses on the source result, so the
+    // report is built once rather than described twice.
+    migration_result_to_js(carve::MigrationResult {
+        value: carve::to_json(&result.value),
+        report: carve::MigrationReport {
+            schema_version: 2,
+            source_format: carve::SourceFormat::Html,
+            mode: Some(result.report.mode),
+            adapter: Some(result.report.adapter),
+            diagnostics: result
+                .report
+                .diagnostics
+                .into_iter()
+                .map(|diagnostic| carve::MigrationDiagnostic {
+                    code: diagnostic.code.as_str().to_owned(),
+                    message: diagnostic.message,
+                    severity: diagnostic.severity,
+                    fidelity: diagnostic.fidelity,
+                    confidence: diagnostic.confidence,
+                    path: diagnostic.path,
+                })
+                .collect(),
+        },
+    })
+}
+
 #[cfg(any(
     feature = "html-import",
     feature = "markdown-import",
