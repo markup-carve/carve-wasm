@@ -524,6 +524,46 @@ over two `createAstPatch` calls is the precondition: applying a step to a tree
 whose fingerprint is not the one it was made against throws, so an undo cannot
 land on a document that has moved on.
 
+### Three-way merge
+
+`mergeAst(base, ours, theirs, options)` merges two edits of one document. Two
+people editing one document is a browser problem, so the audience is here.
+
+```js
+import { parseJson, mergeAst } from '@markup-carve/carve-wasm'
+
+const { ok, ast, conflicts } = JSON.parse(mergeAst(base, ours, theirs))
+```
+
+**A conflict is a value, not a throw.** It is the result you asked for: `ok` is
+false, `ast` is null, and `conflicts` says where and why. A throw is for a
+contract you broke, and an unparseable tree still gets one, naming which of the
+three it was.
+
+Each conflict is `{ path, reason, base, ours, theirs }`, with `reason` one of
+`both-changed`, `delete-edit` or `concurrent-sequence-edit`. That shape and
+those names are carve-js's, so a host merging with either engine reads one
+contract. The Rust engine carries no `deleted` flags, so carve-js's optional
+`deleted` field is absent here rather than guessed at.
+
+`options.resolve` answers conflicts while the merge runs:
+
+```js
+const merged = JSON.parse(mergeAst(base, ours, theirs, {
+  resolve: (conflict) => (conflict.path.startsWith('/children/0') ? 'ours' : null),
+}))
+```
+
+It returns `'base'`, `'ours'`, `'theirs'`, `{ value }` to replace the field
+outright, or `null` to leave that conflict standing.
+
+> **The resolver must be synchronous.**
+> A resolver that asks a server, or asks the user, returns a Promise the merge
+> cannot await. That is reported in `resolverErrors` with the conflict's path,
+> and the conflict is left unresolved - never swallowed, and never stringified
+> into the tree. Returning `null` is the supported way to decline; a Promise is
+> a mistake.
+
 ### ProseMirror
 
 `toProseMirror(source)` converts Carve to the ProseMirror document shape, and
@@ -595,6 +635,7 @@ const html: string = toHtml('_Hello_')
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
 | `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree }` |
 | `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |
+| `mergeAst` | `(base: string, ours: string, theirs: string, options?: object) => string` | Three-way merge; JSON `{ ok, ast, conflicts, resolverErrors }`, a conflict being a value |
 | `createAstPatch` | `(before: string, after: string) => string` | The difference between two PART 12 trees, as `{ op, path, value }` patch JSON |
 | `applyAstPatch` | `(ast: string, patch: string) => string` | Replay patch JSON onto a tree |
 | `createReversibleAstPatch` | `(before: string, after: string) => string` | The same difference with its inverse and both fingerprints |

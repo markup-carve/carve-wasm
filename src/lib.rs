@@ -1016,8 +1016,12 @@ pub fn expand_includes(source: &str, options: js_sys::Object) -> Result<JsValue,
     Ok(object.into())
 }
 
-/// One resolver call the binding could not turn into a resolution.
-#[cfg(feature = "includes")]
+/// One resolver call the binding could not turn into an answer.
+///
+/// Shared by `expandIncludes` and `mergeAst`: both hand a conflict or a path to
+/// a host callback that may return something unusable, and both report it
+/// rather than throwing.
+#[cfg(any(feature = "includes", feature = "ast-merge"))]
 struct ResolverFailure {
     path: String,
     message: String,
@@ -1430,6 +1434,183 @@ fn reversible_patch_from_json(json: &str) -> Result<carve::ReversibleAstPatch, J
         before_fingerprint: fingerprint("beforeFingerprint")?,
         after_fingerprint: fingerprint("afterFingerprint")?,
     })
+}
+
+/// Three-way merge over PART 12 trees, with conflicts as a VALUE.
+///
+/// ```js
+/// const { ok, ast, conflicts } = JSON.parse(mergeAst(base, ours, theirs))
+/// ```
+///
+/// Returns `{ ok, ast, conflicts, resolverErrors }` as one JSON string. A
+/// conflict does NOT throw: it is a result the caller asked for, and two people
+/// editing one document is the ordinary case rather than a broken contract.
+/// `ok` is false, `ast` is null, and `conflicts` says where and why.
+///
+/// The `{ ok, ast, conflicts }` shape and the three `reason` names -
+/// `both-changed`, `delete-edit`, `concurrent-sequence-edit` - are carve-js's,
+/// so a host merging with either engine reads one contract. The Rust engine
+/// carries no `deleted` flags on a conflict, so that optional carve-js field is
+/// absent here rather than guessed at.
+///
+/// `options.resolve` is an optional `(conflict) => 'base' | 'ours' | 'theirs' |
+/// { value } | null`, answering conflicts while the merge runs; an answer of
+/// `null` leaves one unresolved. IT MUST BE SYNCHRONOUS. A resolver that asks a
+/// server, or asks the user, returns a Promise the merge cannot await - that is
+/// reported in `resolverErrors` and the conflict is left unresolved, the same
+/// treatment an `async` `renderers.math` gets.
+#[cfg(feature = "ast-merge")]
+#[wasm_bindgen(js_name = mergeAst)]
+pub fn merge_ast(
+    base: &str,
+    ours: &str,
+    theirs: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    let base = ast_from_json(base, "base")?;
+    let ours = ast_from_json(ours, "ours")?;
+    let theirs = ast_from_json(theirs, "theirs")?;
+    let resolve = merge_resolver_field(options.as_ref())?;
+    let failures: Rc<RefCell<Vec<ResolverFailure>>> = Rc::default();
+
+    let merge_error =
+        |error: carve::AstJsonError| js_error(format!("carve: merge failed: {error:?}"));
+    let result = match &resolve {
+        None => carve::merge_ast(&base, &ours, &theirs).map_err(merge_error)?,
+        Some(resolve) => {
+            let failures = Rc::clone(&failures);
+            carve::merge_ast_with_resolver(&base, &ours, &theirs, |conflict| {
+                js_resolution(resolve, conflict, &failures)
+            })
+            .map_err(merge_error)?
+        }
+    };
+
+    let (ok, ast, conflicts) = match result {
+        carve::MergeResult::Merged(document) => (
+            true,
+            serde_json::from_str(&carve::to_json(&document)).unwrap_or(serde_json::Value::Null),
+            Vec::new(),
+        ),
+        carve::MergeResult::Conflicts(conflicts) => (
+            false,
+            serde_json::Value::Null,
+            conflicts.iter().map(conflict_to_json).collect(),
+        ),
+    };
+    let errors: Vec<serde_json::Value> = failures
+        .borrow()
+        .iter()
+        .map(|failure| serde_json::json!({ "path": failure.path, "message": failure.message }))
+        .collect();
+    Ok(serde_json::json!({
+        "ok": ok,
+        "ast": ast,
+        "conflicts": conflicts,
+        "resolverErrors": errors,
+    })
+    .to_string())
+}
+
+/// One conflict, in carve-js's field names.
+#[cfg(feature = "ast-merge")]
+fn conflict_to_json(conflict: &carve::MergeConflict) -> serde_json::Value {
+    // Each side is a JSON-encoded value or absent, and an absent side is `null`
+    // - a field one side deleted has no value to report.
+    let side = |value: &Option<String>| -> serde_json::Value {
+        value
+            .as_deref()
+            .and_then(|raw| serde_json::from_str(raw).ok())
+            .unwrap_or(serde_json::Value::Null)
+    };
+    serde_json::json!({
+        "path": conflict.path,
+        "reason": match conflict.reason {
+            carve::MergeConflictReason::BothChanged => "both-changed",
+            carve::MergeConflictReason::DeleteEdit => "delete-edit",
+            carve::MergeConflictReason::ConcurrentSequenceEdit => "concurrent-sequence-edit",
+        },
+        "base": side(&conflict.base),
+        "ours": side(&conflict.ours),
+        "theirs": side(&conflict.theirs),
+    })
+}
+
+/// Read `options.resolve`.
+#[cfg(feature = "ast-merge")]
+fn merge_resolver_field(
+    options: Option<&js_sys::Object>,
+) -> Result<Option<js_sys::Function>, JsValue> {
+    let Some(options) = options else {
+        return Ok(None);
+    };
+    let value = js_sys::Reflect::get(options, &JsValue::from_str("resolve"))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(None);
+    }
+    Ok(Some(value.dyn_into::<js_sys::Function>().map_err(
+        |_| type_error("carve: `resolve` must be a function `(conflict) => resolution`"),
+    )?))
+}
+
+/// Ask the JS resolver about one conflict.
+#[cfg(feature = "ast-merge")]
+fn js_resolution(
+    resolve: &js_sys::Function,
+    conflict: &carve::MergeConflict,
+    failures: &Rc<RefCell<Vec<ResolverFailure>>>,
+) -> Option<carve::MergeResolution> {
+    let record = |message: String| {
+        failures.borrow_mut().push(ResolverFailure {
+            path: conflict.path.clone(),
+            message,
+        });
+        None
+    };
+    let argument = match js_sys::JSON::parse(&conflict_to_json(conflict).to_string()) {
+        Ok(value) => value,
+        Err(error) => return record(format!("`resolve` argument: {}", describe_throw(&error))),
+    };
+    let value = match resolve.call1(&JsValue::NULL, &argument) {
+        Ok(value) => value,
+        Err(error) => return record(format!("`resolve` threw: {}", describe_throw(&error))),
+    };
+    if value.is_undefined() || value.is_null() {
+        return None;
+    }
+    if let Some(name) = value.as_string() {
+        return match name.as_str() {
+            "base" => Some(carve::MergeResolution::Base),
+            "ours" => Some(carve::MergeResolution::Ours),
+            "theirs" => Some(carve::MergeResolution::Theirs),
+            other => record(format!(
+                "`resolve` returned {other:?} (supported: \"base\", \"ours\", \"theirs\", \
+                 {{ value }}, null)"
+            )),
+        };
+    }
+    // Named before the object branch: a Promise IS an object, and an `async`
+    // resolver is the mistake this reporting exists for.
+    if value.is_instance_of::<js_sys::Promise>() {
+        return record(format!("`resolve` returned {}", describe_value(&value)));
+    }
+    let Some(object) = value.dyn_ref::<js_sys::Object>() else {
+        return record(format!(
+            "`resolve` returned {}, not a side name, a {{ value }} or null",
+            describe_value(&value)
+        ));
+    };
+    let replacement = js_sys::Reflect::get(object, &JsValue::from_str("value")).ok();
+    let Some(replacement) = replacement.filter(|v| !v.is_undefined()) else {
+        return record("`resolve` returned an object with no `value`".to_string());
+    };
+    match js_sys::JSON::stringify(&replacement) {
+        Ok(encoded) => Some(carve::MergeResolution::Value(String::from(encoded))),
+        Err(error) => record(format!(
+            "`resolve` returned a `value` that is not JSON: {}",
+            describe_throw(&error)
+        )),
+    }
 }
 
 /// Render an AST-JSON document (PART 12) to HTML.
@@ -2355,7 +2536,7 @@ fn describe_throw(error: &JsValue) -> String {
 /// a correct-looking renderer produces - every `async` function returns one.
 fn describe_value(value: &JsValue) -> String {
     if value.is_instance_of::<js_sys::Promise>() {
-        return "a Promise (this render is synchronous and cannot await one)".to_string();
+        return "a Promise (this call is synchronous and cannot await one)".to_string();
     }
     value
         .js_typeof()
