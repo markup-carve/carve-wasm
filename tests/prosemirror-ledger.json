@@ -1,0 +1,1108 @@
+{
+  "$comment": "What the ProseMirror bridge does to the spec corpus, as three exact sets. `reported` is what toProseMirror said it could not hold, keyed by document and listing the node types. `refused` is what fromProseMirror declined. `sourceLossy` names the documents whose canonical source does not survive the round trip, with what changed. Regenerate with UPDATE_PROSEMIRROR_LEDGER=1 node --stack-size=4000 tests/prosemirror.mjs, then write a reason for every new sourceLossy entry - the regeneration leaves a placeholder that tests/prosemirror.mjs refuses.",
+  "reported": {
+    "01-emphasis-4.crv": [
+      "degraded:escaped_text"
+    ],
+    "01-emphasis.crv": [
+      "degraded:soft_break"
+    ],
+    "03-links-7.crv": [
+      "degraded:escaped_text"
+    ],
+    "05-lists-13.crv": [
+      "degraded:soft_break"
+    ],
+    "05-lists-16.crv": [
+      "degraded:soft_break"
+    ],
+    "05-lists-17.crv": [
+      "degraded:soft_break"
+    ],
+    "05-lists-2.crv": [
+      "degraded:soft_break"
+    ],
+    "05-lists-21.crv": [
+      "degraded:soft_break"
+    ],
+    "05-lists-8.crv": [
+      "degraded:soft_break"
+    ],
+    "09-tables-4.crv": [
+      "degraded:escaped_text"
+    ],
+    "109-link-destination-parentheses-balance-4.crv": [
+      "degraded:soft_break"
+    ],
+    "12-inline-code-5.crv": [
+      "degraded:soft_break"
+    ],
+    "134-footnote-definition-requires-an-inline-body.crv": [
+      "degraded:soft_break"
+    ],
+    "139-inline-literal-3.crv": [
+      "degraded:escaped_text"
+    ],
+    "143-post-blank-list-continuation-content-column-model-4.crv": [
+      "degraded:soft_break"
+    ],
+    "145-definition-list-as-a-first-class-block-opener-3.crv": [
+      "degraded:soft_break"
+    ],
+    "146-table-as-a-block-opener-in-a-list-item-2.crv": [
+      "degraded:soft_break"
+    ],
+    "148-colon-fence-as-a-block-opener-in-a-list-item.crv": [
+      "degraded:soft_break"
+    ],
+    "15-heading-ids-4.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "150-abbreviation-title-escapes-its-markup-characters.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "151-indented-ordered-marker-content-column-includes-the-marker-indent.crv": [
+      "degraded:soft_break"
+    ],
+    "154-under-indented-definition-attaches-over-indented-definition-folds-3.crv": [
+      "degraded:soft_break"
+    ],
+    "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace-2.crv": [
+      "degraded:soft_break"
+    ],
+    "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace.crv": [
+      "degraded:soft_break"
+    ],
+    "157-indented-attribute-line-stays-literal-2.crv": [
+      "degraded:soft_break"
+    ],
+    "157-indented-attribute-line-stays-literal.crv": [
+      "degraded:soft_break"
+    ],
+    "158-indented-image-and-caption-stay-literal-2.crv": [
+      "degraded:soft_break"
+    ],
+    "158-indented-image-and-caption-stay-literal.crv": [
+      "degraded:soft_break"
+    ],
+    "159-indented-reference-and-footnote-definitions-stay-literal.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "160-indented-colon-fence-blocks-stay-literal-2.crv": [
+      "degraded:soft_break"
+    ],
+    "160-indented-colon-fence-blocks-stay-literal-3.crv": [
+      "degraded:soft_break"
+    ],
+    "160-indented-colon-fence-blocks-stay-literal.crv": [
+      "degraded:soft_break"
+    ],
+    "161-below-content-column-div-body-in-a-list-item-stays-literal.crv": [
+      "degraded:soft_break"
+    ],
+    "164-tight-list-item-keeps-trailing-text-after-a-block-bare-2.crv": [
+      "degraded:soft_break"
+    ],
+    "165-quote-flanking-after-an-escaped-character.crv": [
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "175-a-repeated-definition-which-one-wins-2.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "176-a-marker-separator-is-a-space-never-a-tab.crv": [
+      "degraded:soft_break"
+    ],
+    "177-two-abbreviation-definitions.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-3.crv": [
+      "degraded:soft_break"
+    ],
+    "178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-4.crv": [
+      "degraded:soft_break"
+    ],
+    "178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-5.crv": [
+      "degraded:soft_break"
+    ],
+    "178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-6.crv": [
+      "degraded:soft_break"
+    ],
+    "178-a-flush-left-line-needs-an-open-paragraph-to-fold-into-7.crv": [
+      "degraded:soft_break"
+    ],
+    "182-openers-past-the-nesting-cap-are-one-paragraph.crv": [
+      "degraded:soft_break"
+    ],
+    "184-a-definition-below-every-content-column-folds-as-text.crv": [
+      "degraded:soft_break"
+    ],
+    "19-smart-typography-dashes-and-quotes-2.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "19-smart-typography-dashes-and-quotes-3.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "19-smart-typography-dashes-and-quotes-4.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "19-smart-typography-dashes-and-quotes-5.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-6.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-7.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-8.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-9.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition.crv": [
+      "degraded:soft_break"
+    ],
+    "20-smart-typography-arrows-and-symbols.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "208-a-combined-bold-italic-span-may-cross-a-line.crv": [
+      "degraded:soft_break"
+    ],
+    "209-an-unresolved-reference-image-takes-no-caption.crv": [
+      "degraded:soft_break"
+    ],
+    "210-a-quote-marker-is-plus-a-space-and-a-lazy-line-keeps-its-own-text.crv": [
+      "degraded:soft_break"
+    ],
+    "22-footnotes-2.crv": [
+      "degraded:soft_break"
+    ],
+    "22-footnotes-6.crv": [
+      "degraded:soft_break"
+    ],
+    "223-an-abbreviation-term-is-one-ascii-alphanumeric-word-2.crv": [
+      "degraded:soft_break"
+    ],
+    "223-an-abbreviation-term-is-one-ascii-alphanumeric-word.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do-3.crv": [
+      "degraded:soft_break"
+    ],
+    "231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose-2.crv": [
+      "degraded:soft_break"
+    ],
+    "232-two-dashes-are-not-a-thematic-break.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "24-generic-divs-2.crv": [
+      "degraded:soft_break"
+    ],
+    "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it-2.crv": [
+      "degraded:soft_break"
+    ],
+    "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it.crv": [
+      "degraded:soft_break"
+    ],
+    "248-an-attribute-name-admits-no-colon.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "25-definition-lists-4.crv": [
+      "degraded:soft_break"
+    ],
+    "25-definition-lists-6.crv": [
+      "degraded:soft_break"
+    ],
+    "250-line-endings-and-a-byte-order-mark-2.crv": [
+      "degraded:soft_break"
+    ],
+    "250-line-endings-and-a-byte-order-mark-3.crv": [
+      "degraded:soft_break"
+    ],
+    "250-line-endings-and-a-byte-order-mark-4.crv": [
+      "degraded:soft_break"
+    ],
+    "250-line-endings-and-a-byte-order-mark.crv": [
+      "degraded:soft_break"
+    ],
+    "253-an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-2.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-3.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-4.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-5.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-6.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-7.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-8.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space-9.crv": [
+      "degraded:soft_break"
+    ],
+    "254-colon-fence-separator-must-be-a-space.crv": [
+      "degraded:soft_break"
+    ],
+    "255-colon-fence-metadata-slots-must-be-a-space-too-2.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "255-colon-fence-metadata-slots-must-be-a-space-too-3.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "255-colon-fence-metadata-slots-must-be-a-space-too-4.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "255-colon-fence-metadata-slots-must-be-a-space-too.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "256-table-cell-padding-must-be-a-space-10.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "256-table-cell-padding-must-be-a-space-11.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "256-table-cell-padding-must-be-a-space-12.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "257-link-and-image-title-slots-must-be-a-space-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "257-link-and-image-title-slots-must-be-a-space-3.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "257-link-and-image-title-slots-must-be-a-space-4.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "257-link-and-image-title-slots-must-be-a-space-5.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "257-link-and-image-title-slots-must-be-a-space-6.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "257-link-and-image-title-slots-must-be-a-space.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "259-a-tab-continues-a-list-item-just-as-two-spaces-do-2.crv": [
+      "degraded:soft_break"
+    ],
+    "259-a-tab-continues-a-list-item-just-as-two-spaces-do.crv": [
+      "degraded:soft_break"
+    ],
+    "26-comments-6.crv": [
+      "degraded:soft_break"
+    ],
+    "260-an-absorbed-colon-fence-leaves-a-block-quote-s-paragraph-open-2.crv": [
+      "degraded:soft_break"
+    ],
+    "260-an-absorbed-colon-fence-leaves-a-block-quote-s-paragraph-open-3.crv": [
+      "degraded:soft_break"
+    ],
+    "260-an-absorbed-colon-fence-leaves-a-block-quote-s-paragraph-open-4.crv": [
+      "degraded:soft_break"
+    ],
+    "260-an-absorbed-colon-fence-leaves-a-block-quote-s-paragraph-open.crv": [
+      "degraded:soft_break"
+    ],
+    "261-a-blank-line-holds-spaces-and-tabs-and-nothing-else-2.crv": [
+      "degraded:soft_break"
+    ],
+    "261-a-blank-line-holds-spaces-and-tabs-and-nothing-else-3.crv": [
+      "degraded:soft_break"
+    ],
+    "261-a-blank-line-holds-spaces-and-tabs-and-nothing-else.crv": [
+      "degraded:soft_break"
+    ],
+    "262-a-link-title-takes-exactly-one-space-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "262-a-link-title-takes-exactly-one-space.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "264-a-frontmatter-opener-takes-exactly-one-space.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "265-a-reference-definition-s-metadata-slots-take-exactly-one-space.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "266-a-reference-definition-is-anchored-at-end-of-line-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "266-a-reference-definition-is-anchored-at-end-of-line-3.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "266-a-reference-definition-is-anchored-at-end-of-line-4.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "266-a-reference-definition-is-anchored-at-end-of-line-5.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run-10.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run-3.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run-5.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "268-trailing-whitespace-on-a-content-line-is-dropped-2.crv": [
+      "degraded:soft_break"
+    ],
+    "268-trailing-whitespace-on-a-content-line-is-dropped-3.crv": [
+      "degraded:soft_break"
+    ],
+    "268-trailing-whitespace-on-a-content-line-is-dropped-7.crv": [
+      "degraded:soft_break"
+    ],
+    "270-a-real-div-in-a-container-and-the-flush-left-line-after-it.crv": [
+      "degraded:soft_break"
+    ],
+    "271-the-flush-left-line-after-a-container-a-quoted-line-opened-4.crv": [
+      "degraded:soft_break"
+    ],
+    "272-an-autolink-body-admits-non-ascii-and-excludes-format-characters-8.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "274-a-quoted-attribute-value-stops-at-the-newline-3.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "274-a-quoted-attribute-value-stops-at-the-newline.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text-4.crv": [
+      "degraded:escaped_text"
+    ],
+    "275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text-6.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-2.crv": [
+      "degraded:soft_break"
+    ],
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-4.crv": [
+      "degraded:soft_break"
+    ],
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-5.crv": [
+      "degraded:soft_break"
+    ],
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-6.crv": [
+      "degraded:soft_break"
+    ],
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-7.crv": [
+      "degraded:soft_break"
+    ],
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column.crv": [
+      "degraded:soft_break"
+    ],
+    "277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open-4.crv": [
+      "degraded:soft_break"
+    ],
+    "277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open-5.crv": [
+      "degraded:soft_break"
+    ],
+    "279-a-boundary-line-inside-an-open-fence-does-not-end-the-container-5.crv": [
+      "degraded:soft_break"
+    ],
+    "280-a-container-a-lazy-line-folded-into-is-still-open-2.crv": [
+      "degraded:soft_break"
+    ],
+    "280-a-container-a-lazy-line-folded-into-is-still-open-3.crv": [
+      "degraded:soft_break"
+    ],
+    "280-a-container-a-lazy-line-folded-into-is-still-open-4.crv": [
+      "degraded:soft_break"
+    ],
+    "280-a-container-a-lazy-line-folded-into-is-still-open-5.crv": [
+      "degraded:soft_break"
+    ],
+    "280-a-container-a-lazy-line-folded-into-is-still-open.crv": [
+      "degraded:soft_break"
+    ],
+    "286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption-2.crv": [
+      "degraded:soft_break"
+    ],
+    "286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption-3.crv": [
+      "degraded:soft_break"
+    ],
+    "286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption.crv": [
+      "degraded:soft_break"
+    ],
+    "287-a-column-zero-definition-ends-an-open-list-item-3.crv": [
+      "degraded:soft_break"
+    ],
+    "287-a-column-zero-definition-ends-an-open-list-item.crv": [
+      "degraded:escaped_text",
+      "degraded:soft_break"
+    ],
+    "29-non-breaking-space-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "305-an-abbreviation-expands-inside-an-inline-container-2.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "305-an-abbreviation-expands-inside-an-inline-container-3.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "305-an-abbreviation-expands-inside-an-inline-container-4.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "305-an-abbreviation-expands-inside-an-inline-container-5.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "305-an-abbreviation-expands-inside-an-inline-container.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "318-composite-figures-10.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "318-composite-figures-11.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "318-composite-figures-2.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "318-composite-figures-3.crv": [
+      "degraded:figure_group"
+    ],
+    "318-composite-figures-4.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "318-composite-figures-5.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "318-composite-figures-6.crv": [
+      "degraded:figure_group"
+    ],
+    "318-composite-figures-9.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "318-composite-figures.crv": [
+      "degraded:figure_group",
+      "dropped:caption_number"
+    ],
+    "321-delimited-comments-7.crv": [
+      "degraded:escaped_text"
+    ],
+    "324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-5.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-12.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-13.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-18.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-19.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-20.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-24.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-25.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-26.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-27.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-28.crv": [
+      "degraded:soft_break"
+    ],
+    "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-29.crv": [
+      "degraded:soft_break"
+    ],
+    "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-3.crv": [
+      "degraded:soft_break"
+    ],
+    "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-4.crv": [
+      "degraded:soft_break"
+    ],
+    "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-2.crv": [
+      "degraded:escaped_text"
+    ],
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-3.crv": [
+      "degraded:escaped_text"
+    ],
+    "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position-2.crv": [
+      "degraded:escaped_text",
+      "degraded:soft_break"
+    ],
+    "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position.crv": [
+      "degraded:escaped_text"
+    ],
+    "349-a-container-whose-table-ends-on-a-continuation-row-7.crv": [
+      "degraded:soft_break"
+    ],
+    "350-a-definition-at-a-container-s-content-column-3.crv": [
+      "degraded:soft_break"
+    ],
+    "350-a-definition-at-a-container-s-content-column-4.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary-2.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary-3.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary-6.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary-7.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary-8.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary-9.crv": [
+      "degraded:soft_break"
+    ],
+    "351-a-bracketed-construct-spanning-a-line-boundary.crv": [
+      "degraded:soft_break"
+    ],
+    "352-a-bracketed-construct-s-identifiers-stay-on-one-line-2.crv": [
+      "degraded:soft_break"
+    ],
+    "352-a-bracketed-construct-s-identifiers-stay-on-one-line-3.crv": [
+      "degraded:soft_break"
+    ],
+    "352-a-bracketed-construct-s-identifiers-stay-on-one-line-4.crv": [
+      "degraded:soft_break"
+    ],
+    "352-a-bracketed-construct-s-identifiers-stay-on-one-line-5.crv": [
+      "degraded:soft_break"
+    ],
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-10.crv": [
+      "degraded:soft_break"
+    ],
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-11.crv": [
+      "degraded:soft_break"
+    ],
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-12.crv": [
+      "degraded:soft_break"
+    ],
+    "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-4.crv": [
+      "degraded:soft_break"
+    ],
+    "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-6.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "358-what-a-content-column-block-does-not-reach-2.crv": [
+      "degraded:soft_break"
+    ],
+    "359-a-footnote-definition-s-block-runs-to-the-end-of-its-body-2.crv": [
+      "degraded:soft_break"
+    ],
+    "36-autolinks-3.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-2.crv": [
+      "degraded:soft_break"
+    ],
+    "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3.crv": [
+      "degraded:soft_break"
+    ],
+    "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line.crv": [
+      "degraded:soft_break"
+    ],
+    "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-2.crv": [
+      "degraded:soft_break"
+    ],
+    "364-only-lazy-folding-demotes-a-marker-line-colon-opener-2.crv": [
+      "degraded:soft_break"
+    ],
+    "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-2.crv": [
+      "degraded:soft_break"
+    ],
+    "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-3.crv": [
+      "degraded:soft_break"
+    ],
+    "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-4.crv": [
+      "degraded:soft_break"
+    ],
+    "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open.crv": [
+      "degraded:soft_break"
+    ],
+    "368-a-heading-at-an-item-s-content-column-leaves-no-paragraph-open-2.crv": [
+      "degraded:soft_break"
+    ],
+    "369-a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one-3.crv": [
+      "degraded:soft_break"
+    ],
+    "369-a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one.crv": [
+      "degraded:soft_break"
+    ],
+    "37-escapes.crv": [
+      "degraded:escaped_text"
+    ],
+    "374-a-collected-definition-closes-the-item-paragraph-2.crv": [
+      "degraded:soft_break"
+    ],
+    "374-a-collected-definition-closes-the-item-paragraph-3.crv": [
+      "degraded:soft_break"
+    ],
+    "374-a-collected-definition-closes-the-item-paragraph-4.crv": [
+      "degraded:soft_break"
+    ],
+    "374-a-collected-definition-closes-the-item-paragraph.crv": [
+      "degraded:soft_break"
+    ],
+    "376-pipe-tables-can-state-head-and-foot-row-counts.crv": [
+      "degraded:table_row_groups"
+    ],
+    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line-2.crv": [
+      "degraded:soft_break"
+    ],
+    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line.crv": [
+      "degraded:soft_break"
+    ],
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-2.crv": [
+      "degraded:soft_break"
+    ],
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-3.crv": [
+      "degraded:soft_break"
+    ],
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item.crv": [
+      "degraded:soft_break"
+    ],
+    "382-a-marker-line-link-definition-is-collected-where-no-paragraph-is-open-2.crv": [
+      "degraded:soft_break"
+    ],
+    "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-2.crv": [
+      "degraded:soft_break"
+    ],
+    "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-3.crv": [
+      "degraded:soft_break"
+    ],
+    "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container.crv": [
+      "degraded:soft_break"
+    ],
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": [
+      "degraded:soft_break"
+    ],
+    "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "386-the-doubled-run-is-the-canonical-arrow-in-both-families.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "387-a-braced-hyphen-pair-is-an-en-dash.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "389-a-boolean-attribute-does-not-start-with-an-underscore-3.crv": [
+      "degraded:soft_break"
+    ],
+    "390-a-table-cell-s-marker-run-ends-at-a-space-5.crv": [
+      "degraded:escaped_text"
+    ],
+    "394-a-leading-escaped-caret-keeps-its-escape.crv": [
+      "degraded:escaped_text",
+      "degraded:soft_break"
+    ],
+    "401-a-marker-at-an-item-content-column-opens-a-sublist-first-in-the-item-or-not-3.crv": [
+      "degraded:soft_break"
+    ],
+    "403-an-idle-escape-does-not-spread-from-the-occurrence-that-needed-one.crv": [
+      "degraded:soft_break"
+    ],
+    "404-a-caption-s-marker-separator-is-a-run-and-none-of-it-is-content-2.crv": [
+      "degraded:soft_break"
+    ],
+    "41-line-blocks-6.crv": [
+      "degraded:soft_break"
+    ],
+    "41-line-blocks-8.crv": [
+      "degraded:soft_break"
+    ],
+    "415-a-floating-attribute-does-not-widen-a-list-item-s-content-column-5.crv": [
+      "degraded:soft_break"
+    ],
+    "416-a-fenced-block-quote-is-the-block-quote-written-another-way-3.crv": [
+      "degraded:soft_break"
+    ],
+    "42-admonitions-6.crv": [
+      "degraded:admonition"
+    ],
+    "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": [
+      "degraded:soft_break"
+    ],
+    "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-6.crv": [
+      "degraded:soft_break"
+    ],
+    "424-a-definition-body-s-separator-width-sets-its-content-column-7.crv": [
+      "degraded:soft_break"
+    ],
+    "426-below-a-definition-body-s-column-the-body-ends-4.crv": [
+      "degraded:soft_break"
+    ],
+    "43-abbreviations.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-2.crv": [
+      "degraded:soft_break"
+    ],
+    "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-3.crv": [
+      "degraded:soft_break"
+    ],
+    "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-4.crv": [
+      "degraded:soft_break"
+    ],
+    "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-6.crv": [
+      "degraded:soft_break"
+    ],
+    "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text.crv": [
+      "degraded:soft_break"
+    ],
+    "432-an-abbreviation-definition-outside-document-level-is-not-an-invisible-line-2.crv": [
+      "degraded:soft_break"
+    ],
+    "432-an-abbreviation-definition-outside-document-level-is-not-an-invisible-line.crv": [
+      "degraded:soft_break"
+    ],
+    "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-2.crv": [
+      "degraded:soft_break"
+    ],
+    "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-3.crv": [
+      "degraded:soft_break"
+    ],
+    "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth.crv": [
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": [
+      "degraded:soft_break"
+    ],
+    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": [
+      "degraded:soft_break"
+    ],
+    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-4.crv": [
+      "degraded:soft_break"
+    ],
+    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": [
+      "degraded:soft_break"
+    ],
+    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-6.crv": [
+      "degraded:soft_break"
+    ],
+    "439-a-colon-followed-by-only-whitespace-is-not-a-description-2.crv": [
+      "degraded:soft_break"
+    ],
+    "439-a-colon-followed-by-only-whitespace-is-not-a-description-3.crv": [
+      "degraded:soft_break"
+    ],
+    "439-a-colon-followed-by-only-whitespace-is-not-a-description-4.crv": [
+      "degraded:soft_break"
+    ],
+    "439-a-colon-followed-by-only-whitespace-is-not-a-description-6.crv": [
+      "degraded:soft_break"
+    ],
+    "439-a-colon-followed-by-only-whitespace-is-not-a-description-7.crv": [
+      "degraded:soft_break"
+    ],
+    "439-a-colon-followed-by-only-whitespace-is-not-a-description.crv": [
+      "degraded:soft_break"
+    ],
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-2.crv": [
+      "degraded:soft_break"
+    ],
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-5.crv": [
+      "degraded:soft_break"
+    ],
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-6.crv": [
+      "degraded:soft_break"
+    ],
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-9.crv": [
+      "degraded:soft_break"
+    ],
+    "444-an-opener-at-or-past-a-description-body-s-column-closes-its-paragraph-10.crv": [
+      "degraded:soft_break"
+    ],
+    "444-an-opener-at-or-past-a-description-body-s-column-closes-its-paragraph-11.crv": [
+      "degraded:soft_break"
+    ],
+    "446-a-degraded-comment-fence-leaves-a-lazy-follower-where-the-line-form-does-3.crv": [
+      "degraded:soft_break"
+    ],
+    "446-a-degraded-comment-fence-leaves-a-lazy-follower-where-the-line-form-does-4.crv": [
+      "degraded:soft_break"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-16.crv": [
+      "degraded:soft_break"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-17.crv": [
+      "degraded:soft_break"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-18.crv": [
+      "degraded:soft_break"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-19.crv": [
+      "degraded:soft_break"
+    ],
+    "448-a-marker-folds-into-a-quote-below-it-2.crv": [
+      "degraded:soft_break"
+    ],
+    "448-a-marker-folds-into-a-quote-below-it-3.crv": [
+      "degraded:soft_break"
+    ],
+    "448-a-marker-folds-into-a-quote-below-it-4.crv": [
+      "degraded:soft_break"
+    ],
+    "448-a-marker-folds-into-a-quote-below-it-9.crv": [
+      "degraded:soft_break"
+    ],
+    "448-a-marker-folds-into-a-quote-below-it.crv": [
+      "degraded:soft_break"
+    ],
+    "449-a-comment-below-a-description-body-s-column-ends-the-body-4.crv": [
+      "degraded:soft_break"
+    ],
+    "45-inline-extensions-11.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "45-inline-extensions-5.crv": [
+      "degraded:soft_break"
+    ],
+    "45-inline-extensions-9.crv": [
+      "degraded:soft_break"
+    ],
+    "450-a-closed-fence-in-a-description-body-ends-it-3.crv": [
+      "degraded:soft_break"
+    ],
+    "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-8.crv": [
+      "degraded:soft_break"
+    ],
+    "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-9.crv": [
+      "degraded:soft_break"
+    ],
+    "452-an-empty-unterminated-container-ends-at-a-flush-left-line-5.crv": [
+      "degraded:soft_break"
+    ],
+    "46-symbols-3.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-2.crv": [
+      "degraded:soft_break"
+    ],
+    "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-3.crv": [
+      "degraded:soft_break"
+    ],
+    "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-4.crv": [
+      "degraded:soft_break"
+    ],
+    "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling.crv": [
+      "degraded:soft_break"
+    ],
+    "47-numbered-cross-references-2.crv": [
+      "dropped:caption_number"
+    ],
+    "47-numbered-cross-references-3.crv": [
+      "dropped:caption_number"
+    ],
+    "47-numbered-cross-references-4.crv": [
+      "dropped:caption_number"
+    ],
+    "47-numbered-cross-references-5.crv": [
+      "dropped:caption_number"
+    ],
+    "47-numbered-cross-references-7.crv": [
+      "degraded:escaped_text"
+    ],
+    "47-numbered-cross-references-8.crv": [
+      "dropped:caption_number"
+    ],
+    "47-numbered-cross-references-9.crv": [
+      "dropped:caption_number"
+    ],
+    "47-numbered-cross-references.crv": [
+      "dropped:caption_number"
+    ],
+    "56-table-cell-escaped-pipe.crv": [
+      "degraded:escaped_text"
+    ],
+    "58-abbreviation-matches-on-word-boundaries-only.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "62-smart-typography-escapes-and-code.crv": [
+      "degraded:escaped_text"
+    ],
+    "70-blocks-that-render-to-nothing-3.crv": [
+      "dropped:abbreviation_def"
+    ],
+    "72-escape-coverage-2.crv": [
+      "degraded:escaped_text"
+    ],
+    "72-escape-coverage.crv": [
+      "degraded:escaped_text"
+    ],
+    "73-parenthesized-ordered-marker.crv": [
+      "degraded:soft_break"
+    ],
+    "75-list-nesting-and-looseness-8.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-10.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-11.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-12.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-13.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-14.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-19.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-5.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-6.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-7.crv": [
+      "degraded:soft_break"
+    ],
+    "81-paragraph-interruption-9.crv": [
+      "degraded:soft_break"
+    ],
+    "82-blockquote-lazy-continuation-2.crv": [
+      "degraded:soft_break"
+    ],
+    "82-blockquote-lazy-continuation.crv": [
+      "degraded:soft_break"
+    ],
+    "85-blockquote-lazy-continuation-stops-at-a-fenced-block-2.crv": [
+      "degraded:soft_break"
+    ],
+    "86-list-lazy-continuation-10.crv": [
+      "degraded:soft_break"
+    ],
+    "86-list-lazy-continuation-3.crv": [
+      "degraded:soft_break"
+    ],
+    "86-list-lazy-continuation-4.crv": [
+      "degraded:soft_break"
+    ],
+    "86-list-lazy-continuation-6.crv": [
+      "degraded:soft_break"
+    ],
+    "86-list-lazy-continuation-9.crv": [
+      "degraded:soft_break"
+    ],
+    "86-list-lazy-continuation.crv": [
+      "degraded:soft_break"
+    ],
+    "88-list-continuation-marker-4.crv": [
+      "degraded:soft_break"
+    ],
+    "88-list-continuation-marker-6.crv": [
+      "degraded:soft_break"
+    ],
+    "91-mention-and-tag-name-boundaries.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "95-abbreviation-definition-interrupts-a-paragraph.crv": [
+      "dropped:abbreviation_def"
+    ]
+  },
+  "refused": {},
+  "sourceLossy": {
+    "108-security-hardening-11.crv": "the sanitized-away `href` attribute is not carried through the bridge, so the link comes back without it",
+    "130-bold-italic-delimiter-needs-content-3.crv": "the nested emphasis delimiters reflow: `/*x*/` comes back `*/x/*`",
+    "130-bold-italic-delimiter-needs-content-4.crv": "the nested emphasis delimiters reflow and gain braces: `a/*y*/b` comes back `a{*/y/*}b`",
+    "14-frontmatter-2.crv": "the JSON frontmatter block is gone; the ProseMirror model holds no frontmatter node",
+    "14-frontmatter-3.crv": "the TOML frontmatter block is gone; the ProseMirror model holds no frontmatter node",
+    "14-frontmatter.crv": "the frontmatter keys come back sorted rather than in the order they were written",
+    "202-a-definition-on-a-footnote-body-s-continuation-line-is-collected.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "220-a-definition-past-a-footnote-body-s-column-registers-from-its-authored-base.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace-2.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
+    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
+    "228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": "the two footnote definitions come back in label order rather than the order they were written",
+    "287-a-column-zero-definition-ends-an-open-list-item-4.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "312-a-note-body-s-own-references-resolve-3.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "312-a-note-body-s-own-references-resolve.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "323-a-block-attached-after-an-invisible-line-leaves-the-item-tight-3.crv": "the link definition inside the item is relocated to document level",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-5.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-6.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-8.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "417-an-authored-base-carries-opaque-payload-captions-and-nested-metadata-4.crv": "the nested footnote definition is hoisted above the note whose body held it",
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-3.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-7.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-10.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-13.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": "the link definition inside the nested item is relocated to document level",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-24.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-7.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-8.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-3.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-2.crv": "the footnote definition inside the item is relocated to document level",
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-4.crv": "the footnote definition inside the item is relocated to document level",
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item.crv": "the footnote definition inside the item is relocated to document level",
+    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves-2.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "457-a-container-closer-closes-its-container-in-a-footnote-body-too.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach-2.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-2.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-3.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in"
+  }
+}

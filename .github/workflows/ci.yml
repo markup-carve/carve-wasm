@@ -301,6 +301,18 @@ jobs:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
         run: node --stack-size=4000 tests/roundtrip.mjs
 
+      # The EDITOR direction. The ProseMirror bridge landed with unit assertions
+      # on hand-written documents (markup-carve/carve-wasm#101), so a regression
+      # arriving with an engine bump had nothing here to fail. This carries each
+      # corpus document out through `toProseMirror` and back through
+      # `fromProseMirror`, and compares canonical source as well as HTML: a
+      # bridge can lose a construct that renders to nothing and an HTML
+      # comparison stays green.
+      - name: Round trip through the ProseMirror bridge
+        env:
+          CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
+        run: node --stack-size=4000 tests/prosemirror.mjs
+
       # For corpus-drift below. It measures the SAME wasm package this job
       # gated rather than building a second one: two builds would be two
       # artifacts, and the drift number would be about the one nothing else
