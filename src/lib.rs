@@ -1614,15 +1614,33 @@ pub fn to_carve_with_options(
 ///
 /// The callback must be SYNCHRONOUS. wasm-bindgen cannot await across it, so an
 /// `async` renderer returns a Promise the engine has no way to resolve; that is
-/// recorded as a failure rather than stringified into the document. It is also
-/// why Mermaid cannot be passed here at all - its `render` returns a Promise
-/// from v10 on - and why `renderers.diagrams` is not bound.
+/// recorded as a failure rather than stringified into the document.
+///
+/// `renderers.diagrams` is the same callback one level down, keyed by the
+/// fence's css class: `{ mermaid: (source) => html }`. A host that renders its
+/// diagrams beforehand passes the lookup in that one line -
+/// `(source) => prerendered.get(source)`. Mermaid itself cannot be passed,
+/// because its `render` returns a Promise from v10 on.
+///
+/// ```js
+/// toHtmlWithRenderers(src, {
+///   mode: 'static',
+///   extensions: ['fenced-render'],
+///   renderers: { diagrams: { mermaid: (source) => prerendered.get(source) } },
+/// })
+/// ```
+///
+/// A diagram key the document never uses renders nothing and reports nothing.
+/// So does a fence whose class the caller did not configure: the engine
+/// degrades it to an escaped source block, and this binding never sees the
+/// node.
 ///
 /// A callback that throws, or returns anything other than a string, does not
 /// abort the render: the node it was called for emits nothing and the failure
-/// is reported in `rendererErrors`. This entry point exists because
-/// [`to_html_with_options`] returns a bare string with nowhere to put that, and
-/// so it rejects `renderers` rather than dropping the failures.
+/// is reported in `rendererErrors`, with `renderer` naming the css class.
+/// This entry point exists because [`to_html_with_options`] returns a bare
+/// string with nowhere to put that, and so it rejects `renderers` rather than
+/// dropping the failures.
 #[wasm_bindgen(js_name = toHtmlWithRenderers, unchecked_return_type = "StaticRenderResult")]
 pub fn to_html_with_renderers(
     source: &str,
@@ -1631,10 +1649,10 @@ pub fn to_html_with_renderers(
     let failures: Rc<RefCell<Vec<RendererFailure>>> = Rc::default();
     let html = match RenderRequest::read_with(options, true)? {
         None => carve::to_html(source),
-        Some(request) => match &request.math_renderer {
-            None => request.render(source).map_err(profile_violation_error)?,
-            Some(math) => request
-                .render_static(source, math, &failures)
+        Some(request) => match request.renderers.is_empty() {
+            true => request.render(source).map_err(profile_violation_error)?,
+            false => request
+                .render_static(source, &failures)
                 .map_err(profile_violation_error)?,
         },
     };
@@ -1644,8 +1662,12 @@ pub fn to_html_with_renderers(
     let errors = js_sys::Array::new();
     for failure in failures.borrow().iter() {
         let item = js_sys::Object::new();
-        js_sys::Reflect::set(&item, &"renderer".into(), &"math".into())?;
-        js_sys::Reflect::set(&item, &"display".into(), &failure.display.into())?;
+        js_sys::Reflect::set(&item, &"renderer".into(), &failure.renderer.as_str().into())?;
+        // `display` is the math callback's second argument. A diagram renderer
+        // has no such flag, and emitting a made-up one would read as data.
+        if let Some(display) = failure.display {
+            js_sys::Reflect::set(&item, &"display".into(), &display.into())?;
+        }
         js_sys::Reflect::set(&item, &"source".into(), &failure.source.as_str().into())?;
         js_sys::Reflect::set(&item, &"message".into(), &failure.message.as_str().into())?;
         errors.push(&item);
@@ -1659,43 +1681,113 @@ pub fn to_html_with_renderers(
 /// The engine's closure returns a `String` and has nowhere to put an error, so
 /// the failure is recorded here and handed back by the entry point instead.
 struct RendererFailure {
-    display: bool,
+    /// `"math"`, or the fence css class a diagram renderer was keyed by.
+    renderer: String,
+    display: Option<bool>,
     source: String,
     message: String,
 }
 
-/// Wrap a JS math callback as the engine's renderer set.
-fn math_renderers(
+/// The JS callbacks one options object supplied.
+#[derive(Default)]
+struct RendererSet {
+    math: Option<js_sys::Function>,
+    /// In the order the caller wrote them, so a reported failure and the object
+    /// the host passed can be read side by side.
+    diagrams: Vec<(String, js_sys::Function)>,
+}
+
+impl RendererSet {
+    fn is_empty(&self) -> bool {
+        self.math.is_none() && self.diagrams.is_empty()
+    }
+
+    /// The engine's renderer set, with every failure routed to `failures`.
+    fn engine_renderers(
+        &self,
+        failures: &Rc<RefCell<Vec<RendererFailure>>>,
+    ) -> carve::StaticRenderers {
+        let mut renderers = carve::StaticRenderers::new();
+        if let Some(math) = &self.math {
+            renderers = renderers.math(math_closure(math.clone(), Rc::clone(failures)));
+        }
+        for (key, callback) in &self.diagrams {
+            renderers = renderers.diagram(
+                key.clone(),
+                diagram_closure(key.clone(), callback.clone(), Rc::clone(failures)),
+            );
+        }
+        renderers
+    }
+}
+
+/// The engine's math closure, over a JS callback.
+fn math_closure(
     math: js_sys::Function,
     failures: Rc<RefCell<Vec<RendererFailure>>>,
-) -> carve::StaticRenderers {
-    carve::StaticRenderers::new().math(move |tex: &str, display: bool| {
-        let record = |message: String| {
-            failures.borrow_mut().push(RendererFailure {
-                display,
-                source: tex.to_string(),
-                message,
-            });
-            String::new()
-        };
-        match math.call2(
+) -> impl Fn(&str, bool) -> String {
+    move |tex: &str, display: bool| {
+        let call = math.call2(
             &JsValue::NULL,
             &JsValue::from_str(tex),
             &JsValue::from_bool(display),
-        ) {
-            Err(error) => record(format!(
-                "`renderers.math` threw: {}",
-                describe_throw(&error)
+        );
+        returned_html(
+            call,
+            "math",
+            "renderers.math",
+            Some(display),
+            tex,
+            &failures,
+        )
+    }
+}
+
+/// The engine's diagram closure, over a JS callback keyed by `key`.
+fn diagram_closure(
+    key: String,
+    callback: js_sys::Function,
+    failures: Rc<RefCell<Vec<RendererFailure>>>,
+) -> impl Fn(&str) -> String {
+    move |source: &str| {
+        let call = callback.call1(&JsValue::NULL, &JsValue::from_str(source));
+        let named = format!("renderers.diagrams.{key}");
+        returned_html(call, &key, &named, None, source, &failures)
+    }
+}
+
+/// What one callback produced: its string, or an empty node and a recorded
+/// failure.
+///
+/// `renderer` is what the failure is reported under; `named` is how the options
+/// key is spelled in the message.
+fn returned_html(
+    call: Result<JsValue, JsValue>,
+    renderer: &str,
+    named: &str,
+    display: Option<bool>,
+    source: &str,
+    failures: &Rc<RefCell<Vec<RendererFailure>>>,
+) -> String {
+    let record = |message: String| {
+        failures.borrow_mut().push(RendererFailure {
+            renderer: renderer.to_string(),
+            display,
+            source: source.to_string(),
+            message,
+        });
+        String::new()
+    };
+    match call {
+        Err(error) => record(format!("`{named}` threw: {}", describe_throw(&error))),
+        Ok(value) => match value.as_string() {
+            Some(html) => html,
+            None => record(format!(
+                "`{named}` returned {}, not a string",
+                describe_value(&value)
             )),
-            Ok(value) => match value.as_string() {
-                Some(html) => html,
-                None => record(format!(
-                    "`renderers.math` returned {}, not a string",
-                    describe_value(&value)
-                )),
-            },
-        }
-    })
+        },
+    }
 }
 
 /// The message a thrown JS value carries, whether or not it is an `Error`.
@@ -1722,18 +1814,20 @@ fn describe_value(value: &JsValue) -> String {
         .unwrap_or_else(|| "an unreadable value".to_string())
 }
 
-/// Read `renderers.math` out of a JS options object.
+/// Read `renderers` out of a JS options object.
 ///
 /// Every check here is at READ time, matching the rest of the object: a
 /// misconfigured host finds out before the render rather than on the first
 /// document that happens to contain a formula.
-fn math_renderer_field(
-    options: &js_sys::Object,
-    allowed: bool,
-) -> Result<Option<js_sys::Function>, JsValue> {
+///
+/// A diagram KEY is checked for shape only. Validating it against the set of
+/// fence classes would mean keeping that list by hand here, because the
+/// extension registry does not carry the class an entry claims
+/// (markup-carve/carve-rs#1670).
+fn renderers_field(options: &js_sys::Object, allowed: bool) -> Result<RendererSet, JsValue> {
     let renderers = js_sys::Reflect::get(options, &JsValue::from_str("renderers"))?;
     if renderers.is_undefined() || renderers.is_null() {
-        return Ok(None);
+        return Ok(RendererSet::default());
     }
     if !allowed {
         return Err(type_error(
@@ -1745,21 +1839,56 @@ fn math_renderer_field(
         .dyn_into::<js_sys::Object>()
         .map_err(|_| type_error("carve: `renderers` must be an object"))?;
 
-    let diagrams = js_sys::Reflect::get(&renderers, &JsValue::from_str("diagrams"))?;
-    if !diagrams.is_undefined() && !diagrams.is_null() {
+    let math = js_sys::Reflect::get(&renderers, &JsValue::from_str("math"))?;
+    let math = if math.is_undefined() || math.is_null() {
+        None
+    } else {
+        Some(
+            math.dyn_into::<js_sys::Function>()
+                .map_err(|_| type_error("carve: `renderers.math` must be a function"))?,
+        )
+    };
+
+    Ok(RendererSet {
+        math,
+        diagrams: diagram_renderers_field(&renderers)?,
+    })
+}
+
+/// Read `renderers.diagrams`: a css class per key, a callback per value.
+fn diagram_renderers_field(
+    renderers: &js_sys::Object,
+) -> Result<Vec<(String, js_sys::Function)>, JsValue> {
+    let diagrams = js_sys::Reflect::get(renderers, &JsValue::from_str("diagrams"))?;
+    if diagrams.is_undefined() || diagrams.is_null() {
+        return Ok(Vec::new());
+    }
+    // A function here is the shape a host reaches for after reading
+    // `renderers.math`, and one callback cannot say which fence it was called
+    // for. Name the working spelling rather than reporting "not an object".
+    if diagrams.is_function() {
         return Err(type_error(
-            "carve: `renderers.diagrams` is not bound yet. Silently ignoring it would render \
-             the fence as source with nothing to say why",
+            "carve: `renderers.diagrams` is keyed by the fence's css class, as \
+             `{ mermaid: (source) => html }` - a bare function has no key to be called under",
         ));
     }
-
-    let math = js_sys::Reflect::get(&renderers, &JsValue::from_str("math"))?;
-    if math.is_undefined() || math.is_null() {
-        return Ok(None);
+    let diagrams = diagrams
+        .dyn_into::<js_sys::Object>()
+        .map_err(|_| type_error("carve: `renderers.diagrams` must be an object"))?;
+    let mut pairs = Vec::new();
+    for entry in js_sys::Object::entries(&diagrams).iter() {
+        let entry: js_sys::Array = entry.into();
+        let key = entry.get(0).as_string().ok_or_else(|| {
+            type_error("carve: every key in `renderers.diagrams` must be a string")
+        })?;
+        let callback = entry.get(1).dyn_into::<js_sys::Function>().map_err(|_| {
+            type_error(&format!(
+                "carve: `renderers.diagrams.{key}` must be a function"
+            ))
+        })?;
+        pairs.push((key, callback));
     }
-    Ok(Some(math.dyn_into::<js_sys::Function>().map_err(|_| {
-        type_error("carve: `renderers.math` must be a function")
-    })?))
+    Ok(pairs)
 }
 
 fn type_error(message: &str) -> JsValue {
@@ -1775,9 +1904,9 @@ struct RenderRequest {
     symbols: SymbolPairs,
     named: Option<Vec<String>>,
     full: bool,
-    /// Only [`to_html_with_renderers`] may set this: it is the one entry point
+    /// Only [`to_html_with_renderers`] may set these: it is the one entry point
     /// whose return value can carry what a failing callback reported.
-    math_renderer: Option<js_sys::Function>,
+    renderers: RendererSet,
 }
 
 impl RenderRequest {
@@ -1836,7 +1965,7 @@ impl RenderRequest {
             symbols: symbol_pairs(symbols)?,
             named,
             full,
-            math_renderer: math_renderer_field(&options, renderers_allowed)?,
+            renderers: renderers_field(&options, renderers_allowed)?,
         }))
     }
 
@@ -1850,7 +1979,7 @@ impl RenderRequest {
         }
     }
 
-    /// Render with a static math renderer installed.
+    /// Render with the host's static renderers installed.
     ///
     /// Separate from [`Self::render`] because the renderer set is owned by the
     /// engine `Options` rather than rebuilt per helper, and because none of the
@@ -1858,13 +1987,12 @@ impl RenderRequest {
     fn render_static(
         &self,
         source: &str,
-        math: &js_sys::Function,
         failures: &Rc<RefCell<Vec<RendererFailure>>>,
     ) -> Result<String, carve::ProfileViolationError> {
         let owned = self.extension_boxes();
         let options = self
             .engine_options(&owned)
-            .with_renderers(math_renderers(math.clone(), Rc::clone(failures)));
+            .with_renderers(self.renderers.engine_renderers(failures));
         carve::try_to_html_with_options(source, &options)
     }
 

@@ -309,11 +309,33 @@ typeset later - never blank.
 `async` renderer returns a Promise the engine has no way to resolve. That is
 reported as a failure rather than stringified into the document.
 
-It is also why there is no `renderers.diagrams` yet: Mermaid's `render` returns
-a Promise from v10 on, so it cannot be passed to a synchronous callback at all,
-and a host could only supply a lookup into diagrams it rendered beforehand.
-Passing `diagrams` throws, rather than being ignored - an ignored key renders the
-fence as source with nothing to say the configuration did nothing.
+`renderers.diagrams` is the same callback one level down, keyed by the fence's
+css class:
+
+```js
+const { html, rendererErrors } = toHtmlWithRenderers(source, {
+  mode: 'static',
+  extensions: ['fenced-render', 'fenced-render-graphviz'],
+  renderers: {
+    diagrams: {
+      mermaid: (source) => prerendered.get(source),
+      graphviz: (source) => dotToSvg(source),
+    },
+  },
+})
+```
+
+Mermaid itself cannot be passed here: its `render` returns a Promise from v10
+on. What a browser host can do is render its diagrams beforehand, by whatever
+async means it likes, and pass the lookup as the one-line callback above.
+
+A fence whose class nobody configured degrades to an escaped source block, and
+that is reported by nothing - the callback is never called, so the binding
+cannot see the miss. A configured key the document never uses is silent for the
+same reason. Keys are checked for shape only: an unknown one is accepted,
+because validating it would mean keeping the list of fence classes by hand here
+until [markup-carve/carve-rs#1670](https://github.com/markup-carve/carve-rs/issues/1670)
+puts the class on the registry entry.
 
 A callback that throws, or returns anything but a string, does not abort the
 render. The node it was called for emits nothing and the failure is reported:
@@ -327,13 +349,16 @@ const { html, rendererErrors } = toHtmlWithRenderers(source, {
 // rendererErrors: [{ renderer: 'math', display: true, source: 'E = mc^2', message: '…bad TeX' }]
 ```
 
+A diagram failure is an entry in the same array, with `renderer` naming the css
+class and no `display` - that flag is the math callback's second argument.
+
 That is why this is a separate entry point: `toHtmlWithOptions` returns a bare
 string with nowhere to report a failing callback, and a silently empty figure is
 the degradation `lintCarve` exists to warn about. Every other check is at READ
 time, matching the rest of the options object - a non-callable `math`, a
-non-object `renderers`, and `diagrams` all throw a `TypeError` before the render
-starts, so a misconfigured host finds out without needing a document that
-happens to contain a formula.
+non-object `renderers` and a non-callable `diagrams` value all throw a
+`TypeError` before the render starts, so a misconfigured host finds out without
+needing a document that happens to contain a formula.
 
 ### Editing a tree, and reading one back
 
@@ -402,7 +427,7 @@ const html: string = toHtml('_Hello_')
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
 | `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form; see the options table above. Throws `ProfileViolationError` when a profile rejects the document |
-| `toHtmlWithRenderers` | `(source: string, options?: object \| null) => StaticRenderResult` | The options object plus `renderers.math`, for `mode: 'static'`; returns `{ html, rendererErrors }` |
+| `toHtmlWithRenderers` | `(source: string, options?: object \| null) => StaticRenderResult` | The options object plus `renderers.math` and `renderers.diagrams`, for `mode: 'static'`; returns `{ html, rendererErrors }` |
 | `toMarkdownWithOptions` | `(source: string, options?: object \| null) => string` | Markdown under the same options object. Throws `ProfileViolationError` when a profile rejects the document |
 | `toPlainTextWithOptions` | `(source: string, options?: object \| null) => string` | Plain text under the same options object |
 | `toAnsiWithOptions` | `(source: string, options?: object \| null) => string` | ANSI text under the same options object |
