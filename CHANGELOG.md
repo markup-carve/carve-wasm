@@ -32,6 +32,34 @@ their own.
 - `lintCarveWithOptions`, `lintAccessibility`, `stampCarve`, `sanitizeSvg`,
   `parseLocator`, `parseSourceLayoutJson` and `markdownToAstJson` - engine
   capability that had no binding (#109).
+- `renderers.diagrams` on that same call, keyed by the fence's css class, each
+  value the `(source) => html` callback `renderers.math` takes. A failure joins
+  `rendererErrors` with `renderer` naming the class. Reading the key threw
+  before, while its shape was undecided (#105, #120).
+- `expandIncludes`, resolving `{{ path }}` directives through a host resolver
+  and handing back the expanded tree as AST JSON. The resolver is SYNCHRONOUS,
+  so a browser resolving over the network cannot use it, and an async one lands
+  in `resolverErrors` rather than being swallowed. `maxBytes`, `maxDepth`,
+  `maxResolverCalls` and `maxWarnings` are exposed with their defaults
+  (#115, #121).
+- `parseSnapshot` and `reparse`, each returning `{ source, document,
+  sourceLayout, changedSource, reusedPreviousTree }` as one JSON string. The
+  change offsets are UTF-8 BYTES, which is what `parseJson` positions and
+  `createSourcePatch` ranges already mean, so a host counting UTF-16 code units
+  converts first and a range splitting a character is refused (#111, #122).
+- `createAstPatch`, `applyAstPatch`, `createReversibleAstPatch` and
+  `applyReversibleAstPatch`, with trees and patches both crossing as JSON
+  strings. Replaying a reversible patch onto a tree whose fingerprint is not the
+  one it was made against throws, so an undo cannot land on a document that has
+  moved on (#112, #125).
+- `mergeAst`, taking an optional synchronous `options.resolve`. A conflict is a
+  value, `{ ok: false, ast: null, conflicts }`, rather than an exception, under
+  the three reason names carve-js uses. An async resolver is reported in
+  `resolverErrors` and its conflict left unresolved (#113, #126).
+- `htmlToAst`, returning the tree in the `{ value, report }` shape `htmlToCarve`
+  already hands back. The two reports differ: a loss only the writer takes is
+  absent here, so a `<figure>` wrapping a table reports `structure-unspellable`
+  from `htmlToCarve` and not from this (#114, #127).
 
 ### Changed
 
