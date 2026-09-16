@@ -23,6 +23,8 @@ for (const name of [
   'toHtmlWithOptions',
   'toHtmlWithRenderers',
   'toHtmlWithSymbols',
+  'sanitizeSvg',
+  'parseLocator',
   'version',
 ]) {
   assert.equal(typeof wasm[name], 'function', `${name} should be exported`)
@@ -45,6 +47,8 @@ for (const name of [
   'fromMarkdown',
   'parseJson',
   'parseJsonWithOptions',
+  'parseSourceLayoutJson',
+  'markdownToAstJson',
   'toHtmlWithReport',
   'toMarkdown',
   'toMarkdownWithOptions',
@@ -64,7 +68,10 @@ for (const name of [
   'toProseMirror',
   'fromProseMirror',
   'lintCarve',
+  'lintCarveWithOptions',
+  'lintAccessibility',
   'readStamp',
+  'stampCarve',
   'needsReview',
   'fromDjot',
   'fromBbcode',

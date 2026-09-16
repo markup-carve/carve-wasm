@@ -16,8 +16,15 @@ import {
   fromMarkdown,
   migrateBbcode,
   migrateDjot,
+  lintAccessibility,
   lintCarve,
+  lintCarveWithOptions,
+  markdownToAstJson,
   needsReview,
+  parseLocator,
+  parseSourceLayoutJson,
+  sanitizeSvg,
+  stampCarve,
   parseJson,
   parseJsonWithOptions,
   readStamp,
@@ -505,9 +512,97 @@ for (const key of ['line', 'column', 'rule', 'message', 'start', 'end']) {
   assert.ok(key in warnings[0], `a warning should carry ${key}`)
 }
 
-// Provenance.
+// The second diagnostic family, with its own rule ids and its own severity.
+assert.deepEqual(lintAccessibility('# One\n\n![alt](x.png)\n'), [])
+{
+  const missing = lintAccessibility('![](x.png)\n')
+  assert.equal(missing.length, 1)
+  assert.equal(missing[0].rule, 'a11y/image-alt')
+  assert.equal(missing[0].severity, 'error')
+  assert.equal(typeof missing[0].startOffset, 'number')
+
+  const jump = lintAccessibility('# One\n\n### Three\n')
+  assert.equal(jump.length, 1)
+  assert.equal(jump[0].rule, 'a11y/heading-jump')
+  assert.equal(jump[0].severity, 'warning')
+}
+
+// Which degradations exist depends on the extensions in play, so the linter
+// needs the set the host renders with. `samp` becomes an element only under
+// `semantic-span`, and only then is a value on it discarded.
+{
+  const src = 'a [x]{samp=out} b\n'
+  assert.deepEqual(lintCarve(src), [])
+  assert.deepEqual(lintCarveWithOptions(src), [])
+  assert.deepEqual(lintCarveWithOptions(src, {}), [])
+  const extended = lintCarveWithOptions(src, { extensions: ['semantic-span'] })
+  assert.equal(extended.length, 1)
+  assert.equal(extended[0].rule, 'semantic-attribute-value-ignored')
+  assert.throws(() => lintCarveWithOptions(src, { extensions: ['nope'] }), TypeError)
+}
+
+// Provenance. `readStamp` could read a marker this package could not write.
 assert.equal(readStamp('# Plain\n'), null)
 assert.equal(needsReview('# Plain\n', '1.0.0'), true)
+{
+  const stamped = stampCarve('# Plain\n', 'my-app 1.2')
+  const read = readStamp(stamped)
+  assert.equal(read.generatedBy, 'my-app 1.2')
+  assert.equal(needsReview(stamped, read.version), false)
+  assert.ok(stamped.startsWith('# Plain\n'))
+  assert.ok(stampCarve('# Plain\n', 'my-app 1.2', 'block').includes('%%%'))
+  assert.ok(!stampCarve('# Plain\n', 'my-app 1.2', 'line').includes('%%%'))
+  assert.throws(() => stampCarve('# Plain\n', 'my-app 1.2', 'nope'), TypeError)
+  // Stamping twice replaces the marker rather than stacking two.
+  assert.equal(stampCarve(stamped, 'my-app 1.3'), stampCarve('# Plain\n', 'my-app 1.3'))
+}
+
+// The SVG sanitizer, strict by default.
+{
+  const hostile = '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script><rect/></svg>'
+  const strict = sanitizeSvg(hostile)
+  assert.equal(strict.ok, true)
+  assert.ok(!strict.svg.includes('<script'))
+  assert.ok(strict.svg.includes('<rect'))
+  assert.equal(sanitizeSvg('not svg at all').ok, false)
+  // An option is read rather than ignored.
+  const linked = '<svg xmlns="http://www.w3.org/2000/svg"><a href="https://example.com/"><rect/></a></svg>'
+  assert.ok(!sanitizeSvg(linked).svg.includes('<a '))
+  assert.ok(sanitizeSvg(linked, { allowLinks: true }).svg.includes('<a '))
+  assert.throws(() => sanitizeSvg(linked, { allowLinks: 'yes' }), TypeError)
+}
+
+// Citation locators, the same shape carve-js parses them into.
+assert.deepEqual(parseLocator('pp. 12-14'), {
+  label: 'page',
+  value: '12-14',
+  suffixText: null,
+})
+assert.deepEqual(parseLocator(''), { label: null, value: null, suffixText: null })
+
+// The source-layout sidecar: the byte-exact record of the source, which
+// `parseJson`'s semantic positions are not.
+{
+  const layout = JSON.parse(parseSourceLayoutJson('# One\r\n'))
+  assert.equal(layout.version, 1)
+  assert.equal(layout.lineEndings, 'crlf')
+  assert.equal(layout.bom, false)
+  assert.ok(layout.nodes.length > 0)
+  assert.equal(typeof layout.nodes[0].path, 'string')
+  assert.equal(JSON.parse(parseSourceLayoutJson('# One\n')).lineEndings, 'lf')
+}
+
+// The Markdown importer, straight to the tree instead of via Carve source. A
+// setext heading is the discriminator: Markdown makes it a heading, and Carve
+// has no such form, so a tree that merely re-parsed the input as Carve would
+// carry a paragraph here.
+{
+  const tree = JSON.parse(markdownToAstJson('Title\n=====\n'))
+  assert.equal(tree.type, 'document')
+  assert.equal(tree.children[0].type, 'heading')
+  assert.equal(tree.children[0].level, 1)
+  assert.notEqual(JSON.parse(parseJson('Title\n=====\n')).children[0].type, 'heading')
+}
 
 // The importers that had no binding. Djot swaps the emphasis delimiters, which
 // is exactly why pasting Djot in as Carve renders wrongly rather than failing.
