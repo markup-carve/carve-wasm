@@ -883,6 +883,318 @@ pub fn parse_source_layout_json(source: &str) -> String {
     carve::parse_with_source_layout(source).1
 }
 
+/// Expand `{{ path }}` include directives (spec PART 9 §19) through a JS
+/// resolver, and hand back the expanded tree as AST JSON.
+///
+/// The resolver MUST BE SYNCHRONOUS, which decides who can use this. A browser
+/// host that would resolve a path by `fetch` cannot: `fetch` is a Promise and
+/// wasm-bindgen cannot await across the call. A host whose files are already in
+/// memory - an editor with its open buffers, a bundler, a VFS, a test harness -
+/// resolves from that map and is exactly who this is for.
+///
+/// ```js
+/// const files = new Map([['child.crv', 'Included body.\n']])
+/// expandIncludes('Before.\n\n{{ child.crv }}\n', {
+///   resolve: (path) => files.get(path) ?? null,
+/// })
+/// // { json, warnings: [], suppressedWarnings: 0, dependencies: […],
+/// //   chargedBytes: 15, resolverErrors: [] }
+/// ```
+///
+/// The resolver returns the child's source as a string, or
+/// `{ source, id }` when it can name the file canonically - the id is what the
+/// cycle guard compares, so two spellings of one file defeat it without one.
+/// `null` refuses the directive as `not-found`; `{ denial }` refuses it in one
+/// of the classes §19 names.
+///
+/// An `async` resolver returns a Promise, which is not a string and cannot be
+/// awaited. That is a per-document failure reported in `resolverErrors`,
+/// matching what an `async` `renderers.math` gets from
+/// [`to_html_with_renderers`]: the directive stays literal and the caller is
+/// told why, rather than the value being swallowed or stringified.
+///
+/// The BUDGETS are part of the contract, not a detail: `maxBytes` defaults to
+/// `max(1 MB, 8 x source bytes)`, `maxDepth` to 16, `maxResolverCalls` to 1000
+/// and `maxWarnings` to 100. They bound what a document of directives can make
+/// a host do, and lowering them is how a host serving untrusted documents keeps
+/// that bounded.
+///
+/// The tree carries no positions. Expansion merges nodes from several files,
+/// and a span on a node that came from a child would point into a source the
+/// caller did not pass.
+#[cfg(feature = "includes")]
+#[wasm_bindgen(js_name = expandIncludes, unchecked_return_type = "IncludeExpansion")]
+pub fn expand_includes(source: &str, options: js_sys::Object) -> Result<JsValue, JsValue> {
+    let request = IncludeRequest::read(&options)?;
+    let failures: Rc<RefCell<Vec<ResolverFailure>>> = Rc::default();
+    let resolver = js_resolver(request.resolve.clone(), Rc::clone(&failures));
+
+    let owned = build_extensions(&request.extensions);
+    let mut include_options = carve::IncludeOptions::new().with_resolver(&resolver);
+    for ext in &owned {
+        include_options = include_options.with_extension(ext.as_ref());
+    }
+    if let Some(path) = &request.source_path {
+        include_options = include_options.with_source_path(path.clone());
+    }
+    if let Some(depth) = request.max_depth {
+        include_options = include_options.with_max_depth(depth);
+    }
+    if let Some(bytes) = request.max_bytes {
+        include_options = include_options.with_max_bytes(bytes);
+    }
+    if let Some(calls) = request.max_resolver_calls {
+        include_options = include_options.with_max_resolver_calls(calls);
+    }
+    if let Some(warnings) = request.max_warnings {
+        include_options = include_options.with_max_warnings(warnings);
+    }
+
+    let mut parse_options = carve::Options::new();
+    for ext in &owned {
+        parse_options = parse_options.with_extension(ext.as_ref());
+    }
+    let doc = carve::parse_with_options(source, &parse_options);
+    let result = carve::expand_includes(doc, source, &include_options);
+
+    let object = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &object,
+        &"json".into(),
+        &JsValue::from_str(&carve::to_json(&result.doc)),
+    )?;
+    let warnings = js_sys::Array::new();
+    for warning in &result.warnings {
+        let item = js_sys::Object::new();
+        js_sys::Reflect::set(&item, &"rule".into(), &warning.rule.as_str().into())?;
+        js_sys::Reflect::set(&item, &"message".into(), &warning.message.as_str().into())?;
+        js_sys::Reflect::set(
+            &item,
+            &"file".into(),
+            &match &warning.file {
+                Some(file) => JsValue::from_str(file),
+                None => JsValue::NULL,
+            },
+        )?;
+        warnings.push(&item);
+    }
+    js_sys::Reflect::set(&object, &"warnings".into(), &warnings)?;
+    js_sys::Reflect::set(
+        &object,
+        &"suppressedWarnings".into(),
+        &(result.suppressed_warnings as f64).into(),
+    )?;
+    let dependencies = js_sys::Array::new();
+    for dependency in &result.dependencies {
+        let item = js_sys::Object::new();
+        js_sys::Reflect::set(&item, &"id".into(), &dependency.id.as_str().into())?;
+        js_sys::Reflect::set(&item, &"resolved".into(), &dependency.resolved.into())?;
+        js_sys::Reflect::set(
+            &item,
+            &"denial".into(),
+            &match dependency.denial {
+                Some(denial) => JsValue::from_str(denial.as_str()),
+                None => JsValue::NULL,
+            },
+        )?;
+        dependencies.push(&item);
+    }
+    js_sys::Reflect::set(&object, &"dependencies".into(), &dependencies)?;
+    js_sys::Reflect::set(
+        &object,
+        &"chargedBytes".into(),
+        &(result.charged_bytes as f64).into(),
+    )?;
+    let errors = js_sys::Array::new();
+    for failure in failures.borrow().iter() {
+        let item = js_sys::Object::new();
+        js_sys::Reflect::set(&item, &"path".into(), &failure.path.as_str().into())?;
+        js_sys::Reflect::set(&item, &"message".into(), &failure.message.as_str().into())?;
+        errors.push(&item);
+    }
+    js_sys::Reflect::set(&object, &"resolverErrors".into(), &errors)?;
+    Ok(object.into())
+}
+
+/// One resolver call the binding could not turn into a resolution.
+#[cfg(feature = "includes")]
+struct ResolverFailure {
+    path: String,
+    message: String,
+}
+
+/// The `expandIncludes` options object, parsed once.
+#[cfg(feature = "includes")]
+struct IncludeRequest {
+    resolve: js_sys::Function,
+    source_path: Option<String>,
+    extensions: Vec<String>,
+    max_depth: Option<usize>,
+    max_bytes: Option<usize>,
+    max_resolver_calls: Option<usize>,
+    max_warnings: Option<usize>,
+}
+
+#[cfg(feature = "includes")]
+impl IncludeRequest {
+    fn read(options: &js_sys::Object) -> Result<Self, JsValue> {
+        let resolve = js_sys::Reflect::get(options, &JsValue::from_str("resolve"))?;
+        // Required rather than optional. With no resolver the engine's pass is
+        // a no-op that leaves every directive literal, and an entry point whose
+        // zero-config form silently does nothing is a trap.
+        let resolve = resolve.dyn_into::<js_sys::Function>().map_err(|_| {
+            type_error(
+                "carve: `resolve` must be a function `(path, ctx) => source`. Without one every \
+                 directive stays literal, so there would be nothing to expand",
+            )
+        })?;
+        Ok(Self {
+            resolve,
+            source_path: string_field(options, "sourcePath")?,
+            extensions: extension_names_field(options)?.unwrap_or_default(),
+            max_depth: size_field(options, "maxDepth")?,
+            max_bytes: size_field(options, "maxBytes")?,
+            max_resolver_calls: size_field(options, "maxResolverCalls")?,
+            max_warnings: size_field(options, "maxWarnings")?,
+        })
+    }
+}
+
+/// Read a non-negative integer budget.
+#[cfg(feature = "includes")]
+fn size_field(options: &js_sys::Object, key: &str) -> Result<Option<usize>, JsValue> {
+    let value = js_sys::Reflect::get(options, &JsValue::from_str(key))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(None);
+    }
+    let number = value.as_f64().filter(|n| n.is_finite() && *n >= 0.0);
+    number
+        .map(|n| n as usize)
+        .map(Some)
+        .ok_or_else(|| type_error(&format!("carve: `{key}` must be a non-negative number")))
+}
+
+/// The engine's resolver, over a JS callback.
+#[cfg(feature = "includes")]
+fn js_resolver(
+    resolve: js_sys::Function,
+    failures: Rc<RefCell<Vec<ResolverFailure>>>,
+) -> impl Fn(&str, &carve::IncludeContext<'_>) -> Result<carve::IncludeResolved, carve::IncludeDenial>
+{
+    move |path: &str, ctx: &carve::IncludeContext<'_>| {
+        let record = |message: String| {
+            failures.borrow_mut().push(ResolverFailure {
+                path: path.to_string(),
+                message,
+            });
+            carve::IncludeDenial::Unresolved
+        };
+        let context = match include_context(ctx) {
+            Ok(context) => context,
+            Err(error) => return Err(record(format!("`resolve` context: {error:?}"))),
+        };
+        let value = match resolve.call2(&JsValue::NULL, &JsValue::from_str(path), &context) {
+            Ok(value) => value,
+            Err(error) => {
+                return Err(record(format!(
+                    "`resolve` threw: {}",
+                    describe_throw(&error)
+                )))
+            }
+        };
+        resolved_from_js(value).map_err(|message| match message {
+            // A refusal the host meant, not a failure of the binding.
+            Ok(denial) => denial,
+            Err(message) => record(message),
+        })
+    }
+}
+
+/// The `ctx` argument one resolver call gets.
+#[cfg(feature = "includes")]
+fn include_context(ctx: &carve::IncludeContext<'_>) -> Result<JsValue, JsValue> {
+    let object = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &object,
+        &"sourcePath".into(),
+        &match ctx.source_path {
+            Some(path) => JsValue::from_str(path),
+            None => JsValue::NULL,
+        },
+    )?;
+    let stack = js_sys::Array::new();
+    for entry in ctx.stack {
+        stack.push(&JsValue::from_str(entry));
+    }
+    js_sys::Reflect::set(&object, &"stack".into(), &stack)?;
+    js_sys::Reflect::set(&object, &"depth".into(), &(ctx.depth as f64).into())?;
+    Ok(object.into())
+}
+
+/// What one resolver call returned.
+///
+/// `Err(Ok(denial))` is a refusal the host asked for; `Err(Err(message))` is a
+/// value the binding could not read, which is reported as well as refused.
+#[cfg(feature = "includes")]
+#[allow(clippy::result_large_err, clippy::type_complexity)]
+fn resolved_from_js(
+    value: JsValue,
+) -> Result<carve::IncludeResolved, Result<carve::IncludeDenial, String>> {
+    if value.is_undefined() || value.is_null() {
+        return Err(Ok(carve::IncludeDenial::NotFound));
+    }
+    if let Some(source) = value.as_string() {
+        return Ok(carve::IncludeResolved::from(source));
+    }
+    // Named before the object branch. A Promise IS an object, so it would
+    // otherwise be reported as one missing a `source` key - and an `async`
+    // resolver is the mistake this reporting exists for.
+    if value.is_instance_of::<js_sys::Promise>() {
+        return Err(Err(format!(
+            "`resolve` returned {}",
+            describe_value(&value)
+        )));
+    }
+    let Some(object) = value.dyn_ref::<js_sys::Object>() else {
+        return Err(Err(format!(
+            "`resolve` returned {}, not a string, an object or null",
+            describe_value(&value)
+        )));
+    };
+    let denial = js_sys::Reflect::get(object, &JsValue::from_str("denial"))
+        .ok()
+        .and_then(|d| d.as_string());
+    if let Some(denial) = denial {
+        return match denial.as_str() {
+            "outside-root" => Err(Ok(carve::IncludeDenial::OutsideRoot)),
+            "not-found" => Err(Ok(carve::IncludeDenial::NotFound)),
+            "no-root" => Err(Ok(carve::IncludeDenial::NoRoot)),
+            "include-denied" => Err(Ok(carve::IncludeDenial::Denied)),
+            "include-unresolved" => Err(Ok(carve::IncludeDenial::Unresolved)),
+            other => Err(Err(format!(
+                "`resolve` returned an unknown denial {other:?} (supported: \"outside-root\", \
+                 \"not-found\", \"no-root\", \"include-denied\", \"include-unresolved\")"
+            ))),
+        };
+    }
+    let source = js_sys::Reflect::get(object, &JsValue::from_str("source"))
+        .ok()
+        .and_then(|s| s.as_string());
+    let Some(source) = source else {
+        return Err(Err(format!(
+            "`resolve` returned {} with no `source` string and no `denial`",
+            describe_value(&value)
+        )));
+    };
+    let id = js_sys::Reflect::get(object, &JsValue::from_str("id"))
+        .ok()
+        .and_then(|i| i.as_string());
+    Ok(match id {
+        Some(id) => carve::IncludeResolved::with_id(source, id),
+        None => carve::IncludeResolved::from(source),
+    })
+}
+
 /// Render an AST-JSON document (PART 12) to HTML.
 ///
 /// The other half of `parseJson`. A host that reads the tree in a browser does

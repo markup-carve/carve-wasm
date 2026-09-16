@@ -42,6 +42,7 @@ import {
   toPlainTextWithOptions,
   toProseMirror,
   toCarvePatch,
+  expandIncludes,
 } from './engine.mjs'
 
 const cases = [
@@ -833,3 +834,132 @@ assert.equal(strong.pos.startColumn, 3)
 assert.equal(strong.pos.startOffset, 2)
 
 console.log('wasm artifact: AST cases pass')
+
+// `{{ path }}` expansion through a JS resolver (markup-carve/carve-wasm#115).
+//
+// The resolver is SYNCHRONOUS, so the host this serves is one whose files are
+// already in memory. Each case is driven on its own: "resolved", "refused by
+// the host" and "the binding could not read what came back" are three different
+// outcomes and a combined assertion cannot say which fired.
+{
+  const files = new Map([
+    ['child.crv', 'Included body.\n'],
+    ['a.crv', 'A\n\n{{ b.crv }}\n'],
+    ['b.crv', 'B\n'],
+  ])
+  const resolve = (path) => files.get(path) ?? null
+  const run = (source, extra = {}) => expandIncludes(source, { resolve, ...extra })
+
+  // The child's body reaches the tree, and the target is reported as a
+  // dependency a host can watch.
+  const basic = run('Before.\n\n{{ child.crv }}\n')
+  assert.ok(astJsonToHtml(basic.json).includes('<p>Included body.</p>'), basic.json)
+  assert.deepEqual(basic.warnings, [])
+  assert.deepEqual(basic.dependencies, [{ id: 'child.crv', resolved: true, denial: null }])
+  assert.equal(basic.chargedBytes, 15)
+  assert.deepEqual(basic.resolverErrors, [])
+
+  // Transitive expansion, in first-encounter order.
+  assert.deepEqual(
+    run('{{ a.crv }}\n').dependencies.map((d) => d.id),
+    ['a.crv', 'b.crv'],
+  )
+
+  // The `ctx` argument, which is what relative resolution keys off. A binding
+  // that handed over only the path would pass every assertion above.
+  const seen = []
+  expandIncludes('{{ a.crv }}\n', {
+    sourcePath: 'root.crv',
+    resolve: (path, ctx) => {
+      seen.push([path, ctx.sourcePath, [...ctx.stack], ctx.depth])
+      return resolve(path)
+    },
+  })
+  assert.deepEqual(seen, [
+    ['a.crv', 'root.crv', ['root.crv'], 0],
+    ['b.crv', 'root.crv', ['root.crv', 'a.crv'], 1],
+  ])
+
+  // AN ASYNC RESOLVER, the case the ruling is about. A Promise is not a source
+  // and cannot be awaited, so it is reported rather than swallowed - the same
+  // treatment `renderers.math` gives one.
+  const promised = expandIncludes('{{ child.crv }}\n', { resolve: async (p) => files.get(p) })
+  assert.equal(promised.resolverErrors.length, 1)
+  assert.equal(promised.resolverErrors[0].path, 'child.crv')
+  assert.match(promised.resolverErrors[0].message, /Promise/)
+  // The directive stays literal, and the engine's own warning says so too.
+  assert.equal(promised.warnings[0].rule, 'include-unresolved')
+  assert.ok(!astJsonToHtml(promised.json).includes('Included body'))
+
+  // A THROW is reported with its message, and does not propagate: the engine's
+  // resolver returns a Result and cannot unwind.
+  const threw = expandIncludes('{{ child.crv }}\n', {
+    resolve: () => {
+      throw new Error('disk on fire')
+    },
+  })
+  assert.match(threw.resolverErrors[0].message, /disk on fire/)
+
+  // Any other unreadable return is reported too, named by its typeof.
+  assert.match(
+    expandIncludes('{{ child.crv }}\n', { resolve: () => 42 }).resolverErrors[0].message,
+    /number/,
+  )
+
+  // A REFUSAL the host meant is not a binding failure: nothing in
+  // `resolverErrors`, and the class reaches `dependencies[].denial`.
+  const refused = expandIncludes('{{ child.crv }}\n', {
+    resolve: () => ({ denial: 'outside-root' }),
+  })
+  assert.deepEqual(refused.resolverErrors, [])
+  assert.equal(refused.dependencies[0].denial, 'outside-root')
+  // `null` is the shorthand for the commonest one.
+  assert.equal(run('{{ nope.crv }}\n').dependencies[0].denial, 'not-found')
+  // An unknown class is a failure, not a silent fallback.
+  assert.match(
+    expandIncludes('{{ child.crv }}\n', { resolve: () => ({ denial: 'nope' }) })
+      .resolverErrors[0].message,
+    /unknown denial/,
+  )
+
+  // A canonical id is what the cycle guard compares, so it has to survive.
+  assert.equal(
+    expandIncludes('{{ child.crv }}\n', {
+      resolve: () => ({ source: 'X\n', id: '/abs/child.crv' }),
+    }).dependencies[0].id,
+    '/abs/child.crv',
+  )
+
+  // THE BUDGETS. Each is driven on its own, because each produces a different
+  // rule and a host lowering one wants to know which it hit.
+  assert.equal(run('{{ a.crv }}\n', { maxDepth: 1 }).warnings[0].rule, 'include-depth')
+  assert.equal(run('{{ child.crv }}\n', { maxBytes: 1 }).warnings[0].rule, 'include-budget')
+  assert.equal(
+    run('{{ child.crv }}\n\n{{ child.crv }}\n', { maxResolverCalls: 1 }).warnings[0].rule,
+    'include-call-limit',
+  )
+  // Their DEFAULTS are the contract, so the same documents pass without them.
+  assert.deepEqual(run('{{ a.crv }}\n').warnings, [])
+  assert.deepEqual(run('{{ child.crv }}\n\n{{ child.crv }}\n').warnings, [])
+
+  // `extensions` reaches the CHILD parse, not only the root. The same text has
+  // to mean the same thing in either file, or an include changes what a
+  // construct is by being in a different file.
+  const wiki = new Map([['w.crv', 'see [[Page]] here\n']])
+  const withExt = expandIncludes('{{ w.crv }}\n', {
+    resolve: (path) => wiki.get(path) ?? null,
+    extensions: ['wikilinks'],
+  })
+  assert.ok(withExt.json.includes('"wikilink"'), withExt.json)
+  const withoutExt = expandIncludes('{{ w.crv }}\n', { resolve: (path) => wiki.get(path) ?? null })
+  assert.ok(withoutExt.json.includes('see [[Page]] here'), withoutExt.json)
+
+  // READ-TIME validation. A missing resolver throws rather than expanding
+  // nothing: the engine's pass with no resolver is a silent no-op.
+  assert.throws(() => expandIncludes('x\n', {}), TypeError)
+  assert.throws(() => expandIncludes('x\n', { resolve: 'nope' }), TypeError)
+  assert.throws(() => expandIncludes('x\n', { resolve, maxDepth: 'big' }), TypeError)
+  assert.throws(() => expandIncludes('x\n', { resolve, maxBytes: -1 }), TypeError)
+  assert.throws(() => expandIncludes('x\n', { resolve, extensions: ['no-such'] }), TypeError)
+}
+console.log('wasm artifact: include expansion cases pass')

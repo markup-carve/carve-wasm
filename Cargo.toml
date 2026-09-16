@@ -19,6 +19,7 @@ crate-type = ["cdylib", "rlib"]
 default = [
     "ast-json",
     "html-import",
+    "includes",
     "lint",
     "markdown-import",
     "other-imports",
@@ -30,6 +31,9 @@ default = [
 ]
 ast-json = []
 html-import = []
+# `{{ path }}` expansion. Needs a host that can resolve a path synchronously,
+# which a browser fetching over the network cannot.
+includes = []
 lint = []
 markdown-import = []
 # The importers a Markdown-shaped host does not need: Djot and BBCode.
