@@ -20,6 +20,7 @@ default = [
     "ast-json",
     "html-import",
     "includes",
+    "incremental",
     "lint",
     "markdown-import",
     "other-imports",
@@ -34,6 +35,8 @@ html-import = []
 # `{{ path }}` expansion. Needs a host that can resolve a path synchronously,
 # which a browser fetching over the network cannot.
 includes = []
+# Snapshot parsing and edit-validated re-parse, for an editor host.
+incremental = []
 lint = []
 markdown-import = []
 # The importers a Markdown-shaped host does not need: Djot and BBCode.
@@ -54,6 +57,9 @@ carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-r
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }
+# Already in the tree through the engine; named here because this crate builds
+# its own JSON results rather than only forwarding the engine's.
+serde_json = "1"
 serde-wasm-bindgen = "0.6"
 
 [dev-dependencies]

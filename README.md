@@ -443,6 +443,48 @@ charged, which is otherwise unobservable from outside.
 The tree carries no positions. Expansion merges nodes from several files, and a
 span on a node that came from a child would point into a source the caller
 never passed.
+### Re-parsing while someone types
+
+`parseSnapshot(source)` parses a document and keeps what a later `reparse` needs.
+`reparse(source, changes)` applies a batch of edits and parses the result. Both
+return one JSON string.
+
+```js
+import { parseSnapshot, reparse } from '@markup-carve/carve-wasm'
+
+const first = JSON.parse(parseSnapshot('# One\n'))
+const next = JSON.parse(reparse(first.source, JSON.stringify([
+  { range: [2, 5], replacement: 'Two' },
+])))
+next.source // '# Two\n'
+```
+
+Each result is `{ source, document, sourceLayout, changedSource,
+reusedPreviousTree }`. `document` is the PART 12 tree, `sourceLayout` is what
+`parseSourceLayoutJson` produces, and `changedSource` is the byte ranges this
+parse covered - the whole document on a first parse, the edits on a re-parse.
+
+The snapshot crosses as JSON rather than as a handle. Every other entry point
+in this package is a pure function that owns nothing, and the engine's snapshot
+holds only the source, so there is no tree kept alive in wasm memory for a
+handle to point at.
+
+> **The offsets are UTF-8 byte offsets.**
+> That is what `parseJson` positions and `createSourcePatch` ranges already
+> mean. A browser editor counts UTF-16 code units, so a host holding a
+> `selectionStart` converts before calling. An offset landing inside a
+> multi-byte character is refused rather than guessed at: `é` is two bytes, and
+> `[0, 1]` throws.
+
+A malformed change throws: overlapping ranges, an end past the source, and a
+range splitting a code point are all a broken caller contract rather than a
+result the caller asked for. An empty change list is not one - it re-parses the
+source unchanged, which is what a host batching keystrokes will hit.
+
+`reusedPreviousTree` is the engine's own answer about whether any of the
+previous parse was reused. **The pinned engine always reports `false`**: it
+validates and applies the edits and then parses the whole source. Read the flag
+rather than assuming work was saved.
 
 ### ProseMirror
 
@@ -513,6 +555,8 @@ const html: string = toHtml('_Hello_')
 | `parseSourceLayoutJson` | `(source: string) => string` | The PART 12 §13 source-layout sidecar |
 | `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree, skipping the Carve-source round trip |
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
+| `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree }` |
+| `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |
 | `toProseMirror` | `(source: string) => ProseMirrorResult` | Convert to the ProseMirror document shape, with what the model could not hold |
 | `fromProseMirror` | `(doc: string) => string` | Convert a ProseMirror document back to canonical Carve source |
 | `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |

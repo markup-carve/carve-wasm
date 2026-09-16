@@ -43,6 +43,8 @@ import {
   toProseMirror,
   toCarvePatch,
   expandIncludes,
+  parseSnapshot,
+  reparse,
 } from './engine.mjs'
 
 const cases = [
@@ -963,3 +965,65 @@ console.log('wasm artifact: AST cases pass')
   assert.throws(() => expandIncludes('x\n', { resolve, extensions: ['no-such'] }), TypeError)
 }
 console.log('wasm artifact: include expansion cases pass')
+// Snapshot parsing and edit-validated re-parse (markup-carve/carve-wasm#111).
+//
+// The snapshot crosses as JSON, so these are pure functions over strings like
+// every other entry point here - there is nothing to `free()`.
+{
+  const first = JSON.parse(parseSnapshot('# One\n'))
+  assert.equal(first.source, '# One\n')
+  assert.equal(first.document.children[0].type, 'heading')
+  // A first parse covers the whole document.
+  assert.deepEqual(first.changedSource, [[0, 6]])
+  assert.equal(first.reusedPreviousTree, false)
+  // The byte-exact source record rides along, so a host writing an edit back
+  // into the file does not need a second call.
+  assert.equal(first.sourceLayout.source, '# One\n')
+
+  // One edit, applied and re-parsed. The tree has to CHANGE, or the binding
+  // would be handing back the parse it was given.
+  const next = JSON.parse(reparse(first.source, '[{"range":[2,5],"replacement":"Two"}]'))
+  assert.equal(next.source, '# Two\n')
+  assert.equal(next.document.children[0].attrs.id, 'Two')
+  // The changed ranges are the edits, not the whole document.
+  assert.deepEqual(next.changedSource, [[2, 5]])
+
+  // Two edits are both applied, and reported in source order. Applying them
+  // left to right without accounting for the shift would corrupt the second.
+  const two = JSON.parse(
+    reparse('abcdef\n', '[{"range":[0,1],"replacement":"X"},{"range":[4,5],"replacement":"Y"}]'),
+  )
+  assert.equal(two.source, 'XbcdYf\n')
+  assert.deepEqual(two.changedSource, [[0, 1], [4, 5]])
+
+  // THE OFFSETS ARE BYTES, which is the whole reason this needs saying: `é` is
+  // two of them, and a host counting UTF-16 code units would pass 1.
+  assert.equal(JSON.parse(reparse('é b\n', '[{"range":[0,2],"replacement":"e"}]')).source, 'e b\n')
+  assert.throws(() => reparse('é b\n', '[{"range":[0,1],"replacement":"e"}]'), /code point/)
+
+  // A BROKEN CALLER CONTRACT throws, driven one at a time because each names a
+  // different mistake and a host wants to know which it made.
+  assert.throws(
+    () => reparse('abcdef\n', '[{"range":[0,3],"replacement":"X"},{"range":[2,4],"replacement":"Y"}]'),
+    /overlap/,
+  )
+  assert.throws(() => reparse('abc\n', '[{"range":[0,99],"replacement":"X"}]'), /out of bounds/)
+  assert.throws(() => reparse('abc\n', 'nope'), /not JSON/)
+  assert.throws(() => reparse('abc\n', '{}'), /must be a JSON array/)
+  assert.throws(() => reparse('abc\n', '[{"replacement":"X"}]'), /needs a `range`/)
+  assert.throws(() => reparse('abc\n', '[{"range":[0,1]}]'), /needs a `replacement`/)
+  assert.throws(() => reparse('abc\n', '[{"range":[-1,1],"replacement":"X"}]'), /non-negative/)
+
+  // An empty change list re-parses the source unchanged, rather than being an
+  // error - a host batching keystrokes can hit it.
+  const idle = JSON.parse(reparse('# One\n', '[]'))
+  assert.equal(idle.source, '# One\n')
+  assert.deepEqual(idle.changedSource, [])
+
+  // `reusedPreviousTree` is the ENGINE's answer, and today it is always false:
+  // the pinned engine validates and applies the edits, then parses the whole
+  // source. Pinned so that an engine bump which starts reusing regions shows up
+  // here rather than passing unnoticed.
+  assert.equal(next.reusedPreviousTree, false)
+}
+console.log('wasm artifact: incremental parse cases pass')
