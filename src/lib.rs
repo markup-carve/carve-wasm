@@ -1,3 +1,6 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "source-patches")]
@@ -732,6 +735,21 @@ export interface SourcePatch {
   unresolved: SourceSuggestion[];
 }
 
+export interface StaticRendererError {
+  /** The renderer that failed. Only "math" is bound. */
+  renderer: "math";
+  /** True for display math. */
+  display: boolean;
+  /** The source the renderer was handed. */
+  source: string;
+  message: string;
+}
+export interface StaticRenderResult {
+  html: string;
+  /** Empty unless a render callback threw or returned a non-string. */
+  rendererErrors: StaticRendererError[];
+}
+
 export interface ProseMirrorResult {
   /** The ProseMirror document, JSON-encoded. */
   json: string;
@@ -1171,6 +1189,10 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 /// who mistypes one deserves the render to still work. A wrong TYPE on a key
 /// that is recognized does throw, because that changes behavior silently.
 ///
+/// `renderers` is the one recognized key this entry point refuses, because a
+/// render callback can fail and a bare string has nowhere to report that. Use
+/// [`to_html_with_renderers`].
+///
 /// Turning sections off changes nothing else. Ids, collision dedup, `</#id>`
 /// crossrefs, implicit `[Heading][]` references and heading numbering all
 /// resolve against the slug rather than the element carrying it, and the
@@ -1187,6 +1209,187 @@ pub fn to_html_with_options(
     request.render(source).map_err(profile_violation_error)
 }
 
+/// Render with a build-time math renderer, the option `mode: "static"` needs.
+///
+/// Static output carries no client scripts, so a formula it contains has to be
+/// rendered while the HTML is being written. `renderers.math` is the callback
+/// the engine calls for each ``` ```math ``` fence, with the TeX source and a
+/// display flag; KaTeX's `renderToString` has that exact shape.
+///
+/// ```js
+/// toHtmlWithRenderers(src, {
+///   mode: 'static',
+///   extensions: ['math-block'],
+///   renderers: { math: (tex, display) => katex.renderToString(tex, { displayMode: display }) },
+/// })
+/// // { html: '…', rendererErrors: [] }
+/// ```
+///
+/// SECURITY: what the callback returns is inserted as **TRUSTED RAW HTML**, the
+/// same trust class as a `symbols` value. The difference worth stating: a symbol
+/// value is host configuration keyed by a NAME, while a renderer is host
+/// configuration that is HANDED DOCUMENT CONTENT and typically echoes some of it
+/// back. A host rendering documents it did not author is accepting whatever its
+/// renderer makes of that input, so the escaping is the renderer's job.
+///
+/// The engine consults the renderer only under `mode: "static"`; interactive
+/// output keeps the `\[…\]` source for the client to typeset, and so does a
+/// static render with no renderer supplied.
+///
+/// The callback must be SYNCHRONOUS. wasm-bindgen cannot await across it, so an
+/// `async` renderer returns a Promise the engine has no way to resolve; that is
+/// recorded as a failure rather than stringified into the document. It is also
+/// why Mermaid cannot be passed here at all - its `render` returns a Promise
+/// from v10 on - and why `renderers.diagrams` is not bound.
+///
+/// A callback that throws, or returns anything other than a string, does not
+/// abort the render: the node it was called for emits nothing and the failure
+/// is reported in `rendererErrors`. This entry point exists because
+/// [`to_html_with_options`] returns a bare string with nowhere to put that, and
+/// so it rejects `renderers` rather than dropping the failures.
+#[wasm_bindgen(js_name = toHtmlWithRenderers, unchecked_return_type = "StaticRenderResult")]
+pub fn to_html_with_renderers(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<JsValue, JsValue> {
+    let failures: Rc<RefCell<Vec<RendererFailure>>> = Rc::default();
+    let html = match RenderRequest::read_with(options, true)? {
+        None => carve::to_html(source),
+        Some(request) => match &request.math_renderer {
+            None => request.render(source).map_err(profile_violation_error)?,
+            Some(math) => request
+                .render_static(source, math, &failures)
+                .map_err(profile_violation_error)?,
+        },
+    };
+
+    let result = js_sys::Object::new();
+    js_sys::Reflect::set(&result, &"html".into(), &JsValue::from_str(&html))?;
+    let errors = js_sys::Array::new();
+    for failure in failures.borrow().iter() {
+        let item = js_sys::Object::new();
+        js_sys::Reflect::set(&item, &"renderer".into(), &"math".into())?;
+        js_sys::Reflect::set(&item, &"display".into(), &failure.display.into())?;
+        js_sys::Reflect::set(&item, &"source".into(), &failure.source.as_str().into())?;
+        js_sys::Reflect::set(&item, &"message".into(), &failure.message.as_str().into())?;
+        errors.push(&item);
+    }
+    js_sys::Reflect::set(&result, &"rendererErrors".into(), &errors)?;
+    Ok(result.into())
+}
+
+/// One static-renderer call that produced no markup.
+///
+/// The engine's closure returns a `String` and has nowhere to put an error, so
+/// the failure is recorded here and handed back by the entry point instead.
+struct RendererFailure {
+    display: bool,
+    source: String,
+    message: String,
+}
+
+/// Wrap a JS math callback as the engine's renderer set.
+fn math_renderers(
+    math: js_sys::Function,
+    failures: Rc<RefCell<Vec<RendererFailure>>>,
+) -> carve::StaticRenderers {
+    carve::StaticRenderers::new().math(move |tex: &str, display: bool| {
+        let record = |message: String| {
+            failures.borrow_mut().push(RendererFailure {
+                display,
+                source: tex.to_string(),
+                message,
+            });
+            String::new()
+        };
+        match math.call2(
+            &JsValue::NULL,
+            &JsValue::from_str(tex),
+            &JsValue::from_bool(display),
+        ) {
+            Err(error) => record(format!(
+                "`renderers.math` threw: {}",
+                describe_throw(&error)
+            )),
+            Ok(value) => match value.as_string() {
+                Some(html) => html,
+                None => record(format!(
+                    "`renderers.math` returned {}, not a string",
+                    describe_value(&value)
+                )),
+            },
+        }
+    })
+}
+
+/// The message a thrown JS value carries, whether or not it is an `Error`.
+fn describe_throw(error: &JsValue) -> String {
+    if let Some(error) = error.dyn_ref::<js_sys::Error>() {
+        return String::from(error.message());
+    }
+    error
+        .as_string()
+        .unwrap_or_else(|| format!("a thrown {}", describe_value(error)))
+}
+
+/// What a non-string return value was, with the Promise case named.
+///
+/// A Promise is `typeof "object"` like any other, and it is the one wrong type
+/// a correct-looking renderer produces - every `async` function returns one.
+fn describe_value(value: &JsValue) -> String {
+    if value.is_instance_of::<js_sys::Promise>() {
+        return "a Promise (this render is synchronous and cannot await one)".to_string();
+    }
+    value
+        .js_typeof()
+        .as_string()
+        .unwrap_or_else(|| "an unreadable value".to_string())
+}
+
+/// Read `renderers.math` out of a JS options object.
+///
+/// Every check here is at READ time, matching the rest of the object: a
+/// misconfigured host finds out before the render rather than on the first
+/// document that happens to contain a formula.
+fn math_renderer_field(
+    options: &js_sys::Object,
+    allowed: bool,
+) -> Result<Option<js_sys::Function>, JsValue> {
+    let renderers = js_sys::Reflect::get(options, &JsValue::from_str("renderers"))?;
+    if renderers.is_undefined() || renderers.is_null() {
+        return Ok(None);
+    }
+    if !allowed {
+        return Err(type_error(
+            "carve: `renderers` is only accepted by `toHtmlWithRenderers`, which returns the \
+             failures a render callback reports",
+        ));
+    }
+    let renderers = renderers
+        .dyn_into::<js_sys::Object>()
+        .map_err(|_| type_error("carve: `renderers` must be an object"))?;
+
+    let diagrams = js_sys::Reflect::get(&renderers, &JsValue::from_str("diagrams"))?;
+    if !diagrams.is_undefined() && !diagrams.is_null() {
+        return Err(type_error(
+            "carve: `renderers.diagrams` is not bound yet. Silently ignoring it would render \
+             the fence as source with nothing to say why",
+        ));
+    }
+
+    let math = js_sys::Reflect::get(&renderers, &JsValue::from_str("math"))?;
+    if math.is_undefined() || math.is_null() {
+        return Ok(None);
+    }
+    Ok(Some(math.dyn_into::<js_sys::Function>().map_err(|_| {
+        type_error("carve: `renderers.math` must be a function")
+    })?))
+}
+
+fn type_error(message: &str) -> JsValue {
+    JsValue::from(js_sys::TypeError::new(message))
+}
+
 /// One options object, parsed once.
 ///
 /// Read as a whole rather than field by field at each entry point: a second
@@ -1196,12 +1399,22 @@ struct RenderRequest {
     symbols: SymbolPairs,
     named: Option<Vec<String>>,
     full: bool,
+    /// Only [`to_html_with_renderers`] may set this: it is the one entry point
+    /// whose return value can carry what a failing callback reported.
+    math_renderer: Option<js_sys::Function>,
 }
 
 impl RenderRequest {
     /// `None` when the caller passed nothing at all, which is the engine's own
     /// default render and takes its fast path.
     fn read(options: Option<js_sys::Object>) -> Result<Option<Self>, JsValue> {
+        Self::read_with(options, false)
+    }
+
+    fn read_with(
+        options: Option<js_sys::Object>,
+        renderers_allowed: bool,
+    ) -> Result<Option<Self>, JsValue> {
         let Some(options) = options else {
             return Ok(None);
         };
@@ -1247,6 +1460,7 @@ impl RenderRequest {
             symbols: symbol_pairs(symbols)?,
             named,
             full,
+            math_renderer: math_renderer_field(&options, renderers_allowed)?,
         }))
     }
 
@@ -1260,11 +1474,26 @@ impl RenderRequest {
         }
     }
 
+    /// Render with a static math renderer installed.
+    ///
+    /// Separate from [`Self::render`] because the renderer set is owned by the
+    /// engine `Options` rather than rebuilt per helper, and because none of the
+    /// default fast paths may be taken when a renderer is present.
+    fn render_static(
+        &self,
+        source: &str,
+        math: &js_sys::Function,
+        failures: &Rc<RefCell<Vec<RendererFailure>>>,
+    ) -> Result<String, carve::ProfileViolationError> {
+        let owned = self.extension_boxes();
+        let options = self
+            .engine_options(&owned)
+            .with_renderers(math_renderers(math.clone(), Rc::clone(failures)));
+        carve::try_to_html_with_options(source, &options)
+    }
+
     /// The engine options this request describes, for an entry point that
     /// takes a TREE and so cannot go through the source-rendering helpers.
-    ///
-    /// `astJsonToHtml` is the only such entry point, and it is gated.
-    #[cfg(feature = "ast-json")]
     fn engine_options<'a>(
         &'a self,
         owned: &'a [Box<dyn carve::CarveExtension>],
@@ -1281,7 +1510,6 @@ impl RenderRequest {
 
     /// The extension boxes this request needs, owned by the caller's frame
     /// because `Options` borrows them.
-    #[cfg(feature = "ast-json")]
     fn extension_boxes(&self) -> Vec<Box<dyn carve::CarveExtension>> {
         match (&self.named, self.full) {
             (Some(keys), _) => build_extensions(keys),
