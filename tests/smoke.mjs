@@ -367,10 +367,9 @@ console.log('wasm artifact: the options object reaches every render target')
     /plain string/,
   )
 
-  // THE PROMISE CASE, which is why `renderers.diagrams` is a separate ticket.
-  // An `async` renderer returns a Promise; stringifying it would put
-  // `[object Promise]` in the document, so it is reported as a failure and the
-  // node emits nothing.
+  // THE PROMISE CASE. An `async` renderer returns a Promise; stringifying it
+  // would put `[object Promise]` in the document, so it is reported as a
+  // failure and the node emits nothing.
   const promised = run(async (tex) => `<math>${tex}</math>`)
   assert.equal(promised.html, '<div class="math display"></div>')
   assert.match(promised.rendererErrors[0].message, /Promise/)
@@ -402,14 +401,7 @@ console.log('wasm artifact: the options object reaches every render target')
   // A read-time throw does not need a document that contains a formula.
   assert.throws(() => toHtmlWithRenderers('plain\n', { renderers: { math: 'nope' } }), TypeError)
 
-  // `diagrams` is refused rather than ignored: ignoring it would render the
-  // fence as source with nothing to say the host's configuration did nothing.
-  assert.throws(
-    () => toHtmlWithRenderers(MATH, { ...STATIC, renderers: { diagrams: { mermaid: () => 'x' } } }),
-    TypeError,
-  )
-
-  // And `toHtmlWithOptions` refuses `renderers` outright - it returns a bare
+  // `toHtmlWithOptions` refuses `renderers` outright - it returns a bare
   // string, so a reported failure would have nowhere to go.
   assert.throws(
     () => toHtmlWithOptions(MATH, { ...STATIC, renderers: { math: () => 'x' } }),
@@ -425,6 +417,131 @@ console.log('wasm artifact: the options object reaches every render target')
   assert.equal(toHtmlWithRenderers('# A\n').html, toHtml('# A\n'))
 }
 console.log('wasm artifact: static math renderer cases pass')
+
+// The static diagram renderers (markup-carve/carve-wasm#105).
+//
+// Driven case by case for the reason the math block above is: "never called",
+// "called and threw" and "called and returned the wrong type" are the content.
+{
+  const MERMAID = '``` mermaid\ngraph TD; A-->B\n```\n'
+  const STATIC = { mode: 'static', extensions: ['fenced-render'] }
+  const run = (mermaid) =>
+    toHtmlWithRenderers(MERMAID, { ...STATIC, renderers: { diagrams: { mermaid } } })
+
+  // The callback reaches the engine with the fence's source, and what it
+  // returns is TRUSTED RAW inside the class-carrying wrapper.
+  const seen = []
+  const ok = run((source) => {
+    seen.push(source)
+    return `<svg>${source}</svg>`
+  })
+  assert.deepEqual(seen, ['graph TD; A-->B'])
+  assert.equal(
+    ok.html,
+    '<div class="mermaid" role="img" aria-label="mermaid"><svg>graph TD; A-->B</svg></div>',
+  )
+  assert.deepEqual(ok.rendererErrors, [])
+
+  // The shape the ruling picked: a lookup is the callback in one line. This is
+  // the case a browser host actually has, Mermaid's own `render` being a
+  // Promise from v10 on.
+  const prerendered = new Map([['graph TD; A-->B', '<svg id="pre"/>']])
+  assert.ok(run((source) => prerendered.get(source)).html.includes('<svg id="pre"/>'))
+
+  // Without a renderer the static path degrades to an escaped source block -
+  // never blank, and nothing to report.
+  const bare = toHtmlWithRenderers(MERMAID, STATIC)
+  assert.equal(
+    bare.html,
+    '<pre class="mermaid"><code class="language-mermaid">graph TD; A--&gt;B\n</code></pre>',
+  )
+  assert.deepEqual(bare.rendererErrors, [])
+
+  // A throw is recorded under the FENCE CLASS, not under `math`.
+  const threw = run(() => {
+    throw new Error('mermaid blew up')
+  })
+  assert.equal(threw.html, '<div class="mermaid" role="img" aria-label="mermaid"></div>')
+  assert.equal(threw.rendererErrors.length, 1)
+  assert.equal(threw.rendererErrors[0].renderer, 'mermaid')
+  assert.equal(threw.rendererErrors[0].source, 'graph TD; A-->B')
+  assert.match(threw.rendererErrors[0].message, /mermaid blew up/)
+  // `display` is the math callback's second argument. A diagram has no such
+  // flag, so the key is absent rather than a made-up `false`.
+  assert.ok(!('display' in threw.rendererErrors[0]), Object.keys(threw.rendererErrors[0]).join())
+
+  // An `async` renderer is the mistake this binding exists to report, since
+  // the field's name is exactly what a host would hand Mermaid to.
+  const promised = run(async (source) => `<svg>${source}</svg>`)
+  assert.equal(promised.html, '<div class="mermaid" role="img" aria-label="mermaid"></div>')
+  assert.match(promised.rendererErrors[0].message, /Promise/)
+  assert.ok(!promised.html.includes('Promise'), promised.html)
+  assert.match(run(() => 7).rendererErrors[0].message, /number/)
+
+  // Two keys are two callbacks. One cell holding the last-registered callback
+  // would pass every assertion above.
+  const two = toHtmlWithRenderers('``` mermaid\nm\n```\n\n``` dot\nd\n```\n', {
+    mode: 'static',
+    extensions: ['fenced-render', 'fenced-render-graphviz'],
+    renderers: { diagrams: { mermaid: (s) => `<M>${s}</M>`, graphviz: (s) => `<G>${s}</G>` } },
+  })
+  assert.ok(two.html.includes('<M>m</M>'), two.html)
+  assert.ok(two.html.includes('<G>d</G>'), two.html)
+
+  // `math` and `diagrams` in one call, because the set is read once and both
+  // halves have to survive it.
+  const mixed = toHtmlWithRenderers('``` math\nE\n```\n\n``` mermaid\nm\n```\n', {
+    mode: 'static',
+    extensions: ['math-block', 'fenced-render'],
+    renderers: { math: (tex) => `<K>${tex}</K>`, diagrams: { mermaid: (s) => `<M>${s}</M>` } },
+  })
+  assert.ok(mixed.html.includes('<K>E</K>'), mixed.html)
+  assert.ok(mixed.html.includes('<M>m</M>'), mixed.html)
+
+  // A MISSING KEY reports nothing, and this is the measurement behind saying
+  // so: a `mermaid` fence under a `graphviz`-only configuration degrades to
+  // source, and the binding is never called, so it cannot see the miss.
+  const missed = toHtmlWithRenderers(MERMAID, {
+    ...STATIC,
+    renderers: { diagrams: { graphviz: (s) => `<G>${s}</G>` } },
+  })
+  assert.equal(missed.html, bare.html)
+  assert.deepEqual(missed.rendererErrors, [])
+
+  // A configured key the document never uses is silent too.
+  assert.deepEqual(
+    toHtmlWithRenderers('plain\n', { ...STATIC, renderers: { diagrams: { mermaid: (s) => s } } })
+      .rendererErrors,
+    [],
+  )
+
+  // READ-TIME validation is SHAPE ONLY. An unknown key is accepted, because
+  // checking it against the fence classes would mean keeping that list by hand
+  // here until markup-carve/carve-rs#1670 puts it on the registry entry.
+  assert.deepEqual(
+    toHtmlWithRenderers(MERMAID, { ...STATIC, renderers: { diagrams: { nosuch: (s) => s } } })
+      .rendererErrors,
+    [],
+  )
+  assert.throws(() => run('nope'), TypeError)
+  assert.throws(() => run(42), TypeError)
+  assert.throws(
+    () => toHtmlWithRenderers(MERMAID, { ...STATIC, renderers: { diagrams: 'nope' } }),
+    TypeError,
+  )
+  // A bare function is the shape a host reaches for after reading
+  // `renderers.math`, so the error names the keyed spelling instead.
+  assert.throws(
+    () => toHtmlWithRenderers(MERMAID, { ...STATIC, renderers: { diagrams: () => 'x' } }),
+    /keyed by the fence's css class/,
+  )
+  // A read-time throw does not need a document that contains a diagram.
+  assert.throws(
+    () => toHtmlWithRenderers('plain\n', { renderers: { diagrams: { mermaid: 'nope' } } }),
+    TypeError,
+  )
+}
+console.log('wasm artifact: static diagram renderer cases pass')
 
 // The round trip. `parseJson` writes a tree out; until `astJsonToHtml` there was
 // no way to render an edited one back, which is the reason to read a tree in a
