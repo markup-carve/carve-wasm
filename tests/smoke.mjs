@@ -45,6 +45,10 @@ import {
   expandIncludes,
   parseSnapshot,
   reparse,
+  createAstPatch,
+  applyAstPatch,
+  createReversibleAstPatch,
+  applyReversibleAstPatch,
 } from './engine.mjs'
 
 const cases = [
@@ -1027,3 +1031,68 @@ console.log('wasm artifact: include expansion cases pass')
   assert.equal(next.reusedPreviousTree, false)
 }
 console.log('wasm artifact: incremental parse cases pass')
+// The AST patch family (markup-carve/carve-wasm#112).
+//
+// Trees and patches both cross as JSON strings, so these are pure functions
+// over strings. The engine's `ast_patch_to_json` / `ast_patch_from_json` are
+// not bound: with the patch crossing as JSON they ARE this pair's encoding.
+{
+  const one = parseJson('# One\n\nBody.\n')
+  const two = parseJson('# Two\n\nBody.\n')
+
+  // The patch is the position-independent wire shape, not a source diff.
+  const patch = JSON.parse(createAstPatch(one, two))
+  assert.deepEqual(
+    patch.map((op) => op.op),
+    ['replace', 'replace'],
+  )
+  assert.ok(patch.every((op) => typeof op.path === 'string' && op.path.startsWith('/')), patch)
+
+  // Replaying it produces the OTHER tree, checked through the source writer so
+  // a patch that changed nothing could not pass.
+  assert.equal(astJsonToCarve(applyAstPatch(one, createAstPatch(one, two))), '# Two\n\nBody.\n')
+  // And the reverse direction, so the arguments cannot be transposed.
+  assert.equal(astJsonToCarve(applyAstPatch(two, createAstPatch(two, one))), '# One\n\nBody.\n')
+
+  // No difference is an empty patch rather than an error.
+  assert.deepEqual(JSON.parse(createAstPatch(one, one)), [])
+  assert.equal(astJsonToCarve(applyAstPatch(one, '[]')), '# One\n\nBody.\n')
+
+  // THE REVERSIBLE PAIR, which is what an undo step wants. The stack stays the
+  // host's; this package holds no history.
+  const reversible = JSON.parse(createReversibleAstPatch(one, two))
+  assert.deepEqual(Object.keys(reversible).sort(), [
+    'afterFingerprint',
+    'beforeFingerprint',
+    'forward',
+    'inverse',
+  ])
+  assert.match(reversible.beforeFingerprint, /^fnv1a64:/)
+  assert.notEqual(reversible.beforeFingerprint, reversible.afterFingerprint)
+  // Forward and inverse are genuinely different lists, not one list twice.
+  assert.notDeepEqual(reversible.forward, reversible.inverse)
+
+  const wire = JSON.stringify(reversible)
+  assert.equal(astJsonToCarve(applyReversibleAstPatch(one, wire)), '# Two\n\nBody.\n')
+  assert.equal(astJsonToCarve(applyReversibleAstPatch(two, wire, true)), '# One\n\nBody.\n')
+
+  // THE PRECONDITION is what the pair adds over two `createAstPatch` calls: an
+  // undo cannot be replayed onto a document that has moved on.
+  assert.throws(() => applyReversibleAstPatch(two, wire), /precondition/)
+  assert.throws(() => applyReversibleAstPatch(one, wire, true), /precondition/)
+
+  // Bad input is named by WHICH argument was bad, so a host is not left
+  // guessing which of two trees it mis-serialized.
+  assert.throws(() => createAstPatch('nope', two), /`before`/)
+  assert.throws(() => createAstPatch(one, 'nope'), /`after`/)
+  assert.throws(() => applyAstPatch('nope', '[]'), /`ast`/)
+  assert.throws(() => applyAstPatch(one, 'nope'), Error)
+  assert.throws(() => applyAstPatch(one, '{}'), /must be an array/)
+  assert.throws(() => applyReversibleAstPatch(one, 'nope'), /not JSON/)
+  assert.throws(
+    () => applyReversibleAstPatch(one, '{"inverse":[],"beforeFingerprint":"a","afterFingerprint":"b"}'),
+    /`forward`/,
+  )
+  assert.throws(() => applyReversibleAstPatch(one, '{"forward":[],"inverse":[]}'), /Fingerprint/)
+}
+console.log('wasm artifact: AST patch family cases pass')

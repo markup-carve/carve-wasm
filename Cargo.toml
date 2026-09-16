@@ -18,6 +18,7 @@ crate-type = ["cdylib", "rlib"]
 # `--no-default-features`.
 default = [
     "ast-json",
+    "ast-patches",
     "html-import",
     "includes",
     "incremental",
@@ -31,6 +32,8 @@ default = [
     "stamp",
 ]
 ast-json = []
+# Tree-level patch creation and replay, including the reversible pair.
+ast-patches = []
 html-import = []
 # `{{ path }}` expansion. Needs a host that can resolve a path synchronously,
 # which a browser fetching over the network cannot.

@@ -1306,6 +1306,132 @@ fn text_changes_from_json(input: &str) -> Result<Vec<carve::TextChange>, JsValue
     Ok(changes)
 }
 
+/// The difference between two PART 12 trees, as patch JSON.
+///
+/// ```js
+/// const patch = createAstPatch(parseJson('# One\n'), parseJson('# Two\n'))
+/// applyAstPatch(parseJson('# One\n'), patch) // the '# Two' tree
+/// ```
+///
+/// Trees and patches both cross as JSON strings, matching `parseJson` and
+/// `astJsonToHtml`. A patch carries node payloads, so it carries arbitrary
+/// document text - the reason `parseJson` chose a string in the first place.
+///
+/// The engine's `ast_patch_to_json` and `ast_patch_from_json` are not bound
+/// separately. With the patch crossing as JSON they ARE the encoding of this
+/// pair, and a host calling them would be converting JSON it already holds.
+///
+/// The operations are position-independent `{ op, path, value }`, so a patch
+/// stays meaningful against a tree that moved underneath it - unlike a source
+/// patch, which `createSourcePatch` fingerprints against staleness.
+#[cfg(feature = "ast-patches")]
+#[wasm_bindgen(js_name = createAstPatch)]
+pub fn create_ast_patch(before: &str, after: &str) -> Result<String, JsValue> {
+    let before = ast_from_json(before, "before")?;
+    let after = ast_from_json(after, "after")?;
+    let operations = carve::create_ast_patch(&before, &after).map_err(ast_patch_error)?;
+    carve::ast_patch_to_json(&operations).map_err(ast_patch_error)
+}
+
+/// Replay patch JSON onto a PART 12 tree, returning the result as AST JSON.
+#[cfg(feature = "ast-patches")]
+#[wasm_bindgen(js_name = applyAstPatch)]
+pub fn apply_ast_patch(ast: &str, patch: &str) -> Result<String, JsValue> {
+    let document = ast_from_json(ast, "ast")?;
+    let operations = carve::ast_patch_from_json(patch).map_err(ast_patch_error)?;
+    let patched = carve::apply_ast_patch(&document, &operations).map_err(ast_patch_error)?;
+    Ok(carve::to_json(&patched))
+}
+
+/// The same difference with its inverse and both fingerprints, as one JSON
+/// object: `{ forward, inverse, beforeFingerprint, afterFingerprint }`.
+///
+/// This is the shape an undo step wants. THE STACK IS THE HOST'S: every entry
+/// point in this package is a pure function that owns nothing, so there is no
+/// history kept here to undo against, and a browser host already has one - a
+/// key handler, a toolbar, an editor's own history plugin.
+///
+/// What the pair adds over two `createAstPatch` calls is the precondition.
+/// [`apply_reversible_ast_patch`] refuses a tree whose fingerprint is not the
+/// one the patch was made against, so an undo cannot be replayed onto a
+/// document that has moved on.
+#[cfg(feature = "ast-patches")]
+#[wasm_bindgen(js_name = createReversibleAstPatch)]
+pub fn create_reversible_ast_patch(before: &str, after: &str) -> Result<String, JsValue> {
+    let before = ast_from_json(before, "before")?;
+    let after = ast_from_json(after, "after")?;
+    let patch = carve::create_reversible_ast_patch(&before, &after).map_err(ast_patch_error)?;
+    let forward = carve::ast_patch_to_json(&patch.forward).map_err(ast_patch_error)?;
+    let inverse = carve::ast_patch_to_json(&patch.inverse).map_err(ast_patch_error)?;
+    let encode = |json: &str| -> serde_json::Value {
+        serde_json::from_str(json).unwrap_or(serde_json::Value::Null)
+    };
+    Ok(serde_json::json!({
+        "forward": encode(&forward),
+        "inverse": encode(&inverse),
+        "beforeFingerprint": patch.before_fingerprint,
+        "afterFingerprint": patch.after_fingerprint,
+    })
+    .to_string())
+}
+
+/// Replay a reversible patch, forward or inverted.
+///
+/// The fingerprint is checked first: a tree that is not the one this patch was
+/// made against is refused rather than half-patched. That is a broken caller
+/// contract, so it throws.
+#[cfg(feature = "ast-patches")]
+#[wasm_bindgen(js_name = applyReversibleAstPatch)]
+pub fn apply_reversible_ast_patch(
+    ast: &str,
+    patch: &str,
+    inverse: Option<bool>,
+) -> Result<String, JsValue> {
+    let document = ast_from_json(ast, "ast")?;
+    let patch = reversible_patch_from_json(patch)?;
+    let patched = carve::apply_reversible_ast_patch(&document, &patch, inverse.unwrap_or(false))
+        .map_err(ast_patch_error)?;
+    Ok(carve::to_json(&patched))
+}
+
+/// Read one AST-JSON argument, naming which one when it is bad.
+#[cfg(feature = "ast-patches")]
+fn ast_from_json(json: &str, which: &str) -> Result<carve::Document, JsValue> {
+    carve::from_json(json)
+        .map_err(|error| js_error(format!("carve: invalid `{which}` AST JSON: {error:?}")))
+}
+
+#[cfg(feature = "ast-patches")]
+fn ast_patch_error(error: carve::AstPatchError) -> JsValue {
+    js_error(format!("carve: {error}"))
+}
+
+/// Read `{ forward, inverse, beforeFingerprint, afterFingerprint }` back.
+#[cfg(feature = "ast-patches")]
+fn reversible_patch_from_json(json: &str) -> Result<carve::ReversibleAstPatch, JsValue> {
+    let value: serde_json::Value = serde_json::from_str(json)
+        .map_err(|error| type_error(&format!("carve: `patch` is not JSON: {error}")))?;
+    let side = |key: &str| -> Result<Vec<carve::AstPatchOperation>, JsValue> {
+        let operations = value
+            .get(key)
+            .ok_or_else(|| type_error(&format!("carve: `patch` needs a `{key}` operation list")))?;
+        carve::ast_patch_from_json(&operations.to_string()).map_err(ast_patch_error)
+    };
+    let fingerprint = |key: &str| -> Result<String, JsValue> {
+        value
+            .get(key)
+            .and_then(|f| f.as_str())
+            .map(str::to_string)
+            .ok_or_else(|| type_error(&format!("carve: `patch` needs a `{key}` string")))
+    };
+    Ok(carve::ReversibleAstPatch {
+        forward: side("forward")?,
+        inverse: side("inverse")?,
+        before_fingerprint: fingerprint("beforeFingerprint")?,
+        after_fingerprint: fingerprint("afterFingerprint")?,
+    })
+}
+
 /// Render an AST-JSON document (PART 12) to HTML.
 ///
 /// The other half of `parseJson`. A host that reads the tree in a browser does

@@ -485,6 +485,44 @@ source unchanged, which is what a host batching keystrokes will hit.
 previous parse was reused. **The pinned engine always reports `false`**: it
 validates and applies the edits and then parses the whole source. Read the flag
 rather than assuming work was saved.
+### Tree patches
+
+`createAstPatch(before, after)` is the difference between two PART 12 trees,
+and `applyAstPatch(ast, patch)` replays it. Trees and patches both cross as
+JSON strings, the same way `parseJson` and `astJsonToHtml` hand a tree across.
+
+```js
+import { parseJson, createAstPatch, applyAstPatch } from '@markup-carve/carve-wasm'
+
+const patch = createAstPatch(parseJson('# One\n'), parseJson('# Two\n'))
+applyAstPatch(parseJson('# One\n'), patch) // the '# Two' tree, as JSON
+```
+
+The operations are the position-independent `{ op, path, value }` wire shape,
+so a patch stays meaningful against a tree that moved underneath it. That is
+the opposite trade from `createSourcePatch`, which pins byte ranges and
+fingerprints them against staleness.
+
+The engine's `ast_patch_to_json` and `ast_patch_from_json` have no binding of
+their own. With the patch crossing as JSON they are exactly this pair's
+encoding, and calling them would convert JSON a host already holds.
+
+`createReversibleAstPatch(before, after)` returns
+`{ forward, inverse, beforeFingerprint, afterFingerprint }` as one JSON string,
+and `applyReversibleAstPatch(ast, patch, inverse)` replays either direction.
+
+```js
+const step = createReversibleAstPatch(before, after)
+const redone = applyReversibleAstPatch(before, step)
+const undone = applyReversibleAstPatch(after, step, true)
+```
+
+**The undo stack is yours.** Every entry point here is a pure function that
+owns nothing, so there is no history kept in this package to undo against, and
+a browser host already has somewhere to keep one. What the reversible pair adds
+over two `createAstPatch` calls is the precondition: applying a step to a tree
+whose fingerprint is not the one it was made against throws, so an undo cannot
+land on a document that has moved on.
 
 ### ProseMirror
 
@@ -557,6 +595,10 @@ const html: string = toHtml('_Hello_')
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
 | `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree }` |
 | `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |
+| `createAstPatch` | `(before: string, after: string) => string` | The difference between two PART 12 trees, as `{ op, path, value }` patch JSON |
+| `applyAstPatch` | `(ast: string, patch: string) => string` | Replay patch JSON onto a tree |
+| `createReversibleAstPatch` | `(before: string, after: string) => string` | The same difference with its inverse and both fingerprints |
+| `applyReversibleAstPatch` | `(ast: string, patch: string, inverse?: boolean) => string` | Replay a reversible patch either way; a fingerprint mismatch throws |
 | `toProseMirror` | `(source: string) => ProseMirrorResult` | Convert to the ProseMirror document shape, with what the model could not hold |
 | `fromProseMirror` | `(doc: string) => string` | Convert a ProseMirror document back to canonical Carve source |
 | `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
