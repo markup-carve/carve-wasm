@@ -680,6 +680,18 @@ pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
     migration_result_to_js(carve::migrate_markdown(source))
 }
 
+/// Import Markdown straight to the tree, as AST JSON.
+///
+/// `fromMarkdown` writes Carve SOURCE, so a host that wanted the tree had to
+/// re-parse what it had just written. This is the same importer without that
+/// round trip. The losses `fromMarkdown` reports are not repeated here; a host
+/// that needs them calls that one.
+#[cfg(all(feature = "markdown-import", feature = "ast-json"))]
+#[wasm_bindgen(js_name = markdownToAstJson)]
+pub fn markdown_to_ast_json(source: &str) -> String {
+    carve::to_json(&carve::markdown_to_ast(source))
+}
+
 /// Turn a profile rejection into a JS `Error` a caller can act on.
 ///
 /// The message is the engine's, and `violations` carries them one per entry so
@@ -799,6 +811,35 @@ export interface StaticRenderResult {
   rendererErrors: StaticRendererError[];
 }
 
+export interface AccessibilityDiagnostic {
+  /** Stable rule id, e.g. a11y/image-alt. */
+  rule: string;
+  severity: "warning" | "error";
+  message: string;
+  /** 0-based BYTE offset into the source, or null when the node carried none. */
+  startOffset: number | null;
+  endOffset: number | null;
+}
+
+export interface SanitizeSvgOptions {
+  allowStyle?: boolean;
+  allowLinks?: boolean;
+  allowAnimation?: boolean;
+  allowExternalImages?: boolean;
+}
+export interface SanitizeResult {
+  /** Meaningful only when ok is true. */
+  svg: string;
+  /** False when the input was not a single well-formed <svg> root. */
+  ok: boolean;
+}
+
+export interface ParsedLocator {
+  label: string | null;
+  value: string | null;
+  suffixText: string | null;
+}
+
 export interface ProseMirrorResult {
   /** The ProseMirror document, JSON-encoded. */
   json: string;
@@ -828,6 +869,18 @@ export interface ProseMirrorResult {
 ))]
 fn js_error(message: String) -> JsValue {
     js_sys::Error::new(&message).into()
+}
+
+/// The PART 12 §13 source-layout sidecar for a document.
+///
+/// Separate from `parseJson`, which carries semantic positions on the nodes.
+/// This is the byte-exact record of the SOURCE: its line endings, whether it
+/// had a BOM, and a path-addressed byte span per node - what a host needs to
+/// write an edit back into the file it came from.
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(js_name = parseSourceLayoutJson)]
+pub fn parse_source_layout_json(source: &str) -> String {
+    carve::parse_with_source_layout(source).1
 }
 
 /// Render an AST-JSON document (PART 12) to HTML.
@@ -975,8 +1028,14 @@ pub fn apply_profile(
 #[cfg(feature = "lint")]
 #[wasm_bindgen(js_name = lintCarve, unchecked_return_type = "LintWarning[]")]
 pub fn lint_carve(source: &str) -> Result<JsValue, JsValue> {
+    lint_warnings(carve::lint_carve(source))
+}
+
+/// The JS array both lint entry points return.
+#[cfg(feature = "lint")]
+fn lint_warnings(found: Vec<carve::LintWarning>) -> Result<JsValue, JsValue> {
     let warnings = js_sys::Array::new();
-    for warning in carve::lint_carve(source) {
+    for warning in found {
         let entry = js_sys::Object::new();
         js_sys::Reflect::set(
             &entry,
@@ -1013,6 +1072,80 @@ pub fn lint_carve(source: &str) -> Result<JsValue, JsValue> {
     Ok(warnings.into())
 }
 
+/// Lint a document with the same options object the render entry points take.
+///
+/// `lintCarve` is the option-less form. Which degradations exist depends on the
+/// extensions in play, so a host that renders with a set has to lint with it.
+#[cfg(feature = "lint")]
+#[wasm_bindgen(js_name = lintCarveWithOptions, unchecked_return_type = "LintWarning[]")]
+pub fn lint_carve_with_options(
+    source: &str,
+    options: Option<js_sys::Object>,
+) -> Result<JsValue, JsValue> {
+    let Some(request) = RenderRequest::read(options)? else {
+        return lint_carve(source);
+    };
+    let owned = request.extension_boxes();
+    let engine_options = request.engine_options(&owned);
+    lint_warnings(carve::lint_carve_with_options(source, &engine_options))
+}
+
+/// The accessibility diagnostics, a second family beside `lintCarve`.
+///
+/// Its own rule ids (`a11y/image-alt`, `a11y/heading-jump`) and its own
+/// severity, which `lintCarve` has no field for. Offsets are `null` when the
+/// node that triggered the rule carried no position.
+#[cfg(feature = "lint")]
+#[wasm_bindgen(js_name = lintAccessibility, unchecked_return_type = "AccessibilityDiagnostic[]")]
+pub fn lint_accessibility(source: &str) -> Result<JsValue, JsValue> {
+    let diagnostics = js_sys::Array::new();
+    for diagnostic in carve::lint_accessibility(source) {
+        let entry = js_sys::Object::new();
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("rule"),
+            &JsValue::from_str(diagnostic.rule),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("severity"),
+            &JsValue::from_str(match diagnostic.severity {
+                carve::AccessibilitySeverity::Warning => "warning",
+                carve::AccessibilitySeverity::Error => "error",
+            }),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("message"),
+            &JsValue::from_str(&diagnostic.message),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("startOffset"),
+            &offset_or_null(diagnostic.start_offset),
+        )?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("endOffset"),
+            &offset_or_null(diagnostic.end_offset),
+        )?;
+        diagnostics.push(&entry.into());
+    }
+    Ok(diagnostics.into())
+}
+
+/// An absent offset is `null`, not `0`: a node with no position and a node at
+/// the start of the document are different answers. Defensive at this pin -
+/// `lint_accessibility` parses with positions forced on, so nothing reaches the
+/// `None` arm today.
+#[cfg(feature = "lint")]
+fn offset_or_null(offset: Option<usize>) -> JsValue {
+    match offset {
+        Some(value) => JsValue::from_f64(value as f64),
+        None => JsValue::NULL,
+    }
+}
+
 /// Read a document's provenance marker: `{ version, generatedBy }`, or `null`.
 #[cfg(feature = "stamp")]
 #[wasm_bindgen(js_name = readStamp, unchecked_return_type = "Stamp | null")]
@@ -1044,6 +1177,92 @@ pub fn read_stamp(source: &str) -> Result<JsValue, JsValue> {
 #[wasm_bindgen(js_name = needsReview)]
 pub fn needs_review(source: &str, current_version: &str) -> bool {
     carve::needs_review(source, current_version)
+}
+
+/// Write a provenance marker onto already-formatted Carve.
+///
+/// The other half of `readStamp` and `needsReview`, which could read a marker
+/// this package had no way to write. `generatedBy` is the engine identity a
+/// host wants recorded, e.g. `"my-app 1.2"`; `form` is `"line"` (default) or
+/// `"block"`. Same signature as carve-js `stampCarve`.
+///
+/// The input is expected to be formatted already: this appends the marker and
+/// replaces one the document carries, it does not canonicalize. `toCarve` is
+/// the formatter.
+#[cfg(feature = "stamp")]
+#[wasm_bindgen(js_name = stampCarve)]
+pub fn stamp_carve(
+    formatted: &str,
+    generated_by: &str,
+    form: Option<String>,
+) -> Result<String, JsValue> {
+    let form = match form.as_deref() {
+        None | Some("line") => carve::StampForm::Line,
+        Some("block") => carve::StampForm::Block,
+        Some(other) => {
+            return Err(type_error(&format!(
+                "carve: `form` must be \"line\" or \"block\", got {other:?}"
+            )))
+        }
+    };
+    Ok(carve::stamp_carve(formatted, generated_by, form))
+}
+
+/// Sanitize an SVG document, the helper a host embedding SVG would otherwise
+/// reimplement.
+///
+/// `{ svg, ok }`. `ok` false means the input was not a single well-formed
+/// `<svg>` root, and a caller must then show the SOURCE rather than the input:
+/// `svg` carries nothing to display. Every option defaults to `false`, which is
+/// the strict setting.
+#[wasm_bindgen(js_name = sanitizeSvg, unchecked_return_type = "SanitizeResult")]
+pub fn sanitize_svg(source: &str, options: Option<js_sys::Object>) -> Result<JsValue, JsValue> {
+    let mut opts = carve::SanitizeSvgOptions::default();
+    if let Some(options) = options {
+        let value: JsValue = options.clone().into();
+        if !value.is_null() && !value.is_undefined() {
+            opts.allow_style = bool_field(&options, "allowStyle")?.unwrap_or(false);
+            opts.allow_links = bool_field(&options, "allowLinks")?.unwrap_or(false);
+            opts.allow_animation = bool_field(&options, "allowAnimation")?.unwrap_or(false);
+            opts.allow_external_images =
+                bool_field(&options, "allowExternalImages")?.unwrap_or(false);
+        }
+    }
+    let result = carve::sanitize_svg(source, &opts);
+    let out = js_sys::Object::new();
+    js_sys::Reflect::set(
+        &out,
+        &JsValue::from_str("svg"),
+        &JsValue::from_str(&result.svg),
+    )?;
+    js_sys::Reflect::set(
+        &out,
+        &JsValue::from_str("ok"),
+        &JsValue::from_bool(result.ok),
+    )?;
+    Ok(out.into())
+}
+
+/// Parse the locator portion of a citation into `{ label, value, suffixText }`.
+///
+/// A field the source did not carry is `null`. Same shape as carve-js
+/// `parseLocator`; pure, and never throws on bad input.
+#[wasm_bindgen(js_name = parseLocator, unchecked_return_type = "ParsedLocator")]
+pub fn parse_locator(loc: &str) -> Result<JsValue, JsValue> {
+    let parsed = carve::parse_locator(loc);
+    let out = js_sys::Object::new();
+    for (key, value) in [
+        ("label", parsed.label),
+        ("value", parsed.value),
+        ("suffixText", parsed.suffix_text),
+    ] {
+        let value = match value {
+            Some(text) => JsValue::from_str(&text),
+            None => JsValue::NULL,
+        };
+        js_sys::Reflect::set(&out, &JsValue::from_str(key), &value)?;
+    }
+    Ok(out.into())
 }
 
 /// Convert Djot source to Carve.
