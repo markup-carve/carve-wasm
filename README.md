@@ -382,6 +382,68 @@ from either.
 carve-php use for the same triggers. Offsets are BYTE offsets into the source,
 matching the engine.
 
+### Include expansion
+
+`expandIncludes(source, options)` runs the `{{ path }}` pass (spec PART 9 §19)
+over a document and hands back the expanded tree as AST JSON, alongside the
+warnings and the dependency list a host needs for reporting and file watching.
+
+```js
+import { expandIncludes, astJsonToHtml } from '@markup-carve/carve-wasm'
+
+const files = new Map([['child.crv', 'Included body.\n']])
+
+const { json, warnings, dependencies } = expandIncludes(source, {
+  resolve: (path, ctx) => files.get(path) ?? null,
+})
+document.body.innerHTML = astJsonToHtml(json)
+```
+
+**The resolver has to be synchronous, and that decides who can use this.** A
+browser host that would resolve a path over the network cannot: `fetch` returns
+a Promise and wasm-bindgen cannot await across the call. A host whose files are
+already in memory can - an editor with its open buffers, a bundler, a VFS, a
+test harness. An `async` resolver is not silently ignored: the Promise is
+reported in `resolverErrors` and the directive stays literal, the same way an
+`async` `renderers.math` is handled.
+
+`resolve` returns the child's source as a string, or `{ source, id }` when it
+can name the file canonically. **Supply the id where you have one** - it is what
+the cycle guard compares, so two spellings of one file (`b.crv`, `./b.crv`)
+defeat it without one and only the depth limit stops the recursion. `null`
+refuses the directive as `not-found`, and `{ denial }` refuses it in one of the
+classes §19 names: `outside-root`, `not-found`, `no-root`, `include-denied`,
+`include-unresolved`. The class reaches the caller on the dependency.
+
+`ctx` carries `{ sourcePath, stack, depth }`. `stack` is the include chain, root
+first, and its last entry is the file containing the directive - which is what
+relative resolution keys off.
+
+| Field | Default | What it does |
+|---|---|---|
+| `resolve` | required | `(path, ctx) => source \| { source, id } \| { denial } \| null` |
+| `sourcePath` | none | Identity of the root document, for cycle detection and warning attribution |
+| `extensions` | none | Registry names to parse each CHILD with; pass the set the parent was parsed with |
+| `maxDepth` | `16` | Transitive include depth |
+| `maxBytes` | `max(1 MB, 8 x source bytes)` | Expanded-source byte budget |
+| `maxResolverCalls` | `1000` | Resolver calls for one expansion |
+| `maxWarnings` | `100` | Warnings retained; one per distinct rule always survives |
+
+The budgets are part of the contract rather than a detail. They bound what a
+document of directives can make a host do, and a host serving documents it did
+not write is the one that should lower them.
+
+The result is `{ json, warnings, suppressedWarnings, dependencies,
+chargedBytes, resolverErrors }`. `dependencies` lists every target touched,
+including the ones that did not resolve: a host watching only the files it read
+would never learn that a missing target now exists, so the preview would stay
+stale at the moment the author fixes it. `chargedBytes` is what the budget was
+charged, which is otherwise unobservable from outside.
+
+The tree carries no positions. Expansion merges nodes from several files, and a
+span on a node that came from a child would point into a source the caller
+never passed.
+
 ### ProseMirror
 
 `toProseMirror(source)` converts Carve to the ProseMirror document shape, and
@@ -450,6 +512,7 @@ const html: string = toHtml('_Hello_')
 | `parseLocator` | `(loc: string) => ParsedLocator` | Parse a citation locator into label, value and suffix |
 | `parseSourceLayoutJson` | `(source: string) => string` | The PART 12 §13 source-layout sidecar |
 | `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree, skipping the Carve-source round trip |
+| `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
 | `toProseMirror` | `(source: string) => ProseMirrorResult` | Convert to the ProseMirror document shape, with what the model could not hold |
 | `fromProseMirror` | `(doc: string) => string` | Convert a ProseMirror document back to canonical Carve source |
 | `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
