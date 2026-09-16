@@ -176,6 +176,9 @@ should not break a render. A recognized key with the wrong type throws a
 `TypeError` instead of being coerced: JS truthiness would read
 `{ sections: 'false' }` as `true`, the opposite of what was written.
 
+`renderers` is the one recognized key `toHtmlWithOptions` refuses; it belongs to
+[`toHtmlWithRenderers`](#static-renderers).
+
 This exists for a host whose CSS or JS assumes rendered blocks are direct
 children of the content container - the `.stack > * + *` spacing idiom,
 `:first-child`, `nth-child()` counting, `element.children` walks - all of which
@@ -247,6 +250,69 @@ nothing else. It does **not** enforce the profile's `max_length`, which the
 engine applies to the SOURCE bytes before a parse - a host filtering untrusted
 input still needs that bound on the way in.
 
+### Static renderers
+
+`mode: 'static'` renders the self-contained form, which carries no client
+scripts - so a formula in the document has to be typeset while the HTML is being
+written, by the host. `toHtmlWithRenderers(source, options)` takes the same
+options object plus a `renderers.math` callback and returns
+`{ html, rendererErrors }`.
+
+```js
+import katex from 'katex'
+import { toHtmlWithRenderers } from '@markup-carve/carve-wasm'
+
+const { html, rendererErrors } = toHtmlWithRenderers(source, {
+  mode: 'static',
+  extensions: ['math-block'],
+  renderers: {
+    math: (tex, display) => katex.renderToString(tex, { displayMode: display }),
+  },
+})
+```
+
+The callback is called once per ` ```math ` fence, with the TeX source and a
+display flag. Without it, static output keeps the `\[…\]` source for a client to
+typeset later - never blank.
+
+> **Security: what a renderer returns is TRUSTED RAW HTML.**
+> The string is inserted **unescaped**, the same trust class as a `symbols`
+> value. There is one difference worth stating: a symbol value is host
+> configuration keyed by a **name**, while a renderer is host configuration that
+> is **handed document content** and typically echoes some of it back. A host
+> rendering documents it did not author is accepting whatever its renderer makes
+> of that input, so the escaping is the renderer's job.
+
+**The callback must be synchronous.** wasm-bindgen cannot await across it, so an
+`async` renderer returns a Promise the engine has no way to resolve. That is
+reported as a failure rather than stringified into the document.
+
+It is also why there is no `renderers.diagrams` yet: Mermaid's `render` returns
+a Promise from v10 on, so it cannot be passed to a synchronous callback at all,
+and a host could only supply a lookup into diagrams it rendered beforehand.
+Passing `diagrams` throws, rather than being ignored - an ignored key renders the
+fence as source with nothing to say the configuration did nothing.
+
+A callback that throws, or returns anything but a string, does not abort the
+render. The node it was called for emits nothing and the failure is reported:
+
+```js
+const { html, rendererErrors } = toHtmlWithRenderers(source, {
+  mode: 'static',
+  extensions: ['math-block'],
+  renderers: { math: () => { throw new Error('bad TeX') } },
+})
+// rendererErrors: [{ renderer: 'math', display: true, source: 'E = mc^2', message: '…bad TeX' }]
+```
+
+That is why this is a separate entry point: `toHtmlWithOptions` returns a bare
+string with nowhere to report a failing callback, and a silently empty figure is
+the degradation `lintCarve` exists to warn about. Every other check is at READ
+time, matching the rest of the options object - a non-callable `math`, a
+non-object `renderers`, and `diagrams` all throw a `TypeError` before the render
+starts, so a misconfigured host finds out without needing a document that
+happens to contain a formula.
+
 ### Editing a tree, and reading one back
 
 `parseJson` serializes a document out. `astJsonToHtml` renders one back, and
@@ -314,6 +380,7 @@ const html: string = toHtml('_Hello_')
 | `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
 | `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
 | `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form; see the options table above. Throws `ProfileViolationError` when a profile rejects the document |
+| `toHtmlWithRenderers` | `(source: string, options?: object \| null) => StaticRenderResult` | The options object plus `renderers.math`, for `mode: 'static'`; returns `{ html, rendererErrors }` |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded `raw-format-dropped` losses; strict mode throws `RenderLossError` |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
 | `toPlainTextWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked plain-text render |

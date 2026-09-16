@@ -22,6 +22,7 @@ import {
   readStamp,
   toHtml,
   toHtmlWithOptions,
+  toHtmlWithRenderers,
   toHtmlWithReport,
   toProseMirror,
   toCarvePatch,
@@ -217,6 +218,116 @@ assert.throws(() => toHtmlWithOptions('# A\n', { mode: 'nope' }), TypeError)
 assert.throws(() => toHtmlWithOptions('# A\n', { labels: 'Hinweis' }), TypeError)
 assert.throws(() => toHtmlWithOptions('# A\n', { sourceLine: 'yes' }), TypeError)
 console.log('wasm artifact: profile, editor and output-shaping options pass')
+
+// The static math renderer (markup-carve/carve-wasm#94).
+//
+// Each case is driven on its own rather than through a loop that ORs them: the
+// distinction between "the callback was never called", "it was called and threw"
+// and "it was called and returned the wrong type" is the whole content here, and
+// a combined assertion cannot say which one fired.
+{
+  const MATH = '``` math\nE = mc^2\n```\n'
+  const STATIC = { mode: 'static', extensions: ['math-block'] }
+  const run = (math) => toHtmlWithRenderers(MATH, { ...STATIC, renderers: { math } })
+
+  // The callback reaches the engine, with both of its arguments. `display` is
+  // asserted because a binding that dropped it would still produce output.
+  const seen = []
+  const ok = run((tex, display) => {
+    seen.push([tex, display])
+    return `<math>${tex}</math>`
+  })
+  assert.deepEqual(seen, [['E = mc^2', true]])
+  assert.equal(ok.html, '<div class="math display"><math>E = mc^2</math></div>')
+  assert.deepEqual(ok.rendererErrors, [])
+
+  // TRUSTED RAW: what the callback returns is not escaped. This is the
+  // documented contract, so it is pinned rather than left to be discovered.
+  assert.ok(run(() => '<script>x</script>').html.includes('<script>x</script>'))
+
+  // Without a renderer the static path keeps the source - never blank.
+  const bare = toHtmlWithRenderers(MATH, STATIC)
+  assert.equal(bare.html, '<div class="math display">\\[E = mc^2\\]</div>')
+  assert.deepEqual(bare.rendererErrors, [])
+
+  // A THROW is recorded and reported, not swallowed and not propagated: the
+  // engine's closure returns a String and cannot unwind.
+  const threw = run(() => {
+    throw new Error('katex blew up')
+  })
+  assert.equal(threw.html, '<div class="math display"></div>')
+  assert.equal(threw.rendererErrors.length, 1)
+  assert.equal(threw.rendererErrors[0].renderer, 'math')
+  assert.equal(threw.rendererErrors[0].display, true)
+  assert.equal(threw.rendererErrors[0].source, 'E = mc^2')
+  assert.match(threw.rendererErrors[0].message, /katex blew up/)
+
+  // A thrown non-Error still carries its text.
+  assert.match(
+    run(() => {
+      throw 'plain string'
+    }).rendererErrors[0].message,
+    /plain string/,
+  )
+
+  // THE PROMISE CASE, which is why `renderers.diagrams` is a separate ticket.
+  // An `async` renderer returns a Promise; stringifying it would put
+  // `[object Promise]` in the document, so it is reported as a failure and the
+  // node emits nothing.
+  const promised = run(async (tex) => `<math>${tex}</math>`)
+  assert.equal(promised.html, '<div class="math display"></div>')
+  assert.match(promised.rendererErrors[0].message, /Promise/)
+  assert.ok(!promised.html.includes('Promise'), promised.html)
+
+  // Any other wrong type is reported too, named by its typeof.
+  assert.match(run(() => 7).rendererErrors[0].message, /number/)
+  assert.match(run(() => undefined).rendererErrors[0].message, /undefined/)
+
+  // Two failing formulas report twice. A single cell that only remembers the
+  // last failure would pass every assertion above.
+  const twice = toHtmlWithRenderers('``` math\na\n```\n\n``` math\nb\n```\n', {
+    ...STATIC,
+    renderers: {
+      math: (tex) => {
+        throw new Error(`no ${tex}`)
+      },
+    },
+  })
+  assert.deepEqual(
+    twice.rendererErrors.map((e) => e.source),
+    ['a', 'b'],
+  )
+
+  // READ-TIME validation, consistent with every other field on the object.
+  assert.throws(() => run('nope'), TypeError)
+  assert.throws(() => run(42), TypeError)
+  assert.throws(() => toHtmlWithRenderers(MATH, { ...STATIC, renderers: 'nope' }), TypeError)
+  // A read-time throw does not need a document that contains a formula.
+  assert.throws(() => toHtmlWithRenderers('plain\n', { renderers: { math: 'nope' } }), TypeError)
+
+  // `diagrams` is refused rather than ignored: ignoring it would render the
+  // fence as source with nothing to say the host's configuration did nothing.
+  assert.throws(
+    () => toHtmlWithRenderers(MATH, { ...STATIC, renderers: { diagrams: { mermaid: () => 'x' } } }),
+    TypeError,
+  )
+
+  // And `toHtmlWithOptions` refuses `renderers` outright - it returns a bare
+  // string, so a reported failure would have nowhere to go.
+  assert.throws(
+    () => toHtmlWithOptions(MATH, { ...STATIC, renderers: { math: () => 'x' } }),
+    TypeError,
+  )
+
+  // The rest of the options object still applies through this entry point. A
+  // binding that read `renderers` and forgot everything else would pass above.
+  assert.ok(toHtmlWithRenderers('# A\n\np\n', { sections: false }).html.startsWith('<h1'))
+  assert.throws(() => toHtmlWithRenderers('# A\n', { sections: 'false' }), TypeError)
+  const shaped = { profile: 'minimal', smartTypography: 'source', labels: { note: 'Hinweis' } }
+  assert.equal(toHtmlWithRenderers(RAW_SOURCE, shaped).html, toHtmlWithOptions(RAW_SOURCE, shaped))
+  assert.equal(toHtmlWithRenderers('# A\n').html, toHtml('# A\n'))
+}
+console.log('wasm artifact: static math renderer cases pass')
 
 // The round trip. `parseJson` writes a tree out; until `astJsonToHtml` there was
 // no way to render an edited one back, which is the reason to read a tree in a

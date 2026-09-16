@@ -21,12 +21,23 @@ for (const name of [
   'toHtml',
   'toHtmlFull',
   'toHtmlWithOptions',
+  'toHtmlWithRenderers',
   'toHtmlWithSymbols',
   'version',
 ]) {
   assert.equal(typeof wasm[name], 'function', `${name} should be exported`)
 }
 assert.match(wasm.toHtmlFull('# Render only'), /<h1>Render only/)
+
+// The static math renderer ships in the rendering-only selection too: a
+// Playground that renders `mode: 'static'` is exactly the host that needs it.
+const mathOnly = wasm.toHtmlWithRenderers('``` math\nE = mc^2\n```\n', {
+  mode: 'static',
+  extensions: ['math-block'],
+  renderers: { math: (tex) => `<math>${tex}</math>` },
+})
+assert.equal(mathOnly.html, '<div class="math display"><math>E = mc^2</math></div>')
+assert.deepEqual(mathOnly.rendererErrors, [])
 
 for (const name of [
   'htmlToCarve',
