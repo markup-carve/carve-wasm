@@ -1297,6 +1297,11 @@ fn render_with_options(
 /// the heading-id switches are HTML-side concerns the engine's other renderers
 /// do not consult. `renderers` is refused for the reason
 /// [`to_html_with_options`] refuses it.
+///
+/// [`to_carve_with_options`] is narrower again and reads `profile` alone: the
+/// engine's canonical writer is parse-only by contract, so extensions and
+/// `smartTypography` are inert there. They are accepted rather than refused
+/// because one options object is meant to serve every target.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toMarkdownWithOptions)]
 pub fn to_markdown_with_options(
@@ -1343,8 +1348,10 @@ pub fn to_ansi_with_options(
     )
 }
 
-/// Write canonical Carve with an options object. See
-/// [`to_markdown_with_options`].
+/// Write canonical Carve with an options object.
+///
+/// `profile` is the only option this target reads; see
+/// [`to_markdown_with_options`] for why.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toCarveWithOptions)]
 pub fn to_carve_with_options(

@@ -283,6 +283,18 @@ console.log('wasm artifact: profile, editor and output-shaping options pass')
   assert.equal(toMarkdownWithOptions('a ... b\n', { smartTypography: 'source' }), 'a ... b\n')
   assert.equal(toMarkdownWithOptions('a ... b\n', {}), 'a … b\n')
 
+  // The Carve writer reads `profile` and nothing else, because the engine's
+  // canonical writer is parse-only by contract. It is accepted rather than
+  // refused so one options object can be handed to every target, which is the
+  // whole point - but the README says so, so pin it.
+  const NUMBERED = '# One\n\n## Two\n'
+  const NUMBERS = { extensions: ['heading-numbers'] }
+  assert.equal(toMarkdownWithOptions(NUMBERED, NUMBERS), '# 1 One\n\n## 1.1 Two\n')
+  assert.equal(toPlainTextWithOptions(NUMBERED, NUMBERS), '1 One\n\n1.1 Two\n')
+  assert.equal(toCarveWithOptions(NUMBERED, NUMBERS), toCarveWithOptions(NUMBERED, {}))
+  assert.equal(toCarveWithOptions('a ... b\n', { smartTypography: 'source' }), 'a ... b\n')
+  assert.equal(toCarveWithOptions('a ... b\n', {}), 'a ... b\n')
+
   // The one reader, so the same object gets the same contract everywhere: a
   // recognized key with the wrong type throws, and `renderers` is refused
   // because a bare string has nowhere to report a callback failure.

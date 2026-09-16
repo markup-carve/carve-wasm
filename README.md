@@ -251,6 +251,11 @@ What those targets actually read is narrower than HTML's list: `profile` and
 concerns the engine's other renderers do not consult. `renderers` is refused
 there as it is on `toHtmlWithOptions`.
 
+`toCarveWithOptions` is narrower again and reads `profile` alone. The canonical
+writer is parse-only by contract, so extensions and `smartTypography` are inert
+there; they are accepted rather than refused so that one options object can be
+handed to every target.
+
 `applyProfile` runs the same filter over an AST-JSON document and hands back the
 filtered tree instead of HTML, for a host that wants to store, diff or re-render
 what the filter left. `violations` reports what it degraded or stripped, which
@@ -401,7 +406,7 @@ const html: string = toHtml('_Hello_')
 | `toMarkdownWithOptions` | `(source: string, options?: object \| null) => string` | Markdown under the same options object. Throws `ProfileViolationError` when a profile rejects the document |
 | `toPlainTextWithOptions` | `(source: string, options?: object \| null) => string` | Plain text under the same options object |
 | `toAnsiWithOptions` | `(source: string, options?: object \| null) => string` | ANSI text under the same options object |
-| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object |
+| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` only |
 | `parseJsonWithOptions` | `(source: string, options?: object \| null) => string` | The AST as JSON under the same options object; positions are always on |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded `raw-format-dropped` losses; strict mode throws `RenderLossError` |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
