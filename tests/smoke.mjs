@@ -42,6 +42,7 @@ import {
   toPlainTextWithOptions,
   toProseMirror,
   toCarvePatch,
+  htmlToAst,
   expandIncludes,
   parseSnapshot,
   reparse,
@@ -1195,3 +1196,65 @@ console.log('wasm artifact: AST patch family cases pass')
   assert.throws(() => mergeAst(base, ours, theirs, { resolve: 'nope' }), TypeError)
 }
 console.log('wasm artifact: three-way merge cases pass')
+
+// The HTML importer straight to the tree (markup-carve/carve-wasm#114).
+//
+// The same `{ value, report }` shape `htmlToCarve` returns, with the tree in
+// `value`. No third result shape for one importer.
+{
+  const HTML = '<p>Hello <b>world</b></p>'
+  const tree = htmlToAst(HTML)
+  assert.deepEqual(Object.keys(tree), ['value', 'report'])
+  assert.deepEqual(Object.keys(tree.report), [
+    'schemaVersion',
+    'sourceFormat',
+    'mode',
+    'adapter',
+    'diagnostics',
+  ])
+
+  // The tree is a real one, checked by rendering it rather than by its shape.
+  assert.equal(astJsonToHtml(tree.value), '<p>Hello <strong>world</strong></p>')
+  // And it is the SAME document `htmlToCarve` writes, so the round trip this
+  // saves a host really was a round trip.
+  assert.equal(astJsonToCarve(tree.value), htmlToCarve(HTML).value)
+
+  // The report is the same report, in the same vocabulary, for input where
+  // nothing is writer-only.
+  const LOSSY = '<p style="color:red" onclick="x()">hi</p><marquee>go</marquee>'
+  assert.deepEqual(htmlToAst(LOSSY).report, htmlToCarve(LOSSY).report)
+  assert.ok(htmlToAst(LOSSY).report.diagnostics.length > 0)
+
+  // A LOSS ONLY A WRITER TAKES is not reported here, and that is PART 12 §16's
+  // split rather than a gap: no writer ran, and the tree keeps what the source
+  // could not spell. Driven per shape, because each reaches a different arm.
+  const writerOnly = (html) => {
+    const ast = htmlToAst(html).report.diagnostics
+    const carve = htmlToCarve(html).report.diagnostics
+    return carve.filter((d) => !ast.some((x) => x.code === d.code && x.message === d.message))
+  }
+  // A figure wrapping a table has no Carve spelling.
+  assert.deepEqual(
+    writerOnly('<figure><table><tr><td>x</td></tr></table><figcaption>cap</figcaption></figure>')
+      .map((d) => d.code),
+    ['structure-unspellable'],
+  )
+  // Nor does an explicit head/body/foot grouping.
+  assert.deepEqual(
+    writerOnly(
+      '<table><thead><tr><th>h</th></tr></thead><tbody><tr><td>b</td></tr></tbody>' +
+        '<tfoot><tr><td>f</td></tr></tfoot></table>',
+    ).map((d) => d.code),
+    ['structure-unspellable'],
+  )
+
+  // `mode` is spelled the way `htmlToCarve` spells it, and reaches the report.
+  for (const mode of ['safe', 'semantic', 'roundtrip']) {
+    assert.equal(htmlToAst(HTML, mode).report.mode, mode)
+  }
+  assert.equal(htmlToAst(HTML).report.mode, 'safe')
+  assert.equal(htmlToAst(HTML).report.sourceFormat, 'html')
+  assert.equal(htmlToAst(HTML).report.schemaVersion, 2)
+  assert.throws(() => htmlToAst(HTML, 'nope'), TypeError)
+}
+console.log('wasm artifact: HTML import to the tree passes')
