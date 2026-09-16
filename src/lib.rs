@@ -1718,6 +1718,97 @@ pub fn ast_json_to_carve(json: &str) -> Result<String, JsValue> {
         .map_err(|error| js_error(format!("carve: cannot write this tree: {error:?}")))
 }
 
+/// The tree-taking half of `toMarkdown` and its two siblings.
+///
+/// `plain` is the engine's options-free renderer, `render` the one that reads
+/// them, mirroring the pair [`render_with_options`] holds for the source-taking
+/// entry points.
+#[cfg(all(feature = "ast-json", feature = "other-renderers"))]
+fn ast_json_to_text(
+    json: &str,
+    options: Option<js_sys::Object>,
+    plain: fn(&carve::Document) -> Result<String, carve::RenderDepthError>,
+    render: fn(&carve::Document, &carve::Options<'_>) -> Result<String, carve::RenderDepthError>,
+) -> Result<String, JsValue> {
+    let doc = carve::from_json(json)
+        .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
+    let Some(request) = RenderRequest::read(options)? else {
+        return plain(&doc).map_err(|error| js_error(format!("carve: render refused: {error:?}")));
+    };
+    let owned = request.extension_boxes();
+    let engine_options = request.engine_options(&owned);
+    // `Mode::Interactive` rather than the requested mode: static rendering is
+    // HTML-only, and the engine forces the same value in
+    // `try_to_markdown_with_options`. Passing `mode` through would run the
+    // static hooks for a target whose renderer never sees them.
+    let prepared =
+        carve::prepare_document_for_render(doc, &engine_options, carve::Mode::Interactive, false)
+            .map_err(profile_violation_error)?;
+    render(&prepared, &engine_options)
+        .map_err(|error| js_error(format!("carve: render refused: {error:?}")))
+}
+
+/// Render an AST-JSON document (PART 12) to Markdown.
+///
+/// The direct call for a host that already holds a tree. Without it Markdown was
+/// reached through `astJsonToCarve` and then `toMarkdown`: a canonical write, a
+/// re-parse and a second render for one answer, and lossier than this, because a
+/// tree holding something no Carve source can spell is refused by the write
+/// rather than rendered.
+///
+/// Takes the same options object as [`to_markdown_with_options`], and reads the
+/// same narrow part of it. The profile filter and the `before_render` hooks run,
+/// as they do in [`ast_json_to_html`].
+///
+/// ORDERING FOLLOWS THE TREE. `toMarkdown` parses with positions on, because
+/// section 7 orders collected definitions by source position. A tree arriving as
+/// JSON carries whatever positions its producer put there, and one carrying none
+/// prints its footnote and link definitions in label order. That is the only
+/// order available to a tree without spans, so it is reported here rather than
+/// repaired.
+#[cfg(all(feature = "ast-json", feature = "other-renderers"))]
+#[wasm_bindgen(js_name = astJsonToMarkdown)]
+pub fn ast_json_to_markdown(
+    json: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    ast_json_to_text(
+        json,
+        options,
+        carve::render_markdown,
+        carve::render_markdown_with_options,
+    )
+}
+
+/// Render an AST-JSON document (PART 12) to plain text. See
+/// [`ast_json_to_markdown`], including what a tree without positions costs.
+#[cfg(all(feature = "ast-json", feature = "other-renderers"))]
+#[wasm_bindgen(js_name = astJsonToPlainText)]
+pub fn ast_json_to_plain_text(
+    json: &str,
+    options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
+    ast_json_to_text(
+        json,
+        options,
+        carve::render_plain_text,
+        carve::render_plain_text_with_options,
+    )
+}
+
+/// Render an AST-JSON document (PART 12) to ANSI-styled text. See
+/// [`ast_json_to_markdown`], including what a tree without positions costs.
+#[cfg(all(feature = "ast-json", feature = "other-renderers"))]
+#[wasm_bindgen(js_name = astJsonToAnsi)]
+pub fn ast_json_to_ansi(json: &str, options: Option<js_sys::Object>) -> Result<String, JsValue> {
+    ast_json_to_text(
+        json,
+        options,
+        carve::render_ansi,
+        carve::render_ansi_with_options,
+    )
+}
+
 /// Apply a security profile to an AST-JSON document (PART 12), keeping the
 /// filtered tree.
 ///

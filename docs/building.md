@@ -43,7 +43,7 @@ features are:
 | `html-import` | `htmlToCarve`, `fromHtml` |
 | `markdown-import` | `fromMarkdown` |
 | `reports` | all five `*WithReport` renderers |
-| `ast-json` | `parseJson`, `astJsonToHtml`, `astJsonToCarve` |
+| `ast-json` | `parseJson`, `astJsonToHtml`, `astJsonToCarve`, `astJsonToMarkdown`, `astJsonToPlainText`, `astJsonToAnsi` |
 | `other-renderers` | the basic Markdown, plain-text, ANSI, and Carve renderers |
 | `lint` | `lintCarve` |
 | `stamp` | `readStamp`, `needsReview` |

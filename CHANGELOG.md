@@ -11,6 +11,14 @@ their own.
 
 ### Added
 
+- `astJsonToMarkdown`, `astJsonToPlainText` and `astJsonToAnsi` render an
+  AST-JSON document to those targets directly. Each takes the same options
+  object the source-taking entry points read, and runs the profile filter and
+  the `before_render` hooks. Definition ordering follows the tree, so a tree
+  without spans prints them in label order. Behind `ast-json` and
+  `other-renderers`, the pair `astJsonToCarve` already sits behind.
+  markup-carve/carve-wasm#130
+
 - Version 2 importer-fidelity reports for HTML and Markdown, plus additive
   `migrateDjot` and `migrateBbcode` entry points that retain the legacy string
   converter APIs.
