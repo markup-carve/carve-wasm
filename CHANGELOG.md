@@ -9,6 +9,8 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-09-19
+
 ### Added
 
 - `astJsonToMarkdown`, `astJsonToPlainText` and `astJsonToAnsi` render an
@@ -78,7 +80,6 @@ their own.
   where it carried the strings `oldText` and `newText`. A host reading an
   AST-JSON tree for substitutions walks the halves instead of reading them
   (carve-rs#1756). Breaking for that host; nothing else in the tree moved.
-
 - Advances the embedded carve-rs revision to released 0.1.6 (`d7837249`, from
   `9a0c421d`). The Markdown and Carve writers escape more of what would reopen a
   construct on the way back in: a literal tilde, an underscore pair the line
@@ -199,7 +200,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/markup-carve/carve-wasm/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/markup-carve/carve-wasm/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/markup-carve/carve-wasm/compare/v0.1.0...v0.1.1
