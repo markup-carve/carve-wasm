@@ -3374,9 +3374,12 @@ mod tests {
     #[cfg(feature = "other-renderers")]
     #[test]
     fn the_profile_reaches_the_markdown_target() {
+        // The degraded heading is a paragraph, and a leading hash would re-open
+        // an ATX heading on the way back in, so Markdown escapes it
+        // (carve-rs#1681).
         assert_eq!(
             filtered(carve::try_to_markdown_with_options),
-            "# Heading\n\n[img: alt\\]\n"
+            "\\# Heading\n\n[img: alt\\]\n"
         );
         assert_eq!(
             unfiltered(carve::try_to_markdown_with_options),
