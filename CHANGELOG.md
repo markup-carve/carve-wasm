@@ -74,16 +74,25 @@ their own.
 - Pinned the Rust engine to its importer-fidelity v2 implementation. Markdown
   and the new report-returning Djot/BBCode APIs fail closed when fidelity is
   not yet assessed at construct level.
-- Advances the embedded carve-rs revision to `1f8b1baa` (from `9a0c421d`).
-  Markdown output escapes a literal tilde and an underscore pair the line would
-  pair (carve-rs#1641, carve-rs#1653), and a bare closer inside a braced inline
-  no longer opens a strike (carve-rs#1638). Since `be5e0970` it also reads an
-  underscore pair over the block rather than the line (carve-rs#1659), hides a
-  link destination and an autolink from a bare closer (carve-rs#1665), reports
-  the mark run two adjacent spans come back as (carve-rs#1667), refuses the fast
-  layout path where a marker follows its own marker (carve-rs#1671), and writes
-  the native `|=` header form for a trailing colspan run (carve-rs#1658). HTML
-  output over the spec corpus is unchanged.
+- A substitution node carries `old` and `new`, each an array of inline nodes,
+  where it carried the strings `oldText` and `newText`. A host reading an
+  AST-JSON tree for substitutions walks the halves instead of reading them
+  (carve-rs#1756). Breaking for that host; nothing else in the tree moved.
+
+- Advances the embedded carve-rs revision to released 0.1.6 (`d7837249`, from
+  `9a0c421d`). The Markdown and Carve writers escape more of what would reopen a
+  construct on the way back in: a literal tilde, an underscore pair the line
+  would pair, a leading hash, a heading's trailing hash run, a caret before a
+  bracket node, and the colon of a trailing `:name` (carve-rs#1641,
+  carve-rs#1653, carve-rs#1681, carve-rs#1687, carve-rs#1713, carve-rs#1728).
+  Parsing tightens around braced inlines, forced closers, escaped markers,
+  adjacent links, blank table rows and a code span's closer (carve-rs#1638,
+  carve-rs#1673, carve-rs#1675, carve-rs#1677, carve-rs#1684, carve-rs#1727,
+  carve-rs#1745, carve-rs#1749, carve-rs#1753). A frontmatter block now survives
+  the ProseMirror bridge as written (carve-rs#1695), and the bridge reports what
+  a mention loses rather than dropping it silently (carve-rs#1760,
+  carve-rs#1764, carve-rs#1766, carve-rs#1770, carve-rs#1773). HTML output over
+  the spec corpus is unchanged: 1740/1740 documents byte-identical.
 
 ## [0.1.3] - 2026-09-08
 

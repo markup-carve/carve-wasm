@@ -64,6 +64,12 @@
     "151-indented-ordered-marker-content-column-includes-the-marker-indent.crv": [
       "degraded:soft_break"
     ],
+    "152-leading-attribute-brace-before-an-inline-span-stays-literal-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "152-leading-attribute-brace-before-an-inline-span-stays-literal-3.crv": [
+      "degraded:smart_punctuation"
+    ],
     "154-under-indented-definition-attaches-over-indented-definition-folds-3.crv": [
       "degraded:soft_break"
     ],
@@ -943,6 +949,18 @@
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling.crv": [
       "degraded:soft_break"
     ],
+    "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": [
+      "degraded:italic"
+    ],
+    "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": [
+      "degraded:soft_break"
+    ],
+    "469-an-empty-link-destination-is-not-a-link-3.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "47-numbered-cross-references-11.crv": [
+      "dropped:caption_number"
+    ],
     "47-numbered-cross-references-2.crv": [
       "dropped:caption_number"
     ],
@@ -966,6 +984,19 @@
     ],
     "47-numbered-cross-references.crv": [
       "dropped:caption_number"
+    ],
+    "471-a-forced-opener-of-an-open-kind-is-literal-5.crv": [
+      "degraded:strong"
+    ],
+    "471-a-forced-opener-of-an-open-kind-is-literal-7.crv": [
+      "degraded:strong"
+    ],
+    "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv": [
+      "degraded:substitution"
+    ],
+    "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv": [
+      "degraded:escaped_text",
+      "degraded:substitution"
     ],
     "56-table-cell-escaped-pipe.crv": [
       "degraded:escaped_text"
@@ -1067,9 +1098,6 @@
     "108-security-hardening-11.crv": "the sanitized-away `href` attribute is not carried through the bridge, so the link comes back without it",
     "130-bold-italic-delimiter-needs-content-3.crv": "the nested emphasis delimiters reflow: `/*x*/` comes back `*/x/*`",
     "130-bold-italic-delimiter-needs-content-4.crv": "the nested emphasis delimiters reflow and gain braces: `a/*y*/b` comes back `a{*/y/*}b`",
-    "14-frontmatter-2.crv": "the JSON frontmatter block is gone; the ProseMirror model holds no frontmatter node",
-    "14-frontmatter-3.crv": "the TOML frontmatter block is gone; the ProseMirror model holds no frontmatter node",
-    "14-frontmatter.crv": "the frontmatter keys come back sorted rather than in the order they were written",
     "202-a-definition-on-a-footnote-body-s-continuation-line-is-collected.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
     "220-a-definition-past-a-footnote-body-s-column-registers-from-its-authored-base.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
     "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace-2.crv": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
@@ -1103,6 +1131,7 @@
     "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
     "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-2.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
     "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-3.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in"
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker.crv": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
+    "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": "the nested emphasis delimiters reflow: `/*x*/` comes back `*/x/*`"
   }
 }

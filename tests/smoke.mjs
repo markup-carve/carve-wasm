@@ -270,7 +270,9 @@ console.log('wasm artifact: profile, editor and output-shaping options pass')
   assert.ok(parseJson(DENIED).includes('"startOffset"'))
 
   // Under `comment` a heading is not a heading and an image is not an image.
-  assert.equal(toMarkdownWithOptions(DENIED, COMMENT), '# Heading\n\n[img: alt\\]\n')
+  // The degraded heading is a paragraph, and a leading hash would re-open an
+  // ATX heading on the way back in, so Markdown escapes it (carve-rs#1681).
+  assert.equal(toMarkdownWithOptions(DENIED, COMMENT), '\\# Heading\n\n[img: alt\\]\n')
   assert.equal(toPlainTextWithOptions(DENIED, COMMENT), '# Heading\n\n[img: alt]\n')
   assert.equal(toAnsiWithOptions(DENIED, COMMENT), '# Heading\n\n[img: alt]\n')
   assert.equal(toCarveWithOptions(DENIED, COMMENT), '\\# Heading\n\n[img: alt]\n')
