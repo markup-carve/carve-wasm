@@ -1,18 +1,23 @@
 # The carve-rs dependency pin
 
-`Cargo.toml` pins an exact carve-rs commit, and `Cargo.lock` is committed
+`Cargo.toml` requires an exact published `carve-lang` version, and `Cargo.lock` is committed
 alongside it:
 
 ```toml
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "..." }
+carve = { package = "carve-lang", version = "=0.1.6" }
 ```
 
-Read the current revision out of `Cargo.toml` rather than from a copy here - a
-revision quoted in prose goes stale the first time someone bumps the manifest
-without noticing the duplicate.
+The leading `=` matters. Cargo reads `0.1.6` as a compatible range and may select
+a later 0.1 release on a fresh lock. The pin guards reject that form.
 
-The engine is published as `carve-lang` (carve-rs renamed it from `carve`), so a
-pin at any revision past that rename needs `package = "carve-lang"` as above.
+The engine is published as `carve-lang` because the `carve` crate name was
+already taken. CI resolves the selected version's bare release tag, such as
+`0.1.6`, to a carve-rs commit before applying the existing ancestry, age, spec,
+and sibling-floor checks.
+
+That establishes release provenance, not byte identity. Cargo verifies the
+registry archive against the checksum in `Cargo.lock`; the pin guard separately
+verifies the source tag. It does not reconstruct the archive from the tag.
 
 The crate previously tracked carve-rs' default branch with no committed lock.
 That never went stale, but it went the other way: every build resolved whatever
@@ -20,13 +25,13 @@ had landed upstream since, so the published package could carry an engine no CI
 run here had ever built, and two clones a day apart could disagree. The pin
 makes an engine change a reviewable line in a diff.
 
-When bumping the `rev`, regenerate and commit `Cargo.lock` in the same change.
-The lock records the resolved revision plus the rest of the tree; leaving it
+When bumping the version, regenerate and commit `Cargo.lock` in the same change.
+The lock records the resolved version plus the rest of the tree; leaving it
 behind gives every fresh clone a dirty working tree on its first build and lets
 the package resolve to an engine other than the one that was tested.
 
 ```sh
-cargo update -p carve-lang --precise <sha>   # or edit the rev and re-lock
+cargo update -p carve-lang --precise <version>
 cargo test && wasm-pack build --target nodejs && node tests/smoke.mjs
 CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node tests/corpus.mjs
 ```

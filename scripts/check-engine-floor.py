@@ -212,14 +212,15 @@ def main(argv: list[str] | None = None) -> int:
     # RUNS. Reading the manifest as well is not redundant: pinned-spec-commit.py
     # fails when the two disagree, and a manifest advertising one engine while
     # the build uses another is its own defect.
-    ours_manifest = reader.manifest_revision(arguments.manifest)
-    ours = reader.lock_revision(arguments.lock)
-    if ours_manifest != ours:
+    ours_manifest_pin = reader.manifest_pin(arguments.manifest)
+    ours_lock_pin = reader.lock_pin(arguments.lock)
+    if ours_manifest_pin != ours_lock_pin:
         fail(
-            f"{arguments.manifest} pins carve-rs {ours_manifest} but {arguments.lock} resolved "
-            f"{ours}. Regenerate the lock and commit it before comparing anything."
+            f"{arguments.manifest} pins carve-rs {ours_manifest_pin} but {arguments.lock} "
+            f"resolved {ours_lock_pin}. Regenerate the lock before comparing anything."
         )
-    theirs = reader.manifest_revision(arguments.sibling_manifest)
+    ours = reader.resolve_pin(arguments.engine, ours_lock_pin)
+    theirs = reader.resolve_pin(arguments.engine, reader.manifest_pin(arguments.sibling_manifest))
 
     for label, revision in (("our", ours), (f"{arguments.sibling_name}'s", theirs)):
         require_commit(arguments.engine, revision, label)
