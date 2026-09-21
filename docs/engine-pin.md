@@ -12,8 +12,9 @@ a later 0.1 release on a fresh lock. The pin guards reject that form.
 
 The engine is published as `carve-lang` because the `carve` crate name was
 already taken. CI resolves the selected version's bare release tag, such as
-`0.1.6`, to a carve-rs commit before applying the existing ancestry, age, spec,
-and sibling-floor checks.
+`0.1.6`, to a carve-rs commit and refuses a tag whose `Cargo.toml` does not
+declare `carve-lang` at that version. The ancestry, age, spec and sibling-floor
+checks run on that commit.
 
 That establishes release provenance, not byte identity. Cargo verifies the
 registry archive against the checksum in `Cargo.lock`; the pin guard separately

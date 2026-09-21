@@ -177,7 +177,17 @@ def resolve_pin(engine: Path, pin: tuple[str, str]) -> str:
     )
     if completed.returncode != 0:
         fail(f"carve-rs has no `{value}` tag, so the published crate cannot be tied to source.")
-    return completed.stdout.strip()
+    revision = completed.stdout.strip()
+    tagged = subprocess.run(
+        ["git", "-C", str(engine), "show", f"{revision}:Cargo.toml"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    package = tomllib.loads(tagged.stdout).get("package", {}) if tagged.returncode == 0 else {}
+    if (package.get("name"), package.get("version")) != (ENGINE_PACKAGE, value):
+        fail(f"carve-rs tag `{value}` does not declare {ENGINE_PACKAGE} {value}; the tag is misplaced.")
+    return revision
 
 
 def spec_gitlink(engine: Path, revision: str) -> str:
