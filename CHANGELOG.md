@@ -2,8 +2,8 @@
 
 Notable changes to `@markup-carve/carve-wasm`.
 
-The parser and renderer are carve-rs, compiled to WebAssembly and pinned to an
-exact commit in `Cargo.toml`, so an engine bump can change rendering without a
+The parser and renderer are carve-rs, compiled to WebAssembly and pinned to a
+published version in `Cargo.toml`, so an engine bump can change rendering without a
 line of Rust in this repository changing. Engine bumps therefore get an entry of
 their own.
 
