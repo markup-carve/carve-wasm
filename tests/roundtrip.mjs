@@ -28,13 +28,25 @@
 // what pandoc-carve and carve-grammars both settled on for their bridges, for
 // the same reason.
 //
-// THE LEDGER, and the direction that gives it teeth. 1341 documents split into
+// THE LEDGER, and the direction that gives it teeth. The corpus splits into
 // three: most survive, some come back rendering differently, and one is refused
-// outright. `roundtrip-ledger.json` names the second and third groups. A
-// document that diverges and is NOT named fails - that is a regression. A named
-// document that now survives ALSO fails - a recorded loss that outlives its
-// cause is a claim this suite has stopped checking, the same ratchet
-// carve-grammars' KNOWN_LEAKS and pandoc-carve's KNOWN_LOSSY use.
+// outright. `roundtrip-ledger.json` records the second and third groups. A
+// document that diverges and is NOT recorded fails - that is a regression. A
+// recorded document that now survives ALSO fails - a recorded loss that
+// outlives its cause is a claim this suite has stopped checking, the same
+// ratchet carve-grammars' KNOWN_LEAKS and pandoc-carve's KNOWN_LOSSY use.
+//
+// AND IT RECORDS WHAT EACH ONE PRODUCES, not just its name. Naming alone left
+// 423 of 1740 documents asserting nothing about their output - an import that
+// returned the literal string `GARBAGE` for a recorded document kept this file
+// green (markup-carve/carve-wasm#137). The recorded value is the re-rendered
+// HTML, compared byte for byte.
+//
+// A RECORDED OUTPUT IS A RECORD OF TODAY, so it is not the only claim the
+// recorded population carries. Two assertions say what the round trip SHOULD
+// do whatever it does today: the surviving fraction below, and idempotence -
+// importing the re-rendered HTML a second time has to reach the same HTML
+// again. Regenerating the ledger cannot make a document settle.
 //
 // AND THE MODE ITSELF HAS TO BE LOAD-BEARING. Every assertion above would hold
 // just as well if `mode` were ignored and every import ran as `safe` - the
@@ -71,9 +83,19 @@ function measure(name) {
     return { name, outcome: 'refused', detail: String(error) }
   }
   const again = toHtml(carve)
-  return again === html
-    ? { name, outcome: 'survives' }
-    : { name, outcome: 'diverges', html, carve, again }
+  if (again === html) return { name, outcome: 'survives' }
+
+  // The second pass, and only for a document that already diverged. A survivor
+  // is stable by construction: `again` equals `html`, so importing it runs the
+  // identical computation and cannot reach a different answer. Measuring the
+  // 1316 survivors again would cost a third of the run to re-derive an identity.
+  let settled
+  try {
+    settled = toHtml(htmlToCarve(again, 'roundtrip').value) === again
+  } catch {
+    settled = false
+  }
+  return { name, outcome: 'diverges', html, carve, again, settled }
 }
 
 const results = names.map(measure)
@@ -83,17 +105,26 @@ const survives = by('survives')
 const diverges = by('diverges')
 const refused = by('refused')
 
+const unsettled = diverges.filter((result) => !result.settled)
+
 if (process.env.UPDATE_ROUNDTRIP_LEDGER === '1') {
   const { writeFileSync } = await import('node:fs')
   writeFileSync(LEDGER, `${JSON.stringify({
     $comment: ledger.$comment,
-    diverges: diverges.map((result) => result.name),
+    diverges: Object.fromEntries(diverges.map((result) => [result.name, result.again])),
     refused: Object.fromEntries(refused.map((result) => [
       result.name,
       ledger.refused?.[result.name] ?? result.detail,
     ])),
+    unsettled: Object.fromEntries(unsettled.map((result) => [
+      result.name,
+      ledger.unsettled?.[result.name] ?? 'REASON MISSING - say what the second pass changes',
+    ])),
   }, null, 2)}\n`, 'utf8')
-  console.log(`roundtrip: ledger rewritten - ${diverges.length} diverging, ${refused.length} refused`)
+  console.log(
+    `roundtrip: ledger rewritten - ${diverges.length} diverging, ${refused.length} refused, ` +
+      `${unsettled.length} unsettled`,
+  )
   process.exit(0)
 }
 
@@ -113,7 +144,13 @@ assert.ok(
     'regression from being cleared by regenerating the ledger, so it is not cleared that way either.',
 )
 
-const recorded = new Set(ledger.diverges)
+const recordedDivergence = ledger.diverges ?? {}
+assert.ok(
+  !Array.isArray(recordedDivergence),
+  `${LEDGER} still records "diverges" as a list of names. A name on its own asserts nothing about ` +
+    `what the document produced; regenerate it: ${REGENERATE}`,
+)
+const recorded = new Set(Object.keys(recordedDivergence))
 const refusedNames = new Set(Object.keys(ledger.refused ?? {}))
 
 // DIRECTION ONE: something broke.
@@ -130,6 +167,55 @@ assert.deepEqual(
   `${unrecorded.length} document(s) no longer survive the round trip and are not in the ledger: ` +
     `${unrecorded.slice(0, 10).join(', ')}. Either the import lost something it used to keep, or the ` +
     `loss is expected and belongs in ${LEDGER} with the reason in the commit message.`,
+)
+
+// DIRECTION ONE AGAIN, one layer down: a recorded document still diverges, but
+// into something else. This is the assertion the name-only ledger never made,
+// and it is what stops 423 documents from being free to import as anything.
+const moved = diverges
+  .filter((result) => recorded.has(result.name) && recordedDivergence[result.name] !== result.again)
+  .map((result) => result.name)
+if (moved.length > 0) {
+  const [first] = diverges.filter((result) => result.name === moved[0])
+  console.error(`--- ${first.name} ---`)
+  console.error(`recorded: ${JSON.stringify(String(recordedDivergence[first.name]).slice(0, 400))}`)
+  console.error(`now:      ${JSON.stringify(first.again.slice(0, 400))}`)
+}
+assert.deepEqual(
+  moved, [],
+  `${moved.length} recorded document(s) now round-trip to different HTML: ${moved.slice(0, 10).join(', ')}. ` +
+    'The ledger records what each lossy document PRODUCES, so a known loss changing shape is not the ' +
+    `same entry. If the new output is right, regenerate: ${REGENERATE}`,
+)
+
+// THE LOSS HAS TO HAPPEN ONCE. Importing the re-rendered HTML again has to
+// reach the same HTML a third time; a round trip that keeps eroding its input
+// is unstable however faithfully the ledger records the first pass. This is
+// derived rather than recorded - regenerating the ledger cannot make a document
+// settle - so it holds even over a ledger someone has just rewritten.
+const recordedUnsettled = ledger.unsettled ?? {}
+const newlyUnsettled = unsettled.map((result) => result.name).filter((name) => !recordedUnsettled[name])
+assert.deepEqual(
+  newlyUnsettled, [],
+  `${newlyUnsettled.length} document(s) change again on a SECOND import: ` +
+    `${newlyUnsettled.slice(0, 10).join(', ')}. The round trip is not reaching a fixed point, so the ` +
+    'recorded output above is one pass of an ongoing erosion rather than the whole loss.',
+)
+const nowSettled = Object.keys(recordedUnsettled)
+  .filter((name) => !unsettled.some((result) => result.name === name))
+  .filter((name) => names.includes(name))
+assert.deepEqual(
+  nowSettled, [],
+  `${nowSettled.length} recorded unsettled document(s) now reach a fixed point: ${nowSettled.join(', ')}. ` +
+    `Delete them from ${LEDGER}.`,
+)
+const unexplained = Object.entries(recordedUnsettled)
+  .filter(([, reason]) => !reason || reason.startsWith('REASON MISSING'))
+  .map(([name]) => name)
+assert.deepEqual(
+  unexplained, [],
+  `${unexplained.length} unsettled entr(y|ies) have no reason: ${unexplained.slice(0, 10).join(', ')}. ` +
+    'Regenerating leaves a placeholder on purpose; say what the second pass changes.',
 )
 
 const unrecordedRefusals = refused.map((result) => result.name).filter((name) => !refusedNames.has(name))
@@ -175,7 +261,8 @@ assert.deepEqual(
 // A ledger entry naming a document the corpus no longer has is dead weight that
 // makes the counts above lie about how much is recorded.
 const present = new Set(names)
-const phantom = [...recorded, ...refusedNames].filter((name) => !present.has(name))
+const phantom = [...recorded, ...refusedNames, ...Object.keys(recordedUnsettled)]
+  .filter((name) => !present.has(name))
 assert.deepEqual(
   phantom, [],
   `${LEDGER} names documents the corpus does not have: ${phantom.slice(0, 10).join(', ')}`,
@@ -187,10 +274,10 @@ assert.deepEqual(
 // and every import silently ran as `safe`. That is not a hypothetical worry
 // about this binding: the mode crosses as an `Option<String>` and is mapped in
 // `html_import_mode`, so a wrong default or a lost argument is a one-line
-// change nothing else here would see. Measured on the same HTML, the two modes
-// disagree on 244 of these documents; the floor is a fraction of that, low
-// enough to survive corpus growth and high enough that one lucky document
-// cannot satisfy it.
+// change nothing else here would see. Measured on the same HTML at spec
+// e1223692, the two modes disagree on 101 of these documents; the floor is a
+// fraction of that, low enough to survive corpus growth and high enough that
+// one lucky document cannot satisfy it.
 const modeSensitive = names.filter((name) => {
   const html = toHtml(source(name))
   try {
@@ -208,6 +295,7 @@ assert.ok(
 
 console.log(
   `roundtrip: ${survives.length}/${names.length} documents re-render byte-identically through ` +
-    `htmlToCarve(..., 'roundtrip'), ${diverges.length} recorded lossy, ${refused.length} refused, ` +
+    `htmlToCarve(..., 'roundtrip'), ${diverges.length} recorded lossy and compared against their ` +
+    `recorded output, ${refused.length} refused, ${unsettled.length} unsettled, ` +
     `${modeSensitive.length} mode-sensitive, at ${packageUnderTest}`,
 )
