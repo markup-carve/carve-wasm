@@ -9,6 +9,18 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-09-26
+
+### Improvements
+
+- The embedded engine is the published `carve-lang` crate at an exact version
+  rather than the same commit fetched from git, so a build resolves through
+  crates.io and the corpus gate resolves the spec through the matching carve-rs
+  release tag, which it now refuses unless that tag's `Cargo.toml` declares the
+  pinned version. The engine does not move: 0.1.4 already embedded `d7837249`,
+  which is what 0.1.6 was published from, and rendering is unchanged (#136,
+  #143).
+
 ## [0.1.4] - 2026-09-19
 
 ### Added
@@ -200,7 +212,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/markup-carve/carve-wasm/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/markup-carve/carve-wasm/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...v0.1.2
