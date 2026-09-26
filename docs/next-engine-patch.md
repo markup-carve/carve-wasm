@@ -25,6 +25,8 @@ node tests/smoke.mjs
 CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node tests/corpus.mjs
 ```
 
+Remove this preparation checklist when completing the pin update.
+
 Keep the draft open if the regressions or full corpus checks fail. Local path
 substitutions are development checks; the final manifest and lock must resolve
 the published crate.
