@@ -344,16 +344,31 @@ pub fn apply_source_patch(source: &str, patch: JsValue) -> Result<String, JsValu
 
 #[cfg(feature = "reports")]
 fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, JsValue> {
+    render_report_fields_to_js(
+        result.value,
+        result.losses,
+        result.total_losses,
+        result.truncated,
+    )
+}
+
+#[cfg(feature = "reports")]
+fn render_report_fields_to_js(
+    value: String,
+    report_losses: Vec<carve::RenderLoss>,
+    total_losses: usize,
+    truncated: bool,
+) -> Result<JsValue, JsValue> {
     let object = js_sys::Object::new();
-    js_sys::Reflect::set(&object, &"value".into(), &result.value.into())?;
+    js_sys::Reflect::set(&object, &"value".into(), &value.into())?;
     js_sys::Reflect::set(
         &object,
         &"totalLosses".into(),
-        &(result.total_losses as f64).into(),
+        &(total_losses as f64).into(),
     )?;
-    js_sys::Reflect::set(&object, &"truncated".into(), &result.truncated.into())?;
+    js_sys::Reflect::set(&object, &"truncated".into(), &truncated.into())?;
     let losses = js_sys::Array::new();
-    for loss in result.losses {
+    for loss in report_losses {
         let item = js_sys::Object::new();
         js_sys::Reflect::set(&item, &"code".into(), &loss.code.into())?;
         js_sys::Reflect::set(&item, &"format".into(), &loss.format.into())?;
@@ -396,15 +411,14 @@ fn checked_result(
         Ok(result) => render_report_to_js(result),
         Err(error) => {
             let message = error.to_string();
-            let report = carve::RenderResult {
-                value: String::new(),
-                losses: error.losses,
-                total_losses: error.total_losses,
-                truncated: error.truncated,
-            };
             let exception = js_sys::Error::new(&message);
             js_sys::Reflect::set(&exception, &"name".into(), &"RenderLossError".into())?;
-            let encoded = render_report_to_js(report)?;
+            let encoded = render_report_fields_to_js(
+                String::new(),
+                error.losses,
+                error.total_losses,
+                error.truncated,
+            )?;
             for key in ["losses", "totalLosses", "truncated"] {
                 js_sys::Reflect::set(
                     &exception,
