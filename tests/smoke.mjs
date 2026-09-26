@@ -1,3 +1,4 @@
+import './denied-scheme-import.mjs'
 // Exercise the built WASM ARTIFACT through the JS API users actually load.
 // `cargo test` only tests the native build of the wrapper; it never proves the
 // wasm package works -- which is how a stale engine can pass CI (the embedded

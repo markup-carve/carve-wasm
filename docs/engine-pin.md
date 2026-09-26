@@ -37,6 +37,14 @@ cargo test && wasm-pack build --target nodejs && node tests/smoke.mjs
 CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node tests/corpus.mjs
 ```
 
+A bump past `=0.1.6` also deletes `src/denied_scheme.rs`, its `mod` line, and its
+two call sites in `html_to_carve` and `html_to_ast`. That module is a copy of the
+engine's denied-scheme import rule, standing in only while the published pin lacks
+it ([#145](https://github.com/markup-carve/carve-wasm/issues/145)). Two copies of
+one security rule is the state the bump exists to end.
+`tests/denied-scheme-import.mjs` stays and must still pass against the engine's
+own rule; close #145 when both halves are done.
+
 `scripts/check-engine-floor.py` is what notices a pin left behind. CI runs it
 against the revision carve-rb embeds:
 
