@@ -47,7 +47,7 @@ their own.
   of the 2134 corpus documents the pinned spec declares byte-identically. A
   non-breaking space reaches the ProseMirror bridge as its own
   `degraded:non_breaking_space` row rather than folded into the smart-punctuation
-  one.
+  one (#149).
 - The embedded engine is the published `carve-lang` crate at an exact version
   rather than the same commit fetched from git, so a build resolves through
   crates.io and the corpus gate resolves the spec through the matching carve-rs
