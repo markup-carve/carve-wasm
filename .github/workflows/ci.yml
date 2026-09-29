@@ -193,8 +193,17 @@ jobs:
           render_bytes=$(wc -c < "$RUNNER_TEMP/render.wasm.gz")
           echo "full wasm: $full_bytes bytes gzip"
           echo "rendering-only wasm: $render_bytes bytes gzip"
-          if [ "$render_bytes" -gt 600000 ]; then
-            echo "::error::rendering-only wasm grew past its 600000-byte gzip budget ($render_bytes bytes)"
+          # 700000, re-baselined on the carve-lang 0.1.7 bump. The old 600000
+          # had 5871 bytes of headroom against the 594129 that 0.1.6 produced -
+          # under one percent, so it was going to fail on whichever engine
+          # release came next rather than on anything this package did. 0.1.7
+          # measures 661697, 11.4% up, for the node types and the GFM-reader
+          # Markdown writer it adds. The RATIO check below is the structural
+          # half and it is untouched: rendering-only is 33% of the full
+          # artifact, well inside its 60% ceiling. Move this number only with
+          # both measurements in the commit message, the way this one moved.
+          if [ "$render_bytes" -gt 700000 ]; then
+            echo "::error::rendering-only wasm grew past its 700000-byte gzip budget ($render_bytes bytes)"
             exit 1
           fi
           if [ $((render_bytes * 100)) -ge $((full_bytes * 60)) ]; then
