@@ -66,12 +66,14 @@ for (const [where, denied, blank] of [
     `${where}: a denied destination imports exactly like an empty one`)
 }
 
-// A figure keeps its caption where the engine's empty-destination path unwraps both, so
-// this one asserts what the guard does guarantee there instead of an equality it does not
-// claim: the destination is gone, reported, and the caption survives.
+// A figure is the shape the removed wrapper handled differently from the engine, so it
+// gets the equivalence spelled out rather than a value: both halves unwrap, and only the
+// denied one reports.
 const figure = htmlToCarve('<figure><img src="data:x" alt="logo"><figcaption>cap</figcaption></figure>', 'safe')
-assert.equal(figure.value, 'logo\n^ cap\n', 'figure: the image becomes its alt text and the caption stays')
-assert.deepEqual(rows(figure), [report.diagnostics[2]], 'figure: one row for the removed source')
+const blankFigure = htmlToCarve('<figure><img src="" alt="logo"><figcaption>cap</figcaption></figure>', 'safe')
+assert.equal(figure.value, blankFigure.value, 'figure: a denied source imports exactly like an empty one')
+assert.deepEqual(rows(figure).filter((row) => row.code === 'attribute-dropped'), [report.diagnostics[2]],
+  'figure: one row for the removed source')
 
 // The control: an allowed destination keeps its link and reports nothing, so the guard
 // cannot pass by refusing every URL.

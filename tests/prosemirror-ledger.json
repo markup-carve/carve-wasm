@@ -380,6 +380,9 @@
     "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run.crv": [
       "dropped:abbreviation_def"
     ],
+    "268-trailing-whitespace-on-a-content-line-is-dropped-12.crv": [
+      "degraded:non_breaking_space"
+    ],
     "268-trailing-whitespace-on-a-content-line-is-dropped-2.crv": [
       "degraded:soft_break"
     ],
@@ -471,7 +474,11 @@
       "degraded:soft_break"
     ],
     "29-non-breaking-space-2.crv": [
+      "degraded:non_breaking_space",
       "degraded:smart_punctuation"
+    ],
+    "29-non-breaking-space.crv": [
+      "degraded:non_breaking_space"
     ],
     "305-an-abbreviation-expands-inside-an-inline-container-2.crv": [
       "dropped:abbreviation_def"
@@ -583,6 +590,15 @@
     ],
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position.crv": [
       "degraded:escaped_text"
+    ],
+    "345-a-line-block-s-hard-break-keeps-its-backslash-3.crv": [
+      "degraded:non_breaking_space"
+    ],
+    "346-a-line-block-s-last-body-line-keeps-its-backslash-2.crv": [
+      "degraded:non_breaking_space"
+    ],
+    "348-a-closed-inline-construct-spanning-a-verse-boundary-5.crv": [
+      "degraded:non_breaking_space"
     ],
     "349-a-container-whose-table-ends-on-a-continuation-row-7.crv": [
       "degraded:soft_break"
@@ -735,6 +751,12 @@
     "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": [
       "degraded:soft_break"
     ],
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": [
+      "degraded:soft_break"
+    ],
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-8.crv": [
+      "degraded:soft_break"
+    ],
     "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag-2.crv": [
       "degraded:smart_punctuation"
     ],
@@ -766,11 +788,23 @@
     "404-a-caption-s-marker-separator-is-a-run-and-none-of-it-is-content-2.crv": [
       "degraded:soft_break"
     ],
+    "41-line-blocks-10.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "41-line-blocks-2.crv": [
+      "degraded:non_breaking_space"
+    ],
+    "41-line-blocks-3.crv": [
+      "degraded:non_breaking_space"
+    ],
     "41-line-blocks-6.crv": [
       "degraded:soft_break"
     ],
     "41-line-blocks-8.crv": [
       "degraded:soft_break"
+    ],
+    "41-line-blocks-9.crv": [
+      "degraded:non_breaking_space"
     ],
     "415-a-floating-attribute-does-not-widen-a-list-item-s-content-column-5.crv": [
       "degraded:soft_break"
@@ -780,6 +814,9 @@
     ],
     "42-admonitions-6.crv": [
       "degraded:admonition"
+    ],
+    "421-a-sigil-fence-takes-its-attribute-line.crv": [
+      "degraded:non_breaking_space"
     ],
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": [
       "degraded:soft_break"
@@ -827,6 +864,18 @@
       "degraded:soft_break"
     ],
     "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": [
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-14.crv": [
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-15.crv": [
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": [
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": [
       "degraded:soft_break"
     ],
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": [
@@ -998,6 +1047,393 @@
       "degraded:escaped_text",
       "degraded:substitution"
     ],
+    "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": [
+      "degraded:soft_break"
+    ],
+    "476-an-item-s-fence-is-read-once-whatever-block-it-follows.crv": [
+      "degraded:soft_break"
+    ],
+    "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-7.crv": [
+      "degraded:substitution"
+    ],
+    "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-8.crv": [
+      "degraded:substitution"
+    ],
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-3.crv": [
+      "degraded:soft_break"
+    ],
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-4.crv": [
+      "degraded:soft_break"
+    ],
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-5.crv": [
+      "degraded:soft_break"
+    ],
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column.crv": [
+      "degraded:soft_break"
+    ],
+    "479-a-closer-below-the-container-s-column-does-not-count-2.crv": [
+      "degraded:soft_break"
+    ],
+    "479-a-closer-below-the-container-s-column-does-not-count-3.crv": [
+      "degraded:soft_break"
+    ],
+    "479-a-closer-below-the-container-s-column-does-not-count-4.crv": [
+      "degraded:soft_break"
+    ],
+    "479-a-closer-below-the-container-s-column-does-not-count-5.crv": [
+      "degraded:soft_break"
+    ],
+    "479-a-closer-below-the-container-s-column-does-not-count-6.crv": [
+      "degraded:soft_break"
+    ],
+    "479-a-closer-below-the-container-s-column-does-not-count.crv": [
+      "degraded:soft_break"
+    ],
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener-6.crv": [
+      "degraded:soft_break"
+    ],
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener-7.crv": [
+      "degraded:soft_break"
+    ],
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener.crv": [
+      "degraded:soft_break"
+    ],
+    "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-7.crv": [
+      "degraded:soft_break"
+    ],
+    "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-8.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-9.crv": [
+      "degraded:soft_break"
+    ],
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": [
+      "degraded:soft_break"
+    ],
+    "483-an-empty-term-marker-in-a-description-body-is-text-2.crv": [
+      "degraded:soft_break"
+    ],
+    "483-an-empty-term-marker-in-a-description-body-is-text-3.crv": [
+      "degraded:soft_break"
+    ],
+    "483-an-empty-term-marker-in-a-description-body-is-text-4.crv": [
+      "degraded:soft_break"
+    ],
+    "483-an-empty-term-marker-in-a-description-body-is-text-5.crv": [
+      "degraded:soft_break"
+    ],
+    "483-an-empty-term-marker-in-a-description-body-is-text-6.crv": [
+      "degraded:soft_break"
+    ],
+    "483-an-empty-term-marker-in-a-description-body-is-text.crv": [
+      "degraded:soft_break"
+    ],
+    "484-a-delimiter-after-an-underscore-or-slash-opens-only-when-that-one-pairs-5.crv": [
+      "dropped:caption_number"
+    ],
+    "484-a-delimiter-after-an-underscore-or-slash-opens-only-when-that-one-pairs-6.crv": [
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "485-a-quote-after-an-escaped-quote-closes-2.crv": [
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "485-a-quote-after-an-escaped-quote-closes-3.crv": [
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "485-a-quote-after-an-escaped-quote-closes-4.crv": [
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "485-a-quote-after-an-escaped-quote-closes-5.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "485-a-quote-after-an-escaped-quote-closes.crv": [
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": [
+      "degraded:non_breaking_space"
+    ],
+    "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": [
+      "degraded:soft_break"
+    ],
+    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": [
+      "degraded:soft_break"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-3.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-4.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-5.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-6.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-7.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-2.crv": [
+      "dropped:caption_number"
+    ],
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-3.crv": [
+      "dropped:caption_number"
+    ],
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-4.crv": [
+      "dropped:caption_number"
+    ],
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-7.crv": [
+      "dropped:caption_number"
+    ],
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-8.crv": [
+      "dropped:caption_number"
+    ],
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": [
+      "dropped:caption_number"
+    ],
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": [
+      "degraded:soft_break"
+    ],
+    "492-adjacent-strong-spans-use-html-only-where-their-delimiters-merge.crv": [
+      "degraded:bold"
+    ],
+    "493-empty-containers-share-one-html-body-shape-2.crv": [
+      "degraded:figure_group"
+    ],
+    "494-an-explicit-table-head-span-keeps-one-row-group.crv": [
+      "degraded:table_row_groups"
+    ],
+    "495-a-table-foot-span-keeps-one-row-group.crv": [
+      "degraded:table_row_groups"
+    ],
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-2.crv": [
+      "degraded:soft_break"
+    ],
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-3.crv": [
+      "degraded:soft_break"
+    ],
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-4.crv": [
+      "degraded:soft_break"
+    ],
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-5.crv": [
+      "degraded:soft_break"
+    ],
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-6.crv": [
+      "degraded:soft_break"
+    ],
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-10.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-11.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-12.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-13.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-14.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-15.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-16.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-2.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-22.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-23.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-24.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-25.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-3.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-4.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-5.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-6.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-7.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-8.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-9.crv": [
+      "degraded:soft_break"
+    ],
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-10.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-11.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-12.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-15.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-3.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-4.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-5.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-6.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-7.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-8.crv": [
+      "degraded:soft_break"
+    ],
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-9.crv": [
+      "degraded:soft_break"
+    ],
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-10.crv": [
+      "degraded:soft_break"
+    ],
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-11.crv": [
+      "degraded:soft_break"
+    ],
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-12.crv": [
+      "degraded:soft_break"
+    ],
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-4.crv": [
+      "degraded:soft_break"
+    ],
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-5.crv": [
+      "degraded:soft_break"
+    ],
+    "511-a-fence-in-a-quote-stores-no-continuation-claim-11.crv": [
+      "degraded:soft_break"
+    ],
+    "511-a-fence-in-a-quote-stores-no-continuation-claim-7.crv": [
+      "degraded:soft_break"
+    ],
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-10.crv": [
+      "degraded:soft_break"
+    ],
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-12.crv": [
+      "degraded:soft_break"
+    ],
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-7.crv": [
+      "degraded:soft_break"
+    ],
+    "519-a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim-2.crv": [
+      "degraded:soft_break"
+    ],
+    "519-a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim-4.crv": [
+      "degraded:soft_break"
+    ],
+    "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-5.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-6.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "527-a-tab-does-not-open-the-title-slot-2.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "527-a-tab-does-not-open-the-title-slot.crv": [
+      "degraded:smart_punctuation"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-10.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-11.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-12.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-13.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-2.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-3.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-4.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-5.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-6.crv": [
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-7.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-8.crv": [
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-9.crv": [
+      "degraded:soft_break"
+    ],
     "56-table-cell-escaped-pipe.crv": [
       "degraded:escaped_text"
     ],
@@ -1093,15 +1529,7 @@
       "dropped:abbreviation_def"
     ]
   },
-  "refused": {
-    "318-composite-figures-10.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position",
-    "318-composite-figures-11.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position",
-    "318-composite-figures-2.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position",
-    "318-composite-figures-4.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position",
-    "318-composite-figures-5.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position",
-    "318-composite-figures-9.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position",
-    "318-composite-figures.crv": "fromProseMirror: carve: invalid ProseMirror document: ProseMirror type `carveCaption` is not valid in a block position"
-  },
+  "refused": {},
   "sourceLossy": {
     "108-security-hardening-11.crv": {
       "reason": "the sanitized-away `href` attribute is not carried through the bridge, so the link comes back without it",
@@ -1254,6 +1682,38 @@
     "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": {
       "reason": "the nested emphasis delimiters reflow: `/*x*/` comes back `*/x/*`",
       "carve": "*/x/*\n"
+    },
+    "473-a-run-of-asterisks-inside-a-combined-token-is-content-2.crv": {
+      "reason": "the combined bold-italic delimiters reflow and gain braces, because the content would otherwise close the reflowed token: `/***/` comes back `*{/*/}*`",
+      "carve": "*{/**/}*\n"
+    },
+    "473-a-run-of-asterisks-inside-a-combined-token-is-content.crv": {
+      "reason": "the combined bold-italic delimiters reflow and gain braces, because the content would otherwise close the reflowed token: `/***/` comes back `*{/*/}*`",
+      "carve": "*{/*/}*\n"
+    },
+    "486-any-character-is-content-of-the-combined-bold-italic-token-2.crv": {
+      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
+      "carve": "*/a<b/* y\n\n*/a # b/* y\n\n*/a{b}c/* y\n\n*/a€b/* y\n\n*/a b/* y\n"
+    },
+    "486-any-character-is-content-of-the-combined-bold-italic-token-4.crv": {
+      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
+      "carve": "*/a\\\nb/* y\n"
+    },
+    "486-any-character-is-content-of-the-combined-bold-italic-token-5.crv": {
+      "reason": "the combined bold-italic delimiters reflow and the inline comment's braces gain padding: `/*a{%c%}b*/` comes back `*/a{% c %}b/*`",
+      "carve": "*/a{% c %}b/* y\n"
+    },
+    "486-any-character-is-content-of-the-combined-bold-italic-token.crv": {
+      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
+      "carve": "*/a\tb/* y\n"
+    },
+    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-12.crv": {
+      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
+      "carve": "*/\fx/* y\n"
+    },
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-3.crv": {
+      "reason": "the combined bold-italic delimiters reflow and gain braces, because the content would otherwise close the reflowed token: `/***/` comes back `*{/*/}*`",
+      "carve": "*{/a %% b/}* y\n"
     }
   },
   "reportedHtml": {
@@ -1300,7 +1760,7 @@
     "19-smart-typography-dashes-and-quotes-4.crv": "<p>(‘q’) [‘q’] =‘q’ :‘q’ -‘q’ /‘q’</p>",
     "194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition.crv": "<ul>\n  <li>a *[HTML]: Hyper Text</li>\n</ul>\n<p>The HTML spec.</p>",
     "20-smart-typography-arrows-and-symbols.crv": "<p>Flow: a → b ← c ↔ d ⇒ e; x ≠ y, p ≤ q, r ≥ s, ±1. © 2024, ®, ™. Dates like 1/2/2024 stay literal.</p>",
-    "208-a-combined-bold-italic-span-may-cross-a-line.crv": "<p><strong><em>multi</em><em> </em><em>line</em></strong></p>",
+    "208-a-combined-bold-italic-span-may-cross-a-line.crv": "<p><strong><em>multi line</em></strong></p>",
     "209-an-unresolved-reference-image-takes-no-caption.crv": "<p>![a][nope] ^ cap</p>",
     "210-a-quote-marker-is-plus-a-space-and-a-lazy-line-keeps-its-own-text.crv": "<blockquote><p>ok &gt;bad</p></blockquote>",
     "22-footnotes-2.crv": "<p>See the note<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a>.</p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>First line of the note and a continuation line.<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
@@ -1349,17 +1809,17 @@
     "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run.crv": "<p>HTML</p>",
     "268-trailing-whitespace-on-a-content-line-is-dropped-2.crv": "<p>abc def</p>",
     "268-trailing-whitespace-on-a-content-line-is-dropped-3.crv": "<p>abc def</p>",
-    "268-trailing-whitespace-on-a-content-line-is-dropped-7.crv": "<p>a&nbsp; b​ c﻿ d  e\f</p>",
+    "268-trailing-whitespace-on-a-content-line-is-dropped-7.crv": "<p>a&nbsp; b​ c﻿ d  e\f f　</p>",
     "270-a-real-div-in-a-container-and-the-flush-left-line-after-it.crv": "<ul>\n  <li>item\n    <aside class=\"admonition note\" aria-label=\"Note\">\n      <p>body tail</p>\n    </aside>\n  </li>\n</ul>",
-    "271-the-flush-left-line-after-a-container-a-quoted-line-opened-4.crv": "<blockquote><p>quote :::note body</p></blockquote>\n<div>\n</div>",
+    "271-the-flush-left-line-after-a-container-a-quoted-line-opened-4.crv": "<blockquote><p>quote :::note body</p></blockquote>\n<div>\n\n</div>",
     "274-a-quoted-attribute-value-stops-at-the-newline-3.crv": "<p>{k=“a b”}</p>\n<p>paragraph</p>",
     "274-a-quoted-attribute-value-stops-at-the-newline.crv": "<p><strong>x</strong>{k=“a b”}</p>",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-2.crv": "<ul>\n  <li>\n    <pre><code>\n</code></pre>\n  </li>\n</ul>\n<p>x <code></code></p>",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-4.crv": "<blockquote>\n  <pre><code>\n</code></pre>\n</blockquote>\n<p>x <code></code></p>",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-5.crv": "<ul>\n  <li>\n    <pre><code>\n</code></pre>\n  </li>\n</ul>\n<p>x ~~~</p>",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-2.crv": "<ul>\n  <li>\n    <pre><code></code></pre>\n  </li>\n</ul>\n<p>x <code></code></p>",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-4.crv": "<blockquote>\n  <pre><code></code></pre>\n</blockquote>\n<p>x <code></code></p>",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-5.crv": "<ul>\n  <li>\n    <pre><code></code></pre>\n  </li>\n</ul>\n<p>x ~~~</p>",
     "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-6.crv": "<ul>\n  <li>\n    <pre><code>x\n</code></pre>\n  </li>\n</ul>\n<p>y <code></code></p>",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-7.crv": "<ul>\n  <li>a <code>\nb</code></li>\n</ul>\n<p>y <code></code></p>",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column.crv": "<ul>\n  <li>\n    <pre><code>\n</code></pre>\n  </li>\n</ul>\n<p>x <code></code></p>",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-7.crv": "<ul>\n  <li>a\n    <pre><code>b\n</code></pre>\n  </li>\n</ul>\n<p>y <code></code></p>",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column.crv": "<ul>\n  <li>\n    <pre><code></code></pre>\n  </li>\n</ul>\n<p>x <code></code></p>",
     "277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open-4.crv": "<ul>\n  <li>a b - s</li>\n</ul>",
     "277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open-5.crv": "<ul>\n  <li>a\n    <blockquote><p>q - s</p></blockquote>\n  </li>\n</ul>",
     "279-a-boundary-line-inside-an-open-fence-does-not-end-the-container-5.crv": "<ul>\n  <li>x\n    <div>\n      <p>a - m b</p>\n    </div>\n  </li>\n</ul>",
@@ -1377,8 +1837,15 @@
     "305-an-abbreviation-expands-inside-an-inline-container-3.crv": "<p>The <span class=\"ext-kbd\">HTML</span> key.</p>",
     "305-an-abbreviation-expands-inside-an-inline-container-4.crv": "<p>Both <strong>HTML</strong> and <a href=\"/u\">HTML</a> expand.</p>",
     "305-an-abbreviation-expands-inside-an-inline-container.crv": "<p>The <span class=\"x\">HTML</span> key.</p>",
+    "318-composite-figures-10.crv": "<div id=\"fig-m\">\n  <table>\n    <thead>\n      <tr><th scope=\"col\">Kind</th><th scope=\"col\">N</th></tr>\n    </thead>\n    <tbody>\n      <tr><td>a</td><td>1</td></tr>\n    </tbody>\n  </table>\n  <figure>\n    <pre><code class=\"language-js\">const x = 1\n</code></pre>\n    <figcaption>A listing panel</figcaption>\n  </figure>\n  <figure>\n    <p><span class=\"math display\" role=\"math\">\\[E = mc^2\\]</span></p>\n    <figcaption>An equation panel</figcaption>\n  </figure>\n  <blockquote><p>Measured twice.</p></blockquote>\n  <figure>\n    <blockquote><p>Brevity.</p></blockquote>\n    <figcaption>A quoted panel</figcaption>\n  </figure>\n  <p>Figure : Mixed panels</p>\n</div>",
+    "318-composite-figures-11.crv": "<div>\n  <aside class=\"admonition note\" aria-label=\"Note\">\n    <figure>\n      <img src=\"x.png\" alt=\"x\">\n      <figcaption>Figure : inner</figcaption>\n    </figure>\n  </aside>\n  <p>Figure : group</p>\n</div>",
+    "318-composite-figures-2.crv": "<figure id=\"fig-first\">\n  <img src=\"lead.png\" alt=\"lead\">\n  <figcaption>Figure : First</figcaption>\n</figure>\n<div id=\"fig-x\">\n  <figure id=\"fig-x-a\">\n    <img src=\"a.png\" alt=\"one\">\n    <figcaption>(a) One</figcaption>\n  </figure>\n  <figure id=\"fig-x-b\">\n    <img src=\"b.png\" alt=\"two\">\n    <figcaption>(b) Two</figcaption>\n  </figure>\n  <p>Figure : Second</p>\n</div>\n<p>See &lt;/#fig-x&gt; and &lt;/#fig-x-a&gt;.</p>",
     "318-composite-figures-3.crv": "<div>\n  <figure>\n    <img src=\"a.png\" alt=\"one\">\n    <figcaption>(a) One</figcaption>\n  </figure>\n  <figure>\n    <img src=\"b.png\" alt=\"two\">\n    <figcaption>(b) Two</figcaption>\n  </figure>\n</div>",
+    "318-composite-figures-4.crv": "<div>\n  <figure>\n    <img src=\"l.png\" alt=\"lone\">\n    <figcaption>The only panel</figcaption>\n  </figure>\n  <p>Figure : One panel is valid</p>\n</div>",
+    "318-composite-figures-5.crv": "<div>\n  <p>Both panels were shot on the same day.</p>\n  <figure id=\"fig-s-a\">\n    <img src=\"a.png\" alt=\"one\">\n    <figcaption>(a) One</figcaption>\n  </figure>\n  <figure id=\"fig-s-b\">\n    <img src=\"b.png\" alt=\"two\">\n    <figcaption>(b) Two</figcaption>\n  </figure>\n  <p>Figure : With a note between the panels</p>\n</div>",
     "318-composite-figures-6.crv": "<div>\n  <figure>\n    <img src=\"a.png\" alt=\"one\">\n    <figcaption>(a) One</figcaption>\n  </figure>\n</div>\n<p>^ Figure #: Detached</p>",
+    "318-composite-figures-9.crv": "<div>\n  <figure class=\"carve-figure-group\">\n    <figure class=\"carve-figure-panel\">\n      <img src=\"a.png\" alt=\"one\">\n      <figcaption>(a) One</figcaption>\n    </figure>\n  </figure>\n  <p>Figure : Outer only</p>\n</div>",
+    "318-composite-figures.crv": "<div id=\"fig-x\" class=\"columns-2\">\n  <figure id=\"fig-x-a\">\n    <img src=\"a.png\" alt=\"one\">\n    <figcaption>(a) One</figcaption>\n  </figure>\n  <figure id=\"fig-x-b\">\n    <img src=\"b.png\" alt=\"two\">\n    <figcaption>(b) Two</figcaption>\n  </figure>\n  <p>Figure : Group caption</p>\n</div>",
     "324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-5.crv": "<p>A here</p>",
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-12.crv": "<ul>\n  <li>\n    <blockquote><p>q tail</p></blockquote>\n  </li>\n</ul>",
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-13.crv": "<ul>\n  <li>a tail</li>\n</ul>",
@@ -1441,6 +1908,8 @@
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-3.crv": "<blockquote><p>r - [^f]: t</p></blockquote>\n<p>see[^f]</p>",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container.crv": "<blockquote><p>r - [d]: u</p></blockquote>\n<p>[go][d]</p>",
     "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b c</li>\n    </ul>\n  </li>\n</ul>",
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": "<ul>\n  <li>x\n    <ul>\n      <li>L p</li>\n    </ul>\n  </li>\n</ul>",
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-8.crv": "<ul>\n  <li>x\n    <ul>\n      <li>L +</li>\n    </ul>\n  </li>\n</ul>",
     "389-a-boolean-attribute-does-not-start-with-an-underscore-3.crv": "<p>{_foo} para</p>",
     "394-a-leading-escaped-caret-keeps-its-escape.crv": "<p><img src=\"b.png\" alt=\"a\"> ^ not a caption</p>",
     "401-a-marker-at-an-item-content-column-opens-a-sublist-first-in-the-item-or-not-3.crv": "<table>\n  <tbody>\n    <tr><td>a</td></tr>\n  </tbody>\n</table>\n<p>para - s1</p>",
@@ -1450,7 +1919,7 @@
     "41-line-blocks-8.crv": "<div class=\"hardbreaks\">\n  <p>indented<br>\nnext</p>\n  <aside class=\"admonition note\" aria-label=\"Note\">\n    <p>a b</p>\n  </aside>\n</div>",
     "415-a-floating-attribute-does-not-widen-a-list-item-s-content-column-5.crv": "<ul>\n  <li id=\"k\">text # h</li>\n</ul>",
     "416-a-fenced-block-quote-is-the-block-quote-written-another-way-3.crv": "<p>:::&gt; x :::</p>",
-    "42-admonitions-6.crv": "<aside class=\"admonition note\" aria-labelledby=\"adm-1\">\n  <p class=\"admonition-title\" id=\"adm-1\">Install  via </p>\n  <p>Body.</p>\n</aside>",
+    "42-admonitions-6.crv": "<aside class=\"admonition note\" aria-labelledby=\"adm-1\">\n  <p class=\"admonition-title\" id=\"adm-1\">Install now via npm</p>\n  <p>Body.</p>\n</aside>",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": "<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>intro</p>\n      <blockquote><p>quote ordinary line</p></blockquote>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-6.crv": "<p>intro # heading</p>",
     "424-a-definition-body-s-separator-width-sets-its-content-column-7.crv": "<dl>\n  <dt>term wrapped on</dt>\n  <dd>definition</dd>\n</dl>",
@@ -1467,6 +1936,10 @@
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-3.crv": "<ul>\n  <li>![a][r] ^ cap</li>\n</ul>",
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth.crv": "<p>![a][r] ^ cap one continued</p>",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": "<ul>\n  <li>intro more</li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-14.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-15.crv": "<ul>\n  <li>x\n    <blockquote><p>q ZZZ</p></blockquote>\n  </li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "<blockquote><p>q + - m</p></blockquote>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": "<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>+ flush<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-4.crv": "<blockquote><p>+ flush</p></blockquote>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": "<blockquote><p>+ flush</p></blockquote>",
@@ -1512,10 +1985,116 @@
     "47-numbered-cross-references-8.crv": "<figure id=\"lst-greet\">\n  <pre><code class=\"language-python\">def greet():\n    return 1\n</code></pre>\n  <figcaption>Listing : a greeting</figcaption>\n</figure>\n<p>See &lt;/#lst-greet&gt;.</p>",
     "47-numbered-cross-references-9.crv": "<figure id=\"eq-emc\">\n  <p><span class=\"math display\" role=\"math\">\\[E = mc^2\\]</span></p>\n  <figcaption>Equation : mass-energy</figcaption>\n</figure>\n<p>See &lt;/#eq-emc&gt;.</p>",
     "47-numbered-cross-references.crv": "<figure id=\"fig-sun\">\n  <img src=\"sun.jpg\" alt=\"A sunset\">\n  <figcaption>Figure : A sunset</figcaption>\n</figure>",
-    "471-a-forced-opener-of-an-open-kind-is-literal-5.crv": "<p><strong>a <em>b </em><em><strong>c</strong></em><em> d</em> e</strong></p>",
-    "471-a-forced-opener-of-an-open-kind-is-literal-7.crv": "<p><strong>a <em>b </em><em><strong>c</strong></em><em> d</em> e</strong></p>",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv": "<p><del>a~&gt;b</del><ins>c</ins></p>\n<p><del>a~&gt;b</del><ins>c</ins></p>\n<p><del>ab</del><ins>c</ins></p>",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv": "<p><s><code>a~&gt;b</code></s></p>\n<p><s>a <code>x~&gt;y</code> b</s></p>\n<p><del>old</del><ins>new</ins></p>\n<p><s>a~&gt;b</s></p>",
+    "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": "<ul>\n  <li>\n    <blockquote><p>q</p></blockquote>\n    <pre><code>b\n</code></pre>\n  </li>\n</ul>\n<p>y <code></code></p>",
+    "476-an-item-s-fence-is-read-once-whatever-block-it-follows.crv": "<ul>\n  <li>\n    <figure>\n      <img src=\"i\" alt=\"a\">\n      <figcaption>cap</figcaption>\n    </figure>\n    <pre><code>b\n</code></pre>\n  </li>\n</ul>\n<p>y <code></code></p>",
+    "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-7.crv": "<p><del>a ~&gt; b</del><ins>c</ins> d</p>",
+    "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-8.crv": "<p><del>a ~} b</del><ins>c</ins> d</p>",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-3.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>a</p>\n    <pre><code>b\n</code></pre>\n  </dd>\n</dl>\n<p>y <code></code></p>",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <pre><code>b\n</code></pre>\n    <p>c y</p>\n  </dd>\n</dl>",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>a <code>\nb\ny</code></dd>\n</dl>\n<p>z <code></code></p>",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <pre><code></code></pre>\n  </dd>\n</dl>\n<p>y <code></code></p>",
+    "479-a-closer-below-the-container-s-column-does-not-count-2.crv": "<ul>\n  <li>a <code>\nb\ny\n</code></li>\n</ul>",
+    "479-a-closer-below-the-container-s-column-does-not-count-3.crv": "<ul>\n  <li>a <code>\nb\ny\n</code></li>\n</ul>",
+    "479-a-closer-below-the-container-s-column-does-not-count-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>a <code>\nb\ny\n</code></dd>\n</dl>",
+    "479-a-closer-below-the-container-s-column-does-not-count-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>a <code>\nb\ny\n</code></dd>\n</dl>",
+    "479-a-closer-below-the-container-s-column-does-not-count-6.crv": "<dl>\n  <dt>t</dt>\n  <dd>a <code></code></dd>\n</dl>",
+    "479-a-closer-below-the-container-s-column-does-not-count.crv": "<ul>\n  <li>a <code>\nb\ny\n</code></li>\n</ul>",
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener-6.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <div>\n      <p>a y</p>\n    </div>\n  </dd>\n</dl>",
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener-7.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>a</p>\n    <pre><code>:::\n</code></pre>\n  </dd>\n</dl>\n<p>y <code></code></p>",
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <div>\n\n    </div>\n  </dd>\n</dl>\n<p>y :::</p>",
+    "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-7.crv": "<p>::: {.x} not a div :::</p>",
+    "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it.crv": "<p>text not a div</p>\n<div>\n\n</div>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": "<ul>\n  <li>::: note y\n    <div>\n\n    </div>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": "<ol>\n  <li>::: d y\n    <div>\n\n    </div>\n  </li>\n</ol>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": "<ul>\n  <li>::: d y z\n    <div>\n\n    </div>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv": "<ul>\n  <li>::: d y\n    <div>\n\n    </div>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": "<ul>\n  <li>x\n    <ul>\n      <li>::: d y\n        <div>\n\n        </div>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-8.crv": "<ul>\n  <li>\n    <div class=\"d\">\n      <p>x y</p>\n    </div>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-9.crv": "<ul>\n  <li>a\n    <div class=\"d\">\n\n    </div>\n  </li>\n</ul>\n<p>y :::</p>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": "<ul>\n  <li>::: y\n    <div>\n\n    </div>\n  </li>\n</ul>",
+    "483-an-empty-term-marker-in-a-description-body-is-text-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>a :: c</dd>\n</dl>",
+    "483-an-empty-term-marker-in-a-description-body-is-text-3.crv": "<dl>\n  <dt>t</dt>\n  <dd>a ::</dd>\n</dl>",
+    "483-an-empty-term-marker-in-a-description-body-is-text-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>a b :: c</dd>\n</dl>",
+    "483-an-empty-term-marker-in-a-description-body-is-text-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>a ::</dd>\n  <dd>c</dd>\n</dl>",
+    "483-an-empty-term-marker-in-a-description-body-is-text-6.crv": "<dl>\n  <dt>t</dt>\n  <dd>a :: c</dd>\n</dl>",
+    "483-an-empty-term-marker-in-a-description-body-is-text.crv": "<dl>\n  <dt>t</dt>\n  <dd>a :: c</dd>\n</dl>",
+    "484-a-delimiter-after-an-underscore-or-slash-opens-only-when-that-one-pairs-5.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure _* x* q</figcaption>\n</figure>",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": "<p><strong><em>a</em></strong> y</p>",
+    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": "<p>---yaml\f a: 1</p>\n<hr>\n<p>t</p>",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-2.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure , q</figcaption>\n</figure>",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-3.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure # q</figcaption>\n</figure>",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-4.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure é q</figcaption>\n</figure>",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-7.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure x * y #: z</figcaption>\n</figure>",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-8.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure* q</figcaption>\n</figure>",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": "<figure>\n  <img src=\"p.png\" alt=\"p\">\n  <figcaption>Figure * q</figcaption>\n</figure>",
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": "<p><strong><em>a</em></strong> y</p>",
+    "492-adjacent-strong-spans-use-html-only-where-their-delimiters-merge.crv": "<p><strong>ab</strong></p>",
+    "493-empty-containers-share-one-html-body-shape-2.crv": "<div>\n\n</div>\n<div class=\"custom\">\n\n</div>\n<aside class=\"admonition note\" aria-label=\"Note\">\n\n</aside>\n<blockquote>\n\n</blockquote>\n<div class=\"line-block\">\n  <p></p>\n</div>\n<div class=\"hardbreaks\">\n\n</div>\n<div>\n\n</div>",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-2.crv": "<dl>\n  <dt>c   ::: note   body   :::</dt>\n</dl>",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-3.crv": "<blockquote>\n  <dl>\n    <dt>c   # H</dt>\n  </dl>\n</blockquote>",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-4.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>c   # H</dt>\n    </dl>\n  </li>\n</ul>",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-5.crv": "<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c   # H</dt>\n    </dl>\n  </dd>\n</dl>",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-6.crv": "<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c   ::: note   body   :::</dt>\n    </dl>\n  </dd>\n</dl>",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth.crv": "<dl>\n  <dt>c   # H</dt>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-10.crv": "<p>[t][r]</p>\n<blockquote>\n  <dl>\n    <dt>c   [r]: /u</dt>\n  </dl>\n</blockquote>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-11.crv": "<p>[t][r]</p>\n<ul>\n  <li>item\n    <dl>\n      <dt>c   [r]: /u</dt>\n    </dl>\n  </li>\n</ul>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-12.crv": "<p>[t][r]</p>\n<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c   [r]: /u</dt>\n    </dl>\n  </dd>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-13.crv": "<p>x[^n]</p>\n<dl>\n  <dt>c   [^n]: y</dt>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-14.crv": "<p>x[^n]</p>\n<blockquote>\n  <dl>\n    <dt>c   [^n]: y</dt>\n  </dl>\n</blockquote>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-15.crv": "<p>x[^n]</p>\n<ul>\n  <li>item\n    <dl>\n      <dt>c   [^n]: y</dt>\n    </dl>\n  </li>\n</ul>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-16.crv": "<p>x[^n]</p>\n<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c   [^n]: y</dt>\n    </dl>\n  </dd>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-2.crv": "<blockquote>\n  <dl>\n    <dt>c</dt>\n  </dl>\n</blockquote>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-22.crv": "<p>[t][r]</p>\n<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c</dt>\n    </dl>\n    <p>hidden</p>\n  </dd>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-23.crv": "<ul>\n  <li>\n    <dl>\n      <dt>c   # H</dt>\n    </dl>\n  </li>\n</ul>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-24.crv": "<p>x[^n]</p>\n<ul>\n  <li>\n    <dl>\n      <dt>c</dt>\n    </dl>\n  </li>\n</ul>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-25.crv": "<p>[t][r]</p>\n<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c   &gt; text   [r]: /u</dt>\n    </dl>\n  </dd>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-3.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>c</dt>\n    </dl>\n  </li>\n</ul>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-4.crv": "<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c</dt>\n    </dl>\n  </dd>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-5.crv": "<dl>\n  <dt>c\n  hidden\n</dt>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-6.crv": "<blockquote>\n  <dl>\n    <dt>c\n  hidden\n</dt>\n  </dl>\n</blockquote>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-7.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>c\n  hidden\n</dt>\n    </dl>\n  </li>\n</ul>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-8.crv": "<dl>\n  <dt>a</dt>\n  <dd>\n    <p>b</p>\n    <dl>\n      <dt>c\n  hidden\n</dt>\n    </dl>\n  </dd>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-9.crv": "<p>[t][r]</p>\n<dl>\n  <dt>c   [r]: /u</dt>\n</dl>",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth.crv": "<dl>\n  <dt>c</dt>\n</dl>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-10.crv": "<ul>\n  <li>head\n    <aside class=\"admonition note\" aria-label=\"Note\">\n      <p>a - second</p>\n    </aside>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-11.crv": "<ul>\n  <li>head\n    <div>\n      <p>a - second</p>\n    </div>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-12.crv": "<ul>\n  <li>head\n    <aside class=\"admonition note\" aria-label=\"Note\">\n      <p>a - second</p>\n    </aside>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-15.crv": "<ul>\n  <li>head\n    <div>\n      <pre><code>:::\n</code></pre>\n      <p>a - second</p>\n    </div>\n    <ul>\n      <li>third</li>\n    </ul>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-3.crv": "<ul>\n  <li>head\n    <div>\n      <p>a - second</p>\n    </div>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-4.crv": "<ul>\n  <li>head\n    <aside class=\"admonition note\" aria-label=\"Note\">\n      <p>a - second</p>\n    </aside>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-5.crv": "<ul>\n  <li>head\n    <div>\n      <p>a - second</p>\n    </div>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-6.crv": "<ul>\n  <li>head\n    <aside class=\"admonition note\" aria-label=\"Note\">\n      <p>a - second</p>\n    </aside>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-7.crv": "<ul>\n  <li>head\n    <div>\n      <p>a - second</p>\n    </div>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-8.crv": "<ul>\n  <li>head\n    <aside class=\"admonition note\" aria-label=\"Note\">\n      <p>a - second</p>\n    </aside>\n  </li>\n</ul>",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-9.crv": "<ul>\n  <li>head\n    <div>\n      <p>a - second</p>\n    </div>\n  </li>\n</ul>",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-10.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b\n        <pre><code>p\n</code></pre>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>x <code></code></p>",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-11.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b\n        <ul>\n          <li>c\n            <pre><code>p\n</code></pre>\n          </li>\n        </ul>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>x <code></code></p>",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-12.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b <code>\np</code></li>\n      <li>c <code></code></li>\n    </ul>\n  </li>\n</ul>",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-4.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b <code>\np\n</code></li>\n    </ul>\n  </li>\n</ul>",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-5.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b <code>\np\n</code></li>\n    </ul>\n  </li>\n</ul>",
+    "511-a-fence-in-a-quote-stores-no-continuation-claim-11.crv": "<blockquote>\n  <blockquote>\n    <div class=\"d\">\n      <p>p</p>\n    </div>\n    <p>b y</p>\n  </blockquote>\n</blockquote>",
+    "511-a-fence-in-a-quote-stores-no-continuation-claim-7.crv": "<blockquote>\n  <blockquote>\n    <pre><code>c\n</code></pre>\n    <p>b y</p>\n  </blockquote>\n</blockquote>",
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-10.crv": "<blockquote>\n  <ul>\n    <li>a\n      <pre><code>x\n</code></pre>\n    </li>\n  </ul>\n  <p>after flush</p>\n</blockquote>",
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-12.crv": "<blockquote>\n  <dl>\n    <dt>t</dt>\n    <dd>d - <code>\nx\nflush</code></dd>\n  </dl>\n</blockquote>",
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-7.crv": "<blockquote>\n  <ul>\n    <li><p>a</p>\n      <pre><code>x\n</code></pre>\n      <p>z flush</p>\n    </li>\n  </ul>\n</blockquote>",
+    "519-a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim-2.crv": "<blockquote>\n  <ul>\n    <li>a\n      <pre><code>x\n</code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>z</p>\n<blockquote><p>b ~~~</p></blockquote>",
+    "519-a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim-4.crv": "<blockquote>\n  <ul>\n    <li>a <code>\nx\nflush</code></li>\n  </ul>\n</blockquote>",
+    "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-5.crv": "<p>[a]{k=“t u”}</p>",
+    "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-6.crv": "<p>[a][r]</p>\n<p>[r]: /u “t u”</p>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-10.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>=html\n&lt;b&gt;r&lt;/b&gt;\n</code></p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-11.crv": "<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <blockquote><p>q <code>js\nc\n</code></p></blockquote>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-12.crv": "<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <blockquote><p>q <code>=latex\n\\r\n</code></p></blockquote>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-13.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <blockquote><p>q <code>js\nc\n</code></p></blockquote>\n  </dd>\n</dl>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-2.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>js\nc\n</code></p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-3.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>js\nc\n</code></p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-4.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>js\nc\n</code></p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-5.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>js\nc\n</code></p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-6.crv": "<ul>\n  <li>a\n    <blockquote><p>q # h</p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-7.crv": "<ul>\n  <li>a\n    <blockquote><p>q —</p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-8.crv": "<ul>\n  <li>a\n    <blockquote><p>q | c | |—| | 1 |</p></blockquote>\n  </li>\n</ul>",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-9.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>=latex\n\\r\n</code></p></blockquote>\n  </li>\n</ul>",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "<p>HTML and XHTMLish.</p>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
@@ -1543,7 +2122,7 @@
     "95-abbreviation-definition-interrupts-a-paragraph.crv": "<p>The HTML spec is long.</p>"
   },
   "reportedSource": {
-    "01-emphasis-4.crv": "/literal\\/ and *not bold\\*\n",
+    "01-emphasis-4.crv": "\\/literal/ and \\*not bold*\n",
     "01-emphasis.crv": "/italic/  *bold*  */bold italic/* _underline_  ~strikethrough~ =highlight=  {^super^}  {,sub,}\n",
     "03-links-7.crv": "[not a link]\\(https://example.com)\n",
     "05-lists-13.crv": "text - item\n",
@@ -1577,7 +2156,7 @@
     "160-indented-colon-fence-blocks-stay-literal.crv": "::: A box. :::\n",
     "161-below-content-column-div-body-in-a-list-item-stays-literal.crv": "- ::: note - para text :::\n",
     "164-tight-list-item-keeps-trailing-text-after-a-block-bare-2.crv": "- item :::note body ::: tail\n",
-    "165-quote-flanking-after-an-escaped-character.crv": "{“quoted”} and <”q”> and *’q’\\*\n\nA { before a quote still opens it: {“open”\n\nUnescaped for contrast: {“open”}\n",
+    "165-quote-flanking-after-an-escaped-character.crv": "{“quoted”} and <”q”> and \\*’q’*\n\nA { before a quote still opens it: {“open”\n\nUnescaped for contrast: {“open”}\n",
     "175-a-repeated-definition-which-one-wins-2.crv": "A here.\n",
     "176-a-marker-separator-is-a-space-never-a-tab.crv": "::\tterm :  d\n",
     "177-two-abbreviation-definitions.crv": "HTML and CSS.\n",
@@ -1599,7 +2178,7 @@
     "19-smart-typography-dashes-and-quotes.crv": "He paused – then ran — fast… “Stop!” it’s over.\n",
     "194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition.crv": "- a *[HTML]: Hyper Text\n\nThe HTML spec.\n",
     "20-smart-typography-arrows-and-symbols.crv": "Flow: a → b ← c ↔ d ⇒ e; x ≠ y, p ≤ q, r ≥ s, ±1. © 2024, ®, ™. Dates like 1/2/2024 stay literal.\n",
-    "208-a-combined-bold-italic-span-may-cross-a-line.crv": "*/multi/{/ /}/line/*\n",
+    "208-a-combined-bold-italic-span-may-cross-a-line.crv": "*/multi line/*\n",
     "209-an-unresolved-reference-image-takes-no-caption.crv": "![a][nope] ^ cap\n",
     "210-a-quote-marker-is-plus-a-space-and-a-lazy-line-keeps-its-own-text.crv": "> ok >bad\n",
     "22-footnotes-2.crv": "See the note[^m].\n\n[^m]: First line of the note and a continuation line.\n",
@@ -1619,7 +2198,7 @@
     "250-line-endings-and-a-byte-order-mark-3.crv": "# Title\n\na b\n",
     "250-line-endings-and-a-byte-order-mark-4.crv": "# Title\n\na b\n",
     "250-line-endings-and-a-byte-order-mark.crv": "# Title\n\na b\n",
-    "253-an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does.crv": "*x*{.a \\.b}\n",
+    "253-an-inline-attribute-block-does-not-span-lines-but-an-attribute-line-does.crv": "*x*\\{.a .b}\n",
     "254-colon-fence-separator-must-be-a-space-2.crv": "::: \tnote x :::\n",
     "254-colon-fence-separator-must-be-a-space-3.crv": ":::\t note x :::\n",
     "254-colon-fence-separator-must-be-a-space-4.crv": ":::\t[First] x :::\n",
@@ -1664,22 +2243,23 @@
     "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run-3.crv": "HTML\n",
     "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run-5.crv": "HTML\n",
     "267-a-definition-marker-s-separator-is-a-space-and-it-is-a-run.crv": "HTML\n",
+    "268-trailing-whitespace-on-a-content-line-is-dropped-12.crv": "::: |\nabc  \ndef\n:::\n",
     "268-trailing-whitespace-on-a-content-line-is-dropped-2.crv": "abc def\n",
     "268-trailing-whitespace-on-a-content-line-is-dropped-3.crv": "abc def\n",
-    "268-trailing-whitespace-on-a-content-line-is-dropped-7.crv": "a  b​ c﻿ d  e\f\n",
+    "268-trailing-whitespace-on-a-content-line-is-dropped-7.crv": "a  b​ c﻿ d  e\f f　\n",
     "270-a-real-div-in-a-container-and-the-flush-left-line-after-it.crv": "- item\n  ::: note\n  body tail\n  :::\n",
     "271-the-flush-left-line-after-a-container-a-quoted-line-opened-4.crv": "> quote :::note body\n\n:::\n\n:::\n",
-    "272-an-autolink-body-admits-non-ascii-and-excludes-format-characters-8.crv": "<https://example.com/“q”\\>\n",
+    "272-an-autolink-body-admits-non-ascii-and-excludes-format-characters-8.crv": "\\<https://example.com/“q”>\n",
     "274-a-quoted-attribute-value-stops-at-the-newline-3.crv": "{k=“a b”}\n\nparagraph\n",
     "274-a-quoted-attribute-value-stops-at-the-newline.crv": "*x*{k=“a b”}\n",
     "275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text-4.crv": "# a_b heading\n\n[a\\_b heading][]\n",
     "275-a-collapsed-reference-reaches-a-heading-by-the-heading-s-rendered-text-6.crv": "# it’s a heading\n\n[it's a heading][]\n",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-2.crv": "- ```\n\n  ```\n\nx ``\n",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-4.crv": "> ```\n>\n> ```\n\nx ``\n",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-5.crv": "- ```\n\n  ```\n\nx ~~~\n",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-2.crv": "- ```\n  ```\n\nx ``\n",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-4.crv": "> ```\n> ```\n\nx ``\n",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-5.crv": "- ```\n  ```\n\nx ~~~\n",
     "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-6.crv": "- ```\n  x\n  ```\n\ny ``\n",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-7.crv": "- a `\n  b`\n\ny ``\n",
-    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column.crv": "- ```\n\n  ```\n\nx ``\n",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column-7.crv": "- a\n  ```\n  b\n  ```\n\ny ``\n",
+    "276-a-fence-opened-on-a-list-marker-line-body-below-the-content-column.crv": "- ```\n  ```\n\nx ``\n",
     "277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open-4.crv": "- a b - s\n",
     "277-a-below-column-marker-after-a-comment-where-no-paragraph-is-open-5.crv": "- a\n  > q - s\n",
     "279-a-boundary-line-inside-an-open-fence-does-not-end-the-container-5.crv": "- x\n  :::\n  a - m b\n  :::\n",
@@ -1693,15 +2273,22 @@
     "286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption.crv": "Text ^ Figure 1: moon\n",
     "287-a-column-zero-definition-ends-an-open-list-item-3.crv": "1. x [r]: /u\n",
     "287-a-column-zero-definition-ends-an-open-list-item.crv": "1. x [t](u) _u_\n\n[t][r] #\n\n[r]: /u\n",
-    "29-non-breaking-space-2.crv": "say\\ ‘twas a fine\\ “day”\n",
+    "29-non-breaking-space-2.crv": "say ‘twas a fine “day”\n",
+    "29-non-breaking-space.crv": "10 kg\n",
     "305-an-abbreviation-expands-inside-an-inline-container-2.crv": "The [HTML]{kbd} key.\n",
     "305-an-abbreviation-expands-inside-an-inline-container-3.crv": "The :kbd[HTML] key.\n",
     "305-an-abbreviation-expands-inside-an-inline-container-4.crv": "Both *HTML* and [HTML](/u) expand.\n",
     "305-an-abbreviation-expands-inside-an-inline-container-5.crv": "The [HTML]{abbr=Custom} key.\n",
     "305-an-abbreviation-expands-inside-an-inline-container.crv": "The [HTML]{.x} key.\n",
+    "318-composite-figures-10.crv": "{#fig-m}\n:::\n|= Kind |= N |\n| a | 1 |\n\n```js\nconst x = 1\n```\n^ A listing panel\n\n$$`E = mc^2`\n^ An equation panel\n\n> Measured twice.\n\n> Brevity.\n^ A quoted panel\n\nFigure : Mixed panels\n:::\n",
+    "318-composite-figures-11.crv": ":::\n:::: note\n![x](x.png)\n^ Figure : inner\n::::\n\nFigure : group\n:::\n",
+    "318-composite-figures-2.crv": "{#fig-first}\n![lead](lead.png)\n^ Figure : First\n\n{#fig-x}\n:::\n{#fig-x-a}\n![one](a.png)\n^ (a) One\n\n{#fig-x-b}\n![two](b.png)\n^ (b) Two\n\nFigure : Second\n:::\n\nSee </#fig-x> and </#fig-x-a>.\n",
     "318-composite-figures-3.crv": ":::\n![one](a.png)\n^ (a) One\n\n![two](b.png)\n^ (b) Two\n:::\n",
+    "318-composite-figures-4.crv": ":::\n![lone](l.png)\n^ The only panel\n\nFigure : One panel is valid\n:::\n",
+    "318-composite-figures-5.crv": ":::\nBoth panels were shot on the same day.\n\n{#fig-s-a}\n![one](a.png)\n^ (a) One\n\n{#fig-s-b}\n![two](b.png)\n^ (b) Two\n\nFigure : With a note between the panels\n:::\n",
     "318-composite-figures-6.crv": ":::\n![one](a.png)\n^ (a) One\n:::\n\n^ Figure #: Detached\n",
-    "321-delimited-comments-7.crv": "a {\\% not a comment %} b\n",
+    "318-composite-figures-9.crv": ":::\n:::: figure\n![one](a.png)\n^ (a) One\n::::\n\nFigure : Outer only\n:::\n",
+    "318-composite-figures.crv": "{#fig-x .columns-2}\n:::\n{#fig-x-a}\n![one](a.png)\n^ (a) One\n\n{#fig-x-b}\n![two](b.png)\n^ (b) Two\n\nFigure : Group caption\n:::\n",
     "324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-5.crv": "A here\n",
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-12.crv": "- > q tail\n",
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-13.crv": "- a tail\n",
@@ -1719,6 +2306,9 @@
     "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": "—\tyaml title: x\n\n---\n\nbody\n",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position-2.crv": "> > \\# deep\n\n> a # heading\n",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position.crv": "> \\# heading\n>\n> C# is a language\n\n- \\# heading\n- \\#tag rest\n",
+    "345-a-line-block-s-hard-break-keeps-its-backslash-3.crv": "::: |\na  \nb\n:::\n",
+    "346-a-line-block-s-last-body-line-keeps-its-backslash-2.crv": "::: |\na  \\\n:::\n",
+    "348-a-closed-inline-construct-spanning-a-verse-boundary-5.crv": "::: |\n*Roses are red,\n  Violets are blue.*\n:::\n",
     "349-a-container-whose-table-ends-on-a-continuation-row-7.crv": "- a + b | tail\n",
     "350-a-definition-at-a-container-s-content-column-3.crv": "- a [r]: /u tail\n\n[r][]\n",
     "350-a-definition-at-a-container-s-content-column-4.crv": "- a *[A]: x tail\n",
@@ -1739,7 +2329,7 @@
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-6.crv": "- a\n+\n“T” tail\n\n[r][]\n\n[r]: /u\n",
     "358-what-a-content-column-block-does-not-reach-2.crv": "- a\n+\nb\n\nx[^f]\n\n[^f]: t more\n",
     "359-a-footnote-definition-s-block-runs-to-the-end-of-its-body-2.crv": "- a\n\n  more tail\n\n[r][]\n\n[r]: /u\n",
-    "36-autolinks-3.crv": "<http://a.com/“q”\\>\n",
+    "36-autolinks-3.crv": "\\<http://a.com/“q”>\n",
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-2.crv": "- | a |\n  b tail\n",
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3.crv": "- ```\n  c\n  ```\n  b tail\n",
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line.crv": "- > | a |\n  + b | tail\n",
@@ -1752,7 +2342,7 @@
     "368-a-heading-at-an-item-s-content-column-leaves-no-paragraph-open-2.crv": "- | a |\n  prose tail\n",
     "369-a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one-3.crv": "> x [r]: /url\n\nSee [r][].\n",
     "369-a-quote-is-reached-by-its-marker-and-a-column-never-reaches-into-one.crv": "> - x [r]: /url\n\nSee [r][].\n",
-    "37-escapes.crv": "*lit\\* [x] \\#h \\@u\n",
+    "37-escapes.crv": "\\*lit* [x] \\#h \\@u\n",
     "374-a-collected-definition-closes-the-item-paragraph-2.crv": ". a\n\nmore tail\n\n[r]: /u\n",
     "374-a-collected-definition-closes-the-item-paragraph-3.crv": "1. a\n+\nmore tail\n\n[^f]: note\n",
     "374-a-collected-definition-closes-the-item-paragraph-4.crv": "- a\n\ntail\n\nsee[^f]\n\n[^f]: note more\n",
@@ -1767,6 +2357,8 @@
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-3.crv": "> r - [^f]: t\n\nsee[^f]\n",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container.crv": "> r - [d]: u\n\n[go][d]\n",
     "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": "- a\n  - b c\n",
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": "- x\n  - L p\n",
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-8.crv": "- x\n  - L +\n",
     "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag-2.crv": "<!– a comment →\n",
     "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag.crv": "git log --oneline and --force-with-lease stay literal.\n\nBut pages 1–10, the Mon–Fri window, a–– b—– and a – b all convert.\n",
     "386-the-doubled-run-is-the-canonical-arrow-in-both-families.crv": "Canonical: ← → ↔ and ⇐ ⇒ ⇔\n\nDeprecated but still rendered: ← → ↔\n\nNot an arrow: key => value stays literal, and p ≤ q is a comparison.\n",
@@ -1777,11 +2369,16 @@
     "401-a-marker-at-an-item-content-column-opens-a-sublist-first-in-the-item-or-not-3.crv": "| a |\n\npara - s1\n",
     "403-an-idle-escape-does-not-spread-from-the-occurrence-that-needed-one.crv": "{.note} This paragraph.\n",
     "404-a-caption-s-marker-separator-is-a-run-and-none-of-it-is-content-2.crv": "> q\n\n^\n\n![a](i.png) ^\n",
+    "41-line-blocks-10.crv": "::: |\n—\n:::\n",
+    "41-line-blocks-2.crv": "::: |\nRoses are red,\n  Violets are blue.\n:::\n",
+    "41-line-blocks-3.crv": "::: |\nTwo roads    diverged in a yellow wood,\nAnd looked   down one as far as I could\n:::\n",
     "41-line-blocks-6.crv": "{.line-block}\n:::\none two\n:::\n",
     "41-line-blocks-8.crv": "{.hardbreaks}\n:::\nindented\\\nnext\n\n:::: note\na b\n::::\n:::\n",
+    "41-line-blocks-9.crv": "::: |\ntab gap\nwide        gap\n    lead\n:::\n",
     "415-a-floating-attribute-does-not-widen-a-list-item-s-content-column-5.crv": "-{#k} text # h\n",
     "416-a-fenced-block-quote-is-the-block-quote-written-another-way-3.crv": ":::> x :::\n",
-    "42-admonitions-6.crv": "::: note \"Install  via \"\nBody.\n:::\n",
+    "42-admonitions-6.crv": "::: note \"Install now via npm\"\nBody.\n:::\n",
+    "421-a-sigil-fence-takes-its-attribute-line.crv": "{#poem .verse}\n::: |\nRoses are red,\n  Violets are blue.\n:::\n",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": "see[^n]\n\n[^n]: intro\n\n  > quote ordinary line\n",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-6.crv": "intro # heading\n",
     "424-a-definition-body-s-separator-width-sets-its-content-column-7.crv": ":: term wrapped on\n: definition\n",
@@ -1798,6 +2395,10 @@
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-3.crv": "- ![a][r] ^ cap\n",
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth.crv": "![a][r] ^ cap one continued\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": "- intro more\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-14.crv": "- x\n  > q +\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-15.crv": "- x\n  > q ZZZ\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "- x\n  > q +\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "> q + - m\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": "see[^a]\n\n[^a]: + flush\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-4.crv": "> + flush\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": "> + flush\n",
@@ -1839,7 +2440,7 @@
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-4.crv": ":: t\n: - nested tail\n\n[^f]: note\n",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling.crv": ":: t\n: {empty}\n\ntail\n\n[^f]: note - nested\n",
     "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": "~/xy\\~/\n",
-    "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": "{/x/}_y z\\_ w\n",
+    "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": "{/x/}\\_y z_ w\n",
     "469-an-empty-link-destination-is-not-a-link-3.crv": "[x]( “t”)\n",
     "47-numbered-cross-references-11.crv": "![a](a.jpg)\n^ x\n",
     "47-numbered-cross-references-2.crv": "![one](a.jpg)\n^ Figure : one\n\n![two](b.jpg)\n^ Figure : two\n",
@@ -1849,14 +2450,136 @@
     "47-numbered-cross-references-8.crv": "{#lst-greet}\n```python\ndef greet():\n    return 1\n```\n^ Listing : a greeting\n\nSee </#lst-greet>.\n",
     "47-numbered-cross-references-9.crv": "{#eq-emc}\n$$`E = mc^2`\n^ Equation : mass-energy\n\nSee </#eq-emc>.\n",
     "47-numbered-cross-references.crv": "{#fig-sun}\n![A sunset](sun.jpg)\n^ Figure : A sunset\n",
-    "471-a-forced-opener-of-an-open-kind-is-literal-5.crv": "*a {/b /}{/*c*/}{/ d/} e*\n",
-    "471-a-forced-opener-of-an-open-kind-is-literal-7.crv": "*a {/b /}{/*c*/}{/ d/} e*\n",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv": "{~a\\~>b~>c~}\n\n{~a\\~>b~>c~}\n\n{~ab~>c~}\n",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv": "~`a~>b`~\n\n~a `x~>y` b~\n\n{~old~>new~}\n\n~a\\~>b~\n",
+    "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": "- > q\n  ```\n  b\n  ```\n\ny ``\n",
+    "476-an-item-s-fence-is-read-once-whatever-block-it-follows.crv": "- ![a](i)\n  ^ cap\n  ```\n  b\n  ```\n\ny ``\n",
+    "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-7.crv": "{~a \\~> b~>c~} d\n",
+    "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-8.crv": "{~a ~\\} b~>c~} d\n",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-3.crv": ":: t\n: a\n\n  ```\n  b\n  ```\n\ny ``\n",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-4.crv": ":: t\n: ```\n  b\n  ```\n\n  c y\n",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column-5.crv": ":: t\n: a `\n  b\n  y`\n\nz ``\n",
+    "478-a-definition-body-s-open-code-fence-ends-at-a-line-below-its-column.crv": ":: t\n: ```\n  ```\n\ny ``\n",
+    "479-a-closer-below-the-container-s-column-does-not-count-2.crv": "- a `\n  b\n  y\n  `\n",
+    "479-a-closer-below-the-container-s-column-does-not-count-3.crv": "- a `\n  b\n  y\n  `\n",
+    "479-a-closer-below-the-container-s-column-does-not-count-4.crv": ":: t\n: a `\n  b\n  y\n  `\n",
+    "479-a-closer-below-the-container-s-column-does-not-count-5.crv": ":: t\n: a `\n  b\n  y\n  `\n",
+    "479-a-closer-below-the-container-s-column-does-not-count-6.crv": ":: t\n: a ``\n",
+    "479-a-closer-below-the-container-s-column-does-not-count.crv": "- a `\n  b\n  y\n  `\n",
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener-6.crv": ":: t\n: :::\n  a y\n  :::\n",
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener-7.crv": ":: t\n: a\n\n  ```\n  :::\n  ```\n\ny ``\n",
+    "480-a-bare-colon-opener-in-a-description-body-is-an-opener.crv": ":: t\n: :::\n\n  :::\n\ny :::\n",
+    "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-7.crv": "::: {.x} not a div :::\n",
+    "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it.crv": "text not a div\n\n:::\n\n:::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": "- \\::: note y\n  :::\n\n  :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": "1. \\::: d y\n   :::\n\n   :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": "- \\::: d y z\n  :::\n\n  :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv": "- \\::: d y\n  :::\n\n  :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": "- x\n  - \\::: d y\n    :::\n\n    :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-8.crv": "- ::: d\n  x y\n  :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-9.crv": "- a\n  ::: d\n\n  :::\n\ny :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": "- \\::: y\n  :::\n\n  :::\n",
+    "483-an-empty-term-marker-in-a-description-body-is-text-2.crv": ":: t\n: a :: c\n",
+    "483-an-empty-term-marker-in-a-description-body-is-text-3.crv": ":: t\n: a ::\n",
+    "483-an-empty-term-marker-in-a-description-body-is-text-4.crv": ":: t\n: a b :: c\n",
+    "483-an-empty-term-marker-in-a-description-body-is-text-5.crv": ":: t\n: a ::\n: c\n",
+    "483-an-empty-term-marker-in-a-description-body-is-text-6.crv": ":: t\n: a :: c\n",
+    "483-an-empty-term-marker-in-a-description-body-is-text.crv": ":: t\n: a :: c\n",
+    "484-a-delimiter-after-an-underscore-or-slash-opens-only-when-that-one-pairs-5.crv": "![p](p.png)\n^ Figure _* x* q\n",
+    "484-a-delimiter-after-an-underscore-or-slash-opens-only-when-that-one-pairs-6.crv": "_*x* \\\"’a’ “\n",
+    "485-a-quote-after-an-escaped-quote-closes-2.crv": "‘a\\'’\n",
+    "485-a-quote-after-an-escaped-quote-closes-3.crv": "“a\\'’\n\n‘a\\\"”\n",
+    "485-a-quote-after-an-escaped-quote-closes-4.crv": "“\\\"’q’”\n",
+    "485-a-quote-after-an-escaped-quote-closes-5.crv": "“‘q’”\n",
+    "485-a-quote-after-an-escaped-quote-closes.crv": "“a\\\"”\n\n“\\\"”\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": "*/a b/* y\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": "*{/a %% c b/}* y\n",
+    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": "---yaml\f a: 1\n\n---\n\nt\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-2.crv": "a *“x”* b\n\na ~*“x”* b\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-3.crv": "a.*“x”* b\n\na,_“x”_ b\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-4.crv": "x{*“y”*}\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-5.crv": "*a *”x”*\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-6.crv": "*”’x’\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-7.crv": "a*”x”* b\n\n/“x”\n\n=“x”\n",
+    "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does.crv": "*”x”\n\na *”x” b\n\na **”x” b\n",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-2.crv": "![p](p.png)\n^ Figure , q\n",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-3.crv": "![p](p.png)\n^ Figure \\# q\n",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-4.crv": "![p](p.png)\n^ Figure é q\n",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-7.crv": "![p](p.png)\n^ Figure x * y \\#: z\n",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-8.crv": "![p](p.png)\n^ Figure* q\n",
+    "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": "![p](p.png)\n^ Figure * q\n",
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": "*{/a %% c b/}* y\n",
+    "492-adjacent-strong-spans-use-html-only-where-their-delimiters-merge.crv": "*ab*\n",
+    "493-empty-containers-share-one-html-body-shape-2.crv": ":::\n%% hidden\n\n%% hidden too\n:::\n\n::: custom\n%% hidden\n:::\n\n::: note\n%% hidden\n:::\n\n::: >\n%% hidden\n:::\n\n::: |\n%% hidden\n:::\n\n{.hardbreaks}\n:::\n%% hidden\n:::\n\n:::\n%% hidden\n:::\n",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-2.crv": ":: c   ::: note   body   :::\n",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-3.crv": "> :: c   # H\n",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-4.crv": "- item\n  :: c   # H\n",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-5.crv": ":: a\n: b\n\n  :: c   # H\n",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-6.crv": ":: a\n: b\n\n  :: c   ::: note   body   :::\n",
+    "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth.crv": ":: c   # H\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-10.crv": "[t][r]\n\n> :: c   [r]: /u\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-11.crv": "[t][r]\n\n- item\n  :: c   [r]: /u\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-12.crv": "[t][r]\n\n:: a\n: b\n\n  :: c   [r]: /u\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-13.crv": "x[^n]\n\n:: c   [^n]: y\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-14.crv": "x[^n]\n\n> :: c   [^n]: y\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-15.crv": "x[^n]\n\n- item\n  :: c   [^n]: y\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-16.crv": "x[^n]\n\n:: a\n: b\n\n  :: c   [^n]: y\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-2.crv": "> :: c %% note   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-22.crv": "[t][r]\n\n:: a\n: b\n\n  :: c %%%\n\n  hidden\n\n  %% %   \\[r\\]: \\/u\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-23.crv": "- :: c   # H\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-24.crv": "x[^n]\n\n- :: c %% note   [^n]\\: y\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-25.crv": "[t][r]\n\n:: a\n: b\n\n  :: c   > text   [r]: /u\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-3.crv": "- item\n  :: c %% note   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-4.crv": ":: a\n: b\n\n  :: c %% note   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-5.crv": ":: c %%%\n  hidden\n %% %   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-6.crv": "> :: c %%%\n>   hidden\n>  %% %   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-7.crv": "- item\n  :: c %%%\n    hidden\n   %% %   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-8.crv": ":: a\n: b\n\n  :: c %%%\n    hidden\n   %% %   more\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth-9.crv": "[t][r]\n\n:: c   [r]: /u\n",
+    "504-a-comment-or-a-definition-under-a-definition-term-folds-at-every-depth.crv": ":: c %% note   more\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-10.crv": "- head\n  ::: note\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-11.crv": "- head\n  :::\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-12.crv": "- head\n  ::: note\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-15.crv": "- head\n  :::\n  ```\n  :::\n  ```\n\n  a - second\n  :::\n  - third\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-3.crv": "- head\n  :::\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-4.crv": "- head\n  ::: note\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-5.crv": "- head\n  :::\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-6.crv": "- head\n  ::: note\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-7.crv": "- head\n  :::\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-8.crv": "- head\n  ::: note\n  a - second\n  :::\n",
+    "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-9.crv": "- head\n  :::\n  a - second\n  :::\n",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-10.crv": "- a\n  - b\n    ```\n    p\n    ```\n\nx ``\n",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-11.crv": "- a\n  - b\n    - c\n      ```\n      p\n      ```\n\nx ``\n",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-12.crv": "- a\n  - b `\n    p`\n  - c ``\n",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-4.crv": "- a\n  - b `\n    p\n    `\n",
+    "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-5.crv": "- a\n  - b `\n    p\n    `\n",
+    "511-a-fence-in-a-quote-stores-no-continuation-claim-11.crv": "> > ::: d\n> > p\n> > :::\n> >\n> > b y\n",
+    "511-a-fence-in-a-quote-stores-no-continuation-claim-7.crv": "> > ```\n> > c\n> > ```\n> >\n> > b y\n",
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-10.crv": "> - a\n>   ```\n>   x\n>   ```\n>\n> after flush\n",
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-12.crv": "> :: t\n> : d - `\n>   x\n>   flush`\n",
+    "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-7.crv": "> - a\n>\n>   ```\n>   x\n>   ```\n>\n>   z flush\n",
+    "519-a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim-2.crv": "> - a\n>   ```\n>   x\n>   ```\n\nz\n\n> b ~~~\n",
+    "519-a-shifted-fence-in-a-quoted-item-stores-no-continuation-claim-4.crv": "> - a `\n>   x\n>   flush`\n",
+    "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-5.crv": "[a]{k=“t u”}\n",
+    "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-6.crv": "[a][r]\n\n[r]: /u “t u”\n",
+    "527-a-tab-does-not-open-the-title-slot-2.crv": "![a](/i\t“t”)\n",
+    "527-a-tab-does-not-open-the-title-slot.crv": "[a](/u\t“t”)\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-10.crv": "- a\n  > q `=html\n  > <b>r</b>\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-11.crv": "x[^1]\n\n[^1]: > q `js\n  > c\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-12.crv": "x[^1]\n\n[^1]: > q `=latex\n  > \\r\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-13.crv": ":: t\n: > q `js\n  > c\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-2.crv": "- a\n  > q `js\n  > c\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-3.crv": "- a\n  > q `js\n  > c\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-4.crv": "- a\n  > q `js\n  > c\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-5.crv": "- a\n  > q `js\n  > c\n  > `\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-6.crv": "- a\n  > q # h\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-7.crv": "- a\n  > q —\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-8.crv": "- a\n  > q | c | |—| | 1 |\n",
+    "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-9.crv": "- a\n  > q `=latex\n  > \\r\n  > `\n",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "HTML and XHTMLish.\n",
-    "62-smart-typography-escapes-and-code.crv": "Escaped -\\> and .\\.\\. stay; code `a -- b ...` stays.\n",
+    "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",
-    "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;<\\=>?@[\\\\]^_\\`{|}~ done\n",
+    "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;\\<=>?@[\\\\]^_\\`{|}~ done\n",
     "73-parenthesized-ordered-marker.crv": "(1) First (2) Second\n",
     "75-list-nesting-and-looseness-8.crv": "- item # H\n",
     "81-paragraph-interruption-10.crv": "text 2. y 3. z\n",

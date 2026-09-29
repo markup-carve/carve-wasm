@@ -838,11 +838,13 @@ assert.deepEqual(JSON.parse(pm.json), {
 assert.deepEqual(pm.dropped, {})
 assert.deepEqual(pm.degraded, {})
 
-// A code block keeps its language as an attribute rather than in the text.
+// A code block keeps its language as an attribute rather than in the text, and its
+// text is the literal payload - `a`, `a\n` and `a\n\n` stay distinct rather than
+// collapsing to one shape (markup-carve/carve-rs#2191).
 const fenced = JSON.parse(toProseMirror('``` rust\nlet x = 1;\n```\n').json).content[0]
 assert.equal(fenced.type, 'codeBlock')
 assert.equal(fenced.attrs.language, 'rust')
-assert.deepEqual(fenced.content, [{ type: 'text', text: 'let x = 1;' }])
+assert.deepEqual(fenced.content, [{ type: 'text', text: 'let x = 1;\n' }])
 
 // What the ProseMirror model cannot hold is REPORTED, not silently converted,
 // and the two maps say different things. `dropped` is content that is gone;
