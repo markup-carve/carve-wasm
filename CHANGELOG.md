@@ -9,17 +9,50 @@ their own.
 
 ## [Unreleased]
 
-## [0.1.5] - 2026-09-26
+### Changed
+
+- **Breaking for a `parseJson` consumer:** a footnote reference node spells its
+  target as `label`, where it spelled it `id`. PART 12 section 25 settles that
+  name on the definition, and every node also carries `attrs.id` for an authored
+  `{#x}`, so the old name stood for two unrelated values on one object.
+  `attrs.id` is untouched (markup-carve/carve-rs#1853).
+- **Breaking for a `parseJson` consumer:** a code block's `content` is the
+  literal payload text, so `a`, `a\n` and `a\n\n` stay distinct on the wire
+  where they collapsed to one shape, and an empty fence holds no newline.
+  Rendered HTML is unchanged (markup-carve/carve-rs#2191,
+  markup-carve/carve-rs#2195).
+- **Breaking for a `toMarkdown` consumer:** the Markdown target follows PART 11
+  section 11 for a GFM reader. A heading takes no `{#id}` suffix, and a resolved
+  cross-reference is written with the heading's GFM slug, so
+  `lowercaseHeadingIds` no longer changes that anchor - the slug is the one a GFM
+  reader computes for itself. `toHtml` still answers to the option
+  (markup-carve/carve-rs#2014).
+
+### Fixes
+
+- `htmlToCarve` and `htmlToAst` no longer hand back a denied-scheme destination
+  from `safe` mode. The published 0.1.4 imports
+  `<a href="javascript:alert(1)">x</a>` as a live link and reports no
+  diagnostic; the destination is now dropped, the content kept, and one
+  `attribute-dropped` row names what went. `carve-lang` 0.1.7 carries the rule,
+  so the stand-in copy this wrapper held goes with the bump (#145, #148).
+- A render error encodes the report's fields directly instead of building an
+  engine result for the encoder to read four fields off. A field added upstream
+  no longer stops this wrapper compiling at the pin bump rather than at the
+  change that caused it (#147).
 
 ### Improvements
 
+- The embedded engine is `carve-lang` 0.1.7, up from 0.1.6, and renders every one
+  of the 2134 corpus documents the pinned spec declares byte-identically. A
+  non-breaking space reaches the ProseMirror bridge as its own
+  `degraded:non_breaking_space` row rather than folded into the smart-punctuation
+  one.
 - The embedded engine is the published `carve-lang` crate at an exact version
   rather than the same commit fetched from git, so a build resolves through
   crates.io and the corpus gate resolves the spec through the matching carve-rs
   release tag, which it now refuses unless that tag's `Cargo.toml` declares the
-  pinned version. The engine does not move: 0.1.4 already embedded `d7837249`,
-  which is what 0.1.6 was published from, and rendering is unchanged (#136,
-  #143).
+  pinned version (#136, #143).
 
 ## [0.1.4] - 2026-09-19
 
@@ -91,20 +124,20 @@ their own.
 - A substitution node carries `old` and `new`, each an array of inline nodes,
   where it carried the strings `oldText` and `newText`. A host reading an
   AST-JSON tree for substitutions walks the halves instead of reading them
-  (carve-rs#1756). Breaking for that host; nothing else in the tree moved.
+  (markup-carve/carve-rs#1756). Breaking for that host; nothing else in the tree moved.
 - Advances the embedded carve-rs revision to released 0.1.6 (`d7837249`, from
   `9a0c421d`). The Markdown and Carve writers escape more of what would reopen a
   construct on the way back in: a literal tilde, an underscore pair the line
   would pair, a leading hash, a heading's trailing hash run, a caret before a
-  bracket node, and the colon of a trailing `:name` (carve-rs#1641,
-  carve-rs#1653, carve-rs#1681, carve-rs#1687, carve-rs#1713, carve-rs#1728).
+  bracket node, and the colon of a trailing `:name` (markup-carve/carve-rs#1641,
+  markup-carve/carve-rs#1653, markup-carve/carve-rs#1681, markup-carve/carve-rs#1687, markup-carve/carve-rs#1713, markup-carve/carve-rs#1728).
   Parsing tightens around braced inlines, forced closers, escaped markers,
-  adjacent links, blank table rows and a code span's closer (carve-rs#1638,
-  carve-rs#1673, carve-rs#1675, carve-rs#1677, carve-rs#1684, carve-rs#1727,
-  carve-rs#1745, carve-rs#1749, carve-rs#1753). A frontmatter block now survives
-  the ProseMirror bridge as written (carve-rs#1695), and the bridge reports what
-  a mention loses rather than dropping it silently (carve-rs#1760,
-  carve-rs#1764, carve-rs#1766, carve-rs#1770, carve-rs#1773). HTML output over
+  adjacent links, blank table rows and a code span's closer (markup-carve/carve-rs#1638,
+  markup-carve/carve-rs#1673, markup-carve/carve-rs#1675, markup-carve/carve-rs#1677, markup-carve/carve-rs#1684, markup-carve/carve-rs#1727,
+  markup-carve/carve-rs#1745, markup-carve/carve-rs#1749, markup-carve/carve-rs#1753). A frontmatter block now survives
+  the ProseMirror bridge as written (markup-carve/carve-rs#1695), and the bridge reports what
+  a mention loses rather than dropping it silently (markup-carve/carve-rs#1760,
+  markup-carve/carve-rs#1764, markup-carve/carve-rs#1766, markup-carve/carve-rs#1770, markup-carve/carve-rs#1773). HTML output over
   the spec corpus is unchanged: 1740/1740 documents byte-identical.
 
 ## [0.1.3] - 2026-09-08
@@ -120,7 +153,7 @@ their own.
 - Advances the embedded carve-rs revision to released 0.1.5 (`56cb3536`, from
   `da45f9d2`). A lone `|` line no longer panics, closing an unauthenticated
   one-byte denial of service for an embedder rendering untrusted Carve
-  (carve#1554). The same range also brings parse-parity fixes it carries:
+  (markup-carve/carve#1554). The same range also brings parse-parity fixes it carries:
   comment leaf spans, emptied definition descriptions, footnote nesting, a
   nested item's leading fence, and all-blank and lone-pipe table rows. Measured
   through the built artifact: 1685/1685 corpus documents byte-identical at the
@@ -157,11 +190,11 @@ their own.
 
 - Advances the embedded carve-rs revision to `da45f9d2`, matching the current
   carve-rb floor. Djot migration now preserves table continuations
-  (carve-rs#1478), empty external-link targets are omitted (carve-rs#1479),
-  titled media emits one title attribute (carve-rs#1481), authored task states
+  (markup-carve/carve-rs#1478), empty external-link targets are omitted (markup-carve/carve-rs#1479),
+  titled media emits one title attribute (markup-carve/carve-rs#1481), authored task states
   survive format cycles and extended states name themselves in HTML
-  (carve-rs#1485, carve-rs#1486), and a colon followed by a space and a tab no
-  longer opens a description (carve-rs#1488).
+  (markup-carve/carve-rs#1485, markup-carve/carve-rs#1486), and a colon followed by a space and a tab no
+  longer opens a description (markup-carve/carve-rs#1488).
 
 ## [0.1.1] - 2026-08-27
 
@@ -178,10 +211,10 @@ their own.
   (`2e9c43f2`), matching the current sibling binding floor. Documents that used to come
   back rendering differently through the HTML importer now survive it: a task
   item comes back a task item rather than as the checkbox HTML that rendered it
-  (carve-rs#1366, carve-rs#1364, carve-rs#1374), and a grouping label keeps its
-  div fence (carve-rs#1322). Attached list-marker attributes are now
+  (markup-carve/carve-rs#1366, markup-carve/carve-rs#1364, markup-carve/carve-rs#1374), and a grouping label keeps its
+  div fence (markup-carve/carve-rs#1322). Attached list-marker attributes are now
   layout-transparent, so item bodies use the bare marker's content column
-  (carve#1701). Measured through the built artifact: 1394/1394
+  (markup-carve/carve#1701). Measured through the built artifact: 1394/1394
   corpus documents byte-identical at the spec commit this engine pins.
 - Embeds carve-rs at `9cf16d05` instead of `9705274c`, 105 commits later and 32 past the revision carve-rb embeds, so the two bindings of this engine no longer render the same document differently (#51, #56). On top of what `85514c6b` already carried - rendered elements saying what they are called (PART 9 §16a), `<thead>` and `<tfoot>` writing one row per line, a table cell's marker run ending at a space - this run is mostly the HTML importer: a deletion, a math span and a div's content survive an import, an import rebuilds the container the renderer wrote and takes the labels map the HTML was rendered with, and a container's span ends where its markup does. Measured through the built artifact: 1371/1371 mandatory corpus documents byte-identical at the spec commit this engine pins.
 
@@ -212,8 +245,7 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.5...HEAD
-[0.1.5]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...v0.1.5
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...HEAD
 [0.1.4]: https://github.com/markup-carve/carve-wasm/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/markup-carve/carve-wasm/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/markup-carve/carve-wasm/compare/v0.1.1...v0.1.2

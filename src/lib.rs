@@ -3,9 +3,6 @@ use std::rc::Rc;
 
 use wasm_bindgen::prelude::*;
 
-// Temporary, for markup-carve/carve-wasm#145. See the module's own note.
-#[cfg(feature = "html-import")]
-mod denied_scheme;
 #[cfg(feature = "source-patches")]
 mod source_patch;
 
@@ -616,36 +613,8 @@ pub fn html_to_carve(source: &str, mode: Option<String>) -> Result<JsValue, JsVa
         mode: html_import_mode(mode)?,
         ..Default::default()
     };
-    let mut result = carve::migrate_html(source, &options)
+    let result = carve::migrate_html(source, &options)
         .map_err(|error| JsValue::from_str(&format!("carve: HTML import failed: {error:?}")))?;
-    // markup-carve/carve-wasm#145. It REPAIRS the tree of the written source rather than a
-    // second import, because the importer's own tree keeps structures only a writer loses,
-    // and rendering that one refuses documents this entry point accepted before the guard.
-    //
-    // It DETECTS on the raw import, and only when the written source carries an escape at
-    // all: a destination the writer escaped no longer reads as a denied scheme, and the raw
-    // tree is where it still does. See `denied_scheme::Escaped`.
-    let escaped = if result.value.contains('%') {
-        let mut raw = carve::html_to_ast(source, &options)
-            .map_err(|error| JsValue::from_str(&format!("carve: HTML import failed: {error:?}")))?;
-        denied_scheme::escaped(&denied_scheme::strip(
-            &mut raw.value,
-            denied_scheme::Escaped::default(),
-        ))
-    } else {
-        denied_scheme::Escaped::default()
-    };
-    let mut written = carve::parse(&result.value);
-    let removals = denied_scheme::strip(&mut written, escaped);
-    if !removals.is_empty() {
-        result.value = carve::render_carve(&written).map_err(|error| {
-            JsValue::from_str(&format!("carve: cannot write this tree: {error:?}"))
-        })?;
-        result
-            .report
-            .diagnostics
-            .extend(removals.iter().map(denied_scheme::Removal::diagnostic));
-    }
     migration_result_to_js(result)
 }
 
@@ -680,14 +649,11 @@ pub fn html_to_ast(source: &str, mode: Option<String>) -> Result<JsValue, JsValu
         mode: html_import_mode(mode)?,
         ..Default::default()
     };
-    let mut result = carve::html_to_ast(source, &options)
+    let result = carve::html_to_ast(source, &options)
         .map_err(|error| js_error(format!("carve: HTML import failed: {error:?}")))?;
-    // markup-carve/carve-wasm#145, the same guard `htmlToCarve` applies. No writer ran here,
-    // so every destination still carries what the author wrote and nothing needs resolving.
-    let removals = denied_scheme::strip(&mut result.value, denied_scheme::Escaped::default());
     // Through the same adapter `migrate_html` uses on the source result, so the
     // report is built once rather than described twice.
-    let mut diagnostics: Vec<carve::MigrationDiagnostic> = result
+    let diagnostics: Vec<carve::MigrationDiagnostic> = result
         .report
         .diagnostics
         .into_iter()
@@ -700,7 +666,6 @@ pub fn html_to_ast(source: &str, mode: Option<String>) -> Result<JsValue, JsValu
             path: diagnostic.path,
         })
         .collect();
-    diagnostics.extend(removals.iter().map(denied_scheme::Removal::diagnostic));
     migration_result_to_js(carve::MigrationResult {
         value: carve::to_json(&result.value),
         report: carve::MigrationReport {
