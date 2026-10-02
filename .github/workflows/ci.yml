@@ -17,6 +17,8 @@ on:
     - cron: "35 6 * * *"
   workflow_dispatch:
 
+# Each job declares timeout-minutes so a hung step fails fast
+# instead of inheriting the 360-minute GitHub default.
 jobs:
   # Which carve-rs is this package running, and is that a revision that really
   # exists on `main`? Nothing here read the pin before: no `rev-list`, no
@@ -39,6 +41,7 @@ jobs:
   # only AGE can fail this job.
   engine-pin:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -115,6 +118,7 @@ jobs:
   rust-lint:
     name: Rust format and lint
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -130,6 +134,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -348,6 +353,7 @@ jobs:
   msrv:
     name: Build on the declared MSRV
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - name: Read rust-version from Cargo.toml
@@ -386,6 +392,7 @@ jobs:
   corpus-drift:
     name: Report the drift against spec main
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: test
     steps:
       - uses: actions/checkout@v4
