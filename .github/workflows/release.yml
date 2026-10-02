@@ -17,11 +17,14 @@ on:
 # added between them later inherits nothing. A separate job named in `needs:`
 # cannot be reached at all while the gate fails, which is the property being
 # bought here.
+# Each job declares timeout-minutes so a hung step fails fast
+# instead of inheriting the 360-minute GitHub default.
 jobs:
   # Everything that decides whether this tag is publishable.
   verify:
     name: Gate the release on the packed artifact
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -154,6 +157,7 @@ jobs:
     # Not reachable while `verify` fails, cancels, or is skipped.
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # Inert until a `release` environment with a required reviewer exists
     # (markup-carve/carve#2032).
     environment: release
