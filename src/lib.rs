@@ -3799,4 +3799,29 @@ mod tests {
         );
         assert!(crate::source_patch::apply("stale", &patch).is_err());
     }
+
+    // `toHtmlWithReport` renders with raw HTML allowed and has no safe switch,
+    // so the JS tests cannot reach the safe half; this pins it on the engine.
+    #[test]
+    fn the_pinned_engine_reports_a_denied_destination_in_both_safe_modes() {
+        for safe in [false, true] {
+            let options = carve::Options::default()
+                .with_positions(true)
+                .with_raw_html(!safe);
+            for (source, html) in [
+                ("[x](javascript:alert(1))", "<p><a href=\"\">x</a></p>"),
+                ("![a](javascript:alert(1))", "<img src=\"\" alt=\"a\">"),
+            ] {
+                let checked = carve::with_render_loss_report(
+                    carve::RenderTarget::Html,
+                    carve::CheckedRenderOptions::default(),
+                    || carve::to_html_with_options(source, &options),
+                )
+                .expect("a non-strict collection cannot fail");
+                assert_eq!(checked.value.trim_end(), html, "safe={safe}");
+                assert_eq!(checked.total_losses, 1, "safe={safe} {source}");
+                assert_eq!(checked.losses[0].code, "destination-denied");
+            }
+        }
+    }
 }

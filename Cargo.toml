@@ -59,7 +59,8 @@ stamp = []
 # scripts/pinned-spec-commit.py resolves it through the carve-rs release tag to
 # the spec the corpus gate runs against. Bump it deliberately: see
 # docs/engine-pin.md.
-carve = { package = "carve-lang", version = "=0.1.7" }
+# Temporary: the carve-lang 0.1.8 cut; returns to version = "=0.1.8" once published.
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "9d8812547dfbdaa40784f32f357f8393f5139e5d" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }

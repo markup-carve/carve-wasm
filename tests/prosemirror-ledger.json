@@ -1434,6 +1434,24 @@
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-9.crv": [
       "degraded:soft_break"
     ],
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-11.crv": [
+      "degraded:soft_break"
+    ],
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-12.crv": [
+      "degraded:soft_break"
+    ],
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-19.crv": [
+      "degraded:soft_break"
+    ],
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-20.crv": [
+      "degraded:soft_break"
+    ],
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-3.crv": [
+      "degraded:soft_break"
+    ],
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": [
+      "degraded:soft_break"
+    ],
     "56-table-cell-escaped-pipe.crv": [
       "degraded:escaped_text"
     ],
@@ -2095,6 +2113,12 @@
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-7.crv": "<ul>\n  <li>a\n    <blockquote><p>q —</p></blockquote>\n  </li>\n</ul>",
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-8.crv": "<ul>\n  <li>a\n    <blockquote><p>q | c | |—| | 1 |</p></blockquote>\n  </li>\n</ul>",
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-9.crv": "<ul>\n  <li>a\n    <blockquote><p>q <code>=latex\n\\r\n</code></p></blockquote>\n  </li>\n</ul>",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-11.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y ~~~</p></blockquote>\n  </li>\n</ul>",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-12.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y ~~~</p></blockquote>\n  </li>\n</ul>",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-19.crv": "<ul>\n  <li>\n    <blockquote>\n      x\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-20.crv": "<ul>\n  <li>\n    <blockquote>\n      x\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-3.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "<p>HTML and XHTMLish.</p>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
@@ -2576,6 +2600,12 @@
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-7.crv": "- a\n  > q —\n",
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-8.crv": "- a\n  > q | c | |—| | 1 |\n",
     "531-an-opener-under-a-quote-in-a-nested-host-opens-at-one-column-only-9.crv": "- a\n  > q `=latex\n  > \\r\n  > `\n",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-11.crv": "- > ```\n  > x\n  > ```\n+\n> y ~~~\n",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-12.crv": "- > ```\n  > x\n  > ```\n+\n> y ~~~\n",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-19.crv": "- > ```=html\n  > x\n  > ```\n+\n> y ``\n",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-20.crv": "- > ```=html\n  > x\n  > ```\n+\n> y ``\n",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-3.crv": "- > ```\n  > x\n  > ```\n+\n> y ``\n",
+    "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": "- > ```\n  > x\n  > ```\n+\n> y ``\n",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "HTML and XHTMLish.\n",
     "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",
