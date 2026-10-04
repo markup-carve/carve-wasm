@@ -1303,13 +1303,19 @@ console.log('wasm artifact: three-way merge cases pass')
       .map((d) => d.code),
     ['structure-unspellable'],
   )
-  // Nor does an explicit head/body/foot grouping.
-  assert.deepEqual(
-    writerOnly(
-      '<table><thead><tr><th>h</th></tr></thead><tbody><tr><td>b</td></tr></tbody>' +
-        '<tfoot><tr><td>f</td></tr></tfoot></table>',
-    ).map((d) => d.code),
-    ['structure-unspellable'],
+  // An explicit head/body/foot grouping IS spellable (carve-rs#2273): the
+  // writer keeps it as row counts, reports nothing, and it renders back.
+  const GROUPED =
+    '<table><thead><tr><th>h</th></tr></thead><tbody><tr><td>b</td></tr></tbody>' +
+    '<tfoot><tr><td>f</td></tr></tfoot></table>'
+  assert.deepEqual(writerOnly(GROUPED), [])
+  assert.deepEqual(htmlToCarve(GROUPED).report.diagnostics, [])
+  assert.equal(htmlToCarve(GROUPED).value, '{header-rows=1 footer-rows=1}\n|= h |\n| b |\n| f |\n')
+  assert.equal(
+    toHtml(htmlToCarve(GROUPED).value),
+    '<table>\n  <thead>\n    <tr><th scope="col">h</th></tr>\n  </thead>\n' +
+      '  <tbody>\n    <tr><td>b</td></tr>\n  </tbody>\n' +
+      '  <tfoot>\n    <tr><td>f</td></tr>\n  </tfoot>\n</table>',
   )
 
   // `mode` is spelled the way `htmlToCarve` spells it, and reaches the report.

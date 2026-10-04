@@ -47,14 +47,43 @@ their own.
   (markup-carve/carve-rs#2239).
 - Every render target enforces the depth ceiling in citation definitions,
   extension summaries and captions (markup-carve/carve-rs#2242).
+- Tables keep multiple bodies, intermediate body headers, empty bodies and
+  per-body row-header counts through `parseJson`, `toCarve` and `toHtml`, and
+  decimal column widths keep their precision. HTML import keeps every empty
+  `<tbody>` as a body boundary, writes an explicit `<thead>`/`<tbody>`/`<tfoot>`
+  grouping as row counts instead of reporting it unspellable, keeps the table's
+  ID and classes, and still reports dropped table attributes when every row is
+  blank (markup-carve/carve-rs#2273, markup-carve/carve-rs#2274,
+  markup-carve/carve-rs#2275, markup-carve/carve-rs#2278,
+  markup-carve/carve-rs#2279).
+- A named colon fence with invalid opener metadata stays a container with its
+  children parsed, and `lintCarve` reports `fence-title-syntax`, where the
+  fence used to reach the page as text (markup-carve/carve-rs#2260).
+- References resolve in authored AST children such as ruby content, short
+  captions and figure images, literal definitions inside verse are kept, and an
+  indented comment closer ends the comment inside a colon fence
+  (markup-carve/carve-rs#2253, markup-carve/carve-rs#2256).
+- Citations skip an invalid `@` in prefix text, honor backslash escapes before
+  `@` and the suppress-author `-`, and keep `[@a , p. 4]` literal as the other
+  engines do (markup-carve/carve-rs#2267).
 
 ### Improvements
 
 - The embedded engine is `carve-lang` 0.1.8, up from 0.1.7, and renders every
-  one of the 2201 corpus documents the pinned spec declares byte-identically.
-  Runs of reference definitions parse and render with fewer allocations
-  (markup-carve/carve-rs#2252, markup-carve/carve-rs#2240,
-  markup-carve/carve-rs#2241).
+  one of the 2215 corpus documents the pinned spec declares byte-identically
+  (markup-carve/carve-rs#2252, markup-carve/carve-rs#2295).
+- Parsing and HTML rendering allocate and rescan far less: nested colon
+  bodies, quoted fences, list markers, citations, reference definitions,
+  heading IDs and nested quotes each stop re-reading what an enclosing level
+  already scanned, and plain Unicode paragraphs take the fast source-to-HTML
+  path (markup-carve/carve-rs#2240, markup-carve/carve-rs#2241,
+  markup-carve/carve-rs#2257, markup-carve/carve-rs#2263,
+  markup-carve/carve-rs#2266, markup-carve/carve-rs#2268,
+  markup-carve/carve-rs#2272, markup-carve/carve-rs#2277,
+  markup-carve/carve-rs#2280, markup-carve/carve-rs#2281,
+  markup-carve/carve-rs#2282, markup-carve/carve-rs#2283,
+  markup-carve/carve-rs#2285, markup-carve/carve-rs#2286,
+  markup-carve/carve-rs#2291).
 
 ## [0.1.5] - 2026-09-29
 
