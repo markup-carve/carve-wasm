@@ -1,0 +1,51 @@
+# Rehearses release.yml's pre-publish notes gate against a draft release; it cannot publish.
+name: Rehearse release notes
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag of the release to check, e.g. v0.1.6
+        required: true
+        type: string
+      changelog_ref:
+        description: Ref whose CHANGELOG.md the notes are compared with (the dispatched ref, normally the default branch, when empty)
+        required: false
+        type: string
+        default: ''
+
+jobs:
+  rehearse:
+    name: The release notes match the tag's changelog
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      # `write` only because a DRAFT release is invisible to `read`. No step writes.
+      contents: write
+    steps:
+      # The gate scripts come from the dispatched ref; only CHANGELOG.md is taken
+      # from changelog_ref, so an older ref without the scripts still works.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Take CHANGELOG.md from changelog_ref
+        if: inputs.changelog_ref != ''
+        shell: bash
+        env:
+          CHANGELOG_REF: ${{ inputs.changelog_ref }}
+        run: |
+          ref="$CHANGELOG_REF"
+          git rev-parse --verify -q "$ref^{commit}" > /dev/null || ref="origin/$ref"
+          git checkout "$ref" -- CHANGELOG.md
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Run the release-notes gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: bash tools/run-release-notes-gate.sh "$TAG"
