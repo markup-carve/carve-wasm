@@ -5,15 +5,19 @@ on:
     paths:
       - 'tools/check-release-notes.py'
       - 'tools/test-release-notes.py'
+      - 'tools/run-release-notes-gate.sh'
       - '.github/workflows/release.yml'
       - '.github/workflows/release-notes.yml'
+      - '.github/workflows/rehearse-release-notes.yml'
   push:
     branches: [main]
     paths:
       - 'tools/check-release-notes.py'
       - 'tools/test-release-notes.py'
+      - 'tools/run-release-notes-gate.sh'
       - '.github/workflows/release.yml'
       - '.github/workflows/release-notes.yml'
+      - '.github/workflows/rehearse-release-notes.yml'
 
 permissions:
   contents: read

@@ -28,7 +28,9 @@ refused rather than skipped.
    not publish without one. Copy the tagged version's `CHANGELOG.md` section,
    excluding its version heading. Resolve relative links to that tag, then add
    `**Full Changelog**: https://github.com/markup-carve/carve-wasm/compare/vPREVIOUS...vX.Y.Z`.
-   The stored body must match that section and footer.
+   The stored body must match that section and footer. Rehearse the notes
+   gate with `gh workflow run rehearse-release-notes.yml -f tag=vX.Y.Z` before
+   tagging.
 3. Push the tag. The gate builds and verifies the packed tarball, npm publishes,
    and the last step flips the draft to published.
 
