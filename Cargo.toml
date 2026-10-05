@@ -55,9 +55,9 @@ source-patches = []
 stamp = []
 
 [dependencies]
-# Pinned to an EXACT published version, the same way carve-rb pins it.
-# scripts/pinned-spec-commit.py resolves it through the carve-rs release tag to
-# the spec the corpus gate runs against. Bump it deliberately: see
+# Pin an exact Git revision or registry version.
+# scripts/pinned-spec-commit.py resolves the revision, or the registry release
+# tag, to the spec the corpus gate runs against. See
 # docs/engine-pin.md.
 # Temporary Git pin for engine fixes; use an exact registry release after it includes them.
 carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "20868cd0d885aae3f5d119b8b7f95047ec0c66f0" }
