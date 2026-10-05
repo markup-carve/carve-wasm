@@ -16,7 +16,7 @@
 //                            through the exact bytes about to be published.
 //
 // Both wasm-pack targets are accepted, because they are not the same artifact:
-// CI builds `--target nodejs` and the release publishes `--target bundler`.
+// The release contains bundler, nodejs and web builds.
 // A gate that could only load the nodejs build would be measuring a package
 // nobody installs.
 import { existsSync, readFileSync } from 'node:fs'
@@ -31,7 +31,7 @@ const entry = join(PKG, 'carve_wasm.js')
 if (!existsSync(entry)) {
   throw new Error(
     `no wasm package at ${PKG}: ${entry} is missing. Build one with ` +
-      '`wasm-pack build --target nodejs`, or point CARVE_WASM_PKG at a built package.',
+      '`npm run build`, or point CARVE_WASM_PKG at a built package.',
   )
 }
 
@@ -113,6 +113,7 @@ const NAMES = [
   'htmlToAst',
   'expandIncludes',
   'parseSnapshot',
+  'ParserSession',
   'reparse',
   'mergeAst',
   'createAstPatch',
@@ -178,6 +179,7 @@ export const {
   htmlToAst,
   expandIncludes,
   parseSnapshot,
+  ParserSession,
   reparse,
   mergeAst,
   createAstPatch,

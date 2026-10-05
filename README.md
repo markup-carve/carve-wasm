@@ -12,15 +12,13 @@ implementation in browsers and powers the **Rust (WASM)** engine in the
 npm install @markup-carve/carve-wasm
 ```
 
-> Publishing to npm is pending. Until the package is live, build it locally
-> using the [build guide](docs/building.md) or consume the generated `pkg/`
-> directory directly.
-
 ## Render Carve
 
-The published package uses the bundler target for webpack, Vite, Rollup, and
-similar tools. WASM initialization is automatic, so its exports are
-synchronous.
+The package root selects synchronous Node bindings in Node and the bundler
+build in browser bundles. The browser bundler must support native WASM imports
+and top-level await. Vite 8.3.2 is tested. See the
+[compatibility guide](docs/compatibility.md) for explicit browser, Node and
+rendering-only imports.
 
 ```js
 import { toHtml, toHtmlFull, toHtmlWithOptions } from '@markup-carve/carve-wasm'
@@ -79,8 +77,9 @@ construct is representable in the tree but not in Carve source.
 - Include expansion calls a synchronous host resolver, records dependencies,
   and enforces depth, byte, and call budgets. The resolver decides which paths
   to refuse.
-- Incremental parsing, tree patches, three-way merge, and ProseMirror helpers
-  support browser editors.
+- `ParserSession` retains a document between edits and can reuse unchanged
+  plain paragraphs. Call `free()` when the editor closes. Tree patches,
+  three-way merge and ProseMirror helpers also support browser editors.
 
 The [complete API and usage reference](docs/reference.md) documents these
 APIs, renderer profiles, resource limits, includes, AST fields, and the
@@ -101,6 +100,6 @@ for the complete model.
 
 Contributor documentation lives under `docs/`:
 
-- [Building and testing](docs/building.md)
-- [The carve-rs engine pin](docs/engine-pin.md)
-- [Release process](docs/releasing.md)
+- [Building and testing](https://github.com/markup-carve/carve-wasm/blob/main/docs/building.md)
+- [The carve-rs engine pin](https://github.com/markup-carve/carve-wasm/blob/main/docs/engine-pin.md)
+- [Release process](https://github.com/markup-carve/carve-wasm/blob/main/docs/releasing.md)

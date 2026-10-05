@@ -107,6 +107,8 @@ const refused = by('refused')
 
 const unsettled = diverges.filter((result) => !result.settled)
 
+assert.equal(unsettled.length, 0, 'HTML round trips must settle, including when regenerating the ledger')
+
 if (process.env.UPDATE_ROUNDTRIP_LEDGER === '1') {
   const { writeFileSync } = await import('node:fs')
   writeFileSync(LEDGER, `${JSON.stringify({

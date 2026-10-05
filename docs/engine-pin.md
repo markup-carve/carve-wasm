@@ -1,7 +1,12 @@
 # The carve-rs dependency pin
 
-`Cargo.toml` requires an exact published `carve-lang` version, and `Cargo.lock` is committed
-alongside it:
+The manifest temporarily pins an exact Git commit for engine fixes that are
+not yet in a registry release. A Git pin must be reachable from carve-rs
+`main` for the ancestry gate to pass. After a squash or rebase merge, pin the landed commit
+and update the lock. Keep the Git revision until a published crate contains
+those fixes, then use an exact registry requirement and update `Cargo.lock`.
+
+The registry form is:
 
 ```toml
 carve = { package = "carve-lang", version = "=0.1.6" }
@@ -33,7 +38,7 @@ the package resolve to an engine other than the one that was tested.
 
 ```sh
 cargo update -p carve-lang --precise <version>
-cargo test && wasm-pack build --target nodejs && node tests/smoke.mjs
+cargo test --locked && npm run build && node tests/smoke.mjs
 CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node tests/corpus.mjs
 ```
 
@@ -62,7 +67,7 @@ continuously and would be red from the moment any pull request opens there.
 
 That last line is the one that can tell a drifted pin from a current one.
 `smoke.mjs` asserts hand-written expectations, which a stale engine satisfies
-happily; `corpus.mjs` renders all ~530 mandatory spec documents through the
+happily; `corpus.mjs` renders all 2215 mandatory spec documents through the
 **built** artifact and requires byte-identical HTML. Without `CARVE_SPEC_CORPUS`
 it prints a notice and exits 0, so a checkout without the spec repo still runs
 the suite. CI always sets it.
@@ -81,6 +86,5 @@ building on the floor:
 CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback cargo generate-lockfile
 ```
 
-Nothing in CI catches this today, since the workflow uses `stable` only. Adding
-a 1.75 job (carve-rs has one) would turn it from a review question into a build
-failure.
+The `msrv` CI job builds and tests the committed lock on Rust 1.75 and checks
+the WASM target. Keep that check passing when updating dependencies.

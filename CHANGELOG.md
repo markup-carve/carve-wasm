@@ -3,13 +3,21 @@
 Notable changes to `@markup-carve/carve-wasm`.
 
 The parser and renderer are carve-rs, compiled to WebAssembly and pinned to a
-published version in `Cargo.toml`, so an engine bump can change rendering without a
+revision or version in `Cargo.toml`, so an engine bump can change rendering without a
 line of Rust in this repository changing. Engine bumps therefore get an entry of
 their own.
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-10-05
+
 ### Breaking
+
+- Edit offsets, include budgets and checked-render limits reject values outside
+  `0..4294967295`, fractions and nonfinite values. Checked renderers reject
+  nonboolean `strict` values instead of coercing them.
+- ProseMirror conversion reports canonical source changes under
+  `degraded.document` when no node-level loss was reported.
 
 - `toHtmlWithReport` reports one `destination-denied` loss for each link,
   autolink or image whose URL scheme the sink denylist blanks. The message names the sink: "Blanked a denied destination scheme" for
@@ -23,6 +31,15 @@ their own.
   markup-carve/carve-rs#2246, markup-carve/carve#2679, markup-carve/carve#2681).
 
 ### Fixes
+
+- HTML round trips settle for all imported corpus examples. Empty definition
+  terms are preserved as raw HTML in trusted roundtrip mode or dropped and
+  reported in safe imports while keeping definition order.
+- Edit offsets are checked before narrowing to WASM's 32-bit size, so an offset
+  above `4294967295` cannot wrap around and edit another part of the document.
+- Published declarations include `IncludeExpansion`, include options, rendering
+  reports and typed renderer options. AST positions are documented as Unicode
+  codepoints; edits and source patches use UTF-8 bytes.
 
 - `toCarve` no longer crashes on emphasis inside a link label, keeps the
   parentheses and backslashes of a denied URL scheme so formatting no longer
@@ -69,7 +86,17 @@ their own.
 
 ### Improvements
 
-- The embedded engine is `carve-lang` 0.1.8, up from 0.1.7, and renders every
+- The npm tarball includes Node, browser `/web` and rendering-only `/render`
+  entries, plus `/offsets` conversion helpers and a module worker example.
+  The full entries share one WASM payload.
+- `ParserSession` retains parsing state, reports parsed bytes and reuses
+  unchanged plain paragraphs. Invalid edits leave its document unchanged.
+- Release checks install the tarball, compile a TypeScript consumer, test Node
+  ESM and CommonJS, and exercise Vite bundles and workers in Chromium, Firefox
+  and WebKit. Benchmarks measure startup, rendering, edits, size and memory.
+
+- The embedded engine uses a pinned Git revision based on `carve-lang` 0.1.8,
+  up from 0.1.7, and renders every
   one of the 2215 corpus documents the pinned spec declares byte-identically
   (markup-carve/carve-rs#2252, markup-carve/carve-rs#2295).
 - Parsing and HTML rendering allocate and rescan far less: nested colon
