@@ -24,7 +24,7 @@ jobs:
   verify:
     name: Gate the release on the packed artifact
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
 
@@ -44,6 +44,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium firefox webkit
 
       # The corpus is the only check that can tell a drifted engine pin from a
       # current one; smoke.mjs asserts hand-written expectations, which a stale
@@ -127,7 +130,7 @@ jobs:
       # bundler package users install rather than a differently-targeted build
       # of the same source.
       - name: Build wasm package
-        run: wasm-pack build --target bundler --scope markup-carve
+        run: node scripts/build-package.mjs
 
       # Packs `pkg/` with `npm pack`, unpacks the tarball, and runs
       # tests/smoke.mjs and tests/corpus.mjs against the UNPACKED tree. A file
@@ -207,7 +210,7 @@ jobs:
         working-directory: pkg
         run: |
           ls -l
-          for file in package.json carve_wasm.js carve_wasm_bg.js carve_wasm_bg.wasm; do
+          for file in package.json carve_wasm.js carve_wasm_bg.js carve_wasm_bg.wasm carve_wasm.d.ts node/carve_wasm.js web/carve_wasm.js render/carve_wasm.js examples/offsets.mjs examples/offsets.d.ts; do
             test -s "$file" || { echo "verified package is missing $file"; exit 1; }
           done
 

@@ -1,3 +1,7 @@
+import './prosemirror-fidelity.mjs'
+import './offsets.mjs'
+import './parser-session.mjs'
+import './checked-inputs.mjs'
 import './denied-scheme-import.mjs'
 import './destination-denied-report.mjs'
 // Exercise the built WASM ARTIFACT through the JS API users actually load.

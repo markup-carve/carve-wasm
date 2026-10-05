@@ -31,11 +31,20 @@
     "09-tables-4.crv": [
       "degraded:escaped_text"
     ],
+    "108-security-hardening-11.crv": [
+      "degraded:document"
+    ],
     "109-link-destination-parentheses-balance-4.crv": [
       "degraded:soft_break"
     ],
     "12-inline-code-5.crv": [
       "degraded:soft_break"
+    ],
+    "130-bold-italic-delimiter-needs-content-3.crv": [
+      "degraded:document"
+    ],
+    "130-bold-italic-delimiter-needs-content-4.crv": [
+      "degraded:document"
     ],
     "134-footnote-definition-requires-an-inline-body.crv": [
       "degraded:soft_break"
@@ -180,6 +189,9 @@
       "degraded:smart_punctuation",
       "degraded:soft_break"
     ],
+    "202-a-definition-on-a-footnote-body-s-continuation-line-is-collected.crv": [
+      "degraded:document"
+    ],
     "208-a-combined-bold-italic-span-may-cross-a-line.crv": [
       "degraded:soft_break"
     ],
@@ -195,6 +207,9 @@
     "22-footnotes-6.crv": [
       "degraded:soft_break"
     ],
+    "220-a-definition-past-a-footnote-body-s-column-registers-from-its-authored-base.crv": [
+      "degraded:document"
+    ],
     "223-an-abbreviation-term-is-one-ascii-alphanumeric-word-2.crv": [
       "degraded:soft_break"
     ],
@@ -204,11 +219,23 @@
     "224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do-3.crv": [
       "degraded:soft_break"
     ],
+    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace-2.crv": [
+      "degraded:document"
+    ],
+    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace.crv": [
+      "degraded:document"
+    ],
+    "228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block.crv": [
+      "degraded:document"
+    ],
     "231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose-2.crv": [
       "degraded:soft_break"
     ],
     "232-two-dashes-are-not-a-thematic-break.crv": [
       "degraded:smart_punctuation"
+    ],
+    "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": [
+      "degraded:document"
     ],
     "24-generic-divs-2.crv": [
       "degraded:soft_break"
@@ -453,6 +480,9 @@
     "287-a-column-zero-definition-ends-an-open-list-item-3.crv": [
       "degraded:soft_break"
     ],
+    "287-a-column-zero-definition-ends-an-open-list-item-4.crv": [
+      "degraded:document"
+    ],
     "287-a-column-zero-definition-ends-an-open-list-item.crv": [
       "degraded:escaped_text",
       "degraded:soft_break"
@@ -478,6 +508,12 @@
     ],
     "305-an-abbreviation-expands-inside-an-inline-container.crv": [
       "dropped:abbreviation_def"
+    ],
+    "312-a-note-body-s-own-references-resolve-3.crv": [
+      "degraded:document"
+    ],
+    "312-a-note-body-s-own-references-resolve.crv": [
+      "degraded:document"
     ],
     "318-composite-figures-10.crv": [
       "degraded:figure_group",
@@ -515,6 +551,9 @@
     ],
     "321-delimited-comments-7.crv": [
       "degraded:escaped_text"
+    ],
+    "323-a-block-attached-after-an-invisible-line-leaves-the-item-tight-3.crv": [
+      "degraded:document"
     ],
     "324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-5.crv": [
       "dropped:abbreviation_def"
@@ -717,6 +756,15 @@
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-3.crv": [
       "degraded:soft_break"
     ],
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-5.crv": [
+      "degraded:document"
+    ],
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-6.crv": [
+      "degraded:document"
+    ],
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-8.crv": [
+      "degraded:document"
+    ],
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item.crv": [
       "degraded:soft_break"
     ],
@@ -795,6 +843,9 @@
     ],
     "416-a-fenced-block-quote-is-the-block-quote-written-another-way-3.crv": [
       "degraded:soft_break"
+    ],
+    "417-an-authored-base-carries-opaque-payload-captions-and-nested-metadata-4.crv": [
+      "degraded:document"
     ],
     "42-admonitions-6.crv": [
       "degraded:admonition"
@@ -895,11 +946,17 @@
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-2.crv": [
       "degraded:soft_break"
     ],
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-3.crv": [
+      "degraded:document"
+    ],
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-5.crv": [
       "degraded:soft_break"
     ],
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-6.crv": [
       "degraded:soft_break"
+    ],
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-7.crv": [
+      "degraded:document"
     ],
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-9.crv": [
       "degraded:soft_break"
@@ -916,6 +973,12 @@
     "446-a-degraded-comment-fence-leaves-a-lazy-follower-where-the-line-form-does-4.crv": [
       "degraded:soft_break"
     ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-10.crv": [
+      "degraded:document"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-13.crv": [
+      "degraded:document"
+    ],
     "447-the-host-does-not-change-which-column-a-definition-reaches-16.crv": [
       "degraded:soft_break"
     ],
@@ -927,6 +990,18 @@
     ],
     "447-the-host-does-not-change-which-column-a-definition-reaches-19.crv": [
       "degraded:soft_break"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": [
+      "degraded:document"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-24.crv": [
+      "degraded:document"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-7.crv": [
+      "degraded:document"
+    ],
+    "447-the-host-does-not-change-which-column-a-definition-reaches-8.crv": [
+      "degraded:document"
     ],
     "448-a-marker-folds-into-a-quote-below-it-2.crv": [
       "degraded:soft_break"
@@ -958,6 +1033,9 @@
     "450-a-closed-fence-in-a-description-body-ends-it-3.crv": [
       "degraded:soft_break"
     ],
+    "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-3.crv": [
+      "degraded:document"
+    ],
     "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-8.crv": [
       "degraded:soft_break"
     ],
@@ -967,8 +1045,41 @@
     "452-an-empty-unterminated-container-ends-at-a-flush-left-line-5.crv": [
       "degraded:soft_break"
     ],
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-2.crv": [
+      "degraded:document"
+    ],
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-4.crv": [
+      "degraded:document"
+    ],
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item.crv": [
+      "degraded:document"
+    ],
+    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves-2.crv": [
+      "degraded:document"
+    ],
+    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves.crv": [
+      "degraded:document"
+    ],
+    "457-a-container-closer-closes-its-container-in-a-footnote-body-too.crv": [
+      "degraded:document"
+    ],
+    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach-2.crv": [
+      "degraded:document"
+    ],
+    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach.crv": [
+      "degraded:document"
+    ],
     "46-symbols-3.crv": [
       "degraded:smart_punctuation"
+    ],
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-2.crv": [
+      "degraded:document"
+    ],
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-3.crv": [
+      "degraded:document"
+    ],
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker.crv": [
+      "degraded:document"
     ],
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-2.crv": [
       "degraded:soft_break"
@@ -984,6 +1095,9 @@
     ],
     "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": [
       "degraded:italic"
+    ],
+    "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": [
+      "degraded:document"
     ],
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": [
       "degraded:soft_break"
@@ -1030,6 +1144,12 @@
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv": [
       "degraded:escaped_text",
       "degraded:substitution"
+    ],
+    "473-a-run-of-asterisks-inside-a-combined-token-is-content-2.crv": [
+      "degraded:document"
+    ],
+    "473-a-run-of-asterisks-inside-a-combined-token-is-content.crv": [
+      "degraded:document"
     ],
     "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": [
       "degraded:soft_break"
@@ -1156,11 +1276,26 @@
       "degraded:escaped_text",
       "degraded:smart_punctuation"
     ],
+    "486-any-character-is-content-of-the-combined-bold-italic-token-2.crv": [
+      "degraded:document"
+    ],
     "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": [
       "degraded:non_breaking_space"
     ],
+    "486-any-character-is-content-of-the-combined-bold-italic-token-4.crv": [
+      "degraded:document"
+    ],
+    "486-any-character-is-content-of-the-combined-bold-italic-token-5.crv": [
+      "degraded:document"
+    ],
     "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": [
       "degraded:soft_break"
+    ],
+    "486-any-character-is-content-of-the-combined-bold-italic-token.crv": [
+      "degraded:document"
+    ],
+    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-12.crv": [
+      "degraded:document"
     ],
     "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": [
       "degraded:soft_break"
@@ -1203,6 +1338,9 @@
     ],
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": [
       "dropped:caption_number"
+    ],
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-3.crv": [
+      "degraded:document"
     ],
     "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": [
       "degraded:soft_break"
@@ -1550,192 +1688,7 @@
     ]
   },
   "refused": {},
-  "sourceLossy": {
-    "108-security-hardening-11.crv": {
-      "reason": "the sanitized-away `href` attribute is not carried through the bridge, so the link comes back without it",
-      "carve": "[safe](https://example.com)\n"
-    },
-    "130-bold-italic-delimiter-needs-content-3.crv": {
-      "reason": "the nested emphasis delimiters reflow: `/*x*/` comes back `*/x/*`",
-      "carve": "*/x/*\n"
-    },
-    "130-bold-italic-delimiter-needs-content-4.crv": {
-      "reason": "the nested emphasis delimiters reflow and gain braces: `a/*y*/b` comes back `a{*/y/*}b`",
-      "carve": "a{*/y/*}b\n"
-    },
-    "202-a-definition-on-a-footnote-body-s-continuation-line-is-collected.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "see[^a] and [t][r]\n\n[r]: /u\n\n[^a]: note\n"
-    },
-    "220-a-definition-past-a-footnote-body-s-column-registers-from-its-authored-base.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "see[^a] and [t][r]\n\n[r]: /u\n\n[^a]: note\n"
-    },
-    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace-2.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
-      "carve": ":: term\n: {empty}\n\nsee[^f]\n\n[^f]: x\n"
-    },
-    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
-      "carve": ":: term\n: {empty}\n\nsee [t][r]\n\n[r]: /u\n"
-    },
-    "228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "- a\n+\nmore\n\nsee[^f]\n\n[^f]: x\n"
-    },
-    "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": {
-      "reason": "the two footnote definitions come back in label order rather than the order they were written",
-      "carve": "see[^b] and[^a]\n\n[^a]: ay\n\n[^b]: bee\n"
-    },
-    "287-a-column-zero-definition-ends-an-open-list-item-4.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "1. x\n+\n[t][r]\n\n[r]: /u\n"
-    },
-    "312-a-note-body-s-own-references-resolve-3.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "a [^1] b\n\n[r]: /u\n\n[^1]: see [t[^2]][r]\n\n[^2]: two\n"
-    },
-    "312-a-note-body-s-own-references-resolve.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "a [^1] b\n\n[r]: /u\n\n[^1]: see [x][r]\n"
-    },
-    "323-a-block-attached-after-an-invisible-line-leaves-the-item-tight-3.crv": {
-      "reason": "the link definition inside the item is relocated to document level",
-      "carve": "- a\n  - b\n- c\n\n[r]: /u\n"
-    },
-    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-5.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "* * +\n\n:\n\n[d]: u\n"
-    },
-    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-6.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "* * +\n  :\n\n[d]: u\n"
-    },
-    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-8.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "* * +\n\n%%\n\n:\n\n[d]: u\n"
-    },
-    "417-an-authored-base-carries-opaque-payload-captions-and-nested-metadata-4.crv": {
-      "reason": "the nested footnote definition is hoisted above the note whose body held it",
-      "carve": "see[^outer]\n\n[^inner]: note\n\n[^outer]: intro\n\n  see[^inner]\n"
-    },
-    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-3.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "- lead\n  - +\n\nSee [t][].\n\n[t]: /t\n"
-    },
-    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-7.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "- lead\n  - +\n\nSee [t][].\n\n[t]: /t\n"
-    },
-    "447-the-host-does-not-change-which-column-a-definition-reaches-10.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "- x\n\nSee [r][] and [^g].\n\n[r]: /url\n\n[^g]: b\n"
-    },
-    "447-the-host-does-not-change-which-column-a-definition-reaches-13.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the `dd` `{empty}`",
-      "carve": ":: t\n: {empty}\n\nSee [r][] and [^g].\n\n[r]: /url\n\n[^g]: b\n"
-    },
-    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": {
-      "reason": "the link definition inside the nested item is relocated to document level",
-      "carve": ":: t\n: - a\n    more\n\nSee [r][].\n\n[r]: /url\n"
-    },
-    "447-the-host-does-not-change-which-column-a-definition-reaches-24.crv": {
-      "reason": "the definition written inside the container is relocated to document level, and what is left of the container collapses, leaving the item `+`",
-      "carve": "- a\n+\nmore\n\nSee [r][].\n\n[r]: /b\n"
-    },
-    "447-the-host-does-not-change-which-column-a-definition-reaches-7.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  - a\n"
-    },
-    "447-the-host-does-not-change-which-column-a-definition-reaches-8.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  :: t\n  : d\n"
-    },
-    "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-3.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "see[^f]\n\n[r][]\n\n[r]: /url\n\n[^f]: a\n\n  > q\n"
-    },
-    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-2.crv": {
-      "reason": "the footnote definition inside the item is relocated to document level",
-      "carve": "- body\n  > z\n\nafter\n\n[^g]: n\n"
-    },
-    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-4.crv": {
-      "reason": "the footnote definition inside the item is relocated to document level",
-      "carve": "- body\n  - item\n\nafter\n\n[^g]: n\n"
-    },
-    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item.crv": {
-      "reason": "the footnote definition inside the item is relocated to document level",
-      "carve": "- body\n  # h\n\nafter\n\n[^g]: n\n"
-    },
-    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves-2.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n\n[^h]: inner\n"
-    },
-    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n\n[^h]: inner\n"
-    },
-    "457-a-container-closer-closes-its-container-in-a-footnote-body-too.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "see[^f]\n\n[r][]\n\n[r]: /url\n\n[^f]: a\n\n  ::: note\n\n  :::\n"
-    },
-    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach-2.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n\n[^h]: inner\n\n  TAILWORD\n"
-    },
-    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n\n  TAILWORD\n\n[^h]: inner\n"
-    },
-    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-2.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n"
-    },
-    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-3.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n\n  TAILWORD\n"
-    },
-    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker.crv": {
-      "reason": "the link definition comes back ahead of the footnote definitions; the canonical writer keeps the order they were authored in",
-      "carve": "x[^f] [^g] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n"
-    },
-    "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": {
-      "reason": "the nested emphasis delimiters reflow: `/*x*/` comes back `*/x/*`",
-      "carve": "*/x/*\n"
-    },
-    "473-a-run-of-asterisks-inside-a-combined-token-is-content-2.crv": {
-      "reason": "the combined bold-italic delimiters reflow and gain braces, because the content would otherwise close the reflowed token: `/***/` comes back `*{/*/}*`",
-      "carve": "*{/**/}*\n"
-    },
-    "473-a-run-of-asterisks-inside-a-combined-token-is-content.crv": {
-      "reason": "the combined bold-italic delimiters reflow and gain braces, because the content would otherwise close the reflowed token: `/***/` comes back `*{/*/}*`",
-      "carve": "*{/*/}*\n"
-    },
-    "486-any-character-is-content-of-the-combined-bold-italic-token-2.crv": {
-      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
-      "carve": "*/a<b/* y\n\n*/a # b/* y\n\n*/a{b}c/* y\n\n*/a€b/* y\n\n*/a b/* y\n"
-    },
-    "486-any-character-is-content-of-the-combined-bold-italic-token-4.crv": {
-      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
-      "carve": "*/a\\\nb/* y\n"
-    },
-    "486-any-character-is-content-of-the-combined-bold-italic-token-5.crv": {
-      "reason": "the combined bold-italic delimiters reflow and the inline comment's braces gain padding: `/*a{%c%}b*/` comes back `*/a{% c %}b/*`",
-      "carve": "*/a{% c %}b/* y\n"
-    },
-    "486-any-character-is-content-of-the-combined-bold-italic-token.crv": {
-      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
-      "carve": "*/a\tb/* y\n"
-    },
-    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-12.crv": {
-      "reason": "the combined bold-italic delimiters reflow: `/*x*/` comes back `*/x/*`",
-      "carve": "*/\fx/* y\n"
-    },
-    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-3.crv": {
-      "reason": "the combined bold-italic delimiters reflow and gain braces, because the content would otherwise close the reflowed token: `/***/` comes back `*{/*/}*`",
-      "carve": "*{/a %% b/}* y\n"
-    }
-  },
+  "sourceLossy": {},
   "reportedHtml": {
     "01-emphasis.crv": "<p><em>italic</em>  <strong>bold</strong>  <strong><em>bold italic</em></strong> <u>underline</u>  <s>strikethrough</s> <mark>highlight</mark>  <sup>super</sup>  <sub>sub</sub></p>",
     "05-lists-13.crv": "<p>text - item</p>",
@@ -2153,8 +2106,11 @@
     "05-lists-2.crv": "\\- not a list\n",
     "05-lists-21.crv": "1. outer\n   1. inner lazy\n   2. sibling\n",
     "05-lists-8.crv": "1. outer 1. inner\n",
+    "108-security-hardening-11.crv": "[safe](https://example.com)\n",
     "109-link-destination-parentheses-balance-4.crv": "[t](url more)\n",
     "12-inline-code-5.crv": "text `\ncode`\n",
+    "130-bold-italic-delimiter-needs-content-3.crv": "*/x/*\n",
+    "130-bold-italic-delimiter-needs-content-4.crv": "a{*/y/*}b\n",
     "134-footnote-definition-requires-an-inline-body.crv": "Use [^a].\n\n[^a]\\: First\n",
     "143-post-blank-list-continuation-content-column-model-4.crv": "- one > q\n",
     "145-definition-list-as-a-first-class-block-opener-3.crv": "- one :: term :  def\n",
@@ -2200,16 +2156,22 @@
     "19-smart-typography-dashes-and-quotes.crv": "He paused – then ran — fast… “Stop!” it’s over.\n",
     "194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition.crv": "- a *[HTML]: Hyper Text\n\nThe HTML spec.\n",
     "20-smart-typography-arrows-and-symbols.crv": "Flow: a → b ← c ↔ d ⇒ e; x ≠ y, p ≤ q, r ≥ s, ±1. © 2024, ®, ™. Dates like 1/2/2024 stay literal.\n",
+    "202-a-definition-on-a-footnote-body-s-continuation-line-is-collected.crv": "see[^a] and [t][r]\n\n[r]: /u\n\n[^a]: note\n",
     "208-a-combined-bold-italic-span-may-cross-a-line.crv": "*/multi line/*\n",
     "209-an-unresolved-reference-image-takes-no-caption.crv": "![a][nope] ^ cap\n",
     "210-a-quote-marker-is-plus-a-space-and-a-lazy-line-keeps-its-own-text.crv": "> ok >bad\n",
     "22-footnotes-2.crv": "See the note[^m].\n\n[^m]: First line of the note and a continuation line.\n",
     "22-footnotes-6.crv": "Wrapped\\[^two words].\n\n\\[^broken label]: This is not a definition.\n\n[^two words]: This definition is not referenced.\n",
+    "220-a-definition-past-a-footnote-body-s-column-registers-from-its-authored-base.crv": "see[^a] and [t][r]\n\n[r]: /u\n\n[^a]: note\n",
     "223-an-abbreviation-term-is-one-ascii-alphanumeric-word-2.crv": "*[ß]: sharp s *[e.g.]: for example *[HTTP API]: an interface\n\nText about ss and eg below.\n",
     "223-an-abbreviation-term-is-one-ascii-alphanumeric-word.crv": "A dl, a 3D one, and 9.\n",
     "224-a-tab-reaches-a-footnote-body-s-column-just-as-two-spaces-do-3.crv": "see[^a]\n\n[^a]: note more\n",
+    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace-2.crv": ":: term\n: {empty}\n\nsee[^f]\n\n[^f]: x\n",
+    "227-a-definition-inside-a-definition-list-dd-is-collected-and-the-entry-keeps-no-trace.crv": ":: term\n: {empty}\n\nsee [t][r]\n\n[r]: /u\n",
+    "228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block.crv": "- a\n+\nmore\n\nsee[^f]\n\n[^f]: x\n",
     "231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose-2.crv": "![Moon](m.jpg) ^\tFigure 1\n",
     "232-two-dashes-are-not-a-thematic-break.crv": "a\n\n–\n\nb\n",
+    "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": "see[^b] and[^a]\n\n[^a]: ay\n\n[^b]: bee\n",
     "24-generic-divs-2.crv": "::: {.sidebar} not a div :::\n",
     "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it-2.crv": "- a +\n\nx\n",
     "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it.crv": "- a +\n\nsee [t][r]\n\n[r]: /u\n",
@@ -2290,6 +2252,7 @@
     "286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption-3.crv": "> Text ^ Figure 1: moon\n",
     "286-a-caret-line-does-not-end-a-paragraph-it-cannot-caption.crv": "Text ^ Figure 1: moon\n",
     "287-a-column-zero-definition-ends-an-open-list-item-3.crv": "1. x [r]: /u\n",
+    "287-a-column-zero-definition-ends-an-open-list-item-4.crv": "1. x\n+\n[t][r]\n\n[r]: /u\n",
     "287-a-column-zero-definition-ends-an-open-list-item.crv": "1. x [t](u) _u_\n\n[t][r] #\n\n[r]: /u\n",
     "29-non-breaking-space-2.crv": "say ‘twas a fine “day”\n",
     "29-non-breaking-space.crv": "10 kg\n",
@@ -2298,6 +2261,8 @@
     "305-an-abbreviation-expands-inside-an-inline-container-4.crv": "Both *HTML* and [HTML](/u) expand.\n",
     "305-an-abbreviation-expands-inside-an-inline-container-5.crv": "The [HTML]{abbr=Custom} key.\n",
     "305-an-abbreviation-expands-inside-an-inline-container.crv": "The [HTML]{.x} key.\n",
+    "312-a-note-body-s-own-references-resolve-3.crv": "a [^1] b\n\n[r]: /u\n\n[^1]: see [t[^2]][r]\n\n[^2]: two\n",
+    "312-a-note-body-s-own-references-resolve.crv": "a [^1] b\n\n[r]: /u\n\n[^1]: see [x][r]\n",
     "318-composite-figures-10.crv": "{#fig-m}\n:::\n|= Kind |= N |\n| a | 1 |\n\n```js\nconst x = 1\n```\n^ A listing panel\n\n$$`E = mc^2`\n^ An equation panel\n\n> Measured twice.\n\n> Brevity.\n^ A quoted panel\n\nFigure : Mixed panels\n:::\n",
     "318-composite-figures-11.crv": ":::\n:::: note\n![x](x.png)\n^ Figure : inner\n::::\n\nFigure : group\n:::\n",
     "318-composite-figures-2.crv": "{#fig-first}\n![lead](lead.png)\n^ Figure : First\n\n{#fig-x}\n:::\n{#fig-x-a}\n![one](a.png)\n^ (a) One\n\n{#fig-x-b}\n![two](b.png)\n^ (b) Two\n\nFigure : Second\n:::\n\nSee </#fig-x> and </#fig-x-a>.\n",
@@ -2307,6 +2272,7 @@
     "318-composite-figures-6.crv": ":::\n![one](a.png)\n^ (a) One\n:::\n\n^ Figure #: Detached\n",
     "318-composite-figures-9.crv": ":::\n:::: figure\n![one](a.png)\n^ (a) One\n::::\n\nFigure : Outer only\n:::\n",
     "318-composite-figures.crv": "{#fig-x .columns-2}\n:::\n{#fig-x-a}\n![one](a.png)\n^ (a) One\n\n{#fig-x-b}\n![two](b.png)\n^ (b) Two\n\nFigure : Group caption\n:::\n",
+    "323-a-block-attached-after-an-invisible-line-leaves-the-item-tight-3.crv": "- a\n  - b\n- c\n\n[r]: /u\n",
     "324-an-abbreviation-definition-in-an-item-body-is-paragraph-text-5.crv": "A here\n",
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-12.crv": "- > q tail\n",
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-13.crv": "- a tail\n",
@@ -2369,6 +2335,9 @@
     "379-a-reference-definition-cannot-take-its-destination-from-the-next-line.crv": "* \\[d]: :::\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-2.crv": "* * u % :\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-3.crv": "* * u % :\n",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-5.crv": "* * +\n\n:\n\n[d]: u\n",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-6.crv": "* * +\n  :\n\n[d]: u\n",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-8.crv": "* * +\n\n%%\n\n:\n\n[d]: u\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item.crv": "* * u % :\n",
     "382-a-marker-line-link-definition-is-collected-where-no-paragraph-is-open-2.crv": "para * [d]: u\n",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-2.crv": "::: n\nr - [d]: u\n:::\n\n[go][d]\n",
@@ -2395,6 +2364,7 @@
     "41-line-blocks-9.crv": "::: |\ntab gap\nwide        gap\n    lead\n:::\n",
     "415-a-floating-attribute-does-not-widen-a-list-item-s-content-column-5.crv": "-{#k} text # h\n",
     "416-a-fenced-block-quote-is-the-block-quote-written-another-way-3.crv": ":::> x :::\n",
+    "417-an-authored-base-carries-opaque-payload-captions-and-nested-metadata-4.crv": "see[^outer]\n\n[^inner]: note\n\n[^outer]: intro\n\n  see[^inner]\n",
     "42-admonitions-6.crv": "::: note \"Install now via npm\"\nBody.\n:::\n",
     "421-a-sigil-fence-takes-its-attribute-line.crv": "{#poem .verse}\n::: |\nRoses are red,\n  Violets are blue.\n:::\n",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": "see[^n]\n\n[^n]: intro\n\n  > quote ordinary line\n",
@@ -2428,17 +2398,25 @@
     "439-a-colon-followed-by-only-whitespace-is-not-a-description-7.crv": ":: t :\n\nflush\n",
     "439-a-colon-followed-by-only-whitespace-is-not-a-description.crv": ":: t :\n\nflush\n",
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-2.crv": "- lead - [t]: /t\n\nSee [t][].\n",
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-3.crv": "- lead\n  - +\n\nSee [t][].\n\n[t]: /t\n",
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-5.crv": "- lead - [t]: /t\n\nSee [t][].\n",
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-6.crv": "- lead - [t]: /t\n\nSee [t][].\n",
+    "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-7.crv": "- lead\n  - +\n\nSee [t][].\n\n[t]: /t\n",
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-9.crv": "- lead - prose - [t]: /t\n\nSee [t][].\n",
     "444-an-opener-at-or-past-a-description-body-s-column-closes-its-paragraph-10.crv": ":: term\n: definition more tail\n",
     "444-an-opener-at-or-past-a-description-body-s-column-closes-its-paragraph-11.crv": ":: term\n: definition\n\n  > q tail\n",
     "446-a-degraded-comment-fence-leaves-a-lazy-follower-where-the-line-form-does-3.crv": "- x\n  %% %\n  body y\n",
     "446-a-degraded-comment-fence-leaves-a-lazy-follower-where-the-line-form-does-4.crv": "- x\n  %% z\n  body y\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-10.crv": "- x\n\nSee [r][] and [^g].\n\n[r]: /url\n\n[^g]: b\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-13.crv": ":: t\n: {empty}\n\nSee [r][] and [^g].\n\n[r]: /url\n\n[^g]: b\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-16.crv": ":: t\n: - a *[HTML]: HyperText\n\nHTML here.\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-17.crv": ":: t\n: d [r]: /url\n\nSee [r][].\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-18.crv": ":: t\n: - a more\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-19.crv": ":: t\n: d\n\n  > q tail\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": ":: t\n: - a\n    more\n\nSee [r][].\n\n[r]: /url\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-24.crv": "- a\n+\nmore\n\nSee [r][].\n\n[r]: /b\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-7.crv": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  - a\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-8.crv": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  :: t\n  : d\n",
     "448-a-marker-folds-into-a-quote-below-it-2.crv": "- > - x - m\n",
     "448-a-marker-folds-into-a-quote-below-it-3.crv": "- a\n  > - x p - m\n",
     "448-a-marker-folds-into-a-quote-below-it-4.crv": "- a\n  > q - m\n",
@@ -2449,15 +2427,28 @@
     "45-inline-extensions-5.crv": ":1[x] :a1[x]\n",
     "45-inline-extensions-9.crv": "[*Ctrl*+C]{#copy .shortcut kbd data-key=copy onclick=alert(1)} [x]{kbd onclick=alert(1)}\n",
     "450-a-closed-fence-in-a-description-body-ends-it-3.crv": ":: term\n: definition `\n  c\n  tail`\n",
+    "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-3.crv": "see[^f]\n\n[r][]\n\n[r]: /url\n\n[^f]: a\n\n  > q\n",
     "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-8.crv": "- a\n\n  > q first\n\n  second\n",
     "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-9.crv": "> a ::: note [r]: /url :::\n\n[r][]\n",
     "452-an-empty-unterminated-container-ends-at-a-flush-left-line-5.crv": ":: t\n: d\n\n  ::: d\n  body tail\n  :::\n",
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-2.crv": "- body\n  > z\n\nafter\n\n[^g]: n\n",
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-4.crv": "- body\n  - item\n\nafter\n\n[^g]: n\n",
+    "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item.crv": "- body\n  # h\n\nafter\n\n[^g]: n\n",
+    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves-2.crv": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n\n[^h]: inner\n",
+    "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves.crv": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n\n[^h]: inner\n",
+    "457-a-container-closer-closes-its-container-in-a-footnote-body-too.crv": "see[^f]\n\n[r][]\n\n[r]: /url\n\n[^f]: a\n\n  ::: note\n\n  :::\n",
+    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach-2.crv": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n\n[^h]: inner\n\n  TAILWORD\n",
+    "459-a-trailing-line-after-a-consumed-definition-is-placed-by-column-reach.crv": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n\n  TAILWORD\n\n[^h]: inner\n",
     "46-symbols-3.crv": "Vote :+1: or :-1:. Tolerance :+-: is a symbol, but a ± b and word:±: are not.\n",
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-2.crv": "x[^f] [^g] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n",
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker-3.crv": "x[^f] [^g] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n\n  TAILWORD\n",
+    "460-a-nested-note-s-floor-is-two-columns-past-its-own-marker.crv": "x[^f] [^g] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n[^g]: mid\n",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-2.crv": ":: t\n: {empty}\n\ntail\n\n[^f]: note cont\n",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-3.crv": ":: t\n: tail\n\n[^f]: note - nested\n",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-4.crv": ":: t\n: - nested tail\n\n[^f]: note\n",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling.crv": ":: t\n: {empty}\n\ntail\n\n[^f]: note - nested\n",
     "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": "~/xy\\~/\n",
+    "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": "*/x/*\n",
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": "{/x/}\\_y z_ w\n",
     "469-an-empty-link-destination-is-not-a-link-3.crv": "[x]( “t”)\n",
     "47-numbered-cross-references-11.crv": "![a](a.jpg)\n^ x\n",
@@ -2470,6 +2461,8 @@
     "47-numbered-cross-references.crv": "{#fig-sun}\n![A sunset](sun.jpg)\n^ Figure : A sunset\n",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv": "{~a\\~>b~>c~}\n\n{~a\\~>b~>c~}\n\n{~ab~>c~}\n",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv": "~`a~>b`~\n\n~a `x~>y` b~\n\n{~old~>new~}\n\n~a\\~>b~\n",
+    "473-a-run-of-asterisks-inside-a-combined-token-is-content-2.crv": "*{/**/}*\n",
+    "473-a-run-of-asterisks-inside-a-combined-token-is-content.crv": "*{/*/}*\n",
     "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": "- > q\n  ```\n  b\n  ```\n\ny ``\n",
     "476-an-item-s-fence-is-read-once-whatever-block-it-follows.crv": "- ![a](i)\n  ^ cap\n  ```\n  b\n  ```\n\ny ``\n",
     "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-7.crv": "{~a \\~> b~>c~} d\n",
@@ -2510,8 +2503,13 @@
     "485-a-quote-after-an-escaped-quote-closes-4.crv": "“\\\"’q’”\n",
     "485-a-quote-after-an-escaped-quote-closes-5.crv": "“‘q’”\n",
     "485-a-quote-after-an-escaped-quote-closes.crv": "“a\\\"”\n\n“\\\"”\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-2.crv": "*/a<b/* y\n\n*/a # b/* y\n\n*/a{b}c/* y\n\n*/a€b/* y\n\n*/a b/* y\n",
     "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": "*/a b/* y\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-4.crv": "*/a\\\nb/* y\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-5.crv": "*/a{% c %}b/* y\n",
     "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": "*{/a %% c b/}* y\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token.crv": "*/a\tb/* y\n",
+    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-12.crv": "*/\fx/* y\n",
     "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": "---yaml\f a: 1\n\n---\n\nt\n",
     "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-2.crv": "a *“x”* b\n\na ~*“x”* b\n",
     "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-3.crv": "a.*“x”* b\n\na,_“x”_ b\n",
@@ -2526,6 +2524,7 @@
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-7.crv": "![p](p.png)\n^ Figure x * y \\#: z\n",
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-8.crv": "![p](p.png)\n^ Figure* q\n",
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": "![p](p.png)\n^ Figure * q\n",
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-3.crv": "*{/a %% b/}* y\n",
     "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": "*{/a %% c b/}* y\n",
     "492-adjacent-strong-spans-use-html-only-where-their-delimiters-merge.crv": "*ab*\n",
     "493-empty-containers-share-one-html-body-shape-2.crv": ":::\n%% hidden\n\n%% hidden too\n:::\n\n::: custom\n%% hidden\n:::\n\n::: note\n%% hidden\n:::\n\n::: >\n%% hidden\n:::\n\n::: |\n%% hidden\n:::\n\n{.hardbreaks}\n:::\n%% hidden\n:::\n\n:::\n%% hidden\n:::\n",

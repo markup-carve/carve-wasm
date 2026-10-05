@@ -6,12 +6,15 @@ fails. The gate is `scripts/verify-release-artifact.mjs`, and it is runnable by
 hand against a local build:
 
 ```sh
-wasm-pack build --target bundler --scope markup-carve
+npm ci --ignore-scripts
+npx playwright install --with-deps chromium firefox webkit
+npm run build
 CARVE_SPEC_CORPUS=/path/to/carve/tests/corpus node scripts/verify-release-artifact.mjs
 ```
 
-It runs `npm pack` and drives `tests/smoke.mjs` and `tests/corpus.mjs` at the
-UNPACKED tarball, not at `pkg/`. The difference matters: npm uploads what the
+It runs `npm pack` and drives the smoke, corpus, HTML roundtrip and ProseMirror
+suites at the unpacked tarball. It also installs the package and checks Node,
+TypeScript, Vite and all three browser engines. The difference matters: npm uploads what the
 generated `files` list names, so a payload file left out of it would never
 reach the registry and would never have been tested either. The corpus
 population comes from the spec's example pages, so a truncated corpus fails
@@ -23,14 +26,17 @@ refused rather than skipped.
 1. Merge the version bump: `Cargo.toml` and the `CHANGELOG.md` section have to
    name the version being released. The workflow refuses a tag whose version
    disagrees with `Cargo.toml`.
-2. Write the notes as a DRAFT release for the tag:
-   `gh release create vX.Y.Z --draft --notes-file NOTES.md`. The workflow will
+2. Write the notes as an unpublished draft release for the intended version and
+   exact commit:
+   `gh release create vX.Y.Z --draft --target COMMIT --notes-file NOTES.md`. The workflow will
    not publish without one. Copy the tagged version's `CHANGELOG.md` section,
    excluding its version heading. Resolve relative links to that tag, then add
    `**Full Changelog**: https://github.com/markup-carve/carve-wasm/compare/vPREVIOUS...vX.Y.Z`.
    The stored body must match that section and footer. Rehearse the notes
    gate with `gh workflow run rehearse-release-notes.yml -f tag=vX.Y.Z` before
-   tagging.
+   tagging. After every draft mutation, read it through the API and verify
+   `tag_name`, `target_commitish` and `draft: true`. Do not push a tag or publish
+   the package while preparing the draft.
 3. Push the tag. The gate builds and verifies the packed tarball, npm publishes,
    and the last step flips the draft to published.
 

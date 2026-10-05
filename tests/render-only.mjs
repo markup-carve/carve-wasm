@@ -52,6 +52,7 @@ for (const name of [
   'htmlToAst',
   'expandIncludes',
   'parseSnapshot',
+  'ParserSession',
   'reparse',
   'mergeAst',
   'createAstPatch',

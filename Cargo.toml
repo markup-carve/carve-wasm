@@ -1,6 +1,6 @@
 [package]
 name = "carve-wasm"
-version = "0.1.5"
+version = "0.1.6"
 edition = "2021"
 rust-version = "1.75"
 description = "WASM bindings for the Carve parser and HTML renderer."
@@ -59,8 +59,8 @@ stamp = []
 # scripts/pinned-spec-commit.py resolves it through the carve-rs release tag to
 # the spec the corpus gate runs against. Bump it deliberately: see
 # docs/engine-pin.md.
-# Temporary: the carve-lang 0.1.8 cut; returns to version = "=0.1.8" once published.
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "46946d4fcb0b62f9a07ca5e19361ac8953a6d572" }
+# Temporary Git pin for engine fixes; use an exact registry release after it includes them.
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "20868cd0d885aae3f5d119b8b7f95047ec0c66f0" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }

@@ -6,3 +6,7 @@ release-artifact/
 # Python bytecode from the checker scripts.
 __pycache__/
 *.pyc
+
+node_modules/
+consumer-artifact/
+benchmark-results.json

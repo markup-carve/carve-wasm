@@ -98,8 +98,9 @@ if (!existsSync(unpacked)) die(`the tarball did not unpack to ${unpacked}`)
 // tarball that is still a valid package, and the failure would otherwise
 // surface as an obscure import error.
 const shipped = new Set(readdirSync(unpacked))
-const required = ['package.json', 'carve_wasm.js', 'carve_wasm_bg.wasm']
-const absent = required.filter((name) => !shipped.has(name))
+const required = ['package.json', 'carve_wasm.js', 'carve_wasm_bg.js', 'carve_wasm_bg.wasm', 'carve_wasm.d.ts', 'node', 'web', 'render', 'examples']
+const nested = ['examples/offsets.mjs', 'examples/offsets.d.ts', 'render/carve_wasm_bg.wasm']
+const absent = [...required.filter((name) => !shipped.has(name)), ...nested.filter(name => !existsSync(join(unpacked, name)))]
 if (absent.length > 0) {
   die(
     `the tarball is missing ${absent.join(', ')}. npm uploads what the "files" list in ` +
@@ -115,6 +116,9 @@ const suite = [
   ['tests/smoke.mjs', 'the hand-written API cases'],
   ['tests/corpus.mjs', 'the spec corpus, every document, byte-identical'],
   ['tests/roundtrip.mjs', "HTML this artifact produced, read back through htmlToCarve's roundtrip mode"],
+  ['tests/prosemirror.mjs', 'ProseMirror fidelity over the packed corpus'],
+  ['tests/consumers.mjs', 'installed package types, Node and browser integration'],
+  ['scripts/benchmark.mjs', 'startup, rendering, retained edits and memory'],
   ['tests/deep-nesting.mjs', 'how much host stack the AST path needs'],
 ]
 
@@ -128,7 +132,7 @@ const STACK = ['--stack-size=4000']
 for (const [file, what] of suite) {
   console.log(`\nrelease gate: ${file} - ${what}`)
   try {
-    process.stdout.write(run(process.execPath, [file], { cwd: root, env, stdio: ['ignore', 'pipe', 'inherit'] }))
+    process.stdout.write(run(process.execPath, [...(file === 'tests/deep-nesting.mjs' ? [] : STACK), file], { cwd: root, env, stdio: ['ignore', 'pipe', 'inherit'] }))
   } catch (error) {
     if (error.stdout) process.stdout.write(error.stdout)
     die(`${file} failed against the packed artifact. This release must not publish.`)

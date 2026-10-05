@@ -134,7 +134,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -171,12 +171,24 @@ jobs:
           # not the same build.
           version: 'v0.15.0'
 
-      - name: Build the wasm package
-        run: wasm-pack build --target nodejs
-
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Build the npm package
+        run: node scripts/build-package.mjs
+      - name: Check declarations for custom feature selections
+        run: node tests/feature-types.mjs
+      - name: Test installed package consumers
+        run: node tests/consumers.mjs
+      - name: Measure startup, rendering, edits and memory
+        run: node scripts/benchmark.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: benchmark-results.json
+          if-no-files-found: error
 
       - name: Test the wasm artifact through its JS API
         run: node tests/smoke.mjs
@@ -185,7 +197,7 @@ jobs:
       # profile both works in a browser-style module and leaves every API the
       # host does not call unreachable.
       - name: Build the rendering-only web package
-        run: wasm-pack build --target web --release --out-dir pkg-render . --no-default-features
+        run: cp -r pkg/render pkg-render
 
       - name: Test the rendering-only web package
         env:

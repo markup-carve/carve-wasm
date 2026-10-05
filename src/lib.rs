@@ -333,7 +333,10 @@ pub fn to_carve_patch(source: &str) -> Result<JsValue, JsValue> {
 #[cfg(feature = "source-patches")]
 #[wasm_bindgen(js_name = applySourcePatch)]
 /// Apply a trusted patch after its source length and fingerprint still match.
-pub fn apply_source_patch(source: &str, patch: JsValue) -> Result<String, JsValue> {
+pub fn apply_source_patch(
+    source: &str,
+    #[wasm_bindgen(unchecked_param_type = "SourcePatch")] patch: JsValue,
+) -> Result<String, JsValue> {
     let patch =
         serde_wasm_bindgen::from_value::<source_patch::SourcePatch>(patch).map_err(|error| {
             js_sys::TypeError::new(&format!("carve: invalid source patch: {error}"))
@@ -399,11 +402,21 @@ fn render_report_fields_to_js(
 }
 
 #[cfg(feature = "reports")]
-fn checked_options(strict: Option<bool>, maximum: Option<u32>) -> carve::CheckedRenderOptions {
-    carve::CheckedRenderOptions {
-        strict: strict.unwrap_or(false),
-        max_losses: maximum.map_or(carve::DEFAULT_MAX_RENDER_LOSSES, |value| value as usize),
-    }
+fn checked_options(
+    strict: Option<JsValue>,
+    maximum: Option<JsValue>,
+) -> Result<carve::CheckedRenderOptions, JsValue> {
+    let strict = match strict.filter(|value| !value.is_null() && !value.is_undefined()) {
+        None => false,
+        Some(value) => value
+            .as_bool()
+            .ok_or_else(|| type_error("carve: `strict` must be a boolean"))?,
+    };
+    let max_losses = match maximum.filter(|value| !value.is_null() && !value.is_undefined()) {
+        None => carve::DEFAULT_MAX_RENDER_LOSSES,
+        Some(value) => unsigned_integer(&value, "maximum")?,
+    };
+    Ok(carve::CheckedRenderOptions { strict, max_losses })
 }
 
 #[cfg(feature = "reports")]
@@ -435,67 +448,67 @@ fn checked_result(
 }
 
 #[cfg(feature = "reports")]
-#[wasm_bindgen(js_name = toHtmlWithReport)]
+#[wasm_bindgen(js_name = toHtmlWithReport, skip_typescript)]
 pub fn to_html_with_report(
     source: &str,
-    strict: Option<bool>,
-    maximum: Option<u32>,
+    #[wasm_bindgen(unchecked_param_type = "boolean | null")] strict: Option<JsValue>,
+    #[wasm_bindgen(unchecked_param_type = "number | null")] maximum: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
     checked_result(carve::to_html_with_report(
         source,
-        checked_options(strict, maximum),
+        checked_options(strict, maximum)?,
     ))
 }
 
 #[cfg(feature = "reports")]
-#[wasm_bindgen(js_name = toMarkdownWithReport)]
+#[wasm_bindgen(js_name = toMarkdownWithReport, skip_typescript)]
 pub fn to_markdown_with_report(
     source: &str,
-    strict: Option<bool>,
-    maximum: Option<u32>,
+    #[wasm_bindgen(unchecked_param_type = "boolean | null")] strict: Option<JsValue>,
+    #[wasm_bindgen(unchecked_param_type = "number | null")] maximum: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
     checked_result(carve::to_markdown_with_report(
         source,
-        checked_options(strict, maximum),
+        checked_options(strict, maximum)?,
     ))
 }
 
 #[cfg(feature = "reports")]
-#[wasm_bindgen(js_name = toPlainTextWithReport)]
+#[wasm_bindgen(js_name = toPlainTextWithReport, skip_typescript)]
 pub fn to_plain_text_with_report(
     source: &str,
-    strict: Option<bool>,
-    maximum: Option<u32>,
+    #[wasm_bindgen(unchecked_param_type = "boolean | null")] strict: Option<JsValue>,
+    #[wasm_bindgen(unchecked_param_type = "number | null")] maximum: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
     checked_result(carve::to_plain_text_with_report(
         source,
-        checked_options(strict, maximum),
+        checked_options(strict, maximum)?,
     ))
 }
 
 #[cfg(feature = "reports")]
-#[wasm_bindgen(js_name = toAnsiWithReport)]
+#[wasm_bindgen(js_name = toAnsiWithReport, skip_typescript)]
 pub fn to_ansi_with_report(
     source: &str,
-    strict: Option<bool>,
-    maximum: Option<u32>,
+    #[wasm_bindgen(unchecked_param_type = "boolean | null")] strict: Option<JsValue>,
+    #[wasm_bindgen(unchecked_param_type = "number | null")] maximum: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
     checked_result(carve::to_ansi_with_report(
         source,
-        checked_options(strict, maximum),
+        checked_options(strict, maximum)?,
     ))
 }
 
 #[cfg(feature = "reports")]
-#[wasm_bindgen(js_name = toCarveWithReport)]
+#[wasm_bindgen(js_name = toCarveWithReport, skip_typescript)]
 pub fn to_carve_with_report(
     source: &str,
-    strict: Option<bool>,
-    maximum: Option<u32>,
+    #[wasm_bindgen(unchecked_param_type = "boolean | null")] strict: Option<JsValue>,
+    #[wasm_bindgen(unchecked_param_type = "number | null")] maximum: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
     checked_result(carve::to_carve_with_report(
         source,
-        checked_options(strict, maximum),
+        checked_options(strict, maximum)?,
     ))
 }
 
@@ -571,10 +584,10 @@ pub fn parse_json(source: &str) -> String {
 /// `positions` is not read: every serialized tree this binding produces carries
 /// them, as in [`parse_json`].
 #[cfg(feature = "ast-json")]
-#[wasm_bindgen(js_name = parseJsonWithOptions)]
+#[wasm_bindgen(js_name = parseJsonWithOptions, skip_typescript)]
 pub fn parse_json_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     let Some(mut request) = RenderRequest::read(options)? else {
         return Ok(parse_json(source));
@@ -791,6 +804,46 @@ fn profile_violation_error(error: carve::ProfileViolationError) -> JsValue {
     js_error.into()
 }
 
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_OTHER_RENDERERS: &str = r#"
+export function toMarkdownWithOptions(source: string, options?: RenderOptions | null): string;
+export function toPlainTextWithOptions(source: string, options?: RenderOptions | null): string;
+export function toAnsiWithOptions(source: string, options?: RenderOptions | null): string;
+export function toCarveWithOptions(source: string, options?: RenderOptions | null): string;
+"#;
+
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_AST_JSON: &str = r#"
+export function parseJsonWithOptions(source: string, options?: RenderOptions | null): string;
+export function astJsonToHtml(json: string, options?: RenderOptions | null): string;
+"#;
+
+#[cfg(all(feature = "ast-json", feature = "other-renderers"))]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_AST_JSON_TEXT: &str = r#"
+export function astJsonToMarkdown(json: string, options?: RenderOptions | null): string;
+export function astJsonToPlainText(json: string, options?: RenderOptions | null): string;
+export function astJsonToAnsi(json: string, options?: RenderOptions | null): string;
+"#;
+
+#[cfg(feature = "lint")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_LINT: &str = r#"
+export function lintCarveWithOptions(source: string, options?: RenderOptions | null): LintWarning[];
+"#;
+
+#[cfg(feature = "reports")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_REPORTS: &str = r#"
+export function toHtmlWithReport(source: string, strict?: boolean | null, maximum?: number | null): RenderResult;
+export function toMarkdownWithReport(source: string, strict?: boolean | null, maximum?: number | null): RenderResult;
+export function toPlainTextWithReport(source: string, strict?: boolean | null, maximum?: number | null): RenderResult;
+export function toAnsiWithReport(source: string, strict?: boolean | null, maximum?: number | null): RenderResult;
+export function toCarveWithReport(source: string, strict?: boolean | null, maximum?: number | null): RenderResult;
+"#;
+
 /// Structural types for the entry points that return objects.
 ///
 /// wasm-bindgen types a `JsValue` return as `any`, which hands a TypeScript
@@ -798,6 +851,81 @@ fn profile_violation_error(error: carve::ProfileViolationError) -> JsValue {
 /// `unchecked_return_type` on the functions below.
 #[wasm_bindgen(typescript_custom_section)]
 const TS_APPEND_CONTENT: &'static str = r#"
+
+export function toHtmlWithOptions(source: string, options?: RenderOptions | null): string;
+export function toHtmlWithRenderers(source: string, options?: StaticRenderOptions | null): StaticRenderResult;
+
+export interface IncludeContext {
+  sourcePath: string | null;
+  stack: string[];
+  depth: number;
+}
+export type IncludeDenial = "outside-root" | "not-found" | "no-root" | "include-denied" | "include-unresolved";
+export interface IncludeOptions {
+  resolve: (path: string, context: IncludeContext) => string | { source: string; id?: string } | { denial: IncludeDenial } | null;
+  sourcePath?: string;
+  extensions?: string[];
+  maxDepth?: number;
+  maxBytes?: number;
+  maxResolverCalls?: number;
+  maxWarnings?: number;
+}
+export interface IncludeExpansion {
+  json: string;
+  warnings: { rule: string; message: string; file: string | null }[];
+  suppressedWarnings: number;
+  dependencies: { id: string; resolved: boolean; denial: IncludeDenial | null }[];
+  chargedBytes: number;
+  resolverErrors: { path: string; message: string }[];
+}
+export interface SourcePosition {
+  startLine: number;
+  endLine: number;
+  startColumn: number;
+  endColumn: number;
+  /** Unicode codepoint offsets, not UTF-8 bytes or UTF-16 units. */
+  startOffset: number;
+  endOffset: number;
+}
+export interface RenderLoss {
+  code: string;
+  format: string;
+  target: string;
+  nodeType: string;
+  message: string;
+  pos?: SourcePosition;
+}
+export interface RenderResult {
+  value: string;
+  losses: RenderLoss[];
+  totalLosses: number;
+  truncated: boolean;
+}
+export interface RenderOptions {
+  full?: boolean;
+  extensions?: string[];
+  symbols?: Record<string, string> | Map<string, string>;
+  rawHtml?: boolean;
+  sections?: boolean;
+  sourceLine?: boolean;
+  positions?: boolean;
+  lowercaseHeadingIds?: boolean;
+  asciiHeadingIds?: "off" | "fold" | "strict";
+  smartTypography?: "glyph" | "source";
+  mode?: "interactive" | "static";
+  profile?: "full" | "article" | "comment" | "minimal";
+  profileBaseHost?: string;
+  mentionUrl?: string;
+  tagUrl?: string;
+  labels?: Record<string, string>;
+}
+export interface StaticRenderOptions extends RenderOptions {
+  renderers?: {
+    math?: (source: string, display: boolean) => string;
+    diagrams?: Record<string, (source: string) => string>;
+  };
+}
+
 export interface LintWarning {
   /** 1-based line number. */
   line: number;
@@ -874,10 +1002,10 @@ export interface SourcePatch {
 }
 
 export interface StaticRendererError {
-  /** The renderer that failed. Only "math" is bound. */
-  renderer: "math";
-  /** True for display math. */
-  display: boolean;
+  /** "math", or the diagram fence class. */
+  renderer: string;
+  /** Present for math callbacks only. */
+  display?: boolean;
   /** The source the renderer was handed. */
   source: string;
   message: string;
@@ -1001,7 +1129,10 @@ pub fn parse_source_layout_json(source: &str) -> String {
 /// caller did not pass.
 #[cfg(feature = "includes")]
 #[wasm_bindgen(js_name = expandIncludes, unchecked_return_type = "IncludeExpansion")]
-pub fn expand_includes(source: &str, options: js_sys::Object) -> Result<JsValue, JsValue> {
+pub fn expand_includes(
+    source: &str,
+    #[wasm_bindgen(unchecked_param_type = "IncludeOptions")] options: js_sys::Object,
+) -> Result<JsValue, JsValue> {
     let request = IncludeRequest::read(&options)?;
     let failures: Rc<RefCell<Vec<ResolverFailure>>> = Rc::default();
     let resolver = js_resolver(request.resolve.clone(), Rc::clone(&failures));
@@ -1141,6 +1272,20 @@ impl IncludeRequest {
     }
 }
 
+/// Validate numbers before narrowing them to the WASM address width.
+#[cfg(any(feature = "includes", feature = "reports"))]
+fn unsigned_integer(value: &JsValue, key: &str) -> Result<usize, JsValue> {
+    value
+        .as_f64()
+        .filter(|n| n.is_finite() && *n >= 0.0 && n.fract() == 0.0 && *n <= u32::MAX as f64)
+        .map(|n| n as usize)
+        .ok_or_else(|| {
+            type_error(&format!(
+                "carve: `{key}` must be an integer between 0 and 4294967295"
+            ))
+        })
+}
+
 /// Read a non-negative integer budget.
 #[cfg(feature = "includes")]
 fn size_field(options: &js_sys::Object, key: &str) -> Result<Option<usize>, JsValue> {
@@ -1148,11 +1293,7 @@ fn size_field(options: &js_sys::Object, key: &str) -> Result<Option<usize>, JsVa
     if value.is_undefined() || value.is_null() {
         return Ok(None);
     }
-    let number = value.as_f64().filter(|n| n.is_finite() && *n >= 0.0);
-    number
-        .map(|n| n as usize)
-        .map(Some)
-        .ok_or_else(|| type_error(&format!("carve: `{key}` must be a non-negative number")))
+    unsigned_integer(&value, key).map(Some)
 }
 
 /// The engine's resolver, over a JS callback.
@@ -1303,8 +1444,8 @@ pub fn parse_snapshot(source: &str) -> String {
 ///
 /// `changes` is a JSON array of `{ range: [start, end], replacement }`.
 ///
-/// THE OFFSETS ARE UTF-8 BYTE OFFSETS, which is what `parseJson` positions and
-/// `createSourcePatch` ranges already mean. A browser editor counts UTF-16 code
+/// THE OFFSETS ARE UTF-8 BYTE OFFSETS, matching `createSourcePatch` ranges.
+/// `parseJson` positions count Unicode codepoints instead. A browser editor counts UTF-16 code
 /// units, so a host holding a `selectionStart` converts before calling - an
 /// offset that lands inside a multi-byte character is refused rather than
 /// guessed at.
@@ -1314,9 +1455,9 @@ pub fn parse_snapshot(source: &str) -> String {
 /// result the caller asked for.
 ///
 /// `reusedPreviousTree` says whether the parse reused any of the previous one.
-/// The pinned engine always reports `false` - it validates and applies the
-/// edits and then parses the whole source - so a host should read this as the
-/// engine's own answer rather than assume work was saved.
+/// The engine can reuse unchanged plain paragraphs. Other syntax falls back
+/// to a full parse. This function rebuilds the initial snapshot from source;
+/// use a parser session to retain it across edits.
 #[cfg(all(feature = "ast-json", feature = "incremental"))]
 #[wasm_bindgen(js_name = reparse)]
 pub fn reparse(source: &str, changes: &str) -> Result<String, JsValue> {
@@ -1326,6 +1467,38 @@ pub fn reparse(source: &str, changes: &str) -> Result<String, JsValue> {
         .map_err(|error| type_error(&format!("carve: {error}")))?;
     let applied = result.snapshot.source().to_string();
     Ok(incremental_json(&result, &applied))
+}
+
+/// A parser snapshot retained between editor updates. Call `free()` when done.
+#[cfg(all(feature = "ast-json", feature = "incremental"))]
+#[wasm_bindgen]
+pub struct ParserSession {
+    parse: carve::IncrementalParse,
+}
+
+#[cfg(all(feature = "ast-json", feature = "incremental"))]
+#[wasm_bindgen]
+impl ParserSession {
+    #[wasm_bindgen(constructor)]
+    pub fn new(source: &str) -> Self {
+        Self {
+            parse: carve::parse_snapshot(source),
+        }
+    }
+
+    /// The current result, with byte ranges and parser-work counters.
+    pub fn snapshot(&self) -> String {
+        incremental_json(&self.parse, self.parse.snapshot.source())
+    }
+
+    /// Apply byte edits; a rejected edit leaves the session unchanged.
+    pub fn edit(&mut self, changes: &str) -> Result<String, JsValue> {
+        let changes = text_changes_from_json(changes)?;
+        let next = carve::reparse(self.parse.snapshot.clone(), &changes)
+            .map_err(|error| type_error(&format!("carve: {error}")))?;
+        self.parse = next;
+        Ok(self.snapshot())
+    }
 }
 
 /// The one JSON object both incremental entry points return.
@@ -1348,6 +1521,7 @@ fn incremental_json(parse: &carve::IncrementalParse, source: &str) -> String {
         "sourceLayout": layout,
         "changedSource": changed,
         "reusedPreviousTree": parse.reused_previous_tree,
+        "parsedSourceBytes": parse.parsed_source_bytes,
     })
     .to_string()
 }
@@ -1372,8 +1546,11 @@ fn text_changes_from_json(input: &str) -> Result<Vec<carve::TextChange>, JsValue
         let offset = |slot: usize| {
             range[slot]
                 .as_u64()
+                .and_then(|n| u32::try_from(n).ok())
                 .map(|n| n as usize)
-                .ok_or_else(|| at("range offsets must be non-negative integers"))
+                .ok_or_else(|| {
+                    at("range offsets must be non-negative integers no greater than 4294967295")
+                })
         };
         let replacement = entry
             .get("replacement")
@@ -1699,8 +1876,11 @@ fn js_resolution(
 /// Takes the same options object as [`to_html_with_options`], so an edited tree
 /// renders under the profile, labels and switches the host already configured.
 #[cfg(feature = "ast-json")]
-#[wasm_bindgen(js_name = astJsonToHtml)]
-pub fn ast_json_to_html(json: &str, options: Option<js_sys::Object>) -> Result<String, JsValue> {
+#[wasm_bindgen(js_name = astJsonToHtml, skip_typescript)]
+pub fn ast_json_to_html(
+    json: &str,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
     let doc = carve::from_json(json)
         .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
     let Some(request) = RenderRequest::read(options)? else {
@@ -1785,10 +1965,10 @@ fn ast_json_to_text(
 /// order available to a tree without spans, so it is reported here rather than
 /// repaired.
 #[cfg(all(feature = "ast-json", feature = "other-renderers"))]
-#[wasm_bindgen(js_name = astJsonToMarkdown)]
+#[wasm_bindgen(js_name = astJsonToMarkdown, skip_typescript)]
 pub fn ast_json_to_markdown(
     json: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     ast_json_to_text(
         json,
@@ -1801,10 +1981,10 @@ pub fn ast_json_to_markdown(
 /// Render an AST-JSON document (PART 12) to plain text. See
 /// [`ast_json_to_markdown`], including what a tree without positions costs.
 #[cfg(all(feature = "ast-json", feature = "other-renderers"))]
-#[wasm_bindgen(js_name = astJsonToPlainText)]
+#[wasm_bindgen(js_name = astJsonToPlainText, skip_typescript)]
 pub fn ast_json_to_plain_text(
     json: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     ast_json_to_text(
         json,
@@ -1817,8 +1997,11 @@ pub fn ast_json_to_plain_text(
 /// Render an AST-JSON document (PART 12) to ANSI-styled text. See
 /// [`ast_json_to_markdown`], including what a tree without positions costs.
 #[cfg(all(feature = "ast-json", feature = "other-renderers"))]
-#[wasm_bindgen(js_name = astJsonToAnsi)]
-pub fn ast_json_to_ansi(json: &str, options: Option<js_sys::Object>) -> Result<String, JsValue> {
+#[wasm_bindgen(js_name = astJsonToAnsi, skip_typescript)]
+pub fn ast_json_to_ansi(
+    json: &str,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
+) -> Result<String, JsValue> {
     ast_json_to_text(
         json,
         options,
@@ -1975,10 +2158,10 @@ fn lint_warnings(found: Vec<carve::LintWarning>) -> Result<JsValue, JsValue> {
 /// `lintCarve` is the option-less form. Which degradations exist depends on the
 /// extensions in play, so a host that renders with a set has to lint with it.
 #[cfg(feature = "lint")]
-#[wasm_bindgen(js_name = lintCarveWithOptions, unchecked_return_type = "LintWarning[]")]
+#[wasm_bindgen(js_name = lintCarveWithOptions, skip_typescript)]
 pub fn lint_carve_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<JsValue, JsValue> {
     let Some(request) = RenderRequest::read(options)? else {
         return lint_carve(source);
@@ -2233,7 +2416,31 @@ fn reason_map(entries: &std::collections::BTreeMap<String, String>) -> Result<Js
 #[cfg(feature = "prosemirror")]
 #[wasm_bindgen(js_name = toProseMirror, unchecked_return_type = "ProseMirrorResult")]
 pub fn to_prose_mirror(source: &str) -> Result<JsValue, JsValue> {
-    let converted = carve::to_prosemirror(&carve::parse(source));
+    let mut converted = carve::to_prosemirror(&carve::parse(source));
+    // A node mapping can keep its type while changing canonical source.
+    // Check the bridge's own output before claiming that nothing changed.
+    if converted.dropped.is_empty() && converted.degraded.is_empty() {
+        let before = carve::to_carve(source);
+        let after = carve::from_prosemirror(&converted.json)
+            .ok()
+            .and_then(|doc| carve::render_carve(&doc).ok())
+            .map(|source| carve::to_carve(&source));
+        match after {
+            Some(after) if before == after => {}
+            Some(_) => {
+                converted.degraded.insert(
+                    "document".into(),
+                    "Canonical source changes on the ProseMirror round trip".into(),
+                );
+            }
+            _ => {
+                converted.degraded.insert(
+                    "document".into(),
+                    "Canonical source preservation could not be verified".into(),
+                );
+            }
+        }
+    }
     let result = js_sys::Object::new();
     js_sys::Reflect::set(
         &result,
@@ -2364,10 +2571,10 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 /// resolve against the slug rather than the element carrying it, and the
 /// endnotes `<section role="doc-endnotes">` is a separate construct that is
 /// still emitted.
-#[wasm_bindgen(js_name = toHtmlWithOptions)]
+#[wasm_bindgen(js_name = toHtmlWithOptions, skip_typescript)]
 pub fn to_html_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     let Some(request) = RenderRequest::read(options)? else {
         return Ok(carve::to_html(source));
@@ -2420,10 +2627,10 @@ fn render_with_options(
 /// `smartTypography` are inert there. They are accepted rather than refused
 /// because one options object is meant to serve every target.
 #[cfg(feature = "other-renderers")]
-#[wasm_bindgen(js_name = toMarkdownWithOptions)]
+#[wasm_bindgen(js_name = toMarkdownWithOptions, skip_typescript)]
 pub fn to_markdown_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     render_with_options(
         source,
@@ -2436,10 +2643,10 @@ pub fn to_markdown_with_options(
 /// Render to plain text with an options object. See
 /// [`to_markdown_with_options`].
 #[cfg(feature = "other-renderers")]
-#[wasm_bindgen(js_name = toPlainTextWithOptions)]
+#[wasm_bindgen(js_name = toPlainTextWithOptions, skip_typescript)]
 pub fn to_plain_text_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     render_with_options(
         source,
@@ -2452,10 +2659,10 @@ pub fn to_plain_text_with_options(
 /// Render to ANSI text with an options object. See
 /// [`to_markdown_with_options`].
 #[cfg(feature = "other-renderers")]
-#[wasm_bindgen(js_name = toAnsiWithOptions)]
+#[wasm_bindgen(js_name = toAnsiWithOptions, skip_typescript)]
 pub fn to_ansi_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     render_with_options(
         source,
@@ -2470,10 +2677,10 @@ pub fn to_ansi_with_options(
 /// `profile` is the only option this target reads; see
 /// [`to_markdown_with_options`] for why.
 #[cfg(feature = "other-renderers")]
-#[wasm_bindgen(js_name = toCarveWithOptions)]
+#[wasm_bindgen(js_name = toCarveWithOptions, skip_typescript)]
 pub fn to_carve_with_options(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
     render_with_options(
         source,
@@ -2539,10 +2746,12 @@ pub fn to_carve_with_options(
 /// This entry point exists because [`to_html_with_options`] returns a bare
 /// string with nowhere to put that, and so it rejects `renderers` rather than
 /// dropping the failures.
-#[wasm_bindgen(js_name = toHtmlWithRenderers, unchecked_return_type = "StaticRenderResult")]
+#[wasm_bindgen(js_name = toHtmlWithRenderers, skip_typescript)]
 pub fn to_html_with_renderers(
     source: &str,
-    options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "StaticRenderOptions | null")] options: Option<
+        js_sys::Object,
+    >,
 ) -> Result<JsValue, JsValue> {
     let failures: Rc<RefCell<Vec<RendererFailure>>> = Rc::default();
     let html = match RenderRequest::read_with(options, true)? {

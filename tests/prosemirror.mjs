@@ -113,6 +113,9 @@ const sourceLossy = strict.filter((result) => result.carve !== null)
 const reportedHtmlLossy = reported.filter((result) => !result.refusal && result.html !== null)
 const reportedSourceLossy = reported.filter((result) => !result.refusal && result.carve !== null)
 
+assert.equal(sourceLossy.length, 0, 'canonical source changes must be reported, including when regenerating the ledger')
+assert.equal(htmlLossy.length, 0, 'HTML changes must be reported, including when regenerating the ledger')
+
 if (process.env.UPDATE_PROSEMIRROR_LEDGER === '1') {
   writeFileSync(LEDGER, `${JSON.stringify({
     $comment: ledger.$comment,

@@ -155,7 +155,7 @@ toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: tru
 ```
 
 Every field is optional. Omitting the object, or passing `null`, renders with
-defaults, so the three shorthands above remain the zero-config forms.
+defaults, so the three shorthands above use those defaults.
 
 | Field | Default | What it does |
 |---|---|---|
@@ -367,8 +367,7 @@ needing a document that happens to contain a formula.
 ### Editing a tree, and reading one back
 
 `parseJson` serializes a document out. `astJsonToHtml` renders one back, and
-`astJsonToCarve` writes one back as source, so a host that reads the tree in
-order to change something can display and save the result without a server.
+`astJsonToCarve` writes one back as source, so a host that reads and changes the tree can display and save the result without a server.
 
 ```js
 const tree = JSON.parse(parseJson(source))
@@ -445,6 +444,9 @@ relative resolution keys off.
 | `maxResolverCalls` | `1000` | Resolver calls for one expansion |
 | `maxWarnings` | `100` | Warnings retained; one per distinct rule always survives |
 
+Each budget must be a finite integer in `0..4294967295`; fractions, strings,
+negative values and nonfinite numbers throw before the resolver runs.
+
 The budgets are part of the contract rather than a detail. They bound what a
 document of directives can make a host do, and a host serving documents it did
 not write is the one that should lower them.
@@ -476,31 +478,45 @@ next.source // '# Two\n'
 ```
 
 Each result is `{ source, document, sourceLayout, changedSource,
-reusedPreviousTree }`. `document` is the PART 12 tree, `sourceLayout` is what
-`parseSourceLayoutJson` produces, and `changedSource` is the byte ranges this
-parse covered - the whole document on a first parse, the edits on a re-parse.
+reusedPreviousTree, parsedSourceBytes }`. `document` is the PART 12 tree,
+`sourceLayout` is what `parseSourceLayoutJson` produces, and `changedSource`
+contains UTF-8 byte ranges. `parsedSourceBytes` measures the source the engine
+parsed, excluding reused paragraphs.
 
-The snapshot crosses as JSON rather than as a handle. Every other entry point
-in this package is a pure function that owns nothing, and the engine's snapshot
-holds only the source, so there is no tree kept alive in wasm memory for a
-handle to point at.
+`reparse` constructs the previous snapshot on every call. Use `ParserSession`
+when an editor needs to retain it between changes:
 
-> **The offsets are UTF-8 byte offsets.**
-> That is what `parseJson` positions and `createSourcePatch` ranges already
-> mean. A browser editor counts UTF-16 code units, so a host holding a
-> `selectionStart` converts before calling. An offset landing inside a
-> multi-byte character is refused rather than guessed at: `é` is two bytes, and
-> `[0, 1]` throws.
+```js
+import { ParserSession } from '@markup-carve/carve-wasm'
 
-A malformed change throws: overlapping ranges, an end past the source, and a
-range splitting a code point are all a broken caller contract rather than a
-result the caller asked for. An empty change list is not one - it re-parses the
-source unchanged, which is what a host batching keystrokes will hit.
+const session = new ParserSession('First paragraph.\n\nSecond paragraph.\n')
+try {
+  const next = JSON.parse(session.edit(JSON.stringify([
+    { range: [0, 5], replacement: 'Other' },
+  ])))
+  console.log(next.reusedPreviousTree, next.parsedSourceBytes)
+} finally {
+  session.free()
+}
+```
 
-`reusedPreviousTree` is the engine's own answer about whether any of the
-previous parse was reused. **The pinned engine always reports `false`**: it
-validates and applies the edits and then parses the whole source. Read the flag
-rather than assuming work was saved.
+`session.snapshot()` returns the current snapshot as JSON. A rejected edit
+leaves the session unchanged. An empty edit list returns the retained snapshot
+with no parsed bytes. Plain-paragraph edits can reuse the previous tree;
+syntax-bearing documents fall back to a full parse. Read `reusedPreviousTree`
+and `parsedSourceBytes` to determine which path ran. Snapshot serialization
+still visits the whole tree.
+
+Edit ranges and source patches use UTF-8 bytes. AST positions from `parseJson`
+use Unicode codepoints; browser `selectionStart` uses UTF-16 code units. Import
+`utf16ToUtf8`, `codepointToUtf8` or `utf8ToUtf16` from the package's `/offsets`
+entry to convert. The helpers reject a boundary inside a surrogate pair or
+UTF-8 sequence. Tests cover emoji, combining marks, CRLF and a leading BOM.
+
+Malformed changes throw `TypeError`: overlapping ranges, an end past the source,
+a range splitting a codepoint, or an offset outside the integer range
+`0..4294967295`. Offsets are checked before conversion to WASM's 32-bit size.
+
 ### Tree patches
 
 `createAstPatch(before, after)` is the difference between two PART 12 trees,
@@ -599,11 +615,19 @@ const saved = fromProseMirror(JSON.stringify(editor.getJSON()))
 `Carve node type -> reason`: `dropped` where the content is gone (an
 abbreviation definition has no editor node), `degraded` where the text survives
 without its node type (a soft break becomes whitespace, smart typography
-resolves to the glyph). Both are empty for a document the model holds exactly.
+resolves to the glyph). When node-level reports are empty, the binding also compares canonical source
+before and after the bridge. A difference is reported under `degraded.document`.
+An empty pair of maps means that this immediate round trip preserves canonical
+source, not that subsequent edits in an editor preserve every Carve construct.
 
 A payload the schema map does not describe is refused rather than written
 approximately. Round-tripping normalizes the source the way `toCarve` does, and
 the reported degradations do not come back - `a ... b` returns as `a … b`.
+
+The checked renderers accept only boolean `strict` values and integer
+`maximum` values in `0..4294967295`. Omitted or null arguments use the defaults.
+A string such as `"false"` throws rather than enabling strict mode through
+JavaScript coercion.
 
 ### TypeScript
 
@@ -653,7 +677,8 @@ const html: string = toHtml('_Hello_')
 | `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree, skipping the Carve-source round trip |
 | `htmlToAst` | `(html: string, mode?: string) => MigrationResult` | Import HTML straight to the tree; `{ value, report }` with the tree in `value` |
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
-| `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree }` |
+| `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree, parsedSourceBytes }` |
+| `ParserSession` | `new (source: string)` | Retained parsing state with `snapshot()`, `edit(changes: string)` and `free()` |
 | `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |
 | `mergeAst` | `(base: string, ours: string, theirs: string, options?: object) => string` | Three-way merge; JSON `{ ok, ast, conflicts, resolverErrors }`, a conflict being a value |
 | `createAstPatch` | `(before: string, after: string) => string` | The difference between two PART 12 trees, as `{ op, path, value }` patch JSON |
