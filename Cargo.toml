@@ -60,7 +60,7 @@ stamp = []
 # tag, to the spec the corpus gate runs against. See
 # docs/engine-pin.md.
 # Temporary Git pin for engine fixes; use an exact registry release after it includes them.
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "20868cd0d885aae3f5d119b8b7f95047ec0c66f0" }
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "914f26ee9968a0dac997b2d16671f568a0e1972b" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }

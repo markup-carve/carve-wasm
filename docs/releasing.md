@@ -29,10 +29,15 @@ refused rather than skipped.
 2. Write the notes as an unpublished draft release for the intended version and
    exact commit:
    `gh release create vX.Y.Z --draft --target COMMIT --notes-file NOTES.md`. The workflow will
-   not publish without one. Copy the tagged version's `CHANGELOG.md` section,
+   not publish without one. Copy the tagged version's `CHANGELOG.md` section or
+   summarize it,
    excluding its version heading. Resolve relative links to that tag, then add
    `**Full Changelog**: https://github.com/markup-carve/carve-wasm/compare/vPREVIOUS...vX.Y.Z`.
-   The stored body must match that section and footer. Rehearse the notes
+   Include a `[Changelog](https://github.com/markup-carve/carve-wasm/blob/vX.Y.Z/CHANGELOG.md)`
+   link for the intended tag. A shorter summary is allowed if it covers the
+   breaking changes, cites each breaking entry's ticket when present, and
+   references only tickets from that section. Include at least one ticket
+   reference if the section has any. Rehearse the notes
    gate with `gh workflow run rehearse-release-notes.yml -f tag=vX.Y.Z` before
    tagging. After every draft mutation, read it through the API and verify
    `tag_name`, `target_commitish` and `draft: true`. Do not push a tag or publish
