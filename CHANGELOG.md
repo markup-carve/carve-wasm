@@ -9,6 +9,82 @@ their own.
 
 ## [Unreleased]
 
+### Breaking
+
+- `toHtmlWithReport` reports one `destination-denied` loss for each link,
+  autolink or image whose URL scheme the sink denylist blanks. The message names the sink: "Blanked a denied destination scheme" for
+  a link or autolink, "Blanked a denied image source" for an image. The HTML is
+  unchanged (`href=""` and `src=""` stay as they were), but a `strict` render of
+  such a document now throws `RenderLossError`, and a consumer that switches on
+  `code` needs a third case beside `raw-format-dropped` and `ruby-flattened`. A
+  refused `strict` render's message now reads "render would lose N nodes"
+  instead of "render would drop N raw nodes", so code that matches on the
+  message needs updating (#151, #156, markup-carve/carve-rs#2243,
+  markup-carve/carve-rs#2246, markup-carve/carve#2679, markup-carve/carve#2681).
+
+### Fixes
+
+- `toCarve` no longer crashes on emphasis inside a link label, keeps the
+  parentheses and backslashes of a denied URL scheme so formatting no longer
+  changes the destination, and doubles a backslash in a quoted attribute, class
+  or title only where the re-parse needs it (markup-carve/carve-rs#2229,
+  markup-carve/carve-rs#2248, markup-carve/carve-rs#2224).
+- HTML import stops pairing a superscript or subscript opener with a
+  reference-shaped tail's bracket, Djot import keeps emphasis, attributes, list
+  markers and quotes it previously altered, and the Markdown, plain text and
+  ANSI targets keep a list table's grouping label (markup-carve/carve-rs#2225,
+  markup-carve/carve-rs#2235, markup-carve/carve-rs#2236).
+- An overindented quote marker after a fence on a list item's marker line stays
+  item text, a lazy line inside a quoted comment keeps its indentation, and
+  link, image and heading references resolve inside line blocks
+  (markup-carve/carve-rs#2228, markup-carve/carve-rs#2231,
+  markup-carve/carve-rs#2249).
+- `lintCarve` reports list over-indentation once per block, and no longer warns
+  about an empty footnote or definition body or about list padding before a
+  quote (markup-carve/carve-rs#2226, markup-carve/carve-rs#2234).
+- `parseJson` reports reference and footnote definition positions in the
+  original input, so a CRLF line ending or a leading BOM no longer shifts them
+  (markup-carve/carve-rs#2239).
+- Every render target enforces the depth ceiling in citation definitions,
+  extension summaries and captions (markup-carve/carve-rs#2242).
+- Tables keep multiple bodies, intermediate body headers, empty bodies and
+  per-body row-header counts through `parseJson`, `toCarve` and `toHtml`, and
+  decimal column widths keep their precision. HTML import keeps every empty
+  `<tbody>` as a body boundary, writes an explicit `<thead>`/`<tbody>`/`<tfoot>`
+  grouping as row counts instead of reporting it unspellable, keeps the table's
+  ID and classes, and still reports dropped table attributes when every row is
+  blank (markup-carve/carve-rs#2273, markup-carve/carve-rs#2274,
+  markup-carve/carve-rs#2275, markup-carve/carve-rs#2278,
+  markup-carve/carve-rs#2279).
+- A named colon fence with invalid opener metadata stays a container with its
+  children parsed, and `lintCarve` reports `fence-title-syntax`, where the
+  fence used to reach the page as text (markup-carve/carve-rs#2260).
+- References resolve in authored AST children such as ruby content, short
+  captions and figure images, literal definitions inside verse are kept, and an
+  indented comment closer ends the comment inside a colon fence
+  (markup-carve/carve-rs#2253, markup-carve/carve-rs#2256).
+- Citations skip an invalid `@` in prefix text, honor backslash escapes before
+  `@` and the suppress-author `-`, and keep `[@a , p. 4]` literal as the other
+  engines do (markup-carve/carve-rs#2267).
+
+### Improvements
+
+- The embedded engine is `carve-lang` 0.1.8, up from 0.1.7, and renders every
+  one of the 2215 corpus documents the pinned spec declares byte-identically
+  (markup-carve/carve-rs#2252, markup-carve/carve-rs#2295).
+- Parsing and HTML rendering allocate and rescan far less: nested colon
+  bodies, quoted fences, list markers, citations, reference definitions,
+  heading IDs and nested quotes each stop re-reading what an enclosing level
+  already scanned, and plain Unicode paragraphs take the fast source-to-HTML
+  path (markup-carve/carve-rs#2240, markup-carve/carve-rs#2241,
+  markup-carve/carve-rs#2257, markup-carve/carve-rs#2263,
+  markup-carve/carve-rs#2266, markup-carve/carve-rs#2268,
+  markup-carve/carve-rs#2272, markup-carve/carve-rs#2277,
+  markup-carve/carve-rs#2280, markup-carve/carve-rs#2281,
+  markup-carve/carve-rs#2282, markup-carve/carve-rs#2283,
+  markup-carve/carve-rs#2285, markup-carve/carve-rs#2286,
+  markup-carve/carve-rs#2291).
+
 ## [0.1.5] - 2026-09-29
 
 ### Changed
