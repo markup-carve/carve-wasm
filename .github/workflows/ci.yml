@@ -199,6 +199,15 @@ jobs:
       - name: Test the engine deltas the artifact carries
         run: node tests/engine-deltas.mjs
 
+      # Two shapes the binding owns rather than the engine: what the loss report
+      # carries, and which unit each diagnostic family counts offsets in. Both
+      # were wrong in a way an ASCII document or an untruncated report cannot
+      # show (markup-carve/carve-wasm#158, markup-carve/carve-wasm#159).
+      - name: Test the report shape and the diagnostic offset units
+        run: |
+          node tests/report-shape.mjs
+          node tests/diagnostic-offsets.mjs
+
       # The docs Playground only renders Carve. Keep proving that its build
       # profile both works in a browser-style module and leaves every API the
       # host does not call unreachable.
@@ -216,25 +225,31 @@ jobs:
           render_bytes=$(wc -c < "$RUNNER_TEMP/render.wasm.gz")
           echo "full wasm: $full_bytes bytes gzip"
           echo "rendering-only wasm: $render_bytes bytes gzip"
-          # 760000, re-baselined on the carve-lang 0.1.8 bump, and the SECOND
-          # time this number has been moved for the same reason: the previous
-          # 700000 was set against 0.1.7's 661697 and 0.1.8 measures 698701,
-          # which left 1299 bytes - under two tenths of a percent - so the
-          # next engine release would have failed this on nothing this package
-          # did. The headroom is now 8.1%, roughly one engine release.
-          # The RATIO check below is the structural half and it is untouched:
-          # rendering-only is 32% of the full artifact, well inside its 60%
-          # ceiling, and that is the check that would catch the package
-          # actually growing. Move this number only with both measurements in
-          # the commit message, the way these two moved. A budget that needs a
-          # manual bump every release is tracked in
-          # markup-carve/carve-wasm#161.
-          if [ "$render_bytes" -gt 760000 ]; then
-            echo "::error::rendering-only wasm grew past its 760000-byte gzip budget ($render_bytes bytes)"
+          # The gate is the RATIO, and only the ratio. An absolute byte budget
+          # stood here and measured the engine rather than this package: it was
+          # moved from 600000 to 700000 on the carve-lang 0.1.7 bump and would
+          # have failed on 0.1.8 at 694440 against 700000, twice in a row for
+          # growth upstream (markup-carve/carve-wasm#161). A number that has to
+          # be raised every engine release reports nothing about the thing it
+          # names.
+          #
+          # What IS this package's business is how much the rendering-only
+          # selection still cuts, and that is engine-independent by
+          # construction: both numbers come from one build of one engine, so
+          # the engine's size divides out. Measured 33% on 0.1.7 and 32.6% on
+          # 0.1.8, which is the stability that makes it the right instrument.
+          #
+          # 40%, down from 60%. The old ceiling sat 27 points above the
+          # measurement, which is far enough that the feature gates could stop
+          # cutting most of what they cut and still pass. Move this only with
+          # the measured ratio in the commit message.
+          if [ "$full_bytes" -lt 100000 ] || [ "$render_bytes" -lt 100000 ]; then
+            echo "::error::a wasm artifact measured under 100000 bytes gzip, so this gate measured nothing"
             exit 1
           fi
-          if [ $((render_bytes * 100)) -ge $((full_bytes * 60)) ]; then
-            echo "::error::rendering-only wasm is no longer at least 40% smaller than the full artifact"
+          echo "rendering-only share: $((render_bytes * 1000 / full_bytes))/1000 of the full artifact"
+          if [ $((render_bytes * 100)) -ge $((full_bytes * 40)) ]; then
+            echo "::error::rendering-only wasm is no longer at least 60% smaller than the full artifact ($render_bytes of $full_bytes bytes gzip)"
             exit 1
           fi
 

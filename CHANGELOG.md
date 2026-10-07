@@ -45,6 +45,21 @@ their own.
 
 ### Fixes
 
+- A checked render's result and its `RenderLossError` carry `totalsByCode`, how
+  many losses each code accounts for across the whole render. `losses` is capped
+  by `maximum`, so a consumer that counted codes off that array under-reported
+  every code past the cap: 120 losses reported as 100 showed an 80/20 split
+  where the truth was 80/40. The field is present even when empty, so it reads
+  without a guard (#158).
+- `lintCarve`, `lintCarveWithOptions` and `lintAccessibility` carry
+  `startUtf16` and `endUtf16` beside their existing offsets. Those index a
+  JavaScript string, which neither existing pair does: `lintCarve` counts UTF-8
+  bytes and `lintAccessibility` counts Unicode codepoints, so
+  `source.slice(start, end)` selected the wrong span for any document outside
+  ASCII and the right one inside it. The existing fields are unchanged. The
+  published declaration for `AccessibilityDiagnostic` claimed byte offsets and
+  was wrong; it now says codepoints, and `docs/reference.md` states the unit of
+  every offset-bearing API in one table (#159).
 - A single pipe carrying row attributes no longer aborts the WASM module.
   `|{.r}`, five bytes, panicked the engine's table check, and a panic reaches a
   JavaScript caller as `unreachable`, which cannot be told apart from an

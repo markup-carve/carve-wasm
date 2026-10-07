@@ -21,6 +21,28 @@ population comes from the spec's example pages, so a truncated corpus fails
 here instead of passing over a subset, and an unset `CARVE_SPEC_CORPUS` is
 refused rather than skipped.
 
+## What this release waits on
+
+carve-wasm has one cross-repository edge that is not in any manifest, and it
+decides release ORDER rather than content. `.github/workflows/ci.yml` checks out
+`markup-carve/carve-rb` and runs `scripts/check-engine-floor.py` against that
+repository's engine pin, which must not be ahead of this one. The org's
+`tools/dependency-map.mjs` does see the edge, as `kind: ci` from this workflow
+path, so it is not invisible to tooling; what no file states is the consequence.
+
+- **Do not tag carve-wasm ahead of the carve-rb release its floor is read
+  from.** Shipping a wasm package whose declared floor sibling has not released
+  the engine both of them pin leaves two bindings of one engine that a host
+  cannot reason about together.
+- **The floor is read from carve-rb's DEFAULT BRANCH, not from a carve-rb
+  release.** A sibling's in-flight bump can therefore turn this repository's CI
+  red with no commit here and nothing to fix here. That has not bitten yet;
+  whether the floor should read the sibling's latest tag instead is open in
+  markup-carve/carve-wasm#160.
+- carve-wasm was missing from the release fleet list, which is a separate file
+  from the dependency map, and that is why a wave skipped it and a pin sat 34
+  commits behind. Adding a repository to this org means adding it there too.
+
 ## Cutting one
 
 1. Merge the version bump: `Cargo.toml` and the `CHANGELOG.md` section have to
