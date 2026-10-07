@@ -351,6 +351,7 @@ fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, J
         result.value,
         result.losses,
         result.total_losses,
+        &result.totals_by_code,
         result.truncated,
     )
 }
@@ -358,11 +359,17 @@ fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, J
 // Takes the fields it encodes rather than a `carve::RenderResult`, so the error
 // path need not build one; a field added to that struct upstream would otherwise
 // stop this binding compiling on the next pin bump.
+//
+// THE COST OF THAT: a field added upstream is silently not forwarded, and
+// `totals_by_code` was exactly that for two engine releases. When this list
+// changes, check `carve::RenderResult` and `carve::RenderLossError` for a field
+// this does not name.
 #[cfg(feature = "reports")]
 fn render_report_fields_to_js(
     value: String,
     report_losses: Vec<carve::RenderLoss>,
     total_losses: usize,
+    totals_by_code: &std::collections::BTreeMap<&'static str, usize>,
     truncated: bool,
 ) -> Result<JsValue, JsValue> {
     let object = js_sys::Object::new();
@@ -372,6 +379,15 @@ fn render_report_fields_to_js(
         &"totalLosses".into(),
         &(total_losses as f64).into(),
     )?;
+    // `losses` is bounded by `max_losses`, so counting codes off that array is
+    // wrong as soon as the report truncates. This is the engine's own count and
+    // the only field that survives truncation intact. Emitted even when empty,
+    // so a consumer reads it without a guard.
+    let totals = js_sys::Object::new();
+    for (code, count) in totals_by_code {
+        js_sys::Reflect::set(&totals, &(*code).into(), &(*count as f64).into())?;
+    }
+    js_sys::Reflect::set(&object, &"totalsByCode".into(), &totals)?;
     js_sys::Reflect::set(&object, &"truncated".into(), &truncated.into())?;
     let losses = js_sys::Array::new();
     for loss in report_losses {
@@ -433,9 +449,10 @@ fn checked_result(
                 String::new(),
                 error.losses,
                 error.total_losses,
+                &error.totals_by_code,
                 error.truncated,
             )?;
-            for key in ["losses", "totalLosses", "truncated"] {
+            for key in ["losses", "totalLosses", "totalsByCode", "truncated"] {
                 js_sys::Reflect::set(
                     &exception,
                     &key.into(),
@@ -926,6 +943,12 @@ export interface RenderResult {
   value: string;
   losses: RenderLoss[];
   totalLosses: number;
+  /**
+   * How many losses each code accounts for, across the WHOLE render.
+   * `losses` is bounded, so counting codes off that array under-reports as
+   * soon as `truncated` is true; these totals do not.
+   */
+  totalsByCode: Record<string, number>;
   truncated: boolean;
 }
 export interface RenderOptions {
@@ -961,10 +984,17 @@ export interface LintWarning {
   /** Stable rule id, shared with carve-js and carve-php. */
   rule: string;
   message: string;
-  /** 0-based BYTE offset into the source, inclusive. */
+  /** 0-based UTF-8 BYTE offset into the source, inclusive. */
   start: number;
-  /** 0-based BYTE offset into the source, exclusive. */
+  /** 0-based UTF-8 BYTE offset into the source, exclusive. */
   end: number;
+  /**
+   * The same span in UTF-16 code units, which is what indexes a JavaScript
+   * string: `source.slice(startUtf16, endUtf16)`. Equal to `start` / `end` on
+   * an ASCII document and not otherwise.
+   */
+  startUtf16: number;
+  endUtf16: number;
 }
 
 export interface ProfileViolation {
@@ -1048,9 +1078,19 @@ export interface AccessibilityDiagnostic {
   rule: string;
   severity: "warning" | "error";
   message: string;
-  /** 0-based BYTE offset into the source, or null when the node carried none. */
+  /**
+   * 0-based Unicode CODEPOINT offset, or null when the node carried none.
+   * Codepoints, not the UTF-8 bytes `LintWarning` counts: the two lint
+   * families answer in different units.
+   */
   startOffset: number | null;
   endOffset: number | null;
+  /**
+   * The same span in UTF-16 code units, which is what indexes a JavaScript
+   * string. Null exactly when `startOffset` / `endOffset` are.
+   */
+  startUtf16: number | null;
+  endUtf16: number | null;
 }
 
 export interface SanitizeSvgOptions {
@@ -2136,12 +2176,66 @@ pub fn apply_profile(
 #[cfg(feature = "lint")]
 #[wasm_bindgen(js_name = lintCarve, unchecked_return_type = "LintWarning[]")]
 pub fn lint_carve(source: &str) -> Result<JsValue, JsValue> {
-    lint_warnings(carve::lint_carve(source))
+    lint_warnings(carve::lint_carve(source), source)
+}
+
+/// Offsets into one source, translated to UTF-16 code units.
+///
+/// A JavaScript string is indexed in UTF-16 code units, and nothing the engine
+/// answers in is: `LintWarning` counts UTF-8 bytes, the accessibility family
+/// counts codepoints. Either is wrong for `source.slice(start, end)` as soon as
+/// the document leaves ASCII, and right while it stays inside it, so a caller
+/// cannot discover the mismatch from its own tests.
+///
+/// ONE pass over the source for the whole batch. A scan per diagnostic would be
+/// quadratic on a document with many findings, which is the normal case for a
+/// linter.
+#[cfg(feature = "lint")]
+fn utf16_offsets(
+    source: &str,
+    wanted: Vec<usize>,
+    by_codepoint: bool,
+) -> std::collections::BTreeMap<usize, usize> {
+    let mut wanted = wanted;
+    wanted.sort_unstable();
+    wanted.dedup();
+    let mut map = std::collections::BTreeMap::new();
+    let mut iter = wanted.into_iter().peekable();
+    let mut consumed = 0usize;
+    let mut utf16 = 0usize;
+    for character in source.chars() {
+        // `<=` rather than `==`: an offset that lands INSIDE a multi-byte
+        // character clamps to that character's start, which is the only answer
+        // that is a valid string index.
+        while iter.peek().is_some_and(|next| *next <= consumed) {
+            let next = iter.next().expect("peeked");
+            map.insert(next, utf16);
+        }
+        consumed += if by_codepoint {
+            1
+        } else {
+            character.len_utf8()
+        };
+        utf16 += character.len_utf16();
+    }
+    // An offset at or past the end is the end.
+    for next in iter {
+        map.insert(next, utf16);
+    }
+    map
 }
 
 /// The JS array both lint entry points return.
 #[cfg(feature = "lint")]
-fn lint_warnings(found: Vec<carve::LintWarning>) -> Result<JsValue, JsValue> {
+fn lint_warnings(found: Vec<carve::LintWarning>, source: &str) -> Result<JsValue, JsValue> {
+    let units = utf16_offsets(
+        source,
+        found
+            .iter()
+            .flat_map(|warning| [warning.start, warning.end])
+            .collect(),
+        false,
+    );
     let warnings = js_sys::Array::new();
     for warning in found {
         let entry = js_sys::Object::new();
@@ -2175,6 +2269,13 @@ fn lint_warnings(found: Vec<carve::LintWarning>) -> Result<JsValue, JsValue> {
             &JsValue::from_str("end"),
             &JsValue::from_f64(warning.end as f64),
         )?;
+        for (key, offset) in [("startUtf16", warning.start), ("endUtf16", warning.end)] {
+            js_sys::Reflect::set(
+                &entry,
+                &JsValue::from_str(key),
+                &JsValue::from_f64(units[&offset] as f64),
+            )?;
+        }
         warnings.push(&entry.into());
     }
     Ok(warnings.into())
@@ -2195,7 +2296,10 @@ pub fn lint_carve_with_options(
     };
     let owned = request.extension_boxes();
     let engine_options = request.engine_options(&owned);
-    lint_warnings(carve::lint_carve_with_options(source, &engine_options))
+    lint_warnings(
+        carve::lint_carve_with_options(source, &engine_options),
+        source,
+    )
 }
 
 /// The accessibility diagnostics, a second family beside `lintCarve`.
@@ -2206,8 +2310,21 @@ pub fn lint_carve_with_options(
 #[cfg(feature = "lint")]
 #[wasm_bindgen(js_name = lintAccessibility, unchecked_return_type = "AccessibilityDiagnostic[]")]
 pub fn lint_accessibility(source: &str) -> Result<JsValue, JsValue> {
+    let found = carve::lint_accessibility(source);
+    // CODEPOINTS here, bytes in `lintCarve`. The two families differ because
+    // the engine's two structs differ, and the declarations used to claim both
+    // were bytes.
+    let units = utf16_offsets(
+        source,
+        found
+            .iter()
+            .flat_map(|item| [item.start_offset, item.end_offset])
+            .flatten()
+            .collect(),
+        true,
+    );
     let diagnostics = js_sys::Array::new();
-    for diagnostic in carve::lint_accessibility(source) {
+    for diagnostic in found {
         let entry = js_sys::Object::new();
         js_sys::Reflect::set(
             &entry,
@@ -2237,6 +2354,16 @@ pub fn lint_accessibility(source: &str) -> Result<JsValue, JsValue> {
             &JsValue::from_str("endOffset"),
             &offset_or_null(diagnostic.end_offset),
         )?;
+        for (key, offset) in [
+            ("startUtf16", diagnostic.start_offset),
+            ("endUtf16", diagnostic.end_offset),
+        ] {
+            js_sys::Reflect::set(
+                &entry,
+                &JsValue::from_str(key),
+                &offset_or_null(offset.map(|value| units[&value])),
+            )?;
+        }
         diagnostics.push(&entry.into());
     }
     Ok(diagnostics.into())

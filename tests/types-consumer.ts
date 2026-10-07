@@ -1,6 +1,7 @@
 import {
-  expandIncludes, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
-  createSourcePatch, applySourcePatch, ParserSession, type IncludeExpansion, type RenderResult,
+  expandIncludes, lintAccessibility, lintCarve, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
+  createSourcePatch, applySourcePatch, ParserSession, type AccessibilityDiagnostic,
+  type IncludeExpansion, type LintWarning, type RenderResult,
 } from '@markup-carve/carve-wasm'
 const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
   resolve: (path, context) => ({ source: context.stack.join('/') + path, id: path }),
@@ -8,6 +9,14 @@ const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
 })
 const report: RenderResult = toHtmlWithReport('body')
 report.losses.map(loss => loss.pos?.startOffset)
+// The per-code totals a truncated report has to be read through.
+const perCode: number = report.totalsByCode['raw-format-dropped']
+// The UTF-16 pair, which is what indexes the string a JS caller holds.
+const warnings: LintWarning[] = lintCarve('body')
+warnings.map(warning => 'x'.slice(warning.startUtf16, warning.endUtf16))
+const a11y: AccessibilityDiagnostic[] = lintAccessibility('body')
+a11y.map(item => item.startUtf16 === null ? -1 : item.startUtf16)
+void perCode
 expanded.dependencies.map(dependency => dependency.denial)
 toHtmlWithOptions('body', { rawHtml: false, profile: 'comment', asciiHeadingIds: 'fold' })
 toHtmlWithRenderers('body', { renderers: { diagrams: { mermaid: source => source }, math: (tex, display) => display ? tex : '' } })
