@@ -7,7 +7,7 @@
 // ASCII document makes every unit the same number, which is why this was
 // silently right for most callers and silently wrong for the rest.
 import assert from 'node:assert/strict'
-import { lintAccessibility, lintCarve, parseJson } from './engine.mjs'
+import { lintAccessibility, lintCarve, lintCarveWithOptions, parseJson } from './engine.mjs'
 
 const unitsDiffer = (source) => {
   const bytes = Buffer.byteLength(source, 'utf8')
@@ -21,19 +21,27 @@ const lintSource = unitsDiffer('\u{1F680}\n\n[t][missing]\n')
 const [warning] = lintCarve(lintSource)
 assert.equal(warning.rule, 'unresolved-reference-link')
 
-// The existing pair is BYTES, and stays bytes. Pinned so a change of unit is a
-// test failure rather than a silent shift.
-assert.equal(warning.start, 6)
-assert.equal(warning.end, 18)
-assert.equal(
-  Buffer.from(lintSource, 'utf8').subarray(warning.start, warning.end).toString('utf8'),
-  '[t][missing]',
-)
+// The lint family counts UTF-16 CODE UNITS, so `start` and `end` index the
+// JavaScript string the caller already holds. On this document the byte pair
+// would be 6 and 18 and the codepoint pair 3 and 15, so a wrong unit cannot
+// pass here.
+assert.equal(warning.start, 4)
+assert.equal(warning.end, 16)
+assert.equal(lintSource.slice(warning.start, warning.end), '[t][missing]')
 
-// The new pair indexes the JavaScript string the caller holds.
-assert.equal(warning.startUtf16, 4)
-assert.equal(warning.endUtf16, 16)
-assert.equal(lintSource.slice(warning.startUtf16, warning.endUtf16), '[t][missing]')
+// The additive pair #159 shipped is gone from this family: it said the same
+// thing as `start` / `end` once those became UTF-16, and it never reached a
+// release. `lintAccessibility` keeps its own pair, whose offsets still differ.
+assert.equal(warning.startUtf16, undefined)
+assert.equal(warning.endUtf16, undefined)
+
+// The option-taking entry point answers in the same unit. It is a separate
+// export reaching the same encoder, so a flip applied to one and not the other
+// would leave the two disagreeing.
+const [withOptions] = lintCarveWithOptions(lintSource, null)
+assert.equal(withOptions.start, 4)
+assert.equal(withOptions.end, 16)
+assert.equal(lintSource.slice(withOptions.start, withOptions.end), '[t][missing]')
 
 // The accessibility family counts in CODEPOINTS, not bytes. Two lint APIs in
 // one package, two units: that difference is the trap, and it is pinned here so
@@ -63,7 +71,8 @@ for (const item of lintAccessibility('# a\n\n### c\n')) {
 // so it is worth asserting rather than assuming.
 const ascii = '[t][missing]\n'
 const [plain] = lintCarve(ascii)
-assert.equal(plain.start, plain.startUtf16)
-assert.equal(plain.end, plain.endUtf16)
+assert.equal(plain.start, 0)
+assert.equal(plain.end, 12)
+assert.equal(ascii.slice(plain.start, plain.end), '[t][missing]')
 
 console.log('wasm artifact: diagnostic offset units pass')

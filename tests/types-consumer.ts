@@ -11,9 +11,10 @@ const report: RenderResult = toHtmlWithReport('body')
 report.losses.map(loss => loss.pos?.startOffset)
 // The per-code totals a truncated report has to be read through.
 const perCode: number = report.totalsByCode['raw-format-dropped']
-// The UTF-16 pair, which is what indexes the string a JS caller holds.
+// The lint family's own pair, in UTF-16 code units, which is what indexes the
+// string a JS caller holds.
 const warnings: LintWarning[] = lintCarve('body')
-warnings.map(warning => 'x'.slice(warning.startUtf16, warning.endUtf16))
+warnings.map(warning => 'x'.slice(warning.start, warning.end))
 const a11y: AccessibilityDiagnostic[] = lintAccessibility('body')
 a11y.map(item => item.startUtf16 === null ? -1 : item.startUtf16)
 void perCode
