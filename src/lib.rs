@@ -2204,18 +2204,23 @@ fn utf16_offsets(
     let mut consumed = 0usize;
     let mut utf16 = 0usize;
     for character in source.chars() {
-        // `<=` rather than `==`: an offset that lands INSIDE a multi-byte
-        // character clamps to that character's start, which is the only answer
-        // that is a valid string index.
-        while iter.peek().is_some_and(|next| *next <= consumed) {
+        let next_consumed = consumed
+            + if by_codepoint {
+                1
+            } else {
+                character.len_utf8()
+            };
+        // Every offset that falls anywhere WITHIN this character answers with
+        // this character's own index, so an offset landing between two bytes of
+        // one character clamps back to where that character starts. The engine
+        // emits boundaries, so the clamp is never exercised in practice; the
+        // rule has to exist anyway, because the encoders index this map and a
+        // missing key is a panic reaching the caller as `unreachable`.
+        while iter.peek().is_some_and(|next| *next < next_consumed) {
             let next = iter.next().expect("peeked");
             map.insert(next, utf16);
         }
-        consumed += if by_codepoint {
-            1
-        } else {
-            character.len_utf8()
-        };
+        consumed = next_consumed;
         utf16 += character.len_utf16();
     }
     // An offset at or past the end is the end.
@@ -3473,12 +3478,64 @@ pub fn version() -> String {
 
 #[cfg(test)]
 mod tests {
+    #[cfg(feature = "lint")]
+    use super::utf16_offsets;
     use super::{
         extensions, render_core, render_full, render_with_extensions, RenderConfig, SymbolPairs,
         PREVIEW_EXTENSIONS,
     };
     #[cfg(any(feature = "other-renderers", feature = "ast-json"))]
     use super::{profile_by_name, render_target};
+
+    /// Every offset the diagnostic encoders ask for has to be in the map.
+    ///
+    /// They index it rather than looking it up, so a missing key is a panic,
+    /// and in a wasm build a panic reaches the caller as `unreachable` on a
+    /// document that is perfectly valid. These are the shapes that could leave
+    /// a hole: an offset past the end, an offset inside a multi-byte
+    /// character, repeats, reverse order, and an empty source.
+    #[cfg(feature = "lint")]
+    #[test]
+    fn utf16_offsets_answers_every_offset_it_was_given() {
+        // "aä🚀b": bytes 0,1,3,7,11 - codepoints 0,1,2,3,4 - utf16 0,1,2,3,5.
+        let source = "a\u{e4}\u{1F680}b";
+        assert_eq!(source.len(), 8);
+        let wanted = vec![0, 1, 2, 3, 4, 6, 7, 8, 99];
+        let map = utf16_offsets(source, wanted.clone(), false);
+        for offset in &wanted {
+            assert!(map.contains_key(offset), "byte offset {offset} missing");
+        }
+        // Exact boundaries, and the clamp for an offset inside a character.
+        assert_eq!(map[&0], 0);
+        assert_eq!(map[&1], 1);
+        assert_eq!(map[&2], 1, "inside the two bytes of a-umlaut, clamped back");
+        assert_eq!(map[&3], 2);
+        assert_eq!(
+            map[&4], 2,
+            "inside the four bytes of the rocket, clamped back"
+        );
+        assert_eq!(map[&6], 2, "the rocket's last byte, clamped back");
+        assert_eq!(map[&7], 4, "the rocket is two UTF-16 units");
+        assert_eq!(map[&8], 5, "one past the last byte is the end");
+        assert_eq!(map[&99], 5, "past the end is still the end");
+
+        // Codepoint mode, reverse order and duplicates.
+        let map = utf16_offsets(source, vec![4, 2, 2, 0, 3, 1], true);
+        assert_eq!(map[&0], 0);
+        assert_eq!(map[&1], 1);
+        assert_eq!(map[&2], 2);
+        // The rocket is codepoint 2 and occupies UTF-16 indices 2 and 3, so the
+        // codepoint after it starts at 4. That gap is the whole reason a
+        // codepoint offset cannot index a JavaScript string either.
+        assert_eq!(map[&3], 4);
+        assert_eq!(map[&4], 5);
+
+        // An empty source still answers.
+        let map = utf16_offsets("", vec![0, 5], false);
+        assert_eq!(map[&0], 0);
+        assert_eq!(map[&5], 0);
+        assert!(utf16_offsets("abc", Vec::new(), false).is_empty());
+    }
 
     /// The named profile, everything else at its default.
     #[cfg(any(feature = "other-renderers", feature = "ast-json"))]
