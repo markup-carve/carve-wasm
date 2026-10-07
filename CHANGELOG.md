@@ -9,7 +9,7 @@ their own.
 
 ## [Unreleased]
 
-## [0.1.6] - 2026-10-05
+## [0.1.6] - 2026-10-07
 
 ### Breaking
 
@@ -18,6 +18,19 @@ their own.
   nonboolean `strict` values instead of coercing them.
 - ProseMirror conversion reports canonical source changes under
   `degraded.document` when no node-level loss was reported.
+
+- `toCarveWithOptions` throws `CarveWriteError` where the canonical writer
+  itself refuses a tree, instead of folding that into `ProfileViolationError`.
+  The exception carries `reason` (`depth-exceeded` or `source-unspellable`) and
+  `nodeType`; a profile violation still arrives as `ProfileViolationError`, so a
+  caller switching on `name` needs the second case
+  (markup-carve/carve-rs#2333, markup-carve/carve-rs#2326).
+- Name lookups compare case exactly: heading cross-references, numbered caption
+  and equation references, collapsed references that fall back to heading text,
+  and glossary terms. `[getting started][]` no longer resolves to a
+  `Getting Started` heading, and two terms differing only in case take two ids
+  (markup-carve/carve-rs#2320, markup-carve/carve-rs#2321,
+  markup-carve/carve-rs#2325, markup-carve/carve-rs#2327).
 
 - `toHtmlWithReport` reports one `destination-denied` loss for each link,
   autolink or image whose URL scheme the sink denylist blanks. The message names the sink: "Blanked a denied destination scheme" for
@@ -32,6 +45,16 @@ their own.
 
 ### Fixes
 
+- A single pipe carrying row attributes no longer aborts the WASM module.
+  `|{.r}`, five bytes, panicked the engine's table check, and a panic reaches a
+  JavaScript caller as `unreachable`, which cannot be told apart from an
+  invalid document. A differential over the shapes around it found 36 that
+  aborted - the bare line, the same line inside a list item, a quote, a colon
+  fence, and below a table's rows - on every entry point that parses
+  (markup-carve/carve-rs#2341).
+- `lintCarve` reports a reference image with no matching definition, under the
+  `unresolved-reference-link` rule that already covered reference links and
+  with no new rule id (markup-carve/carve-rs#2336).
 - HTML round trips settle for all imported corpus examples. Empty definition
   terms are preserved as raw HTML in trusted roundtrip mode or dropped and
   reported in safe imports while keeping definition order.
@@ -95,10 +118,21 @@ their own.
   ESM and CommonJS, and exercise Vite bundles and workers in Chromium, Firefox
   and WebKit. Benchmarks measure startup, rendering, edits, size and memory.
 
-- The embedded engine uses a pinned Git revision based on `carve-lang` 0.1.8,
-  up from 0.1.7, and renders every
-  one of the 2215 corpus documents the pinned spec declares byte-identically
-  (markup-carve/carve-rs#2252, markup-carve/carve-rs#2295).
+- `lintCarve` reports `broken-fragment-link` for a `[text](#id)` link, inline or
+  through a reference definition, whose fragment matches no id in the rendered
+  document. A case-only near miss names the real id; `#`, `#top`, cross-file
+  links and URLs with a fragment are not reported. A cross-reference whose id
+  exists on an element it cannot reach names that element kind
+  (markup-carve/carve-rs#2300, markup-carve/carve#2497).
+- `expandIncludes` selects a block by its explicit id, not only a heading
+  section: `{{ other.crv #para }}` resolves to the paragraph carrying
+  `{#para}`, where it used to warn `include-section`. Includes also rename
+  colliding explicit ids, and references written in the same inclusion follow
+  the rename (markup-carve/carve-rs#2311, markup-carve/carve#2727,
+  markup-carve/carve#2729).
+- The embedded engine is the published `carve-lang` 0.1.8 crate, up from 0.1.7,
+  and renders every one of the 2225 corpus documents the pinned spec declares
+  byte-identically (markup-carve/carve-rs#2252, markup-carve/carve-rs#2295).
 - Parsing and HTML rendering allocate and rescan far less: nested colon
   bodies, quoted fences, list markers, citations, reference definitions,
   heading IDs and nested quotes each stop re-reading what an enclosing level

@@ -1592,6 +1592,12 @@
     "544-explicit-body-counts-include-native-header-cells.crv": [
       "degraded:table_row_groups"
     ],
+    "546-every-name-lookup-compares-case-exactly-5.crv": [
+      "dropped:caption_number"
+    ],
+    "548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column.crv": [
+      "degraded:soft_break"
+    ],
     "56-table-cell-escaped-pipe.crv": [
       "degraded:escaped_text"
     ],
@@ -2070,6 +2076,8 @@
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-20.crv": "<ul>\n  <li>\n    <blockquote>\n      x\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-3.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
+    "546-every-name-lookup-compares-case-exactly-5.crv": "<figure id=\"Fig\">\n  <img src=\"upper.png\" alt=\"upper\">\n  <figcaption>Figure : upper</figcaption>\n</figure>\n<figure id=\"fig\">\n  <img src=\"lower.png\" alt=\"lower\">\n  <figcaption>Figure : lower</figcaption>\n</figure>\n<figure id=\"Eq\">\n  <p><span class=\"math display\" role=\"math\">\\[x\\]</span></p>\n  <figcaption>Equation : upper</figcaption>\n</figure>\n<figure id=\"eq\">\n  <p><span class=\"math display\" role=\"math\">\\[y\\]</span></p>\n  <figcaption>Equation : lower</figcaption>\n</figure>\n<p>&lt;/#Fig&gt;, &lt;/#fig&gt;, &lt;/#FIG&gt;, &lt;/#Eq&gt;, &lt;/#eq&gt;, &lt;/#EQ&gt;.</p>",
+    "548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <pre><code></code></pre>\n  </dd>\n</dl>\n<p>code <code></code></p>",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "<p>HTML and XHTMLish.</p>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
@@ -2599,6 +2607,8 @@
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-20.crv": "- > ```=html\n  > x\n  > ```\n+\n> y ``\n",
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-3.crv": "- > ```\n  > x\n  > ```\n+\n> y ``\n",
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": "- > ```\n  > x\n  > ```\n+\n> y ``\n",
+    "546-every-name-lookup-compares-case-exactly-5.crv": "{#Fig}\n![upper](upper.png)\n^ Figure : upper\n\n{#fig}\n![lower](lower.png)\n^ Figure : lower\n\n{#Eq}\n$$`x`\n^ Equation : upper\n\n{#eq}\n$$`y`\n^ Equation : lower\n\n</#Fig>, </#fig>, </#FIG>, </#Eq>, </#eq>, </#EQ>.\n",
+    "548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column.crv": ":: t\n: ```\n  ```\n\ncode ``\n",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "HTML and XHTMLish.\n",
     "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",

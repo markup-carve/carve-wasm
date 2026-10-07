@@ -260,6 +260,23 @@ writer is parse-only by contract, so extensions and `smartTypography` are inert
 there; they are accepted rather than refused so that one options object can be
 handed to every target.
 
+It has a second exception the other targets do not. The canonical writer can
+refuse a tree on its own account, apart from any profile, and that arrives as an
+error named `CarveWriteError` carrying `reason` (`depth-exceeded` or
+`source-unspellable`) and `nodeType`. A profile rejection still arrives as
+`ProfileViolationError`, so a caller that only handles the one name will miss
+the other:
+
+```js
+try {
+  return toCarveWithOptions(source, { profile: 'comment' })
+} catch (error) {
+  if (error.name === 'ProfileViolationError') return report(error.violations)
+  if (error.name === 'CarveWriteError') return report([error.reason, error.nodeType])
+  throw error
+}
+```
+
 `applyProfile` runs the same filter over an AST-JSON document and hands back the
 filtered tree instead of HTML, for a host that wants to store, diff or re-render
 what the filter left. `violations` reports what it degraded or stripped, which
@@ -653,7 +670,7 @@ const html: string = toHtml('_Hello_')
 | `toMarkdownWithOptions` | `(source: string, options?: object \| null) => string` | Markdown under the same options object. Throws `ProfileViolationError` when a profile rejects the document |
 | `toPlainTextWithOptions` | `(source: string, options?: object \| null) => string` | Plain text under the same options object |
 | `toAnsiWithOptions` | `(source: string, options?: object \| null) => string` | ANSI text under the same options object |
-| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` only |
+| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` only. Throws `ProfileViolationError` when a profile rejects the document, or `CarveWriteError` when the writer itself refuses the tree |
 | `parseJsonWithOptions` | `(source: string, options?: object \| null) => string` | The AST as JSON under the same options object; positions are always on |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded losses: `raw-format-dropped`, and `destination-denied` for each link, autolink or image URL whose scheme is denied and blanked (the HTML keeps the empty attribute). Strict mode throws `RenderLossError` ("render would lose N nodes") |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |

@@ -193,6 +193,12 @@ jobs:
       - name: Test the wasm artifact through its JS API
         run: node tests/smoke.mjs
 
+      # The engine deltas this package can observe, each measured against the
+      # previous pin as well as the current one. Separate from smoke.mjs so a
+      # bump's answer sheet is one file a reviewer can read start to finish.
+      - name: Test the engine deltas the artifact carries
+        run: node tests/engine-deltas.mjs
+
       # The docs Playground only renders Carve. Keep proving that its build
       # profile both works in a browser-style module and leaves every API the
       # host does not call unreachable.
@@ -210,17 +216,21 @@ jobs:
           render_bytes=$(wc -c < "$RUNNER_TEMP/render.wasm.gz")
           echo "full wasm: $full_bytes bytes gzip"
           echo "rendering-only wasm: $render_bytes bytes gzip"
-          # 700000, re-baselined on the carve-lang 0.1.7 bump. The old 600000
-          # had 5871 bytes of headroom against the 594129 that 0.1.6 produced -
-          # under one percent, so it was going to fail on whichever engine
-          # release came next rather than on anything this package did. 0.1.7
-          # measures 661697, 11.4% up, for the node types and the GFM-reader
-          # Markdown writer it adds. The RATIO check below is the structural
-          # half and it is untouched: rendering-only is 33% of the full
-          # artifact, well inside its 60% ceiling. Move this number only with
-          # both measurements in the commit message, the way this one moved.
-          if [ "$render_bytes" -gt 700000 ]; then
-            echo "::error::rendering-only wasm grew past its 700000-byte gzip budget ($render_bytes bytes)"
+          # 760000, re-baselined on the carve-lang 0.1.8 bump, and the SECOND
+          # time this number has been moved for the same reason: the previous
+          # 700000 was set against 0.1.7's 661697 and 0.1.8 measures 698701,
+          # which left 1299 bytes - under two tenths of a percent - so the
+          # next engine release would have failed this on nothing this package
+          # did. The headroom is now 8.1%, roughly one engine release.
+          # The RATIO check below is the structural half and it is untouched:
+          # rendering-only is 32% of the full artifact, well inside its 60%
+          # ceiling, and that is the check that would catch the package
+          # actually growing. Move this number only with both measurements in
+          # the commit message, the way these two moved. A budget that needs a
+          # manual bump every release is tracked in
+          # markup-carve/carve-wasm#161.
+          if [ "$render_bytes" -gt 760000 ]; then
+            echo "::error::rendering-only wasm grew past its 760000-byte gzip budget ($render_bytes bytes)"
             exit 1
           fi
           if [ $((render_bytes * 100)) -ge $((full_bytes * 60)) ]; then
