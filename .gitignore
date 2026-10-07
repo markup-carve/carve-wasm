@@ -1,5 +1,9 @@
 target/
 pkg/
+# The rendering-only and full copies CI makes out of pkg/ while measuring
+# their sizes against each other.
+pkg-render/
+pkg-full/
 release-artifact/
 *.log
 

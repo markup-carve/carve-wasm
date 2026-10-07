@@ -1,23 +1,24 @@
 # The carve-rs dependency pin
 
-The manifest temporarily pins an exact Git commit for engine fixes that are
-not yet in a registry release. A Git pin must be reachable from carve-rs
-`main` for the ancestry gate to pass. After a squash or rebase merge, pin the landed commit
-and update the lock. Keep the Git revision until a published crate contains
-those fixes, then use an exact registry requirement and update `Cargo.lock`.
-
-The registry form is:
+The manifest requires an exact published `carve-lang` version:
 
 ```toml
-carve = { package = "carve-lang", version = "=0.1.6" }
+carve = { package = "carve-lang", version = "=0.1.8" }
 ```
 
-The leading `=` matters. Cargo reads `0.1.6` as a compatible range and may select
+The leading `=` matters. Cargo reads `0.1.8` as a compatible range and may select
 a later 0.1 release on a fresh lock. The pin guards reject that form.
+
+A Git revision is accepted by the same guards, for an engine fix that is not yet
+in a registry release. It must be reachable from carve-rs `main` for the ancestry
+gate to pass, so after a squash or rebase merge pin the landed commit and update
+the lock. A revision is the exception and not the resting state: it names a build
+no release names, and every sibling binding pins a published version, so come
+back to the registry form as soon as one carries the fix.
 
 The engine is published as `carve-lang` because the `carve` crate name was
 already taken. CI resolves the selected version's bare release tag, such as
-`0.1.6`, to a carve-rs commit and refuses a tag whose `Cargo.toml` does not
+`0.1.8`, to a carve-rs commit and refuses a tag whose `Cargo.toml` does not
 declare `carve-lang` at that version. The ancestry, age, spec and sibling-floor
 checks run on that commit.
 

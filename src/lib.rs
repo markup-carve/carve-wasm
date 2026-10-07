@@ -804,6 +804,33 @@ fn profile_violation_error(error: carve::ProfileViolationError) -> JsValue {
     js_error.into()
 }
 
+/// Map the canonical writer's typed refusal onto a JS exception.
+///
+/// Two arms, and only one of them is the profile: since carve-lang 0.1.8 the
+/// writer reports its OWN refusal beside a profile violation, so a tree the
+/// writer cannot spell has to arrive as something other than
+/// `ProfileViolationError` or a caller switching on `name` mis-handles it.
+#[cfg(feature = "other-renderers")]
+fn carve_write_error(error: carve::CarveWriteError) -> JsValue {
+    let render = match error {
+        carve::CarveWriteError::Profile(error) => return profile_violation_error(error),
+        carve::CarveWriteError::Render(error) => error,
+    };
+    let js_error = js_sys::Error::new(&render.to_string());
+    js_error.set_name("CarveWriteError");
+    let (reason, detail) = match &render {
+        carve::RenderCarveError::Depth(error) => ("depth-exceeded", error.renderer()),
+        carve::RenderCarveError::SourceUnspellable(error) => {
+            ("source-unspellable", error.node_type())
+        }
+    };
+    // Best effort, as in `profile_violation_error`: a failed property set must
+    // not mask the refusal itself.
+    let _ = js_sys::Reflect::set(&js_error, &JsValue::from_str("reason"), &reason.into());
+    let _ = js_sys::Reflect::set(&js_error, &JsValue::from_str("nodeType"), &detail.into());
+    js_error.into()
+}
+
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(typescript_custom_section)]
 const TS_OTHER_RENDERERS: &str = r#"
@@ -2682,12 +2709,12 @@ pub fn to_carve_with_options(
     source: &str,
     #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<String, JsValue> {
-    render_with_options(
-        source,
-        options,
-        carve::to_carve,
-        carve::try_to_carve_with_options,
-    )
+    let Some(request) = RenderRequest::read(options)? else {
+        return Ok(carve::to_carve(source));
+    };
+    let owned = request.extension_boxes();
+    let options = request.engine_options(&owned);
+    carve::try_to_carve_with_options(source, &options).map_err(carve_write_error)
 }
 
 /// Render with a build-time math renderer, the option `mode: "static"` needs.
@@ -3364,6 +3391,15 @@ mod tests {
         .unwrap()
     }
 
+    /// The canonical writer, which no longer fits [`super::TargetRender`]:
+    /// since carve-lang 0.1.8 it refuses with `CarveWriteError` rather than
+    /// `ProfileViolationError`.
+    #[cfg(feature = "other-renderers")]
+    fn carve_written(config: &RenderConfig) -> String {
+        let options = config.apply(carve::Options::new());
+        carve::try_to_carve_with_options(DENIED, &options).unwrap()
+    }
+
     /// Sections off, everything else at its default.
     fn no_sections() -> RenderConfig {
         RenderConfig {
@@ -3643,13 +3679,26 @@ mod tests {
     fn the_profile_reaches_the_carve_writer() {
         // The `#` is escaped because it is text now, not a heading marker.
         assert_eq!(
-            filtered(carve::try_to_carve_with_options),
+            carve_written(&under_profile("comment")),
             "\\# Heading\n\n[img: alt]\n"
         );
         assert_eq!(
-            unfiltered(carve::try_to_carve_with_options),
+            carve_written(&RenderConfig::default()),
             "# Heading\n\n![alt](x.png)\n"
         );
+    }
+
+    /// Five bytes that aborted the wasm module.
+    ///
+    /// `|{.r}` panicked carve-lang 0.1.7 inside the table check
+    /// (carve-rs#2341). In a wasm build a panic reaches the caller as
+    /// `unreachable`, which is indistinguishable from an invalid document, so
+    /// every entry point that parses is pinned here.
+    #[test]
+    fn a_single_pipe_carrying_row_attributes_does_not_panic() {
+        for source in ["|{.r}", "|{.r}\n", "a\n\n|{.r}\n"] {
+            assert!(carve::to_html(source).contains("{.r}"), "{source:?}");
+        }
     }
 
     // The bound on the INPUT bytes, the one profile rule that refuses a render

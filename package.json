@@ -7,6 +7,7 @@
     "build": "node scripts/build-package.mjs",
     "test": "node tests/smoke.mjs",
     "test:consumers": "node tests/consumers.mjs",
+    "test:deltas": "node tests/engine-deltas.mjs",
     "test:features": "node tests/feature-types.mjs",
     "bench": "node scripts/benchmark.mjs"
   },
