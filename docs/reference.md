@@ -410,8 +410,8 @@ source order and a tree carrying none prints them in label order.
 points get whatever their producer built.
 
 `lintCarve` returns the degradation diagnostics as
-`{ line, column, rule, message, start, end, startUtf16, endUtf16 }`, with the
-rule ids carve-js and carve-php use for the same triggers.
+`{ line, column, rule, message, start, end }`, with the rule ids carve-js and
+carve-php use for the same triggers.
 
 #### Which unit each offset counts in
 
@@ -421,22 +421,32 @@ which one is shortest:
 
 | API | `start` / `startOffset` | `startUtf16` |
 |---|---|---|
-| `lintCarve`, `lintCarveWithOptions` | UTF-8 **bytes** | UTF-16 code units |
+| `lintCarve`, `lintCarveWithOptions` | **UTF-16 code units** | not emitted |
 | `lintAccessibility` | Unicode **codepoints** | UTF-16 code units |
 | `parseJson` positions | Unicode **codepoints** (PART 12 §4) | not emitted |
 | `reparse`, `ParserSession.edit`, source patches | UTF-8 **bytes** | not emitted |
 
-**To index a JavaScript string, use the `Utf16` pair.** `String.prototype.slice`
-counts UTF-16 code units, so neither a byte nor a codepoint offset selects the
-right span once the document leaves ASCII - and inside ASCII all three numbers
-are equal, so a test on English prose will not show the difference:
+**To index a JavaScript string, use UTF-16.** `String.prototype.slice` counts
+UTF-16 code units, so neither a byte nor a codepoint offset selects the right
+span once the document leaves ASCII - and inside ASCII all three numbers are
+equal, so a test on English prose will not show the difference. The lint family
+answers in that unit directly; `lintAccessibility` keeps codepoints and carries
+the `Utf16` pair beside them:
 
 ```js
 const source = '\u{1F680}\n\n[t][missing]\n'
 const [warning] = lintCarve(source)
-source.slice(warning.start, warning.end)            // "][missing]\n"  wrong
-source.slice(warning.startUtf16, warning.endUtf16)  // "[t][missing]"   right
+source.slice(warning.start, warning.end)  // "[t][missing]"
+
+const [diagnostic] = lintAccessibility('\u{1F680}\n\n![](x.png)\n')
+source.slice(diagnostic.startOffset, diagnostic.endOffset)  // wrong unit
+source.slice(diagnostic.startUtf16, diagnostic.endUtf16)    // "![](x.png)"
 ```
+
+`lintCarve` and `lintCarveWithOptions` answered in UTF-8 bytes before 0.1.6.
+The change is silent on ASCII, so a caller feeding these offsets to a byte-range
+API finds out from a document with an accented character rather than from an
+error.
 
 `parseJson` positions stay in codepoints deliberately: that is the cross-engine
 wire format, not a local convenience, and a consumer comparing trees across
@@ -714,9 +724,9 @@ const html: string = toHtml('_Hello_')
 | `astJsonToPlainText` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to plain text |
 | `astJsonToAnsi` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to ANSI-styled text |
 | `applyProfile` | `(json: string, profile: string, options?: object \| null) => ProfileFilterResult` | Filter an AST-JSON document through a profile, keeping the tree and what the filter did |
-| `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share. `start` / `end` are UTF-8 bytes, `startUtf16` / `endUtf16` index a JS string |
+| `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share. `start` / `end` are UTF-16 code units, so they index a JS string |
 | `lintCarveWithOptions` | `(source: string, options?: object \| null) => LintWarning[]` | The same linter for the extension set the host renders with |
-| `lintAccessibility` | `(source: string) => AccessibilityDiagnostic[]` | The second diagnostic family, with its own rule ids and a severity. `startOffset` / `endOffset` are codepoints, not the bytes `lintCarve` counts |
+| `lintAccessibility` | `(source: string) => AccessibilityDiagnostic[]` | The second diagnostic family, with its own rule ids and a severity. `startOffset` / `endOffset` are codepoints, not the UTF-16 units `lintCarve` counts; `startUtf16` / `endUtf16` index a JS string |
 | `stampCarve` | `(formatted: string, generatedBy: string, form?: "line" \| "block") => string` | Write the provenance marker `readStamp` reads |
 | `sanitizeSvg` | `(source: string, options?: object \| null) => SanitizeResult` | Sanitize an SVG document; strict unless an option says otherwise |
 | `parseLocator` | `(loc: string) => ParsedLocator` | Parse a citation locator into label, value and suffix |

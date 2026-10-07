@@ -13,6 +13,17 @@ their own.
 
 ### Breaking
 
+- `lintCarve` and `lintCarveWithOptions` report `start` and `end` in UTF-16 code
+  units instead of UTF-8 bytes, so `source.slice(start, end)` selects the span
+  the warning is about. The two numbers agree on an ASCII document and differ on
+  every other one, so a caller that feeds them to a byte-range API gets a wrong
+  answer with no error: check any such call site rather than waiting for a
+  report. The `startUtf16` and `endUtf16` fields #159 added to this family are
+  gone, having never reached a release and said the same thing as the flipped
+  pair; `lintAccessibility` keeps both its codepoint `startOffset` / `endOffset`
+  and its `startUtf16` / `endUtf16`, and `parseJson` positions stay codepoints
+  because PART 12 §4 pins that for the wire format (#164).
+
 - Edit offsets, include budgets and checked-render limits reject values outside
   `0..4294967295`, fractions and nonfinite values. Checked renderers reject
   nonboolean `strict` values instead of coercing them.
@@ -51,12 +62,12 @@ their own.
   every code past the cap: 120 losses reported as 100 showed an 80/20 split
   where the truth was 80/40. The field is present even when empty, so it reads
   without a guard (#158).
-- `lintCarve`, `lintCarveWithOptions` and `lintAccessibility` carry
-  `startUtf16` and `endUtf16` beside their existing offsets. Those index a
-  JavaScript string, which neither existing pair does: `lintCarve` counts UTF-8
-  bytes and `lintAccessibility` counts Unicode codepoints, so
-  `source.slice(start, end)` selected the wrong span for any document outside
-  ASCII and the right one inside it. The existing fields are unchanged. The
+- `lintAccessibility` carries `startUtf16` and `endUtf16` beside its existing
+  offsets. Those index a JavaScript string, which its codepoint pair does not,
+  so `source.slice(startOffset, endOffset)` selected the wrong span for any
+  document outside ASCII and the right one inside it. The lint family got the
+  same pair here and then had its own `start` / `end` flipped instead, which the
+  Breaking entry above describes. The
   published declaration for `AccessibilityDiagnostic` claimed byte offsets and
   was wrong; it now says codepoints, and `docs/reference.md` states the unit of
   every offset-bearing API in one table (#159).

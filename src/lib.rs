@@ -984,17 +984,15 @@ export interface LintWarning {
   /** Stable rule id, shared with carve-js and carve-php. */
   rule: string;
   message: string;
-  /** 0-based UTF-8 BYTE offset into the source, inclusive. */
-  start: number;
-  /** 0-based UTF-8 BYTE offset into the source, exclusive. */
-  end: number;
   /**
-   * The same span in UTF-16 code units, which is what indexes a JavaScript
-   * string: `source.slice(startUtf16, endUtf16)`. Equal to `start` / `end` on
-   * an ASCII document and not otherwise.
+   * 0-based offset into the source in UTF-16 CODE UNITS, inclusive. That is
+   * what indexes a JavaScript string, so `source.slice(start, end)` selects the
+   * span the warning is about. It was a UTF-8 byte offset before 0.1.6, which
+   * agreed with this on an ASCII document and not outside one.
    */
-  startUtf16: number;
-  endUtf16: number;
+  start: number;
+  /** 0-based UTF-16 code unit offset into the source, exclusive. */
+  end: number;
 }
 
 export interface ProfileViolation {
@@ -2168,8 +2166,9 @@ pub fn apply_profile(
 ///
 /// Returns an array of `{ line, column, rule, message, start, end }`. The rule
 /// ids are shared with carve-js and carve-php, so the same trigger reports the
-/// same id everywhere. Offsets are BYTE offsets into the source, matching the
-/// engine.
+/// same id everywhere. Offsets count UTF-16 CODE UNITS, so they index the
+/// JavaScript string the caller holds; the engine answers in bytes and this
+/// wrapper converts (#164).
 ///
 /// Built as JS objects rather than a JSON string: a message carries arbitrary
 /// document text, and hand-rolled JSON escaping is where that goes wrong.
@@ -2264,17 +2263,10 @@ fn lint_warnings(found: Vec<carve::LintWarning>, source: &str) -> Result<JsValue
             &JsValue::from_str("message"),
             &JsValue::from_str(&warning.message),
         )?;
-        js_sys::Reflect::set(
-            &entry,
-            &JsValue::from_str("start"),
-            &JsValue::from_f64(warning.start as f64),
-        )?;
-        js_sys::Reflect::set(
-            &entry,
-            &JsValue::from_str("end"),
-            &JsValue::from_f64(warning.end as f64),
-        )?;
-        for (key, offset) in [("startUtf16", warning.start), ("endUtf16", warning.end)] {
+        // UTF-16, not the bytes the engine answers in: this package's host
+        // language indexes strings in UTF-16 code units, and the engine's own
+        // note on the field says the unit follows the host (#164).
+        for (key, offset) in [("start", warning.start), ("end", warning.end)] {
             js_sys::Reflect::set(
                 &entry,
                 &JsValue::from_str(key),
@@ -2316,9 +2308,10 @@ pub fn lint_carve_with_options(
 #[wasm_bindgen(js_name = lintAccessibility, unchecked_return_type = "AccessibilityDiagnostic[]")]
 pub fn lint_accessibility(source: &str) -> Result<JsValue, JsValue> {
     let found = carve::lint_accessibility(source);
-    // CODEPOINTS here, bytes in `lintCarve`. The two families differ because
-    // the engine's two structs differ, and the declarations used to claim both
-    // were bytes.
+    // CODEPOINTS here, UTF-16 code units in `lintCarve`. This family keeps the
+    // engine's own unit and carries `startUtf16` / `endUtf16` beside it; moving
+    // it too would be a larger break on an API nobody has reported trouble
+    // with, and the ruling on #164 left it for its own ticket.
     let units = utf16_offsets(
         source,
         found
