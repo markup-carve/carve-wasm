@@ -1,26 +1,34 @@
-name: Release
+name: Release packages and assets
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
-  # A release is STARTED here. The `tag` job below creates the tag after the
-  # gates and after the approval, so starting a release no longer means pushing
-  # a tag by hand. Dispatched at an existing tag with no version it re-runs that
-  # one instead, which a tag push cannot do: recreating a tag under the same
-  # name fires no push event.
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      version:
-        description: 'Version to release, without a leading v (e.g. 0.1.9). Leave empty when dispatching at an existing tag.'
-        required: false
+      publish:
+        required: true
+        type: boolean
+      tag:
+        required: true
         type: string
-
-# The tag this run releases: the one that was pushed, or the one a dispatch will
-# create. Every gate below reads this, so a dispatch and a tag push measure the
-# same version.
+      version:
+        required: true
+        type: string
+      release_tag:
+        required: true
+        type: string
+      source_sha:
+        required: true
+        type: string
+      release_id:
+        required: true
+        type: string
+      release_body:
+        required: true
+        type: string
+      notes_digest:
+        required: true
+        type: string
 env:
-  RELEASE_TAG: ${{ inputs.version != '' && format('v{0}', inputs.version) || github.ref_name }}
+  RELEASE_TAG: ${{ inputs.version != '' && format('v{0}', inputs.version) || inputs.tag }}
 
 
 # The publish is split off from the build so that it can be REACHED only
@@ -37,6 +45,10 @@ env:
 # bought here.
 # Each job declares timeout-minutes so a hung step fails fast
 # instead of inheriting the 360-minute GitHub default.
+  LANE_TAG: ${{ inputs.tag }}
+  LANE_REF: ${{ format('refs/tags/{0}', inputs.tag) }}
+  LANE_REF_TYPE: tag
+  LANE_PUBLISH: ${{ inputs.publish }}
 jobs:
   # Everything that decides whether this tag is publishable.
   verify:
@@ -46,6 +58,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+      - name: Expose the candidate tag locally
+        if: ${{ !inputs.publish }}
+        shell: bash
+        env:
+          CANDIDATE_TAG: ${{ inputs.tag }}
+        run: |
+          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
@@ -168,7 +190,7 @@ jobs:
       - name: Upload the verified package
         uses: actions/upload-artifact@v4
         with:
-          name: verified-package
+          name: verified-package-${{ inputs.publish && 'publish' || 'check' }}
           path: release-artifact/package/
           if-no-files-found: error
           retention-days: 7
@@ -180,6 +202,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+      - name: Verify approval and checked tag before publishing
+        working-directory: ${{ github.workspace }}
+        if: ${{ inputs.publish }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_SHA: ${{ inputs.source_sha }}
+          RELEASE_NOTES_DIGEST: ${{ inputs.notes_digest }}
+        run: python .github/scripts/release-lane.py permit
+      - name: Expose the candidate tag locally
+        if: ${{ !inputs.publish }}
+        shell: bash
+        env:
+          CANDIDATE_TAG: ${{ inputs.tag }}
+        run: |
+          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -206,83 +248,88 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          set -uo pipefail
+          if [ "$LANE_PUBLISH" = true ]; then
+            set -uo pipefail
 
-          if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
-            echo "::error::NPM_TOKEN is not readable from this repository, so the publish cannot authenticate at all."
-            exit 1
-          fi
-
-          # FATAL. An expired, revoked or malformed token fails here with
-          # 401 / ENEEDAUTH, and this is the one probe below whose failure is
-          # unambiguous.
-          if ! who="$(npm whoami 2>&1)"; then
-            echo "::error::npm rejected the credential: ${who}"
-            echo "::error::rotate NPM_TOKEN before releasing. A 404 on PUT is an auth failure, not a missing package."
-            exit 1
-          fi
-          echo "authenticated as ${who}"
-
-          # Adapted for this repository: the root package.json is the private
-          # development manifest, and `npm publish` runs in `pkg/`, a wasm-pack
-          # output built with `--scope markup-carve`. `pkg/` does not exist in a
-          # checkout, so the published name is read from the same source the
-          # build reads it from: the scope plus the Cargo package name.
-          pkg="@markup-carve/$(sed -n 's/^name = "\(.*\)"/\1/p' Cargo.toml | head -1)"
-          echo "package under release: ${pkg}"
-
-          # REPORTED, NOT FATAL, and measured rather than assumed. This is the
-          # organization endpoint /-/org/<scope>/package, an org read and not a
-          # package write. On carve-wasm run 32156381782 this organization's
-          # NPM_TOKEN answered 403 "You may not perform that action with these
-          # credentials" here, while an anonymous GET of the same URL returned
-          # the whole scope. A credential with fewer rights than a stranger on
-          # an org endpoint is the signature of a granular access token, which
-          # says nothing about whether it can publish. Made fatal, as the first
-          # draft of this gate had it, this would refuse every release in this
-          # organization.
-          echo "== packages this credential can see in the scope"
-          if ! npm access list packages 2>&1; then
-            echo "  REFUSED on the org endpoint. An anonymous reader is not refused here, so this"
-            echo "  is about the credential's kind, not about the scope being unreachable."
-          fi
-
-          # The discriminator, and the reason the two probes above are not
-          # enough. A classic automation token can read this endpoint and a
-          # granular one cannot. A classic token carries its owner's publish
-          # rights, so with a read-write grant below the publish is as proven
-          # as it gets without publishing. A granular token's package grants
-          # are fixed when it is created and are not readable from here at all,
-          # which is the residual risk this gate cannot close.
-          echo "== the kind of credential"
-          if npm token list >/dev/null 2>&1; then
-            echo "  classic automation token: it carries the owner's publish rights."
-          else
-            echo "  granular access token: its package grants are fixed at creation and cannot be"
-            echo "  read from here. If this package is not among them the publish fails with E404"
-            echo "  and no change in this repository can fix it. Check the token at npmjs.com."
-          fi
-
-          # FATAL ONLY ON A DEFINITE NEGATIVE. Note what this is and is not:
-          # the collaborators endpoint is a PUBLIC read, so it reports the npm
-          # USER's grant on the package and not the token's. A read-only grant
-          # therefore means the publish cannot succeed whatever the token is,
-          # which is worth stopping for; read-write does not prove the token
-          # inherits it, which is why it is not reported as a pass.
-          echo "== the account's grant on the package"
-          if grants="$(npm access list collaborators "${pkg}" --json 2>/dev/null)"; then
-            mine="$(printf '%s' "${grants}" | jq -r --arg u "${who}" '.[$u] // "not listed"')"
-            echo "  ${who}: ${mine}"
-            if [ "${mine}" = "read-only" ]; then
-              echo "::error::${who} holds read-only access to ${pkg}, so the publish cannot succeed."
-              echo "::error::grant write access or rotate NPM_TOKEN before releasing."
+            if [ -z "${NODE_AUTH_TOKEN:-}" ]; then
+              echo "::error::NPM_TOKEN is not readable from this repository, so the publish cannot authenticate at all."
               exit 1
             fi
+
+            # FATAL. An expired, revoked or malformed token fails here with
+            # 401 / ENEEDAUTH, and this is the one probe below whose failure is
+            # unambiguous.
+            if ! who="$(npm whoami 2>&1)"; then
+              echo "::error::npm rejected the credential: ${who}"
+              echo "::error::rotate NPM_TOKEN before releasing. A 404 on PUT is an auth failure, not a missing package."
+              exit 1
+            fi
+            echo "authenticated as ${who}"
+
+            # Adapted for this repository: the root package.json is the private
+            # development manifest, and `npm publish` runs in `pkg/`, a wasm-pack
+            # output built with `--scope markup-carve`. `pkg/` does not exist in a
+            # checkout, so the published name is read from the same source the
+            # build reads it from: the scope plus the Cargo package name.
+            pkg="@markup-carve/$(sed -n 's/^name = "\(.*\)"/\1/p' Cargo.toml | head -1)"
+            echo "package under release: ${pkg}"
+
+            # REPORTED, NOT FATAL, and measured rather than assumed. This is the
+            # organization endpoint /-/org/<scope>/package, an org read and not a
+            # package write. On carve-wasm run 32156381782 this organization's
+            # NPM_TOKEN answered 403 "You may not perform that action with these
+            # credentials" here, while an anonymous GET of the same URL returned
+            # the whole scope. A credential with fewer rights than a stranger on
+            # an org endpoint is the signature of a granular access token, which
+            # says nothing about whether it can publish. Made fatal, as the first
+            # draft of this gate had it, this would refuse every release in this
+            # organization.
+            echo "== packages this credential can see in the scope"
+            if ! npm access list packages 2>&1; then
+              echo "  REFUSED on the org endpoint. An anonymous reader is not refused here, so this"
+              echo "  is about the credential's kind, not about the scope being unreachable."
+            fi
+
+            # The discriminator, and the reason the two probes above are not
+            # enough. A classic automation token can read this endpoint and a
+            # granular one cannot. A classic token carries its owner's publish
+            # rights, so with a read-write grant below the publish is as proven
+            # as it gets without publishing. A granular token's package grants
+            # are fixed when it is created and are not readable from here at all,
+            # which is the residual risk this gate cannot close.
+            echo "== the kind of credential"
+            if npm token list >/dev/null 2>&1; then
+              echo "  classic automation token: it carries the owner's publish rights."
+            else
+              echo "  granular access token: its package grants are fixed at creation and cannot be"
+              echo "  read from here. If this package is not among them the publish fails with E404"
+              echo "  and no change in this repository can fix it. Check the token at npmjs.com."
+            fi
+
+            # FATAL ONLY ON A DEFINITE NEGATIVE. Note what this is and is not:
+            # the collaborators endpoint is a PUBLIC read, so it reports the npm
+            # USER's grant on the package and not the token's. A read-only grant
+            # therefore means the publish cannot succeed whatever the token is,
+            # which is worth stopping for; read-write does not prove the token
+            # inherits it, which is why it is not reported as a pass.
+            echo "== the account's grant on the package"
+            if grants="$(npm access list collaborators "${pkg}" --json 2>/dev/null)"; then
+              mine="$(printf '%s' "${grants}" | jq -r --arg u "${who}" '.[$u] // "not listed"')"
+              echo "  ${who}: ${mine}"
+              if [ "${mine}" = "read-only" ]; then
+                echo "::error::${who} holds read-only access to ${pkg}, so the publish cannot succeed."
+                echo "::error::grant write access or rotate NPM_TOKEN before releasing."
+                exit 1
+              fi
+            else
+              echo "  the endpoint did not answer, which does not distinguish 'no permission' from"
+              echo "  'no such package', so it is not treated as a verdict."
+            fi
           else
-            echo "  the endpoint did not answer, which does not distinguish 'no permission' from"
-            echo "  'no such package', so it is not treated as a verdict."
+            npm publish --dry-run --access public
           fi
 
+        shell: bash
   publish:
     name: Publish to npm
     # Not reachable while `verify` fails, cancels, or is skipped.
@@ -299,11 +346,30 @@ jobs:
       # `read` (#80).
       contents: write
       id-token: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.RELEASE_TAG }}
+          ref: ${{ inputs.source_sha }}
 
+          fetch-depth: 0
+      - name: Verify approval and checked tag before publishing
+        working-directory: ${{ github.workspace }}
+        if: ${{ inputs.publish }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_SHA: ${{ inputs.source_sha }}
+          RELEASE_NOTES_DIGEST: ${{ inputs.notes_digest }}
+        run: python .github/scripts/release-lane.py permit
+      - name: Expose the candidate tag locally
+        if: ${{ !inputs.publish }}
+        shell: bash
+        env:
+          CANDIDATE_TAG: ${{ inputs.tag }}
+        run: |
+          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
       - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
@@ -325,7 +391,7 @@ jobs:
       - name: Download the verified package
         uses: actions/download-artifact@v4
         with:
-          name: verified-package
+          name: verified-package-${{ inputs.publish && 'publish' || 'check' }}
           path: pkg
 
       # Cheap restatement of what the gate already proved, because this job
@@ -341,7 +407,12 @@ jobs:
 
       - name: Publish to npm
         working-directory: pkg
-        run: npm publish --access public --provenance
+        run: |
+          if [ "$LANE_PUBLISH" = true ]; then
+            npm publish --access public --provenance
+          else
+            npm publish --dry-run --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -354,37 +425,7 @@ jobs:
       #
       # Last, deliberately: a draft that stays a draft is recoverable, and one
       # published beside a failed npm publish is not.
-      - name: Publish the release notes
         shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          bash tools/run-release-notes-gate.sh "$RELEASE_TAG" "$RUNNER_TEMP/release.json"
-          release="$(cat "$RUNNER_TEMP/release.json")"
-          id="$(printf '%s' "$release" | jq -r 'select(.draft) | .id // empty')"
-          if [ -z "$id" ]; then
-            echo "The release is already published."
-            exit 0
-          fi
-          # `tag_name` goes with every PATCH of a release. Omit it on a DRAFT
-          # and GitHub replaces the tag with a generated `untagged-*`
-          # placeholder, because a draft's tag is a string on the object rather
-          # than a git ref - so the field has nothing to fall back to.
-          gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
-            -f tag_name="$RELEASE_TAG" -F draft=false --jq '"published \(.tag_name)"'
-          # Read it back: exit status does not tell you whether the tag survived.
-          gh api "repos/$GITHUB_REPOSITORY/releases/$id" \
-            --jq '"draft=\(.draft) tag=\(.tag_name)"'
-
-  # THE TAG IS CREATED HERE, after a human approves, so a release can be started
-  # without a tag existing - which is the whole point: creating the tag by hand
-  # was the maintainer's step.
-  # It needs every gate job, so whoever approves is looking at a green
-  # gate rather than at nothing.
-  #
-  # A tag push still works unchanged: the step finds the tag already on the
-  # remote and creates nothing. The publish runs in THIS run rather than on the
-  # new tag, because a ref created with github.token triggers no workflow.
   tag:
     name: Create the tag
     runs-on: ubuntu-latest
@@ -393,20 +434,21 @@ jobs:
     environment: release
     permissions:
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@v4
 
-      - name: Create the tag unless it already exists
+        with:
+          ref: ${{ inputs.source_sha }}
+          fetch-depth: 0
+      - name: Expose the candidate tag locally
+        if: ${{ !inputs.publish }}
+        shell: bash
+        env:
+          CANDIDATE_TAG: ${{ inputs.tag }}
         run: |
-          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
-            echo "$RELEASE_TAG is already on the remote; creating nothing."
-            exit 0
-          fi
-          if [ "$GITHUB_REF_TYPE" = tag ]; then
-            echo "::error::this run is on tag $RELEASE_TAG, which is not on the remote."
-            exit 1
-          fi
-          # Re-checked under the approval: a tag can appear while a run waits.
-          git tag "$RELEASE_TAG" "$GITHUB_SHA"
-          git push origin "refs/tags/$RELEASE_TAG"
-          echo "tagged $RELEASE_TAG at $GITHUB_SHA"
+          git tag "$CANDIDATE_TAG" "${{ inputs.source_sha }}"
+permissions:
+  contents: write
+  actions: read
+  id-token: write

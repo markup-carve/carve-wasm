@@ -1,0 +1,20 @@
+{
+  "workflow": ".github/workflows/release-lane.yml",
+  "publisher": ".github/workflows/release.yml",
+  "publisher_environments": [
+    "release"
+  ],
+  "registries": {
+    "npm": "@markup-carve/carve-wasm"
+  },
+  "assets": [],
+  "versions": [
+    {
+      "path": "Cargo.toml",
+      "field": [
+        "package",
+        "version"
+      ]
+    }
+  ]
+}
