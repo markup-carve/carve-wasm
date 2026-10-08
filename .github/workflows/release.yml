@@ -4,12 +4,24 @@ on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
-  # Dispatch is aimed at the TAG, not a branch: every gate below reads the
-  # version from GITHUB_REF_NAME, so a run dispatched at refs/tags/X.Y.Z behaves
-  # exactly like the tag push, and the publish still waits on the release
-  # environment. Without it a version whose tag already exists has no way to run
-  # at all, because recreating a tag under the same name fires no push event.
+  # A release is STARTED here. The `tag` job below creates the tag after the
+  # gates and after the approval, so starting a release no longer means pushing
+  # a tag by hand. Dispatched at an existing tag with no version it re-runs that
+  # one instead, which a tag push cannot do: recreating a tag under the same
+  # name fires no push event.
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, without a leading v (e.g. 0.1.9). Leave empty when dispatching at an existing tag.'
+        required: false
+        type: string
+
+# The tag this run releases: the one that was pushed, or the one a dispatch will
+# create. Every gate below reads this, so a dispatch and a tag push measure the
+# same version.
+env:
+  RELEASE_TAG: ${{ inputs.version != '' && format('v{0}', inputs.version) || github.ref_name }}
+
 
 # The publish is split off from the build so that it can be REACHED only
 # through a gate. This file used to be one job: `wasm-pack build` followed
@@ -124,11 +136,11 @@ jobs:
       # like everything else on this path it cannot be taken back.
       - name: The tag and the package version have to agree
         run: |
-          tag="${GITHUB_REF_NAME#v}"
+          tag="${RELEASE_TAG#v}"
           declared=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
           echo "tag: $tag, Cargo.toml: $declared"
           if [ "$tag" != "$declared" ]; then
-            echo "tag $GITHUB_REF_NAME does not match the version in Cargo.toml ($declared)"
+            echo "tag $RELEASE_TAG does not match the version in Cargo.toml ($declared)"
             exit 1
           fi
 
@@ -274,12 +286,9 @@ jobs:
   publish:
     name: Publish to npm
     # Not reachable while `verify` fails, cancels, or is skipped.
-    needs: [verify, npm-credential]
+    needs: [verify, npm-credential, tag]
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    # Inert until a `release` environment with a required reviewer exists
-    # (markup-carve/carve#2032).
-    environment: release
     permissions:
       # `write`, not `read`, and the gate below is the whole reason: a DRAFT
       # release is invisible to a caller without push access, so under
@@ -293,7 +302,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ env.RELEASE_TAG }}
 
       - uses: actions/setup-python@v6
         with:
@@ -306,7 +315,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: bash tools/run-release-notes-gate.sh "$GITHUB_REF_NAME"
+        run: bash tools/run-release-notes-gate.sh "$RELEASE_TAG"
 
       - uses: actions/setup-node@v4
         with:
@@ -350,7 +359,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          bash tools/run-release-notes-gate.sh "$GITHUB_REF_NAME" "$RUNNER_TEMP/release.json"
+          bash tools/run-release-notes-gate.sh "$RELEASE_TAG" "$RUNNER_TEMP/release.json"
           release="$(cat "$RUNNER_TEMP/release.json")"
           id="$(printf '%s' "$release" | jq -r 'select(.draft) | .id // empty')"
           if [ -z "$id" ]; then
@@ -362,7 +371,42 @@ jobs:
           # placeholder, because a draft's tag is a string on the object rather
           # than a git ref - so the field has nothing to fall back to.
           gh api "repos/$GITHUB_REPOSITORY/releases/$id" -X PATCH \
-            -f tag_name="$GITHUB_REF_NAME" -F draft=false --jq '"published \(.tag_name)"'
+            -f tag_name="$RELEASE_TAG" -F draft=false --jq '"published \(.tag_name)"'
           # Read it back: exit status does not tell you whether the tag survived.
           gh api "repos/$GITHUB_REPOSITORY/releases/$id" \
             --jq '"draft=\(.draft) tag=\(.tag_name)"'
+
+  # THE TAG IS CREATED HERE, after a human approves, so a release can be started
+  # without a tag existing - which is the whole point: creating the tag by hand
+  # was the maintainer's step.
+  # It needs every gate job, so whoever approves is looking at a green
+  # gate rather than at nothing.
+  #
+  # A tag push still works unchanged: the step finds the tag already on the
+  # remote and creates nothing. The publish runs in THIS run rather than on the
+  # new tag, because a ref created with github.token triggers no workflow.
+  tag:
+    name: Create the tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: [verify, npm-credential]
+    environment: release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create the tag unless it already exists
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "$RELEASE_TAG is already on the remote; creating nothing."
+            exit 0
+          fi
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            echo "::error::this run is on tag $RELEASE_TAG, which is not on the remote."
+            exit 1
+          fi
+          # Re-checked under the approval: a tag can appear while a run waits.
+          git tag "$RELEASE_TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$RELEASE_TAG"
+          echo "tagged $RELEASE_TAG at $GITHUB_SHA"
