@@ -157,8 +157,8 @@ assert.equal(
   names.length,
   declared,
   `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ${declared}. ` +
-    'Every ::: compare block in resources/examples/{core,extensions,edge-cases}.md declares its ' +
-    'corpus pair, so a difference means the corpus checked out here is not the one those pages ' +
+    'Every carve fence in a ::: compare block in resources/examples/{core,extensions,edge-cases}.md ' +
+    'becomes one corpus pair, so a difference means the corpus checked out here is not the one those pages ' +
     'describe - a truncated or stale checkout, a wrong CARVE_SPEC_CORPUS, or a corpus that needs ' +
     'regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
 )
