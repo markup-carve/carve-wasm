@@ -3,12 +3,11 @@
 The manifest pins an exact merged `carve-lang` revision:
 
 ```toml
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "ed5581b19b4cf840dc625a1d25b7184d273aa406" }
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "889e916f62dd9d51d743b544a83d04dace2d924c" }
 ```
 
 The revision must be reachable from carve-rs `main`. After a squash or rebase
-merge, pin the landed commit and update the lock. This revision includes the
-Markdown fidelity fixes that the previous registry pin lacked.
+merge, pin the landed commit and update the lock.
 
 An exact published version is also accepted by the guards. Use `version =
 "=<version>"` when a registry release carries the required fixes. The leading
