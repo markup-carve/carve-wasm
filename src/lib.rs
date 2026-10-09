@@ -800,8 +800,13 @@ pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
 /// that needs them calls that one.
 #[cfg(all(feature = "markdown-import", feature = "ast-json"))]
 #[wasm_bindgen(js_name = markdownToAstJson)]
-pub fn markdown_to_ast_json(source: &str) -> String {
-    carve::to_json(&carve::markdown_to_ast(source))
+pub fn markdown_to_ast_json(source: &str) -> Result<String, JsValue> {
+    let document = carve::try_markdown_to_ast(source).map_err(|error| {
+        JsValue::from(js_sys::Error::new(&format!(
+            "Markdown import failed: {error}"
+        )))
+    })?;
+    Ok(carve::to_json(&document))
 }
 
 /// Turn a profile rejection into a JS `Error` a caller can act on.

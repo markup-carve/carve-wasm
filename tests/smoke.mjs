@@ -823,6 +823,12 @@ assert.deepEqual(
   ],
 )
 
+const tooDeepMarkdown = '> '.repeat(512) + 'text\n'
+for (const importer of [fromMarkdown, markdownToAstJson]) {
+  assert.throws(() => importer(tooDeepMarkdown), error =>
+    error instanceof Error && /Markdown import failed/.test(error.message))
+  assert.equal(toHtml('after refusal'), '<p>after refusal</p>')
+}
 console.log('wasm artifact: tree, lint, stamp and importer entry points pass')
 
 // The ProseMirror bridge. ProseMirror runs in a browser and nowhere else, so
