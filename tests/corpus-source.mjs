@@ -72,10 +72,8 @@ const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 // modifiers such as `::: compare no-render`.
 const COMPARE_OPEN = /^:{3,}\s+compare(\s+\S.*)?$/
 
-// The scan mirrors the generator's state machine rather than grepping: a
-// `::: compare` line inside an already-open block is content, not a second
-// pair, and a block closes on a bare marker line. Mirroring keeps the two
-// counts equal by construction instead of by luck.
+// Count Carve and HTML fences independently of generated files. Each block
+// must contain equal, nonzero counts; literal fenced content is ignored.
 const declaredCorpusSize = (corpusDir) => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
   let declared = 0
@@ -94,17 +92,36 @@ const declaredCorpusSize = (corpusDir) => {
       )
     }
     let marker = null
-    for (const rawLine of blob.split('\n')) {
-      const line = rawLine.trim()
-      if (marker !== null) {
-        if (line === marker) marker = null
+    let fence = null
+    let counts = { carve: 0, html: 0 }
+    for (const line of blob.split('\n')) {
+      if (fence !== null) {
+        if (line.startsWith(fence) && line.slice(fence.length).trim() === '') fence = null
         continue
       }
-      if (COMPARE_OPEN.test(line)) {
-        declared += 1
-        marker = line.match(/^:{3,}/)[0]
+      const opening = line.match(/^(`{3,})([\s\S]*)$/)
+      if (opening) {
+        fence = opening[1]
+        const language = opening[2].trim()
+        if (marker !== null && Object.hasOwn(counts, language)) counts[language]++
+        continue
+      }
+      const trimmed = line.trim()
+      if (marker !== null) {
+        if (trimmed === marker) {
+          assert.ok(counts.carve > 0 && counts.carve === counts.html,
+            `unpaired or empty compare block in ${path}: ${JSON.stringify(counts)}`)
+          declared += counts.carve
+          marker = null
+        }
+        continue
+      }
+      if (COMPARE_OPEN.test(trimmed)) {
+        marker = trimmed.match(/^:{3,}/)[0]
+        counts = { carve: 0, html: 0 }
       }
     }
+    assert.ok(marker === null && fence === null, `unclosed compare block or fence in ${path}`)
   }
   assert.ok(
     declared > 0,
@@ -140,7 +157,7 @@ assert.equal(
   names.length,
   declared,
   `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ${declared}. ` +
-    'Every ::: compare block in resources/examples/{core,extensions,edge-cases}.md becomes one ' +
+    'Every ::: compare block in resources/examples/{core,extensions,edge-cases}.md declares its ' +
     'corpus pair, so a difference means the corpus checked out here is not the one those pages ' +
     'describe - a truncated or stale checkout, a wrong CARVE_SPEC_CORPUS, or a corpus that needs ' +
     'regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',

@@ -2579,17 +2579,19 @@ fn reason_map(entries: &std::collections::BTreeMap<String, String>) -> Result<Js
 #[wasm_bindgen(js_name = toProseMirror, unchecked_return_type = "ProseMirrorResult")]
 pub fn to_prose_mirror(source: &str) -> Result<JsValue, JsValue> {
     let mut converted = carve::to_prosemirror(&carve::parse(source));
-    // A node mapping can keep its type while changing canonical source.
-    // Check the bridge's own output before claiming that nothing changed.
-    if converted.dropped.is_empty() && converted.degraded.is_empty() {
-        let before = carve::to_carve(source);
+    // Report document changes even when a node already reported degradation.
+    // One known loss does not establish preservation of the remaining content.
+    {
+        let before = carve::try_to_carve_with_options(source, &carve::Options::default()).ok();
         let after = carve::from_prosemirror(&converted.json)
             .ok()
             .and_then(|doc| carve::render_carve(&doc).ok())
-            .map(|source| carve::to_carve(&source));
-        match after {
-            Some(after) if before == after => {}
-            Some(_) => {
+            .and_then(|source| {
+                carve::try_to_carve_with_options(&source, &carve::Options::default()).ok()
+            });
+        match (before, after) {
+            (Some(before), Some(after)) if before == after => {}
+            (Some(_), Some(_)) => {
                 converted.degraded.insert(
                     "document".into(),
                     "Canonical source changes on the ProseMirror round trip".into(),

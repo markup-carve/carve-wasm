@@ -870,6 +870,20 @@ assert.deepEqual(fenced.content, [{ type: 'text', text: 'let x = 1;\n' }])
 const softBreak = toProseMirror('left\nright')
 assert.equal(softBreak.degraded.soft_break, 'a soft break is whitespace in the ProseMirror model')
 assert.deepEqual(softBreak.dropped, {})
+assert.equal(softBreak.degraded.document, 'Canonical source changes on the ProseMirror round trip')
+const deepEditorSource = ':::: note\n'.repeat(203) + 'x\n'
+const deepEditor = toProseMirror(deepEditorSource)
+assert.equal(deepEditor.degraded.soft_break, 'a soft break is whitespace in the ProseMirror model')
+assert.equal(deepEditor.degraded.document, 'Canonical source changes on the ProseMirror round trip')
+assert.notEqual(toHtml(fromProseMirror(deepEditor.json)), toHtml(deepEditorSource))
+const ladderDepth = 201
+const ladderPad = '  '.repeat(ladderDepth)
+const unspellableLadder = Array.from({ length: ladderDepth }, (_, level) => '  '.repeat(level) + '- x')
+  .concat([ladderPad + '```', ladderPad + 'code', ladderPad + '```']).join('\n') + '\n'
+const unverifiedEditor = toProseMirror(unspellableLadder)
+assert.equal(unverifiedEditor.degraded.document, 'Canonical source preservation could not be verified')
+assert.equal(toHtml('after refusal'), '<p>after refusal</p>')
+
 assert.equal(
   toProseMirror('a ... b').degraded.smart_punctuation,
   'smart-typography output is lossy on reparse, so it is not modeled',
@@ -878,7 +892,9 @@ const abbreviated = toProseMirror('*[HTML]: HyperText Markup Language\n\nHTML is
 assert.deepEqual(abbreviated.dropped, {
   abbreviation_def: "abbreviation definitions ride on the doc node's attrs",
 })
-assert.deepEqual(abbreviated.degraded, {})
+assert.deepEqual(abbreviated.degraded, {
+  document: 'Canonical source changes on the ProseMirror round trip',
+})
 assert.equal(fromProseMirror(toProseMirror('a ... b').json), 'a … b\n')
 
 // The editor loop closes: source in, source back.

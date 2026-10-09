@@ -672,8 +672,11 @@ const saved = fromProseMirror(JSON.stringify(editor.getJSON()))
 `Carve node type -> reason`: `dropped` where the content is gone (an
 abbreviation definition has no editor node), `degraded` where the text survives
 without its node type (a soft break becomes whitespace, smart typography
-resolves to the glyph). When node-level reports are empty, the binding also compares canonical source
-before and after the bridge. A difference is reported under `degraded.document`.
+resolves to the glyph). The binding compares canonical source before and after
+an immediate round trip, including when a node already reports a loss. A
+change adds `degraded.document` with the reason `Canonical source changes on
+the ProseMirror round trip`. A writer refusal instead reports `Canonical
+source preservation could not be verified`.
 An empty pair of maps means that this immediate round trip preserves canonical
 source, not that subsequent edits in an editor preserve every Carve construct.
 
@@ -731,7 +734,7 @@ const html: string = toHtml('_Hello_')
 | `sanitizeSvg` | `(source: string, options?: object \| null) => SanitizeResult` | Sanitize an SVG document; strict unless an option says otherwise |
 | `parseLocator` | `(loc: string) => ParsedLocator` | Parse a citation locator into label, value and suffix |
 | `parseSourceLayoutJson` | `(source: string) => string` | The PART 12 §13 source-layout sidecar |
-| `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree, skipping the Carve-source round trip |
+| `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree; throws `Error` when nesting exceeds the importer limit |
 | `htmlToAst` | `(html: string, mode?: string) => MigrationResult` | Import HTML straight to the tree; `{ value, report }` with the tree in `value` |
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
 | `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree, parsedSourceBytes }` |
