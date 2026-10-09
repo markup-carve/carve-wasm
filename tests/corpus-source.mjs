@@ -15,6 +15,8 @@ import assert from 'node:assert/strict'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
+import { censusComparePairs } from './lib/example-pair-census.mjs'
+
 const CORPUS = process.env.CARVE_SPEC_CORPUS
 
 // The skip above is a convenience for a local checkout without the spec repo.
@@ -68,12 +70,11 @@ if (!CORPUS) {
 // bigger number.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 
-// Mirrors the generator: `::: compare`, or a longer colon run, with optional
-// modifiers such as `::: compare no-render`.
-const COMPARE_OPEN = /^:{3,}\s+compare(\s+\S.*)?$/
-
-// Count Carve and HTML fences independently of generated files. Each block
-// must contain equal, nonzero counts; literal fenced content is ignored.
+// One pair per `carve` fence inside a `::: compare` block, which is what the
+// generator writes: a block may declare several, so counting BLOCKS would report
+// fewer declared pairs than the corpus holds (markup-carve/carve#2824). The
+// counting itself is tests/lib/example-pair-census.mjs, a port of the spec's own
+// census, kept in a module a test can call with a synthetic page.
 const declaredCorpusSize = (corpusDir) => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
   let declared = 0
@@ -91,37 +92,20 @@ const declaredCorpusSize = (corpusDir) => {
           'these pages; if the spec moved them, this helper has to move with them.',
       )
     }
-    let marker = null
-    let fence = null
-    let counts = { carve: 0, html: 0 }
-    for (const line of blob.split('\n')) {
-      if (fence !== null) {
-        if (line.startsWith(fence) && line.slice(fence.length).trim() === '') fence = null
-        continue
-      }
-      const opening = line.match(/^(`{3,})([\s\S]*)$/)
-      if (opening) {
-        fence = opening[1]
-        const language = opening[2].trim()
-        if (marker !== null && Object.hasOwn(counts, language)) counts[language]++
-        continue
-      }
-      const trimmed = line.trim()
-      if (marker !== null) {
-        if (trimmed === marker) {
-          assert.ok(counts.carve > 0 && counts.carve === counts.html,
-            `unpaired or empty compare block in ${path}: ${JSON.stringify(counts)}`)
-          declared += counts.carve
-          marker = null
-        }
-        continue
-      }
-      if (COMPARE_OPEN.test(trimmed)) {
-        marker = trimmed.match(/^:{3,}/)[0]
-        counts = { carve: 0, html: 0 }
-      }
+    const { blocks, openFence } = censusComparePairs(blob.split('\n'))
+    for (const block of blocks) {
+      assert.ok(
+        block.unclosed !== true,
+        `unclosed compare block in ${path} at line ${block.line}`,
+      )
+      assert.ok(
+        block.carve > 0 && block.carve === block.html,
+        `unpaired or empty compare block in ${path} at line ${block.line}: ` +
+          JSON.stringify({ carve: block.carve, html: block.html }),
+      )
+      declared += block.carve
     }
-    assert.ok(marker === null && fence === null, `unclosed compare block or fence in ${path}`)
+    assert.ok(openFence === null, `unclosed fence in ${path}`)
   }
   assert.ok(
     declared > 0,
