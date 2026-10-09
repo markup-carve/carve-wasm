@@ -190,6 +190,9 @@ jobs:
           path: benchmark-results.json
           if-no-files-found: error
 
+      - name: Check corpus population refusals
+        run: node tests/corpus-population.mjs
+
       - name: Test the wasm artifact through its JS API
         run: node tests/smoke.mjs
 

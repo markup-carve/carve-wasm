@@ -784,7 +784,12 @@ pub fn from_html(source: &str, mode: Option<String>) -> Result<JsValue, JsValue>
 #[cfg(feature = "markdown-import")]
 #[wasm_bindgen(js_name = fromMarkdown, unchecked_return_type = "MigrationResult")]
 pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
-    migration_result_to_js(carve::migrate_markdown(source))
+    let result = carve::try_migrate_markdown(source).map_err(|error| {
+        JsValue::from(js_sys::Error::new(&format!(
+            "Markdown import failed: {error}"
+        )))
+    })?;
+    migration_result_to_js(result)
 }
 
 /// Import Markdown straight to the tree, as AST JSON.
@@ -795,8 +800,13 @@ pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
 /// that needs them calls that one.
 #[cfg(all(feature = "markdown-import", feature = "ast-json"))]
 #[wasm_bindgen(js_name = markdownToAstJson)]
-pub fn markdown_to_ast_json(source: &str) -> String {
-    carve::to_json(&carve::markdown_to_ast(source))
+pub fn markdown_to_ast_json(source: &str) -> Result<String, JsValue> {
+    let document = carve::try_markdown_to_ast(source).map_err(|error| {
+        JsValue::from(js_sys::Error::new(&format!(
+            "Markdown import failed: {error}"
+        )))
+    })?;
+    Ok(carve::to_json(&document))
 }
 
 /// Turn a profile rejection into a JS `Error` a caller can act on.
@@ -2569,17 +2579,19 @@ fn reason_map(entries: &std::collections::BTreeMap<String, String>) -> Result<Js
 #[wasm_bindgen(js_name = toProseMirror, unchecked_return_type = "ProseMirrorResult")]
 pub fn to_prose_mirror(source: &str) -> Result<JsValue, JsValue> {
     let mut converted = carve::to_prosemirror(&carve::parse(source));
-    // A node mapping can keep its type while changing canonical source.
-    // Check the bridge's own output before claiming that nothing changed.
-    if converted.dropped.is_empty() && converted.degraded.is_empty() {
-        let before = carve::to_carve(source);
+    // Report document changes even when a node already reported degradation.
+    // One known loss does not establish preservation of the remaining content.
+    {
+        let before = carve::try_to_carve_with_options(source, &carve::Options::default()).ok();
         let after = carve::from_prosemirror(&converted.json)
             .ok()
             .and_then(|doc| carve::render_carve(&doc).ok())
-            .map(|source| carve::to_carve(&source));
-        match after {
-            Some(after) if before == after => {}
-            Some(_) => {
+            .and_then(|source| {
+                carve::try_to_carve_with_options(&source, &carve::Options::default()).ok()
+            });
+        match (before, after) {
+            (Some(before), Some(after)) if before == after => {}
+            (Some(_), Some(_)) => {
                 converted.degraded.insert(
                     "document".into(),
                     "Canonical source changes on the ProseMirror round trip".into(),

@@ -47,8 +47,9 @@ The package imports HTML, Markdown, Djot, and BBCode. `fromHtml`,
 with a fidelity report. The simpler `fromDjot` and `fromBbcode` helpers return
 only the converted string.
 
-Markdown, Djot, and BBCode reports currently mark fidelity as unverified. An
-empty diagnostic list does not claim that every construct was preserved.
+Markdown reports assess supported constructs and report known losses. Inputs
+outside that assessment receive `fidelity-unverified`. Djot and BBCode use the
+conservative fallback except for verified literal text.
 
 ```js
 import { fromHtml, fromMarkdown, htmlToAst, htmlToCarve } from '@markup-carve/carve-wasm'

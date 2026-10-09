@@ -76,7 +76,8 @@ HTML import projects through a DOM and cannot retain all Carve source
 constructs. Its `roundtrip` mode is for trusted Carve-produced HTML. The corpus
 ledger records output differences, while the stability gate requires a second
 import to settle. Inspect conversion reports before accepting imported source.
-Markdown, Djot and BBCode migration reports still mark fidelity as unverified.
+Markdown reports assess supported constructs and report known losses. Incomplete
+assessments, including nonliteral Djot and BBCode inputs, remain unverified.
 
 ProseMirror reports dropped nodes, degraded nodes and canonical source changes.
 A nonempty report requires a host decision before replacing the original
