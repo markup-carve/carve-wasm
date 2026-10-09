@@ -784,7 +784,12 @@ pub fn from_html(source: &str, mode: Option<String>) -> Result<JsValue, JsValue>
 #[cfg(feature = "markdown-import")]
 #[wasm_bindgen(js_name = fromMarkdown, unchecked_return_type = "MigrationResult")]
 pub fn from_markdown(source: &str) -> Result<JsValue, JsValue> {
-    migration_result_to_js(carve::migrate_markdown(source))
+    let result = carve::try_migrate_markdown(source).map_err(|error| {
+        JsValue::from(js_sys::Error::new(&format!(
+            "Markdown import failed: {error}"
+        )))
+    })?;
+    migration_result_to_js(result)
 }
 
 /// Import Markdown straight to the tree, as AST JSON.

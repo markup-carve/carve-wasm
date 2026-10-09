@@ -9,6 +9,12 @@ their own.
 
 ## [Unreleased]
 
+- A Markdown writer refusal returns a JavaScript error instead of panicking in the engine.
+
+- **Breaking:** Engine compatibility: image alt text and quoted include paths decode ASCII punctuation escapes; escape a literal backslash twice. Include rename warnings use `include-id-rename` instead of `include-heading-id-rename`.
+
+- Pin Rust engine `ed5581b1` to include Markdown construct assessment and the image-alt boundary fix.
+
 ## [0.1.6] - 2026-10-07
 
 ### Breaking

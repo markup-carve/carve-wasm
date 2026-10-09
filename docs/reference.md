@@ -33,10 +33,10 @@ astJsonToHtml(value)
 
 Portable migration code can use `fromHtml(html, mode)` and
 `fromMarkdown(markdown)`. Both return `{ value, report }`. Version 2 reports use
-the shared fidelity vocabulary. Markdown, Djot, and BBCode conservatively emit
-`fidelity-unverified` as `dropped` / `fallback` until their importers expose
-construct-level outcomes; an empty diagnostic list is therefore never used to
-imply fidelity that was not assessed.
+the shared fidelity vocabulary. Markdown reports assess supported constructs
+and report known losses; incomplete assessments use `fidelity-unverified` with
+`dropped` / `fallback`. Djot and BBCode use that conservative fallback except
+for verified literal text.
 
 ### Core renderer
 

@@ -817,8 +817,12 @@ assert.ok(htmlMigration.report.diagnostics.some(({ code, fidelity, confidence })
 const markdownMigration = fromMarkdown('**bold**')
 assert.deepEqual(
   markdownMigration.report.diagnostics.map(({ code, fidelity, confidence }) => ({ code, fidelity, confidence })),
-  [{ code: 'fidelity-unverified', fidelity: 'dropped', confidence: 'fallback' }],
+  [
+    { code: 'markdown-paragraph', fidelity: 'preserved', confidence: 'exact' },
+    { code: 'markdown-strong', fidelity: 'preserved', confidence: 'exact' },
+  ],
 )
+
 console.log('wasm artifact: tree, lint, stamp and importer entry points pass')
 
 // The ProseMirror bridge. ProseMirror runs in a browser and nowhere else, so

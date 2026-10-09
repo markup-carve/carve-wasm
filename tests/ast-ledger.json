@@ -782,7 +782,7 @@
     "315-an-inline-note-s-content-resolves-after-the-note.crv": "40a2377d8f4a73e8 document heading heading_ref inline_footnote paragraph text:4",
     "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-2.crv": "2fedf7dc534c8aa6 document image paragraph text:2",
     "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-3.crv": "4c1f2649673dddf0 document image link_reference_definition paragraph text:2",
-    "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-4.crv": "ab85f708e8541a38 document image paragraph text:2",
+    "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-4.crv": "54f156bef344aae2 document image paragraph text:2",
     "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-5.crv": "7659c0d60dd940c5 document image paragraph text:2",
     "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-6.crv": "245a3d5b0beeedc9 document link_reference_definition paragraph text",
     "316-an-image-s-alt-text-closes-where-a-link-s-text-closes-7.crv": "f7bdff865a3a01cc document figure image link_reference_definition text",

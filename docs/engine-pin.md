@@ -1,20 +1,19 @@
 # The carve-rs dependency pin
 
-The manifest requires an exact published `carve-lang` version:
+The manifest pins an exact merged `carve-lang` revision:
 
 ```toml
-carve = { package = "carve-lang", version = "=0.1.8" }
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "ed5581b19b4cf840dc625a1d25b7184d273aa406" }
 ```
 
-The leading `=` matters. Cargo reads `0.1.8` as a compatible range and may select
-a later 0.1 release on a fresh lock. The pin guards reject that form.
+The revision must be reachable from carve-rs `main`. After a squash or rebase
+merge, pin the landed commit and update the lock. This revision includes the
+Markdown fidelity fixes that the previous registry pin lacked.
 
-A Git revision is accepted by the same guards, for an engine fix that is not yet
-in a registry release. It must be reachable from carve-rs `main` for the ancestry
-gate to pass, so after a squash or rebase merge pin the landed commit and update
-the lock. A revision is the exception and not the resting state: it names a build
-no release names, and every sibling binding pins a published version, so come
-back to the registry form as soon as one carries the fix.
+An exact published version is also accepted by the guards. Use `version =
+"=<version>"` when a registry release carries the required fixes. The leading
+`=` matters: Cargo otherwise treats a version as a compatible range and may
+select a later release on a fresh lock.
 
 The engine is published as `carve-lang` because the `carve` crate name was
 already taken. CI resolves the selected version's bare release tag, such as
@@ -68,7 +67,7 @@ continuously and would be red from the moment any pull request opens there.
 
 That last line is the one that can tell a drifted pin from a current one.
 `smoke.mjs` asserts hand-written expectations, which a stale engine satisfies
-happily; `corpus.mjs` renders all 2215 mandatory spec documents through the
+happily; `corpus.mjs` renders all mandatory spec documents through the
 **built** artifact and requires byte-identical HTML. Without `CARVE_SPEC_CORPUS`
 it prints a notice and exits 0, so a checkout without the spec repo still runs
 the suite. CI always sets it.
