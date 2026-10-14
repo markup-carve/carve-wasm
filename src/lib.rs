@@ -971,7 +971,7 @@ export interface RenderOptions {
   positions?: boolean;
   lowercaseHeadingIds?: boolean;
   asciiHeadingIds?: "off" | "fold" | "strict";
-  smartTypography?: "glyph" | "source";
+  smartTypography?: "glyph" | "source" | "quotes-source";
   mode?: "interactive" | "static";
   profile?: "full" | "article" | "comment" | "minimal";
   profileBaseHost?: string;
@@ -2710,7 +2710,8 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 ///   endnotes heading, backlink text) for a page that is not in English. These
 ///   are TEXT and are escaped where they land, unlike `symbols`.
 /// * `smartTypography` - `"glyph"` (default) resolves `...` to an ellipsis,
-///   `"source"` keeps the author's run.
+///   `"source"` keeps the author's run, and `"quotes-source"` keeps only the
+///   author's quotes.
 /// * `lowercaseHeadingIds` (default `false`) and `asciiHeadingIds`
 ///   (`"off"` (default), `"fold"`, `"strict"`) - the slug policy, for a host
 ///   whose anchors have to match another generator's.
@@ -3384,10 +3385,11 @@ fn smart_typography_field(options: &js_sys::Object) -> Result<carve::SmartTypogr
     Ok(enum_field(
         options,
         "smartTypography",
-        "\"glyph\", \"source\"",
+        "\"glyph\", \"source\", \"quotes-source\"",
         |name| match name {
             "glyph" => Some(carve::SmartTypographyMode::Glyph),
             "source" => Some(carve::SmartTypographyMode::Source),
+            "quotes-source" => Some(carve::SmartTypographyMode::QuotesSource),
             _ => None,
         },
     )?

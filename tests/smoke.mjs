@@ -218,6 +218,11 @@ assert.ok(
   }).includes('Hinweis'),
 )
 assert.ok(toHtmlWithOptions('a...b\n', { smartTypography: 'source' }).includes('a...b'))
+{
+  const quotesSource = toHtmlWithOptions('"a"...b\n', { smartTypography: 'quotes-source' })
+  assert.ok(quotesSource.includes('"a"'), quotesSource)
+  assert.ok(quotesSource.includes('\u2026'), quotesSource)
+}
 assert.ok(
   toHtmlWithOptions('# Grüße Alle\n', {
     lowercaseHeadingIds: true,

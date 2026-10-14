@@ -3,7 +3,7 @@
 The manifest pins an exact merged `carve-lang` revision:
 
 ```toml
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "889e916f62dd9d51d743b544a83d04dace2d924c" }
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "204af9cd5a2e144c54bca7efa0146cdd0a882cc6" }
 ```
 
 The revision must be reachable from carve-rs `main`. After a squash or rebase

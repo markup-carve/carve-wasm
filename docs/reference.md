@@ -170,7 +170,7 @@ defaults, so the three shorthands above use those defaults.
 | `sourceLine` | `false` | Stamp top-level blocks with `data-source-line` |
 | `positions` | `false` | Keep source offsets on the nodes |
 | `labels` | none | Override engine-written strings, for a page not in English |
-| `smartTypography` | `glyph` | `source` keeps the author's run instead of the glyph |
+| `smartTypography` | `glyph` | `source` keeps the author's run instead of the glyph; `quotes-source` keeps the author's quotes and still resolves dashes, ellipses and symbols |
 | `lowercaseHeadingIds` | `false` | Lowercase the generated heading ids |
 | `asciiHeadingIds` | `off` | `fold` transliterates, `strict` guarantees ASCII |
 | `mentionUrl` | none | URL template for `@mention`; `{name}` / `{user}` take the encoded name |
