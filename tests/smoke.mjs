@@ -218,6 +218,19 @@ assert.ok(
   }).includes('Hinweis'),
 )
 assert.ok(toHtmlWithOptions('a...b\n', { smartTypography: 'source' }).includes('a...b'))
+{
+  const quotesSource = toHtmlWithOptions('"a"...b\n', { smartTypography: { quotes: false } })
+  assert.ok(quotesSource.includes('"a"'), quotesSource)
+  assert.ok(quotesSource.includes('\u2026'), quotesSource)
+  assert.equal(toHtmlWithOptions('"a"...b\n', { smartTypography: { quotes: true } }), toHtmlWithOptions('"a"...b\n', {}))
+  assert.equal(toHtmlWithOptions('"a"...b\n', { smartTypography: true }), toHtmlWithOptions('"a"...b\n', {}))
+  assert.equal(
+    toHtmlWithOptions('"a"...b\n', { smartTypography: false }),
+    toHtmlWithOptions('"a"...b\n', { smartTypography: 'source' }),
+  )
+  assert.throws(() => toHtmlWithOptions('a\n', { smartTypography: 'quotes-source' }), /smartTypography/)
+  assert.throws(() => toHtmlWithOptions('a\n', { smartTypography: { dashes: false } }), /smartTypography/)
+}
 assert.ok(
   toHtmlWithOptions('# Grüße Alle\n', {
     lowercaseHeadingIds: true,

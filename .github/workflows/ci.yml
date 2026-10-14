@@ -17,6 +17,13 @@ on:
     - cron: "35 6 * * *"
   workflow_dispatch:
 
+# One run per pull request: a new push cancels the one it supersedes. Every
+# other event gets a group of its own, because GitHub keeps only one pending
+# run per group and would drop a queued schedule or push run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 # Each job declares timeout-minutes so a hung step fails fast
 # instead of inheriting the 360-minute GitHub default.
 jobs:
@@ -125,6 +132,10 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
           components: rustfmt, clippy
+      - name: Cache the Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
       - name: Check formatting
         run: cargo fmt --check
       - name: Lint the target that ships
@@ -132,14 +143,21 @@ jobs:
       - name: Lint the rendering-only selection
         run: cargo clippy --target wasm32-unknown-unknown --all-targets --no-default-features -- -D warnings
 
-  test:
+  # The native Rust checks, in parallel with the wasm package job below so
+  # they stay off its critical path.
+  rust-test:
+    name: Rust tests
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
+      - name: Cache the Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
       - name: Test Rust wrapper
         run: cargo test
       - name: Test rendering-only Rust wrapper
@@ -157,7 +175,20 @@ jobs:
             exit 1
           fi
 
-      # `cargo test` exercises the NATIVE build of the wrapper; it never proves
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - name: Cache the Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+
+      # `cargo test` (rust-test above) exercises the NATIVE build of the wrapper; it never proves
       # the wasm package users actually load works. Build the real artifact and
       # drive it through the JS API, so a stale or broken engine fails here
       # instead of shipping (carve-go's embedded engine went months stale with
@@ -175,6 +206,16 @@ jobs:
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
+      # Browsers are cached by Playwright version; the system dependencies
+      # still come from apt on every run.
+      - name: Read the Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/playwright'].version")" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - run: npx playwright install --with-deps chromium firefox webkit
       - name: Build the npm package
         run: node scripts/build-package.mjs
@@ -248,13 +289,18 @@ jobs:
           # measurement, which is far enough that the feature gates could stop
           # cutting most of what they cut and still pass. Move this only with
           # the measured ratio in the commit message.
+          #
+          # TEMPORARILY 43%. carve-lang 0.1.9 links the regex engine into every
+          # render through smart-quote direction (markup-carve/carve-rs#2771),
+          # which puts this build at 41.3%. Back to 40% once a carve-lang
+          # release with that fix is pinned (#177).
           if [ "$full_bytes" -lt 100000 ] || [ "$render_bytes" -lt 100000 ]; then
             echo "::error::a wasm artifact measured under 100000 bytes gzip, so this gate measured nothing"
             exit 1
           fi
           echo "rendering-only share: $((render_bytes * 1000 / full_bytes))/1000 of the full artifact"
-          if [ $((render_bytes * 100)) -ge $((full_bytes * 40)) ]; then
-            echo "::error::rendering-only wasm is no longer at least 60% smaller than the full artifact ($render_bytes of $full_bytes bytes gzip)"
+          if [ $((render_bytes * 100)) -ge $((full_bytes * 43)) ]; then
+            echo "::error::rendering-only wasm is no longer at least 57% smaller than the full artifact ($render_bytes of $full_bytes bytes gzip)"
             exit 1
           fi
 
@@ -408,6 +454,10 @@ jobs:
         with:
           toolchain: ${{ steps.msrv.outputs.version }}
           targets: wasm32-unknown-unknown
+      - name: Cache the Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          save-if: ${{ github.ref == 'refs/heads/main' }}
       - run: cargo build --locked --all-targets
       - run: cargo test --locked
       - run: cargo check --locked --target wasm32-unknown-unknown
