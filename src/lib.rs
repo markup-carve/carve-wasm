@@ -971,7 +971,7 @@ export interface RenderOptions {
   positions?: boolean;
   lowercaseHeadingIds?: boolean;
   asciiHeadingIds?: "off" | "fold" | "strict";
-  smartTypography?: "glyph" | "source" | "quotes-source";
+  smartTypography?: "glyph" | "source" | boolean | { quotes?: boolean };
   mode?: "interactive" | "static";
   profile?: "full" | "article" | "comment" | "minimal";
   profileBaseHost?: string;
@@ -2709,9 +2709,9 @@ fn bool_field(options: &js_sys::Object, key: &str) -> Result<Option<bool>, JsVal
 /// * `labels` - override the engine-written strings (admonition names, the
 ///   endnotes heading, backlink text) for a page that is not in English. These
 ///   are TEXT and are escaped where they land, unlike `symbols`.
-/// * `smartTypography` - `"glyph"` (default) resolves `...` to an ellipsis,
-///   `"source"` keeps the author's run, and `"quotes-source"` keeps only the
-///   author's quotes.
+/// * `smartTypography` - `"glyph"` or `true` (default) resolves `...` to an
+///   ellipsis, `"source"` or `false` keeps the author's run, and
+///   `{ quotes: false }` keeps only the author's quotes.
 /// * `lowercaseHeadingIds` (default `false`) and `asciiHeadingIds`
 ///   (`"off"` (default), `"fold"`, `"strict"`) - the slug policy, for a host
 ///   whose anchors have to match another generator's.
@@ -3381,19 +3381,43 @@ fn mode_field(options: &js_sys::Object) -> Result<carve::Mode, JsValue> {
     .unwrap_or_default())
 }
 
+/// carve-js's `smartTypography` shape: `"glyph"` | `"source"` | boolean |
+/// `{ quotes: boolean }`. `true` is glyph, `false` is source, and
+/// `{ quotes: false }` keeps only the author's quotes.
 fn smart_typography_field(options: &js_sys::Object) -> Result<carve::SmartTypographyMode, JsValue> {
-    Ok(enum_field(
-        options,
-        "smartTypography",
-        "\"glyph\", \"source\", \"quotes-source\"",
-        |name| match name {
-            "glyph" => Some(carve::SmartTypographyMode::Glyph),
-            "source" => Some(carve::SmartTypographyMode::Source),
-            "quotes-source" => Some(carve::SmartTypographyMode::QuotesSource),
-            _ => None,
-        },
-    )?
-    .unwrap_or_default())
+    const ACCEPTED: &str = "\"glyph\", \"source\", true, false, { quotes: boolean }";
+    let value = js_sys::Reflect::get(options, &JsValue::from_str("smartTypography"))?;
+    if value.is_undefined() || value.is_null() {
+        return Ok(carve::SmartTypographyMode::default());
+    }
+    let refuse = |what: String| {
+        JsValue::from(js_sys::TypeError::new(&format!(
+            "carve: unknown `smartTypography` {what} (supported: {ACCEPTED})"
+        )))
+    };
+    if let Some(flag) = value.as_bool() {
+        return Ok(if flag { carve::SmartTypographyMode::Glyph } else { carve::SmartTypographyMode::Source });
+    }
+    if let Some(name) = value.as_string() {
+        return match name.as_str() {
+            "glyph" => Ok(carve::SmartTypographyMode::Glyph),
+            "source" => Ok(carve::SmartTypographyMode::Source),
+            _ => Err(refuse(format!("{name:?}"))),
+        };
+    }
+    if value.is_object() && !js_sys::Array::is_array(&value) {
+        let object = js_sys::Object::from(value);
+        let keys = js_sys::Object::keys(&object);
+        if keys.iter().any(|key| key.as_string().as_deref() != Some("quotes")) {
+            return Err(refuse("object with a key other than `quotes`".to_owned()));
+        }
+        return match bool_field(&object, "quotes") {
+            Ok(Some(false)) => Ok(carve::SmartTypographyMode::QuotesSource),
+            Ok(_) => Ok(carve::SmartTypographyMode::Glyph),
+            Err(_) => Err(refuse("object whose `quotes` is not a boolean".to_owned())),
+        };
+    }
+    Err(refuse("value".to_owned()))
 }
 
 fn ascii_heading_ids_field(options: &js_sys::Object) -> Result<carve::AsciiHeadingIds, JsValue> {
