@@ -1,16 +1,18 @@
 # The carve-rs dependency pin
 
-The manifest pins an exact merged `carve-lang` revision:
+The manifest pins an exact published `carve-lang` version:
 
 ```toml
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "204af9cd5a2e144c54bca7efa0146cdd0a882cc6" }
+carve = { package = "carve-lang", version = "=0.1.9" }
 ```
 
-The revision must be reachable from carve-rs `main`. After a squash or rebase
+A merged carve-rs revision is accepted too, in the form
+`git = "https://github.com/markup-carve/carve-rs", rev = "<40-hex sha>"`.
+
+A Git revision must be reachable from carve-rs `main`. After a squash or rebase
 merge, pin the landed commit and update the lock.
 
-An exact published version is also accepted by the guards. Use `version =
-"=<version>"` when a registry release carries the required fixes. The leading
+Prefer the registry form whenever a release carries the required fixes. The leading
 `=` matters: Cargo otherwise treats a version as a compatible range and may
 select a later release on a fresh lock.
 

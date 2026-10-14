@@ -9,7 +9,9 @@ their own.
 
 ## [Unreleased]
 
-- Pin Rust engine `889e916f` for current spec conformance.
+- The engine is the published `carve-lang` 0.1.9 crate. Its AST follows contract 1.1: a cell joined across lines holds a `cell_wrap` node, a table carries `separatorWidths`, and `delim` and `bulletChar` appear only for `)` and `*`. New loss codes include `carrier-attribute-dropped`, `list-style-dropped` and `frontmatter-synthesized`.
+
+- `smartTypography` takes carve-js's shape: `"glyph"` or `true` (default), `"source"` or `false`, or `{ quotes: false }` to keep the author's quotes while dashes, ellipses and symbols still resolve.
 
 - Adjacent alphabetic and Roman ordered lists stay separate through HTML import and formatting. Three blank lines end dialect lookahead.
 

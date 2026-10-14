@@ -3396,7 +3396,11 @@ fn smart_typography_field(options: &js_sys::Object) -> Result<carve::SmartTypogr
         )))
     };
     if let Some(flag) = value.as_bool() {
-        return Ok(if flag { carve::SmartTypographyMode::Glyph } else { carve::SmartTypographyMode::Source });
+        return Ok(if flag {
+            carve::SmartTypographyMode::Glyph
+        } else {
+            carve::SmartTypographyMode::Source
+        });
     }
     if let Some(name) = value.as_string() {
         return match name.as_str() {
@@ -3408,7 +3412,10 @@ fn smart_typography_field(options: &js_sys::Object) -> Result<carve::SmartTypogr
     if value.is_object() && !js_sys::Array::is_array(&value) {
         let object = js_sys::Object::from(value);
         let keys = js_sys::Object::keys(&object);
-        if keys.iter().any(|key| key.as_string().as_deref() != Some("quotes")) {
+        if keys
+            .iter()
+            .any(|key| key.as_string().as_deref() != Some("quotes"))
+        {
             return Err(refuse("object with a key other than `quotes`".to_owned()));
         }
         return match bool_field(&object, "quotes") {
