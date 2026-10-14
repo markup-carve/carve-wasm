@@ -51,12 +51,6 @@
       "degraded:document",
       "degraded:soft_break"
     ],
-    "130-bold-italic-delimiter-needs-content-3.crv": [
-      "degraded:document"
-    ],
-    "130-bold-italic-delimiter-needs-content-4.crv": [
-      "degraded:document"
-    ],
     "134-footnote-definition-requires-an-inline-body.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -202,15 +196,111 @@
       "degraded:smart_punctuation",
       "degraded:soft_break"
     ],
+    "19-smart-typography-dashes-and-quotes-11.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-12.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-13.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-14.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-15.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-16.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-17.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-18.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-19.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
     "19-smart-typography-dashes-and-quotes-2.crv": [
       "degraded:document",
       "degraded:smart_punctuation",
       "degraded:soft_break"
     ],
+    "19-smart-typography-dashes-and-quotes-20.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-21.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-22.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-23.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-24.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-25.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-26.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-27.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-28.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-29.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
     "19-smart-typography-dashes-and-quotes-3.crv": [
       "degraded:document",
       "degraded:smart_punctuation",
       "degraded:soft_break"
+    ],
+    "19-smart-typography-dashes-and-quotes-30.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-31.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-32.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-33.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "19-smart-typography-dashes-and-quotes-34.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
     ],
     "19-smart-typography-dashes-and-quotes-4.crv": [
       "degraded:document",
@@ -305,6 +395,10 @@
       "degraded:document",
       "degraded:smart_punctuation"
     ],
+    "237-a-continuation-row-carries-no-trailing-text.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
     "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": [
       "degraded:document"
     ],
@@ -323,6 +417,10 @@
     "248-an-attribute-name-admits-no-colon.crv": [
       "degraded:document",
       "degraded:smart_punctuation"
+    ],
+    "249-trailing-whitespace-after-a-block-marker-4.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
     ],
     "25-definition-lists-4.crv": [
       "degraded:document",
@@ -399,6 +497,18 @@
     "256-table-cell-padding-must-be-a-space-12.crv": [
       "degraded:document",
       "degraded:smart_punctuation"
+    ],
+    "256-table-cell-padding-must-be-a-space-15.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "256-table-cell-padding-must-be-a-space-16.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "256-table-cell-padding-must-be-a-space-17.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
     ],
     "257-link-and-image-title-slots-must-be-a-space-2.crv": [
       "degraded:document",
@@ -790,6 +900,18 @@
     "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-3.crv": [
       "degraded:escaped_text"
     ],
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-4.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-5.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position-2.crv": [
       "degraded:document",
       "degraded:escaped_text",
@@ -811,9 +933,25 @@
       "degraded:document",
       "degraded:non_breaking_space"
     ],
+    "349-a-container-whose-table-ends-on-a-continuation-row-3.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "349-a-container-whose-table-ends-on-a-continuation-row-5.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "349-a-container-whose-table-ends-on-a-continuation-row-6.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
     "349-a-container-whose-table-ends-on-a-continuation-row-7.crv": [
       "degraded:document",
       "degraded:soft_break"
+    ],
+    "349-a-container-whose-table-ends-on-a-continuation-row.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
     ],
     "350-a-definition-at-a-container-s-content-column-3.crv": [
       "degraded:document",
@@ -866,6 +1004,34 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-2.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-4.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-5.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "355-a-container-whose-table-ends-on-a-joined-header-row-2.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "355-a-container-whose-table-ends-on-a-joined-header-row-3.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "355-a-container-whose-table-ends-on-a-joined-header-row.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-10.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -877,6 +1043,14 @@
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-12.crv": [
       "degraded:document",
       "degraded:soft_break"
+    ],
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-8.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-9.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
     ],
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-4.crv": [
       "degraded:document",
@@ -912,10 +1086,6 @@
       "degraded:soft_break"
     ],
     "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-2.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
-    "364-only-lazy-folding-demotes-a-marker-line-colon-opener-2.crv": [
       "degraded:document",
       "degraded:soft_break"
     ],
@@ -1195,10 +1365,6 @@
       "degraded:document",
       "degraded:soft_break"
     ],
-    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-4.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1367,6 +1533,18 @@
     "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item.crv": [
       "degraded:document"
     ],
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves-2.crv": [
       "degraded:document"
     ],
@@ -1415,9 +1593,6 @@
       "degraded:document",
       "degraded:italic"
     ],
-    "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": [
-      "degraded:document"
-    ],
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1461,10 +1636,27 @@
       "degraded:document",
       "dropped:caption_number"
     ],
-    "471-a-forced-opener-of-an-open-kind-is-literal-5.crv": [
+    "471-braced-emphasis-can-nest-its-own-kind-11.crv": [
+      "degraded:document",
+      "degraded:escaped_text"
+    ],
+    "471-braced-emphasis-can-nest-its-own-kind-13.crv": [
+      "degraded:emphasis",
       "degraded:strong"
     ],
-    "471-a-forced-opener-of-an-open-kind-is-literal-7.crv": [
+    "471-braced-emphasis-can-nest-its-own-kind-2.crv": [
+      "degraded:strong"
+    ],
+    "471-braced-emphasis-can-nest-its-own-kind-4.crv": [
+      "degraded:emphasis"
+    ],
+    "471-braced-emphasis-can-nest-its-own-kind-5.crv": [
+      "degraded:strong"
+    ],
+    "471-braced-emphasis-can-nest-its-own-kind-7.crv": [
+      "degraded:strong"
+    ],
+    "471-braced-emphasis-can-nest-its-own-kind.crv": [
       "degraded:strong"
     ],
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv": [
@@ -1475,12 +1667,6 @@
       "degraded:document",
       "degraded:escaped_text",
       "degraded:substitution"
-    ],
-    "473-a-run-of-asterisks-inside-a-combined-token-is-content-2.crv": [
-      "degraded:document"
-    ],
-    "473-a-run-of-asterisks-inside-a-combined-token-is-content.crv": [
-      "degraded:document"
     ],
     "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": [
       "degraded:document",
@@ -1570,10 +1756,6 @@
       "degraded:document",
       "degraded:soft_break"
     ],
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
     "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1647,28 +1829,13 @@
       "degraded:escaped_text",
       "degraded:smart_punctuation"
     ],
-    "486-any-character-is-content-of-the-combined-bold-italic-token-2.crv": [
-      "degraded:document"
-    ],
     "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": [
       "degraded:document",
       "degraded:non_breaking_space"
     ],
-    "486-any-character-is-content-of-the-combined-bold-italic-token-4.crv": [
-      "degraded:document"
-    ],
-    "486-any-character-is-content-of-the-combined-bold-italic-token-5.crv": [
-      "degraded:document"
-    ],
     "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": [
       "degraded:document",
       "degraded:soft_break"
-    ],
-    "486-any-character-is-content-of-the-combined-bold-italic-token.crv": [
-      "degraded:document"
-    ],
-    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-12.crv": [
-      "degraded:document"
     ],
     "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": [
       "degraded:document",
@@ -1725,9 +1892,6 @@
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": [
       "degraded:document",
       "dropped:caption_number"
-    ],
-    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-3.crv": [
-      "degraded:document"
     ],
     "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": [
       "degraded:document",
@@ -1915,6 +2079,10 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "510-a-nested-quoted-term-leaves-no-paragraph-for-a-lazy-line.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "511-a-fence-in-a-quote-stores-no-continuation-claim-11.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -2061,16 +2229,252 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "551-a-link-destination-is-opaque-to-the-bracket-scan-10.crv": [
+      "degraded:document",
+      "degraded:escaped_text"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote-2.crv": [
+      "degraded:document",
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote-3.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote-4.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote-5.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote-6.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote-7.crv": [
+      "degraded:document",
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "552-a-braced-comment-does-not-decide-a-quote.crv": [
+      "degraded:document",
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-13.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-14.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-9.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "556-a-closed-block-leaves-no-frame-for-the-line-below.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "558-a-container-boundary-is-read-at-the-container-s-own-column-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "56-table-cell-escaped-pipe.crv": [
       "degraded:escaped_text"
+    ],
+    "560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "561-a-line-block-payload-span-pairs-past-the-content-column-2.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space",
+      "degraded:soft_break"
+    ],
+    "561-a-line-block-payload-span-pairs-past-the-content-column-3.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space",
+      "degraded:soft_break"
+    ],
+    "561-a-line-block-payload-span-pairs-past-the-content-column.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space",
+      "degraded:soft_break"
+    ],
+    "562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "567-a-description-marker-followed-by-a-no-break-space-has-content-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "568-a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "568-a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "569-a-quoted-term-takes-a-lazy-line-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "569-a-quoted-term-takes-a-lazy-line-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "569-a-quoted-term-takes-a-lazy-line.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "570-an-at-column-comment-retains-nothing-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "570-an-at-column-comment-retains-nothing.crv": [
+      "degraded:document",
+      "degraded:soft_break"
     ],
     "58-abbreviation-matches-on-word-boundaries-only.crv": [
       "degraded:document",
       "dropped:abbreviation_def"
     ],
+    "580-a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-18.crv": [
+      "degraded:escaped_text"
+    ],
+    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-19.crv": [
+      "degraded:escaped_text"
+    ],
+    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-33.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-34.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "590-a-closed-fence-in-a-nested-child-leaves-no-paragraph-open-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "591-a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-2.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-3.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
     "62-smart-typography-escapes-and-code.crv": [
       "degraded:document",
       "degraded:escaped_text"
+    ],
+    "63-table-multi-line-cell-continuation.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "64-table-rowspan-with-multi-line-content-2.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "64-table-rowspan-with-multi-line-content-3.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "64-table-rowspan-with-multi-line-content.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
     ],
     "70-blocks-that-render-to-nothing-3.crv": [
       "degraded:document",
@@ -2133,6 +2537,10 @@
       "degraded:soft_break"
     ],
     "82-blockquote-lazy-continuation-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "82-blockquote-lazy-continuation-5.crv": [
       "degraded:document",
       "degraded:soft_break"
     ],
@@ -2214,7 +2622,7 @@
     "160-indented-colon-fence-blocks-stay-literal-2.crv": "<p>::: | Roses, Violets. :::</p>",
     "160-indented-colon-fence-blocks-stay-literal-3.crv": "<p>::: note Body. :::</p>",
     "160-indented-colon-fence-blocks-stay-literal.crv": "<p>::: A box. :::</p>",
-    "161-below-content-column-div-body-in-a-list-item-stays-literal.crv": "<ul>\n  <li>::: note - para text :::</li>\n</ul>",
+    "161-below-content-column-div-body-in-a-list-item-stays-literal.crv": "<ul>\n  <li>\n    <aside class=\"admonition note\" aria-label=\"Note\">\n\n    </aside>\n  </li>\n</ul>\n<ul>\n  <li>para text :::</li>\n</ul>",
     "164-tight-list-item-keeps-trailing-text-after-a-block-bare-2.crv": "<ul>\n  <li>item :::note body ::: tail</li>\n</ul>",
     "175-a-repeated-definition-which-one-wins-2.crv": "<p>A here.</p>",
     "176-a-marker-separator-is-a-space-never-a-tab.crv": "<p>::\tterm :  d</p>",
@@ -2354,7 +2762,6 @@
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3.crv": "<ul>\n  <li>\n    <pre><code>c\n</code></pre>\n    b tail\n  </li>\n</ul>",
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line.crv": "<ul>\n  <li>\n    <blockquote>\n      <table>\n        <tbody>\n          <tr><td>a</td></tr>\n        </tbody>\n      </table>\n    </blockquote>\n    + b | tail\n  </li>\n</ul>",
     "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-2.crv": "<ul>\n  <li>\n    <div class=\"d\">\n      <p>b tail</p>\n    </div>\n  </li>\n</ul>",
-    "364-only-lazy-folding-demotes-a-marker-line-colon-opener-2.crv": "<ul>\n  <li>::: d tail</li>\n</ul>\n<p>after</p>",
     "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>a <code>\ntail</code></dd>\n</dl>",
     "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-3.crv": "<blockquote><p>q <code>\ntail</code></p></blockquote>",
     "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-4.crv": "<ul>\n  <li>q <code></code></li>\n</ul>\n<p>tail</p>",
@@ -2409,7 +2816,6 @@
     "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "<blockquote><p>q + - m</p></blockquote>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": "<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>+ flush<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
-    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-4.crv": "<blockquote><p>+ flush</p></blockquote>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": "<blockquote><p>+ flush</p></blockquote>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-6.crv": "<blockquote><p>+ flush</p></blockquote>",
     "439-a-colon-followed-by-only-whitespace-is-not-a-description-2.crv": "<dl>\n  <dt>t :</dt>\n</dl>\n<p>flush</p>",
@@ -2435,13 +2841,16 @@
     "448-a-marker-folds-into-a-quote-below-it-4.crv": "<ul>\n  <li>a\n    <blockquote><p>q - m</p></blockquote>\n  </li>\n</ul>",
     "448-a-marker-folds-into-a-quote-below-it-9.crv": "<ul>\n  <li>a p\n    <ul>\n      <li>m</li>\n    </ul>\n  </li>\n</ul>",
     "448-a-marker-folds-into-a-quote-below-it.crv": "<ul>\n  <li>a\n    <blockquote>\n      <ul>\n        <li>x - m</li>\n      </ul>\n    </blockquote>\n  </li>\n</ul>",
-    "449-a-comment-below-a-description-body-s-column-ends-the-body-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>x</dd>\n</dl>\n<p>y z</p>",
+    "449-a-comment-below-a-description-body-s-column-ends-the-body-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>x</p>\n    <p>y z</p>\n  </dd>\n</dl>",
     "45-inline-extensions-5.crv": "<p>:1[x] <span class=\"ext-a1\">x</span></p>",
     "45-inline-extensions-9.crv": "<p><kbd id=\"copy\" class=\"shortcut\" data-key=\"copy\"><strong>Ctrl</strong>+C</kbd> <kbd>x</kbd></p>",
     "450-a-closed-fence-in-a-description-body-ends-it-3.crv": "<dl>\n  <dt>term</dt>\n  <dd>definition <code>\nc\ntail</code></dd>\n</dl>",
     "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-8.crv": "<ul>\n  <li><p>a</p>\n    <blockquote><p>q first</p></blockquote>\n    <p>second</p>\n  </li>\n</ul>",
     "451-a-container-in-a-host-body-owns-a-line-past-its-own-content-column-9.crv": "<blockquote><p>a ::: note [r]: /url :::</p></blockquote>\n<p>[r][]</p>",
     "452-an-empty-unterminated-container-ends-at-a-flush-left-line-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>d</p>\n    <div class=\"d\">\n      <p>body tail</p>\n    </div>\n  </dd>\n</dl>",
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code ~~~</p>",
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code <code></code></p>",
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>\n        <pre><code class=\"language-x\"></code></pre>\n      </li>\n    </ul>\n  </dd>\n</dl>\n<p>code <code></code></p>",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>nested tail</li>\n    </ul>\n  </dd>\n</dl>",
     "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": "<p>~<em>xy~</em></p>",
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": "<p><em>x</em>_y z_ w</p>",
@@ -2474,14 +2883,13 @@
     "480-a-bare-colon-opener-in-a-description-body-is-an-opener.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <div>\n\n    </div>\n  </dd>\n</dl>\n<p>y :::</p>",
     "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-7.crv": "<p>::: {.x} not a div :::</p>",
     "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it.crv": "<p>text not a div</p>\n<div>\n\n</div>",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": "<ul>\n  <li>::: note y\n    <div>\n\n    </div>\n  </li>\n</ul>",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": "<ol>\n  <li>::: d y\n    <div>\n\n    </div>\n  </li>\n</ol>",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": "<ul>\n  <li>::: d y z\n    <div>\n\n    </div>\n  </li>\n</ul>",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv": "<ul>\n  <li>::: d y\n    <div>\n\n    </div>\n  </li>\n</ul>",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": "<ul>\n  <li>x\n    <ul>\n      <li>::: d y\n        <div>\n\n        </div>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": "<ul>\n  <li>\n    <aside class=\"admonition note\" aria-label=\"Note\">\n\n    </aside>\n  </li>\n</ul>\n<p>y :::</p>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": "<ol>\n  <li>\n    <div class=\"d\">\n\n    </div>\n  </li>\n</ol>\n<p>y :::</p>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": "<ul>\n  <li>\n    <div class=\"d\">\n\n    </div>\n  </li>\n</ul>\n<p>y z :::</p>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": "<ul>\n  <li>x\n    <ul>\n      <li>\n        <div class=\"d\">\n\n        </div>\n      </li>\n    </ul>\n    y :::\n  </li>\n</ul>",
     "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-8.crv": "<ul>\n  <li>\n    <div class=\"d\">\n      <p>x y</p>\n    </div>\n  </li>\n</ul>",
     "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-9.crv": "<ul>\n  <li>a\n    <div class=\"d\">\n\n    </div>\n  </li>\n</ul>\n<p>y :::</p>",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": "<ul>\n  <li>::: y\n    <div>\n\n    </div>\n  </li>\n</ul>",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": "<ul>\n  <li>\n    <div>\n\n    </div>\n  </li>\n</ul>\n<p>y :::</p>",
     "483-an-empty-term-marker-in-a-description-body-is-text-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>a :: c</dd>\n</dl>",
     "483-an-empty-term-marker-in-a-description-body-is-text-3.crv": "<dl>\n  <dt>t</dt>\n  <dd>a ::</dd>\n</dl>",
     "483-an-empty-term-marker-in-a-description-body-is-text-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>a b :: c</dd>\n</dl>",
@@ -2542,6 +2950,7 @@
     "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-12.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b <code>\np</code></li>\n      <li>c <code></code></li>\n    </ul>\n  </li>\n</ul>",
     "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-4.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b <code>\np\n</code></li>\n    </ul>\n  </li>\n</ul>",
     "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-5.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b <code>\np\n</code></li>\n    </ul>\n  </li>\n</ul>",
+    "510-a-nested-quoted-term-leaves-no-paragraph-for-a-lazy-line.crv": "<blockquote>\n  <blockquote>\n    <dl>\n      <dt>term tail</dt>\n    </dl>\n  </blockquote>\n</blockquote>",
     "511-a-fence-in-a-quote-stores-no-continuation-claim-11.crv": "<blockquote>\n  <blockquote>\n    <div class=\"d\">\n      <p>p</p>\n    </div>\n    <p>b y</p>\n  </blockquote>\n</blockquote>",
     "511-a-fence-in-a-quote-stores-no-continuation-claim-7.crv": "<blockquote>\n  <blockquote>\n    <pre><code>c\n</code></pre>\n    <p>b y</p>\n  </blockquote>\n</blockquote>",
     "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-10.crv": "<blockquote>\n  <ul>\n    <li>a\n      <pre><code>x\n</code></pre>\n    </li>\n  </ul>\n  <p>after flush</p>\n</blockquote>",
@@ -2571,7 +2980,49 @@
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": "<ul>\n  <li>\n    <blockquote>\n      <pre><code>x\n</code></pre>\n    </blockquote>\n    <blockquote><p>y <code></code></p></blockquote>\n  </li>\n</ul>",
     "546-every-name-lookup-compares-case-exactly-5.crv": "<figure id=\"Fig\">\n  <img src=\"upper.png\" alt=\"upper\">\n  <figcaption>Figure : upper</figcaption>\n</figure>\n<figure id=\"fig\">\n  <img src=\"lower.png\" alt=\"lower\">\n  <figcaption>Figure : lower</figcaption>\n</figure>\n<figure id=\"Eq\">\n  <p><span class=\"math display\" role=\"math\">\\[x\\]</span></p>\n  <figcaption>Equation : upper</figcaption>\n</figure>\n<figure id=\"eq\">\n  <p><span class=\"math display\" role=\"math\">\\[y\\]</span></p>\n  <figcaption>Equation : lower</figcaption>\n</figure>\n<p>&lt;/#Fig&gt;, &lt;/#fig&gt;, &lt;/#FIG&gt;, &lt;/#Eq&gt;, &lt;/#eq&gt;, &lt;/#EQ&gt;.</p>",
     "548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <pre><code></code></pre>\n  </dd>\n</dl>\n<p>code <code></code></p>",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-10.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b\n        <ul>\n          <li>c lazy</li>\n        </ul>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-13.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b\n        <pre><code>::: note\n</code></pre>\n        text lazy\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-14.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b\n        <aside class=\"admonition note\" aria-label=\"Note\">\n          <p>x</p>\n        </aside>\n        text lazy\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-8.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b text lazy</li>\n    </ul>\n  </li>\n</ul>",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-9.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b\n        <blockquote><p>q lazy</p></blockquote>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv": "<ul>\n  <li></li>\n</ul>\n<p>below</p>\n<p><a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a> <a id=\"fnref2\" href=\"#fn2\" role=\"doc-noteref\"><sup>2</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text - child<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n    <li id=\"fn2\">\n      <p>inner</p>\n      <pre><code>one\n</code></pre>\n      <p><a href=\"#fnref2\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv": "<ul>\n  <li>a <code></code>\n    <hr>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-3.crv": "<ul>\n  <li>a <code></code>\n    <pre><code>code\n</code></pre>\n    more after\n  </li>\n</ul>",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below.crv": "<ul>\n  <li>a <code></code>\n    <pre><code>code\n</code></pre>\n  </li>\n</ul>\n<p>after</p>",
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-3.crv": "<ul>\n  <li>a\n    <ul>\n      <li>inner</li>\n    </ul>\n    code tail\n  </li>\n</ul>",
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-4.crv": "<ul>\n  <li>inner</li>\n</ul>\n<p>code - tail</p>",
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-5.crv": "<ul>\n  <li>inner</li>\n</ul>\n<p>code tail</p>",
+    "558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv": "<ul>\n  <li>outer\n    <ul>\n      <li>para <code>\ncode</code></li>\n    </ul>\n    <h1 id=\"h\">h</h1>\n    <pre><code></code></pre>\n  </li>\n</ul>",
+    "558-a-container-boundary-is-read-at-the-container-s-own-column-5.crv": "<ul>\n  <li>a <code>\nb</code></li>\n</ul>\n<p>y <code></code></p>",
+    "560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-6.crv": "<ul>\n  <li>\n    <dl>\n      <dt>term</dt>\n      <dd>\n        <p>definition</p>\n        <p>para after</p>\n      </dd>\n    </dl>\n  </li>\n</ul>",
+    "561-a-line-block-payload-span-pairs-past-the-content-column-2.crv": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    <code></code>\n    <div>\n      <p>para tail</p>\n    </div>\n  </li>\n</ul>",
+    "561-a-line-block-payload-span-pairs-past-the-content-column-3.crv": "<ul>\n  <li>\n    <div class=\"line-block\">\n      <p>&nbsp;&nbsp;<code></code></p>\n    </div>\n    para tail\n  </li>\n</ul>",
+    "561-a-line-block-payload-span-pairs-past-the-content-column.crv": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"line-block\">\n        <p>&nbsp;&nbsp;<code></code></p>\n      </div>\n      <code></code>\n      <div>\n        <p>:::bad ::: - tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
+    "562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph-2.crv": "<blockquote>\n  <ul>\n    <li>a <code></code>\n      <pre><code>code\n</code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>tail</p>",
+    "562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph-3.crv": "<blockquote>\n  <ul>\n    <li>b\n      <ul>\n        <li>c text tail</li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>",
+    "567-a-description-marker-followed-by-a-no-break-space-has-content-3.crv": "<dl>\n  <dt>t :</dt>\n</dl>",
+    "568-a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph-2.crv": "<ul>\n  <li>a\n    <ul>\n      <li>c b\n        <pre><code>y\n</code></pre>\n      </li>\n    </ul>\n  </li>\n</ul>\n<p>flush</p>",
+    "568-a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph.crv": "<blockquote>\n  <ul>\n    <li>a\n      <ul>\n        <li>c b\n          <pre><code>y\n</code></pre>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>\n<p>flush</p>",
+    "569-a-quoted-term-takes-a-lazy-line-2.crv": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>t tail</dt>\n      </dl>\n    </li>\n  </ul>\n</blockquote>",
+    "569-a-quoted-term-takes-a-lazy-line-3.crv": "<ul>\n  <li>\n    <blockquote>\n      <dl>\n        <dt>term tail</dt>\n      </dl>\n    </blockquote>\n  </li>\n</ul>",
+    "569-a-quoted-term-takes-a-lazy-line.crv": "<blockquote>\n  <dl>\n    <dt>t tail</dt>\n  </dl>\n</blockquote>",
+    "570-an-at-column-comment-retains-nothing-2.crv": "<ul>\n  <li>inner</li>\n</ul>\n<p>code - tail</p>",
+    "570-an-at-column-comment-retains-nothing.crv": "<blockquote>\n  <ul>\n    <li>\n      <div class=\"box\">\n        <ul>\n          <li>\n            <div class=\"inner\">\n\n            </div>\n          </li>\n        </ul>\n        <p>text tail</p>\n      </div>\n    </li>\n  </ul>\n</blockquote>",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "<p>HTML and XHTMLish.</p>",
+    "580-a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note-3.crv": "<ul>\n  <li>\n    <blockquote><p>q after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p></blockquote>\n  </li>\n</ul>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-4.crv": "<blockquote>\n  <ul>\n    <li>a\n      <ul>\n        <li>child <code></code>\n          <pre><code></code></pre>\n        </li>\n      </ul>\n      <pre><code></code></pre>\n    </li>\n  </ul>\n</blockquote>\n<p>after</p>",
+    "581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-7.crv": "<ul>\n  <li>a\n    <ul>\n      <li>child <code>\ncode\nafter</code></li>\n    </ul>\n  </li>\n</ul>",
+    "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note-2.crv": "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text more</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note.crv": "<ul>\n  <li></li>\n</ul>\n<p>after <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>text more</p>\n      <pre><code>code\n</code></pre>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "590-a-closed-fence-in-a-nested-child-leaves-no-paragraph-open-4.crv": "<ul>\n  <li>a\n    <ul>\n      <li>child text ~~~ after</li>\n    </ul>\n  </li>\n</ul>",
+    "591-a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base-3.crv": "<ul>\n  <li>\n    <div class=\"box\">\n      <pre><code></code></pre>\n    </div>\n  </li>\n</ul>\n<p>x y ::: after</p>",
+    "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-2.crv": "<dl>\n  <dt>term +</dt>\n  <dd>d</dd>\n</dl>",
+    "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-3.crv": "<dl>\n  <dt>A term that    wraps +</dt>\n  <dd>d</dd>\n</dl>",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-2.crv": "<table>\n  <tbody>\n    <tr><td></td><td>b y</td></tr>\n  </tbody>\n</table>",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-3.crv": "<table>\n  <tbody>\n    <tr><td colspan=\"2\">a</td></tr>\n    <tr><td></td><td>b y</td></tr>\n  </tbody>\n</table>",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "<table>\n  <tbody>\n    <tr><td rowspan=\"2\">a</td><td>b</td></tr>\n    <tr><td>c</td></tr>\n    <tr><td></td><td>d y</td></tr>\n  </tbody>\n</table>",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "<table>\n  <tbody>\n    <tr><td colspan=\"2\"></td></tr>\n  </tbody>\n</table>",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "<table>\n  <tbody>\n    <tr><td>a</td><td>b</td></tr>\n    <tr><td></td><td>c y</td></tr>\n  </tbody>\n</table>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
     "81-paragraph-interruption-10.crv": "<p>text 2. y 3. z</p>",
@@ -2585,6 +3036,7 @@
     "81-paragraph-interruption-7.crv": "<p>text 1. x 2. y</p>",
     "81-paragraph-interruption-9.crv": "<p>text :::note body :::</p>",
     "82-blockquote-lazy-continuation-2.crv": "<blockquote><p>quoted - item</p></blockquote>",
+    "82-blockquote-lazy-continuation-5.crv": "<blockquote>\n  <dl>\n    <dt>t ~</dt>\n  </dl>\n</blockquote>",
     "82-blockquote-lazy-continuation.crv": "<blockquote><p>quoted continued</p></blockquote>",
     "85-blockquote-lazy-continuation-stops-at-a-fenced-block-2.crv": "<blockquote><p>text <code>\nlazy</code></p></blockquote>",
     "86-list-lazy-continuation-10.crv": "<ol>\n  <li><p>item</p>\n    <p>spaced flush</p>\n  </li>\n</ol>",
@@ -2599,7 +3051,7 @@
   },
   "reportedSource": {
     "01-emphasis-4.crv": "\\/literal/ and \\*not bold*\n",
-    "01-emphasis.crv": "/italic/  *bold*  */bold italic/* _underline_  ~strikethrough~ =highlight=  {^super^}  {,sub,}\n",
+    "01-emphasis.crv": "/italic/  *bold*  /*bold italic*/ _underline_  ~strikethrough~ =highlight=  {^super^}  {,sub,}\n",
     "03-links-7.crv": "[not a link]\\(https://example.com)\n",
     "05-lists-13.crv": "text - item\n",
     "05-lists-16.crv": "Die Frage ist x = 5 * 3 + 17 wahr.\n",
@@ -2610,8 +3062,6 @@
     "108-security-hardening-11.crv": "[safe](https://example.com)\n",
     "109-link-destination-parentheses-balance-4.crv": "[t](url more)\n",
     "12-inline-code-5.crv": "text `\ncode`\n",
-    "130-bold-italic-delimiter-needs-content-3.crv": "*/x/*\n",
-    "130-bold-italic-delimiter-needs-content-4.crv": "a{*/y/*}b\n",
     "134-footnote-definition-requires-an-inline-body.crv": "Use [^a].\n\n[^a]\\: First\n",
     "143-post-blank-list-continuation-content-column-model-4.crv": "- one > q\n",
     "145-definition-list-as-a-first-class-block-opener-3.crv": "- one :: term :  def\n",
@@ -2633,7 +3083,7 @@
     "160-indented-colon-fence-blocks-stay-literal-2.crv": "::: | Roses, Violets. :::\n",
     "160-indented-colon-fence-blocks-stay-literal-3.crv": "\\::: note Body. :::\n",
     "160-indented-colon-fence-blocks-stay-literal.crv": "\\::: A box. :::\n",
-    "161-below-content-column-div-body-in-a-list-item-stays-literal.crv": "- \\::: note - para text :::\n",
+    "161-below-content-column-div-body-in-a-list-item-stays-literal.crv": "- ::: note\n\n  :::\n\n\n\n- para text :::\n",
     "164-tight-list-item-keeps-trailing-text-after-a-block-bare-2.crv": "- item :::note body ::: tail\n",
     "165-quote-flanking-after-an-escaped-character.crv": "{“quoted”} and <”q”> and \\*’q’*\n\nA { before a quote still opens it: {“open”\n\nUnescaped for contrast: {“open”}\n",
     "175-a-repeated-definition-which-one-wins-2.crv": "A here.\n",
@@ -2647,8 +3097,32 @@
     "182-openers-past-the-nesting-cap-are-one-paragraph.crv": "::: note\n:::: note\n::::: note\n:::::: note\n::::::: note\n:::::::: note\n::::::::: note\n:::::::::: note\n::::::::::: note\n:::::::::::: note\n::::::::::::: note\n:::::::::::::: note\n::::::::::::::: note\n:::::::::::::::: note\n::::::::::::::::: note\n:::::::::::::::::: note\n::::::::::::::::::: note\n:::::::::::::::::::: note\n::::::::::::::::::::: note\n:::::::::::::::::::::: note\n::::::::::::::::::::::: note\n:::::::::::::::::::::::: note\n::::::::::::::::::::::::: note\n:::::::::::::::::::::::::: note\n::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: note\n\\:::: note :::: note :::: note x\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::::\n\\::::::::::::::::::::::::::\n\\:::::::::::::::::::::::::\n\\::::::::::::::::::::::::\n\\:::::::::::::::::::::::\n\\::::::::::::::::::::::\n\\:::::::::::::::::::::\n\\::::::::::::::::::::\n\\:::::::::::::::::::\n\\::::::::::::::::::\n\\:::::::::::::::::\n\\::::::::::::::::\n\\:::::::::::::::\n\\::::::::::::::\n\\:::::::::::::\n\\::::::::::::\n\\:::::::::::\n\\::::::::::\n\\:::::::::\n\\::::::::\n\\:::::::\n\\::::::\n\\:::::\n\\::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::::\n::::::::::::::::::::::::::::\n:::::::::::::::::::::::::::\n::::::::::::::::::::::::::\n:::::::::::::::::::::::::\n::::::::::::::::::::::::\n:::::::::::::::::::::::\n::::::::::::::::::::::\n:::::::::::::::::::::\n::::::::::::::::::::\n:::::::::::::::::::\n::::::::::::::::::\n:::::::::::::::::\n::::::::::::::::\n:::::::::::::::\n::::::::::::::\n:::::::::::::\n::::::::::::\n:::::::::::\n::::::::::\n:::::::::\n::::::::\n:::::::\n::::::\n:::::\n::::\n:::\n",
     "184-a-definition-below-every-content-column-folds-as-text.crv": "- - a [^f]: x\n",
     "19-smart-typography-dashes-and-quotes-10.crv": "He paused, then said “I will not go,” and left.\\\n‘Fine,’ she said.\n\n> She said “no” twice.\n\n- He said “no” twice.\n\nBack in the ’90s it was rare.\n",
+    "19-smart-typography-dashes-and-quotes-11.crv": "’tis the season to be ‘jolly’\n",
+    "19-smart-typography-dashes-and-quotes-12.crv": "“Wait—” he said.\n",
+    "19-smart-typography-dashes-and-quotes-13.crv": "he said—“Go” and replied–“Now”.\n",
+    "19-smart-typography-dashes-and-quotes-14.crv": "end-”\n\nend-”.\n\nend-’!\n",
+    "19-smart-typography-dashes-and-quotes-15.crv": "’tis ’em ’twasn’t\n",
+    "19-smart-typography-dashes-and-quotes-16.crv": "’TIS ’tisn ’twas ’twasn ’twere ’twill ’twould ’cause ’til ’n ’bout\n\nsay ‘tissue’\n",
+    "19-smart-typography-dashes-and-quotes-17.crv": "‘n’ and ‘em’ and ‘tis’\n",
+    "19-smart-typography-dashes-and-quotes-18.crv": "’em’2\n",
+    "19-smart-typography-dashes-and-quotes-19.crv": "’tis Jane’s dog\n",
     "19-smart-typography-dashes-and-quotes-2.crv": "a=“b” :“q” -“q” /“q” (“q”)\n",
+    "19-smart-typography-dashes-and-quotes-20.crv": "‘I told ’em so,’ he said.\n",
+    "19-smart-typography-dashes-and-quotes-21.crv": "‘I said ’hello there,’ she replied.\n",
+    "19-smart-typography-dashes-and-quotes-22.crv": "say ’word\n",
+    "19-smart-typography-dashes-and-quotes-23.crv": "‘word\n",
+    "19-smart-typography-dashes-and-quotes-24.crv": "“‘word\n",
+    "19-smart-typography-dashes-and-quotes-25.crv": "say ‘*bold* text\n",
+    "19-smart-typography-dashes-and-quotes-26.crv": "‘Jane’s ’90s dog and ’word’\n",
+    "19-smart-typography-dashes-and-quotes-27.crv": "‘I *said ’hello* there,’ she replied.\n",
+    "19-smart-typography-dashes-and-quotes-28.crv": "‘one\n\nsay ‘two’\n",
+    "19-smart-typography-dashes-and-quotes-29.crv": "say ^[‘note] ‘two’\n",
     "19-smart-typography-dashes-and-quotes-3.crv": "}”q” )”q” ]”q” .”q” ,”q” a”b ““\n",
+    "19-smart-typography-dashes-and-quotes-30.crv": "‘one ^[say ’note] ’two’\n",
+    "19-smart-typography-dashes-and-quotes-31.crv": "“Wait—{%  %}” he said.\n",
+    "19-smart-typography-dashes-and-quotes-32.crv": "“‘word’” and ‘“word”’\n",
+    "19-smart-typography-dashes-and-quotes-33.crv": "Il dit “ oui ” hier.\n",
+    "19-smart-typography-dashes-and-quotes-34.crv": "a　”q”\n",
     "19-smart-typography-dashes-and-quotes-4.crv": "(‘q’) [‘q’] =‘q’ :‘q’ -‘q’ /‘q’\n",
     "19-smart-typography-dashes-and-quotes-5.crv": "{‘q’}\n",
     "19-smart-typography-dashes-and-quotes-6.crv": "the ’70s and ’24’ and ‘word’\n",
@@ -2659,7 +3133,7 @@
     "194-an-abbreviation-at-a-list-item-s-content-column-is-still-not-a-definition.crv": "- a *[HTML]: Hyper Text\n\nThe HTML spec.\n",
     "20-smart-typography-arrows-and-symbols.crv": "Flow: a → b ← c ↔ d ⇒ e; x ≠ y, p ≤ q, r ≥ s, ±1. © 2024, ®, ™. Dates like 1/2/2024 stay literal.\n",
     "202-a-definition-on-a-footnote-body-s-continuation-line-is-collected.crv": "see[^a] and [t][r]\n\n[r]: /u\n\n[^a]: note\n",
-    "208-a-combined-bold-italic-span-may-cross-a-line.crv": "*/multi line/*\n",
+    "208-a-combined-bold-italic-span-may-cross-a-line.crv": "/*multi line*/\n",
     "209-an-unresolved-reference-image-takes-no-caption.crv": "![a][nope] ^ cap\n",
     "210-a-quote-marker-is-plus-a-space-and-a-lazy-line-keeps-its-own-text.crv": "> ok >bad\n",
     "22-footnotes-2.crv": "See the note[^m].\n\n[^m]: First line of the note and a continuation line.\n",
@@ -2673,11 +3147,13 @@
     "228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block.crv": "- a\n+\nmore\n\nsee[^f]\n\n[^f]: x\n",
     "231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose-2.crv": "![Moon](m.jpg) ^\tFigure 1\n",
     "232-two-dashes-are-not-a-thematic-break.crv": "a\n\n–\n\nb\n",
+    "237-a-continuation-row-carries-no-trailing-text.crv": "| a c | b d |\n",
     "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": "see[^b] and[^a]\n\n[^a]: ay\n\n[^b]: bee\n",
     "24-generic-divs-2.crv": "::: {.sidebar} not a div :::\n",
     "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it-2.crv": "- a +\n\nx\n",
     "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it.crv": "- a +\n\nsee [t][r]\n\n[r]: /u\n",
     "248-an-attribute-name-admits-no-colon.crv": "[a]{xlink:href=u}\n\n[b]{k:v=“q”}\n\n[c]{.sm:hover}\n\n[d]{#a:b}\n\n[e]{.ok xml:lang=en}\n",
+    "249-trailing-whitespace-after-a-block-marker-4.crv": "| a c | b d |\n",
     "25-definition-lists-4.crv": ":: term\n: A definition wrapped onto the next line.\n",
     "25-definition-lists-6.crv": ":: A term that wraps onto the next line\n: its definition\n",
     "250-line-endings-and-a-byte-order-mark-2.crv": "# Title\n\na b\n",
@@ -2697,6 +3173,9 @@
     "256-table-cell-padding-must-be-a-space-10.crv": "| a | b |\n| \t— | \t— |\n| 1 | 2 |\n",
     "256-table-cell-padding-must-be-a-space-11.crv": "| a | b |\n| \t— | \t— |\n| 1 | 2 |\n",
     "256-table-cell-padding-must-be-a-space-12.crv": "| a | b |\n| —\t | —\t |\n| 1 | 2 |\n",
+    "256-table-cell-padding-must-be-a-space-15.crv": "| a \tx | b y |\n",
+    "256-table-cell-padding-must-be-a-space-16.crv": "| a x\t | b y\t |\n",
+    "256-table-cell-padding-must-be-a-space-17.crv": "| a x | b y |\n",
     "257-link-and-image-title-slots-must-be-a-space-2.crv": "[t](/u \t“T”)\n",
     "257-link-and-image-title-slots-must-be-a-space-3.crv": "[t](/u\t “T”)\n",
     "257-link-and-image-title-slots-must-be-a-space-4.crv": "![a](/p.png\t“T”)\n",
@@ -2756,7 +3235,7 @@
     "287-a-column-zero-definition-ends-an-open-list-item-3.crv": "1. x [r]: /u\n",
     "287-a-column-zero-definition-ends-an-open-list-item-4.crv": "1. x\n+\n[t][r]\n\n[r]: /u\n",
     "287-a-column-zero-definition-ends-an-open-list-item.crv": "1. x [t](u) _u_\n\n[t][r] #\n\n[r]: /u\n",
-    "29-non-breaking-space-2.crv": "say ‘twas a fine “day”\n",
+    "29-non-breaking-space-2.crv": "say ’twas a fine “day”\n",
     "29-non-breaking-space.crv": "10 kg\n",
     "305-an-abbreviation-expands-inside-an-inline-container-2.crv": "The [HTML]{kbd} key.\n",
     "305-an-abbreviation-expands-inside-an-inline-container-3.crv": "The :kbd[HTML] key.\n",
@@ -2765,7 +3244,7 @@
     "305-an-abbreviation-expands-inside-an-inline-container.crv": "The [HTML]{.x} key.\n",
     "312-a-note-body-s-own-references-resolve-3.crv": "a [^1] b\n\n[r]: /u\n\n[^1]: see [t[^2]][r]\n\n[^2]: two\n",
     "312-a-note-body-s-own-references-resolve.crv": "a [^1] b\n\n[r]: /u\n\n[^1]: see [x][r]\n",
-    "318-composite-figures-10.crv": "{#fig-m}\n:::\n|= Kind |= N |\n| a | 1 |\n\n```js\nconst x = 1\n```\n^ A listing panel\n\n$$`E = mc^2`\n^ An equation panel\n\n> Measured twice.\n\n> Brevity.\n^ A quoted panel\n\nFigure : Mixed panels\n:::\n",
+    "318-composite-figures-10.crv": "{#fig-m}\n:::\n| Kind | N |\n|------|---|\n| a | 1 |\n\n```js\nconst x = 1\n```\n^ A listing panel\n\n$$`E = mc^2`\n^ An equation panel\n\n> Measured twice.\n\n> Brevity.\n^ A quoted panel\n\nFigure : Mixed panels\n:::\n",
     "318-composite-figures-11.crv": ":::\n:::: note\n![x](x.png)\n^ Figure : inner\n::::\n\nFigure : group\n:::\n",
     "318-composite-figures-2.crv": "{#fig-first}\n![lead](lead.png)\n^ Figure : First\n\n{#fig-x}\n:::\n{#fig-x-a}\n![one](a.png)\n^ (a) One\n\n{#fig-x-b}\n![two](b.png)\n^ (b) Two\n\nFigure : Second\n:::\n\nSee </#fig-x> and </#fig-x-a>.\n",
     "318-composite-figures-3.crv": ":::\n![one](a.png)\n^ (a) One\n\n![two](b.png)\n^ (b) Two\n:::\n",
@@ -2790,12 +3269,19 @@
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-3.crv": "- a\n+\np1 p2\n\n> q\n",
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-4.crv": "- a\n  > x y\n- next\n",
     "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": "—\tyaml title: x\n\n---\n\nbody\n",
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-4.crv": "| a `b c | d` |\n",
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-5.crv": "| x y | a `b c` |\n",
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe.crv": "| a `b c` |\n",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position-2.crv": "> > \\# deep\n\n> a # heading\n",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position.crv": "> \\# heading\n>\n> C# is a language\n\n- \\# heading\n- \\#tag rest\n",
     "345-a-line-block-s-hard-break-keeps-its-backslash-3.crv": "::: |\na  \nb\n:::\n",
     "346-a-line-block-s-last-body-line-keeps-its-backslash-2.crv": "::: |\na  \\\n:::\n",
     "348-a-closed-inline-construct-spanning-a-verse-boundary-5.crv": "::: |\n*Roses are red,\n  Violets are blue.*\n:::\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row-3.crv": "> | a b |\n\ntail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row-5.crv": ":: t\n: > | a b |\n\ntail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row-6.crv": ":: t\n: | a b |\n\ntail\n",
     "349-a-container-whose-table-ends-on-a-continuation-row-7.crv": "- a + b | tail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row.crv": "- | a b |\n\ntail\n",
     "350-a-definition-at-a-container-s-content-column-3.crv": "- a [r]: /u tail\n\n[r][]\n",
     "350-a-definition-at-a-container-s-content-column-4.crv": "- a *[A]: x tail\n",
     "351-a-bracketed-construct-spanning-a-line-boundary-2.crv": "An [a b]{.k} span.\n",
@@ -2808,9 +3294,18 @@
     "352-a-bracketed-construct-s-identifiers-stay-on-one-line-3.crv": "![a][r\nx] ^ cap\n",
     "352-a-bracketed-construct-s-identifiers-stay-on-one-line-4.crv": "![a](/i q) ^ cap\n",
     "352-a-bracketed-construct-s-identifiers-stay-on-one-line-5.crv": "x [a y\n\nz\n",
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-2.crv": "| a |\n|= b c |\n",
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-4.crv": "| a |\n",
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-5.crv": "| a | b |\n",
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold.crv": "|= a cont |= b |\n",
+    "355-a-container-whose-table-ends-on-a-joined-header-row-2.crv": "- | a |\n\ntail\n",
+    "355-a-container-whose-table-ends-on-a-joined-header-row-3.crv": "> |= a b |\n\ntail\n",
+    "355-a-container-whose-table-ends-on-a-joined-header-row.crv": "- |= a b |\n\ntail\n",
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-10.crv": "> > a tail\n",
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-11.crv": "> > # H\n> >\n> > a tail\n",
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-12.crv": "> > | a |\n>\n> # H\n>\n> > + b | tail\n",
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-8.crv": "> > | a b |\n\ntail\n",
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-9.crv": "> > > | a b |\n\ntail\n",
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-4.crv": "- a\n\ntail\n\nx[^f]\n\n[^f]: t more\n",
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-6.crv": "- a\n+\n“T” tail\n\n[r][]\n\n[r]: /u\n",
     "358-what-a-content-column-block-does-not-reach-2.crv": "- a\n+\nb\n\nx[^f]\n\n[^f]: t more\n",
@@ -2820,7 +3315,6 @@
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line-3.crv": "- ```\n  c\n  ```\n  b tail\n",
     "361-a-paragraph-opened-after-a-block-in-an-item-is-still-open-for-a-lazy-line.crv": "- > | a |\n  + b | tail\n",
     "362-an-unterminated-container-does-not-extend-the-item-past-a-blank-line-2.crv": "- ::: d\n  b tail\n  :::\n",
-    "364-only-lazy-folding-demotes-a-marker-line-colon-opener-2.crv": "- \\::: d tail\n\nafter\n",
     "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-2.crv": ":: t\n: a `\n  tail`\n",
     "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-3.crv": "> q `\n> tail`\n",
     "367-an-unterminated-fence-at-a-content-column-opens-no-block-so-the-paragraph-stays-open-4.crv": "- q ``\n\ntail\n",
@@ -2890,7 +3384,6 @@
     "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "- x\n  > q +\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "> q + - m\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": "see[^a]\n\n[^a]: + flush\n",
-    "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-4.crv": "> + flush\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": "> + flush\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-6.crv": "> + flush\n",
     "439-a-colon-followed-by-only-whitespace-is-not-a-description-2.crv": ":: t :\n\nflush\n",
@@ -2924,7 +3417,7 @@
     "448-a-marker-folds-into-a-quote-below-it-4.crv": "- a\n  > q - m\n",
     "448-a-marker-folds-into-a-quote-below-it-9.crv": "- a p\n  - m\n",
     "448-a-marker-folds-into-a-quote-below-it.crv": "- a\n  > - x - m\n",
-    "449-a-comment-below-a-description-body-s-column-ends-the-body-4.crv": ":: t\n: x\n\n%% %\n\ny z\n",
+    "449-a-comment-below-a-description-body-s-column-ends-the-body-4.crv": ":: t\n: x\n\n  %% %\n\n  y z\n",
     "45-inline-extensions-11.crv": "[HTML]{abbr=Custom}\n",
     "45-inline-extensions-5.crv": ":1[x] :a1[x]\n",
     "45-inline-extensions-9.crv": "[*Ctrl*+C]{#copy .shortcut kbd data-key=copy onclick=alert(1)} [x]{kbd onclick=alert(1)}\n",
@@ -2936,6 +3429,9 @@
     "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-2.crv": "- body\n  > z\n\nafter\n\n[^g]: n\n",
     "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item-4.crv": "- body\n  - item\n\nafter\n\n[^g]: n\n",
     "454-a-block-opener-past-a-nested-footnote-definition-opens-in-the-item.crv": "- body\n  # h\n\nafter\n\n[^g]: n\n",
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-2.crv": ":: t\n: - ```x\n    ```\n\ncode ~~~\n",
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body-3.crv": ":: t\n: - ```\n    ```\n\ncode ``\n",
+    "455-an-unterminated-fence-on-a-nested-lead-in-a-description-body-owns-its-body.crv": ":: t\n: - ```x\n    ```\n\ncode ``\n",
     "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves-2.crv": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n\n[^h]: inner\n",
     "456-a-definition-nested-past-a-footnote-body-is-a-note-and-a-reference-below-it-resolves.crv": "x[^f] [^g] [^h] [t][r]\n\n[r]: /url\n\n[^f]: outer\n\n  TAILWORD\n\n[^g]: mid\n\n[^h]: inner\n",
     "457-a-container-closer-closes-its-container-in-a-footnote-body-too.crv": "see[^f]\n\n[r][]\n\n[r]: /url\n\n[^f]: a\n\n  ::: note\n\n  :::\n",
@@ -2950,7 +3446,6 @@
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling-4.crv": ":: t\n: - nested tail\n\n[^f]: note\n",
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling.crv": ":: t\n: {empty}\n\ntail\n\n[^f]: note - nested\n",
     "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": "~/xy\\~/\n",
-    "466-the-round-trip-comparison-normalizes-a-named-list-2.crv": "*/x/*\n",
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": "{/x/}\\_y z_ w\n",
     "469-an-empty-link-destination-is-not-a-link-3.crv": "[x]( “t”)\n",
     "47-numbered-cross-references-11.crv": "![a](a.jpg)\n^ x\n",
@@ -2961,10 +3456,9 @@
     "47-numbered-cross-references-8.crv": "{#lst-greet}\n```python\ndef greet():\n    return 1\n```\n^ Listing : a greeting\n\nSee </#lst-greet>.\n",
     "47-numbered-cross-references-9.crv": "{#eq-emc}\n$$`E = mc^2`\n^ Equation : mass-energy\n\nSee </#eq-emc>.\n",
     "47-numbered-cross-references.crv": "{#fig-sun}\n![A sunset](sun.jpg)\n^ Figure : A sunset\n",
+    "471-braced-emphasis-can-nest-its-own-kind-11.crv": "{*x*\\}\n\n{\\*x*}\n",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it-2.crv": "{~a\\~>b~>c~}\n\n{~a\\~>b~>c~}\n\n{~ab~>c~}\n",
     "472-substitution-content-is-inline-and-only-a-top-level-arrow-splits-it.crv": "~`a~>b`~\n\n~a `x~>y` b~\n\n{~old~>new~}\n\n~a\\~>b~\n",
-    "473-a-run-of-asterisks-inside-a-combined-token-is-content-2.crv": "*{/**/}*\n",
-    "473-a-run-of-asterisks-inside-a-combined-token-is-content.crv": "*{/*/}*\n",
     "476-an-item-s-fence-is-read-once-whatever-block-it-follows-2.crv": "- > q\n  ```\n  b\n  ```\n\ny ``\n",
     "476-an-item-s-fence-is-read-once-whatever-block-it-follows.crv": "- ![a](i)\n  ^ cap\n  ```\n  b\n  ```\n\ny ``\n",
     "477-a-code-span-closes-only-on-a-run-of-its-own-length-whatever-the-length-7.crv": "{~a \\~> b~>c~} d\n",
@@ -2984,14 +3478,13 @@
     "480-a-bare-colon-opener-in-a-description-body-is-an-opener.crv": ":: t\n: :::\n\n  :::\n\ny :::\n",
     "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it-7.crv": "::: {.x} not a div :::\n",
     "481-a-bare-colon-run-interrupts-a-paragraph-whether-or-not-a-line-follows-it.crv": "text not a div\n\n:::\n\n:::\n",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": "- \\::: note y\n  :::\n\n  :::\n",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": "1. \\::: d y\n   :::\n\n   :::\n",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": "- \\::: d y z\n  :::\n\n  :::\n",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-5.crv": "- \\::: d y\n  :::\n\n  :::\n",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": "- x\n  - \\::: d y\n    :::\n\n    :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-2.crv": "- ::: note\n\n  :::\n\ny :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-3.crv": "1. ::: d\n\n   :::\n\ny :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-4.crv": "- ::: d\n\n  :::\n\ny z :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-6.crv": "- x\n  - ::: d\n\n    :::\n  y :::\n",
     "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-8.crv": "- ::: d\n  x y\n  :::\n",
     "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in-9.crv": "- a\n  ::: d\n\n  :::\n\ny :::\n",
-    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": "- \\::: y\n  :::\n\n  :::\n",
+    "482-a-closer-does-not-rescue-a-marker-line-colon-opener-whose-body-folded-in.crv": "- :::\n\n  :::\n\ny :::\n",
     "483-an-empty-term-marker-in-a-description-body-is-text-2.crv": ":: t\n: a :: c\n",
     "483-an-empty-term-marker-in-a-description-body-is-text-3.crv": ":: t\n: a ::\n",
     "483-an-empty-term-marker-in-a-description-body-is-text-4.crv": ":: t\n: a b :: c\n",
@@ -3005,13 +3498,8 @@
     "485-a-quote-after-an-escaped-quote-closes-4.crv": "“\\\"’q’”\n",
     "485-a-quote-after-an-escaped-quote-closes-5.crv": "“‘q’”\n",
     "485-a-quote-after-an-escaped-quote-closes.crv": "“a\\\"”\n\n“\\\"”\n",
-    "486-any-character-is-content-of-the-combined-bold-italic-token-2.crv": "*/a<b/* y\n\n*/a # b/* y\n\n*/a{b}c/* y\n\n*/a€b/* y\n\n*/a b/* y\n",
-    "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": "*/a b/* y\n",
-    "486-any-character-is-content-of-the-combined-bold-italic-token-4.crv": "*/a\\\nb/* y\n",
-    "486-any-character-is-content-of-the-combined-bold-italic-token-5.crv": "*/a{% c %}b/* y\n",
-    "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": "*{/a %% c b/}* y\n",
-    "486-any-character-is-content-of-the-combined-bold-italic-token.crv": "*/a\tb/* y\n",
-    "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-12.crv": "*/\fx/* y\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-3.crv": "/*a b*/ y\n",
+    "486-any-character-is-content-of-the-combined-bold-italic-token-7.crv": "/*a %% c b*/ y\n",
     "487-a-form-feed-or-a-no-break-space-is-content-wherever-whitespace-is-tested-9.crv": "---yaml\f a: 1\n\n---\n\nt\n",
     "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-2.crv": "a *“x”* b\n\na ~*“x”* b\n",
     "488-a-quote-after-a-bare-delimiter-follows-what-that-delimiter-does-3.crv": "a.*“x”* b\n\na,_“x”_ b\n",
@@ -3026,8 +3514,7 @@
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-7.crv": "![p](p.png)\n^ Figure x * y \\#: z\n",
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag-8.crv": "![p](p.png)\n^ Figure* q\n",
     "489-a-caption-s-placeholder-is-any-that-does-not-begin-a-tag.crv": "![p](p.png)\n^ Figure * q\n",
-    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-3.crv": "*{/a %% b/}* y\n",
-    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": "*{/a %% c b/}* y\n",
+    "490-a-comment-inside-a-forced-span-or-the-combined-token-ends-at-its-closer-4.crv": "/*a %% c b*/ y\n",
     "492-adjacent-strong-spans-use-html-only-where-their-delimiters-merge.crv": "*ab*\n",
     "493-empty-containers-share-one-html-body-shape-2.crv": ":::\n%% hidden\n\n%% hidden too\n:::\n\n::: custom\n%% hidden\n:::\n\n::: note\n%% hidden\n:::\n\n::: >\n%% hidden\n:::\n\n::: |\n%% hidden\n:::\n\n{.hardbreaks}\n:::\n%% hidden\n:::\n\n:::\n%% hidden\n:::\n",
     "503-a-block-opener-indented-under-a-definition-term-is-term-text-at-every-depth-2.crv": ":: c   ::: note   body   :::\n",
@@ -3072,6 +3559,7 @@
     "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-12.crv": "- a\n  - b `\n    p`\n  - c ``\n",
     "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-4.crv": "- a\n  - b `\n    p\n    `\n",
     "509-a-fence-closer-below-a-nested-item-s-column-ends-containers-down-to-its-owner-5.crv": "- a\n  - b `\n    p\n    `\n",
+    "510-a-nested-quoted-term-leaves-no-paragraph-for-a-lazy-line.crv": "> > :: term tail\n",
     "511-a-fence-in-a-quote-stores-no-continuation-claim-11.crv": "> > ::: d\n> > p\n> > :::\n> >\n> > b y\n",
     "511-a-fence-in-a-quote-stores-no-continuation-claim-7.crv": "> > ```\n> > c\n> > ```\n> >\n> > b y\n",
     "514-a-fence-a-container-inside-a-quote-holds-open-stores-no-claim-10.crv": "> - a\n>   ```\n>   x\n>   ```\n>\n> after flush\n",
@@ -3103,8 +3591,64 @@
     "535-a-marker-line-opaque-quote-keeps-overindented-markers-literal-4.crv": "- > ```\n  > x\n  > ```\n+\n> y ``\n",
     "546-every-name-lookup-compares-case-exactly-5.crv": "{#Fig}\n![upper](upper.png)\n^ Figure : upper\n\n{#fig}\n![lower](lower.png)\n^ Figure : lower\n\n{#Eq}\n$$`x`\n^ Equation : upper\n\n{#eq}\n$$`y`\n^ Equation : lower\n\n</#Fig>, </#fig>, </#FIG>, </#Eq>, </#eq>, </#EQ>.\n",
     "548-a-description-body-whose-own-block-is-a-fence-keeps-no-line-below-its-column.crv": ":: t\n: ```\n  ```\n\ncode ``\n",
+    "551-a-link-destination-is-opaque-to-the-bracket-scan-10.crv": "a [[http://u/\\]](http://u/])\n",
+    "552-a-braced-comment-does-not-decide-a-quote-2.crv": "{{%  %}“q”\n",
+    "552-a-braced-comment-does-not-decide-a-quote-3.crv": "{%  %}“q”\n",
+    "552-a-braced-comment-does-not-decide-a-quote-4.crv": "x {% hidden %}“q”\n",
+    "552-a-braced-comment-does-not-decide-a-quote-5.crv": "a{%  %}”q”\n",
+    "552-a-braced-comment-does-not-decide-a-quote-6.crv": "[x]{.c}{%  %}”q”\n",
+    "552-a-braced-comment-does-not-decide-a-quote-7.crv": "{{%  %}‘q’\n",
+    "552-a-braced-comment-does-not-decide-a-quote.crv": "{“q”\n",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-10.crv": "- a\n  - b\n    - c lazy\n",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-13.crv": "- a\n  - b\n    ```\n    ::: note\n    ```\n    text lazy\n",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-14.crv": "- a\n  - b\n    ::: note\n    x\n    :::\n    text lazy\n",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-8.crv": "- a\n  - b text lazy\n",
+    "553-a-below-column-line-continues-a-paragraph-only-where-one-is-open-9.crv": "- a\n  - b\n    > q lazy\n",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-12.crv": "- +\n\nbelow\n\n[^a] [^b]\n\n[^a]: text - child\n\n[^b]: inner\n\n  ```\n  one\n  ```\n",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-2.crv": "- a ``\n  ---\n  ```\n  code\n  ```\n\nafter\n",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below-3.crv": "- a ``\n  ```\n  code\n  ```\n  more after\n",
+    "556-a-closed-block-leaves-no-frame-for-the-line-below.crv": "- a ``\n  ```\n  code\n  ```\n\nafter\n",
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-3.crv": "- a\n  - inner\n    %% c\n  code tail\n",
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-4.crv": "- inner\n  %% c\n\ncode - tail\n",
+    "557-a-line-retained-after-a-comment-opens-a-paragraph-5.crv": "- inner\n  %% c\n\ncode tail\n",
+    "558-a-container-boundary-is-read-at-the-container-s-own-column-4.crv": "- outer\n  - para `\n    code`\n  # h\n  ```\n  ```\n",
+    "558-a-container-boundary-is-read-at-the-container-s-own-column-5.crv": "- a `\n  b`\n\ny ``\n",
+    "560-a-description-keeps-a-block-at-its-body-column-whatever-leads-the-item-6.crv": "- :: term\n  : definition\n\n    para after\n",
+    "561-a-line-block-payload-span-pairs-past-the-content-column-2.crv": "- ::: |\n    ``\n  :::\n  ``\n  :::\n  para tail\n  :::\n",
+    "561-a-line-block-payload-span-pairs-past-the-content-column-3.crv": "- ::: |\n    ``\n  :::\n  para tail\n",
+    "561-a-line-block-payload-span-pairs-past-the-content-column.crv": "> - ::: |\n>     ``\n>   :::\n>   ``\n>   :::\n>   :::bad ::: - tail\n>   :::\n",
+    "562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph-2.crv": "> - a ``\n>   ```\n>   code\n>   ```\n\ntail\n",
+    "562-a-quoted-item-that-ends-on-a-block-past-its-column-holds-no-paragraph-3.crv": "> - b\n>   - c text tail\n",
+    "567-a-description-marker-followed-by-a-no-break-space-has-content-3.crv": ":: t :\n",
+    "568-a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph-2.crv": "- a\n  - c b\n    ```\n    y\n    ```\n\nflush\n",
+    "568-a-closed-fence-in-a-quoted-sub-item-after-a-lazy-line-leaves-no-paragraph.crv": "> - a\n>   - c b\n>     ```\n>     y\n>     ```\n\nflush\n",
+    "569-a-quoted-term-takes-a-lazy-line-2.crv": "> - :: t tail\n",
+    "569-a-quoted-term-takes-a-lazy-line-3.crv": "- > :: term tail\n",
+    "569-a-quoted-term-takes-a-lazy-line.crv": "> :: t tail\n",
+    "570-an-at-column-comment-retains-nothing-2.crv": "- inner\n  %% c\n\ncode - tail\n",
+    "570-an-at-column-comment-retains-nothing.crv": "> - ::: box\n>   - ::: inner\n>     %% c\n>     :::\n>\n>   text tail\n>   :::\n",
     "58-abbreviation-matches-on-word-boundaries-only.crv": "HTML and XHTMLish.\n",
+    "580-a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note-3.crv": "- > q after [^n]\n\n[^n]: text\n",
+    "581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-4.crv": "> - a\n>   - child ``\n>     ```\n>     ```\n>   ```\n>   ```\n\nafter\n",
+    "581-a-fence-that-leaves-a-closed-nested-item-opens-in-the-host-it-lands-in-7.crv": "- a\n  - child `\n    code\n    after`\n",
+    "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note-2.crv": "- +\n\nafter [^n]\n\n[^n]: text more\n\n  %% c\n\n  ```\n  code\n  ```\n",
+    "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note.crv": "- +\n\nafter [^n]\n\n[^n]: text more\n\n  %% c\n\n  ```\n  code\n  ```\n",
+    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-33.crv": "| x | y |\n",
+    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-34.crv": "| |\n| |\n",
+    "590-a-closed-fence-in-a-nested-child-leaves-no-paragraph-open-4.crv": "- a\n  - child text ~~~ after\n",
+    "591-a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base-3.crv": "- ::: box\n  ```\n  ```\n  :::\n\nx y ::: after\n",
+    "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-2.crv": ":: term +\n: d\n",
+    "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-3.crv": ":: A term that    wraps +\n: d\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-2.crv": "| ^ | b y |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-3.crv": "| a | < |\n| ^ | b y |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "| a | b |\n| ^ | c |\n| < | d y |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "| ^ | < |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "| a | b |\n| < | c y |\n",
     "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
+    "63-table-multi-line-cell-continuation.crv": "|= Feature |= Description |\n| Complex | A long description that continues across lines. |\n| Simple | Single line. |\n",
+    "64-table-rowspan-with-multi-line-content-2.crv": "| a more | b |\n| ^ | c d |\n",
+    "64-table-rowspan-with-multi-line-content-3.crv": "| a more | b d |\n| ^ | c |\n",
+    "64-table-rowspan-with-multi-line-content.crv": "|= Category |= Item |\n| Fresh Fruits from local farms | Apple |\n| ^ | Banana |\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",
     "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;\\<=>?@[\\\\]^_\\`{|}~ done\n",
     "73-parenthesized-ordered-marker.crv": "(1) First (2) Second\n",
@@ -3120,6 +3664,7 @@
     "81-paragraph-interruption-7.crv": "text 1. x 2. y\n",
     "81-paragraph-interruption-9.crv": "text :::note body :::\n",
     "82-blockquote-lazy-continuation-2.crv": "> quoted - item\n",
+    "82-blockquote-lazy-continuation-5.crv": "> :: t ~\n",
     "82-blockquote-lazy-continuation.crv": "> quoted continued\n",
     "85-blockquote-lazy-continuation-stops-at-a-fenced-block-2.crv": "> text `\n> lazy`\n",
     "86-list-lazy-continuation-10.crv": "1. item\n\n   spaced flush\n",
