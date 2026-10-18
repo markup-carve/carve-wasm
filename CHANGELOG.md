@@ -9,6 +9,24 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-10-18
+
+### Breaking
+
+- The carve-lang 0.1.10 pin moves the AST to contract 1.2: its root carries
+  `astVersion`, links carry `resolved`, and comments carry `form`. Older AST
+  readers reject the newer contract. Empty link and image destinations now
+  render as links and images rather than literal text. Render-loss reports can
+  include `table-span-flattened`, `table-header-row-demoted`,
+  `table-header-row-hoisted`, and `table-header-cell-demoted` (#178).
+
+### Improvements
+
+- The carve-lang 0.1.10 pin adds CSV and TSV table fences and keeps plain-text
+  list continuation blocks at their item's indentation (#178).
+- `htmlToCarve` preserves empty link and image destinations as `[x]()` and
+  `![x]()`. An HTML figure with an empty image source remains a figure (#178).
+
 ## [0.1.7] - 2026-10-14
 
 ### Breaking
@@ -429,7 +447,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/markup-carve/carve-wasm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/markup-carve/carve-wasm/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/markup-carve/carve-wasm/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...v0.1.5
