@@ -9,6 +9,17 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-10-18
+
+### Breaking
+
+- CSV and TSV table fences now parse as tables, and empty destinations now render as links or images; AST contract 1.2 changes output trees (#178).
+
+### Improvements
+
+- Update to carve-rs 0.1.10 for CSV and TSV table fences, list continuation indentation in plain text (#178).
+- HTML import reports more corpus losses; ProseMirror conversion marks CSV and TSV tables as degraded (#178).
+
 ## [0.1.7] - 2026-10-14
 
 ### Breaking
@@ -429,7 +440,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/markup-carve/carve-wasm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/markup-carve/carve-wasm/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/markup-carve/carve-wasm/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/markup-carve/carve-wasm/compare/v0.1.4...v0.1.5
