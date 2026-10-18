@@ -42,36 +42,42 @@ for (const [where, html, carve] of [
   assert.deepEqual(rows(result), [report.diagnostics[0]], `${where}: one row per removal`)
 }
 
-// The contract's own equivalence, which needs no hand-written expectation: a denied
-// destination "is imported exactly like an empty one". The engine already implements the
-// empty half, so it arbitrates the denied half against every attribute shape.
-for (const [where, denied, blank] of [
-  ['title', '<a href="javascript:x" title="tip">hello</a>', '<a href="" title="tip">hello</a>'],
-  ['id and title', '<a href="javascript:x" id="k" title="tip">hello</a>', '<a href="" id="k" title="tip">hello</a>'],
-  ['class', '<a href="data:x" class="c">hello</a>', '<a href="" class="c">hello</a>'],
-  ['image title', '<img src="data:x" alt="logo" title="tip">', '<img src="" alt="logo" title="tip">'],
-  ['image, empty alt', '<img src="file:x" alt="">', '<img src="" alt="">'],
-  ['image in a paragraph', '<p><img src="data:x" alt="logo" title="tip"> tail</p>', '<p><img src="" alt="logo" title="tip"> tail</p>'],
-  ['nested', '<blockquote><ul><li><p><em><a href="vbscript:x">deep</a></em></p></li></ul></blockquote>', '<blockquote><ul><li><p><em><a href="">deep</a></em></p></li></ul></blockquote>'],
-  ['table cell', '<table><tr><td><a href="ms-msdt:x">cell</a></td></tr></table>', '<table><tr><td><a href="">cell</a></td></tr></table>'],
+// An explicit empty destination remains a link or image under the current spec.
+// A denied nonempty destination loses that node and reports the dropped attribute.
+for (const [where, denied, blank, expectedBlank] of [
+  ['title', '<a href="javascript:x" title="tip">hello</a>', '<a href="" title="tip">hello</a>', '[hello]( "tip")\n'],
+  ['id and title', '<a href="javascript:x" id="k" title="tip">hello</a>', '<a href="" id="k" title="tip">hello</a>', '[hello]( "tip"){#k}\n'],
+  ['class', '<a href="data:x" class="c">hello</a>', '<a href="" class="c">hello</a>', '[hello](){.c}\n'],
+  ['image title', '<img src="data:x" alt="logo" title="tip">', '<img src="" alt="logo" title="tip">', '![logo]( "tip")\n'],
+  ['image, empty alt', '<img src="file:x" alt="">', '<img src="" alt="">', '![]()\n'],
+  ['image in a paragraph', '<p><img src="data:x" alt="logo" title="tip"> tail</p>', '<p><img src="" alt="logo" title="tip"> tail</p>', '![logo]( "tip") tail\n'],
+  ['nested', '<blockquote><ul><li><p><em><a href="vbscript:x">deep</a></em></p></li></ul></blockquote>', '<blockquote><ul><li><p><em><a href="">deep</a></em></p></li></ul></blockquote>', '> {loose}\n> - /[deep]()/\n'],
+  ['table cell', '<table><tr><td><a href="ms-msdt:x">cell</a></td></tr></table>', '<table><tr><td><a href="">cell</a></td></tr></table>', '| [cell]() |\n'],
   // The writer has already spelled the split scheme `Java%09Script:` by the time the
   // guard reads it, so this shape is what proves the probe resolves the escape.
-  ['split scheme', '<a href="Java&#9;Script:x">hello</a>', '<a href="">hello</a>'],
-  ['split scheme on an image', '<img src="da&#9;ta:x" alt="logo">', '<img src="" alt="logo">'],
+  ['split scheme', '<a href="Java&#9;Script:x">hello</a>', '<a href="">hello</a>', '[hello]()\n'],
+  ['split scheme on an image', '<img src="da&#9;ta:x" alt="logo">', '<img src="" alt="logo">', '![logo]()\n'],
   // An empty code span is dropped by the WRITER and kept by the tree, so a guard that
   // re-imported instead of reading the written source refuses this document.
-  ['empty code span beside it', '<p>a<code></code>b <a href="javascript:x">x</a></p>', '<p>a<code></code>b <a href="">x</a></p>'],
+  ['empty code span beside it', '<p>a<code></code>b <a href="javascript:x">x</a></p>', '<p>a<code></code>b <a href="">x</a></p>', 'ab [x]()\n'],
 ]) {
-  assert.equal(htmlToCarve(denied, 'safe').value, htmlToCarve(blank, 'safe').value,
-    `${where}: a denied destination imports exactly like an empty one`)
+  const deniedResult = htmlToCarve(denied, 'safe')
+  const blankResult = htmlToCarve(blank, 'safe')
+  assert.equal(blankResult.value, expectedBlank, `${where}: authored empty destination survives`)
+  assert.notEqual(deniedResult.value, blankResult.value,
+    `${where}: explicit empty and denied destinations remain distinct`)
+  assert.ok(rows(deniedResult).some((row) => row.code === 'attribute-dropped'),
+    `${where}: a denied destination reports the removed attribute`)
+  assert.ok(rows(blankResult).every((row) => row.code !== 'attribute-dropped'),
+    `${where}: an authored empty destination is retained`)
 }
 
-// A figure is the shape the removed wrapper handled differently from the engine, so it
-// gets the equivalence spelled out rather than a value: both halves unwrap, and only the
-// denied one reports.
+// A figure with an empty image source remains a figure. Denying a nonempty source
+// unwraps it and reports the removed attribute.
 const figure = htmlToCarve('<figure><img src="data:x" alt="logo"><figcaption>cap</figcaption></figure>', 'safe')
 const blankFigure = htmlToCarve('<figure><img src="" alt="logo"><figcaption>cap</figcaption></figure>', 'safe')
-assert.equal(figure.value, blankFigure.value, 'figure: a denied source imports exactly like an empty one')
+assert.notEqual(figure.value, blankFigure.value, 'figure: explicit empty and denied sources remain distinct')
+assert.equal(blankFigure.value, '![logo]()\n^ cap\n')
 assert.deepEqual(rows(figure).filter((row) => row.code === 'attribute-dropped'), [report.diagnostics[2]],
   'figure: one row for the removed source')
 

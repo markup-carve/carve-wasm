@@ -3,7 +3,7 @@
 // is a difference the artifact actually carries rather than a restatement of
 // the engine's changelog.
 import assert from 'node:assert/strict'
-import { expandIncludes, lintCarve, parseJson, toCarve, toHtml } from './engine.mjs'
+import { expandIncludes, lintCarve, parseJson, toCarve, toHtml, toPlainText } from './engine.mjs'
 
 // `|{.r}`, five bytes, panicked the table check (carve-rs#2341). A panic
 // reaches a wasm caller as `unreachable`, which is indistinguishable from an
@@ -77,3 +77,24 @@ const unknown = expandIncludes('{{ other.crv #nope }}\n', { resolve, sourcePath:
 assert.deepEqual(unknown.warnings.map(({ rule }) => rule), ['include-section'])
 
 console.log('wasm artifact: carve-lang 0.1.8 delta cases pass')
+
+// Engine 0.1.10 preserves explicit empty destinations as links and images.
+// A denied nonempty destination still loses the attribute in the importer.
+assert.match(toHtml('[x]()'), /<a href="">x<\/a>/)
+assert.match(toHtml('![alt]()'), /<img src="" alt="alt">/)
+assert.equal(toCarve('[x]()'), '[x]()\n')
+
+// CSV and TSV table bodies use the table declaration, not a bare code fence.
+for (const [format, body] of [
+  ['csv', 'A,B\n1,2'],
+  ['tsv', 'A\tB\n1\t2'],
+]) {
+  const source = `{table}\n\`\`\`${format}\n${body}\n\`\`\``
+  assert.equal(JSON.parse(parseJson(source)).children[0].type, 'table')
+  assert.match(toHtml(source), /<table>/)
+  assert.equal(toCarve(source), `${source}\n`)
+}
+
+// A list item's continuation blocks keep the item's content column.
+assert.equal(toPlainText('- first\n\n  continuation\n'), '- first\n\n  continuation\n')
+console.log('wasm artifact: carve-lang 0.1.10 delta cases pass')
