@@ -1140,14 +1140,6 @@
     "376-pipe-tables-can-state-head-and-foot-row-counts.crv": [
       "degraded:table_row_groups"
     ],
-    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line-2.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
-    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-2.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1289,7 +1281,19 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "424-a-definition-body-s-separator-width-sets-its-content-column-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "426-below-a-definition-body-s-column-the-body-ends-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "426-below-a-definition-body-s-column-the-body-ends-3.crv": [
       "degraded:document",
       "degraded:soft_break"
     ],
@@ -1596,10 +1600,6 @@
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": [
       "degraded:document",
       "degraded:soft_break"
-    ],
-    "469-an-empty-link-destination-is-not-a-link-3.crv": [
-      "degraded:document",
-      "degraded:smart_punctuation"
     ],
     "47-numbered-cross-references-11.crv": [
       "degraded:document",
@@ -2456,6 +2456,222 @@
       "degraded:cell_wrap",
       "degraded:document"
     ],
+    "603-the-combined-bold-italic-token-does-not-open-inside-an-open-bare-italic-or-bold-4.crv": [
+      "degraded:emphasis"
+    ],
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "605-an-autolink-a-cross-reference-or-a-comment-is-atomic-to-every-outside-delimiter-2.crv": [
+      "degraded:document",
+      "degraded:substitution"
+    ],
+    "607-a-quoted-comment-or-attribute-line-closes-the-quote-s-paragraph-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "609-an-escaped-cross-reference-spelling-stays-literal.crv": [
+      "degraded:document",
+      "degraded:escaped_text"
+    ],
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "611-a-table-row-or-a-definition-under-a-paragraph-ends-it-before-an-unclosed-fence-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "612-a-block-at-an-item-content-column-ends-its-paragraph-before-an-unclosed-fence-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-14.crv": [
+      "degraded:document"
+    ],
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-15.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "614-a-quoted-item-comment-ends-the-quote-before-an-unclosed-fence-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-9.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-12.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-14.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-15.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-16.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-17.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-19.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-20.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-23.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-25.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-26.crv": [
+      "degraded:document"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-3.crv": [
+      "degraded:document"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-9.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "617-csv-and-tsv-table-bodies-10.crv": [
+      "degraded:document",
+      "degraded:table_row_groups",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies-2.crv": [
+      "degraded:document",
+      "degraded:table_row_groups",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies-4.crv": [
+      "degraded:document",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies-5.crv": [
+      "degraded:document",
+      "degraded:table_row_groups",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies-6.crv": [
+      "degraded:document",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies-8.crv": [
+      "degraded:document",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies-9.crv": [
+      "degraded:document",
+      "degraded:table_source_format"
+    ],
+    "617-csv-and-tsv-table-bodies.crv": [
+      "degraded:document",
+      "degraded:table_source_format"
+    ],
     "62-smart-typography-escapes-and-code.crv": [
       "degraded:document",
       "degraded:escaped_text"
@@ -2773,8 +2989,6 @@
     "374-a-collected-definition-closes-the-item-paragraph-3.crv": "<ol>\n  <li>a\n    more tail\n  </li>\n</ol>",
     "374-a-collected-definition-closes-the-item-paragraph-4.crv": "<ul>\n  <li>a</li>\n</ul>\n<p>tail</p>\n<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>note more<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
     "374-a-collected-definition-closes-the-item-paragraph.crv": "<ul>\n  <li>a</li>\n</ul>\n<p>more tail</p>",
-    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line-2.crv": "<ul>\n  <li>[d]: text</li>\n</ul>",
-    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line.crv": "<ul>\n  <li>[d]: :::</li>\n</ul>",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-2.crv": "<ul>\n  <li>\n    <ul>\n      <li>u % :</li>\n    </ul>\n  </li>\n</ul>",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-3.crv": "<ul>\n  <li>\n    <ul>\n      <li>u % :</li>\n    </ul>\n  </li>\n</ul>",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item.crv": "<ul>\n  <li>\n    <ul>\n      <li>u % :</li>\n    </ul>\n  </li>\n</ul>",
@@ -2797,7 +3011,10 @@
     "42-admonitions-6.crv": "<aside class=\"admonition note\" aria-labelledby=\"adm-1\">\n  <p class=\"admonition-title\" id=\"adm-1\">Install now via npm</p>\n  <p>Body.</p>\n</aside>",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": "<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>intro</p>\n      <blockquote><p>quote ordinary line</p></blockquote>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-6.crv": "<p>intro # heading</p>",
+    "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-7.crv": "<dl>\n  <dt>term</dt>\n  <dd>definition &gt; quote</dd>\n</dl>",
     "424-a-definition-body-s-separator-width-sets-its-content-column-7.crv": "<dl>\n  <dt>term wrapped on</dt>\n  <dd>definition</dd>\n</dl>",
+    "426-below-a-definition-body-s-column-the-body-ends-2.crv": "<dl>\n  <dt>term</dt>\n  <dd>definition &gt; quote</dd>\n</dl>",
+    "426-below-a-definition-body-s-column-the-body-ends-3.crv": "<dl>\n  <dt>term</dt>\n  <dd>definition # H</dd>\n</dl>",
     "426-below-a-definition-body-s-column-the-body-ends-4.crv": "<dl>\n  <dt>term</dt>\n  <dd>definition more</dd>\n</dl>",
     "43-abbreviations.crv": "<p>The HTML spec is essential reading.</p>",
     "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>d [^f]: n tail</dd>\n</dl>\n<p>See[^f]</p>",
@@ -3023,6 +3240,50 @@
     "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "<table>\n  <tbody>\n    <tr><td rowspan=\"2\">a</td><td>b</td></tr>\n    <tr><td>c</td></tr>\n    <tr><td></td><td>d y</td></tr>\n  </tbody>\n</table>",
     "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "<table>\n  <tbody>\n    <tr><td colspan=\"2\"></td></tr>\n  </tbody>\n</table>",
     "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "<table>\n  <tbody>\n    <tr><td>a</td><td>b</td></tr>\n    <tr><td></td><td>c y</td></tr>\n  </tbody>\n</table>",
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing-2.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>quote <code>\ncode</code></p></blockquote>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing-3.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <ul>\n    <li>item <code>\ncode</code></li>\n  </ul>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <p>para <code>\ncode</code></p>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "605-an-autolink-a-cross-reference-or-a-comment-is-atomic-to-every-outside-delimiter-2.crv": "<p><del>a https://x~y</del><ins>z b</ins></p>",
+    "607-a-quoted-comment-or-attribute-line-closes-the-quote-s-paragraph-3.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>para more text <code>\ncode</code></p></blockquote>\n</aside>\n<p>after <strong>b</strong></p>",
+    "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing-2.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>a b c d <code>\ncode</code></p></blockquote>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>para more <code>\ncode</code></p></blockquote>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-5.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <ul>\n    <li>para</li>\n    <li>text <code>\ncode</code></li>\n  </ul>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-6.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <p>para -\ncode<code></code></p>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-7.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>para -\ncode<code></code></p></blockquote>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "611-a-table-row-or-a-definition-under-a-paragraph-ends-it-before-an-unclosed-fence-4.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>para | t <code>\ncode</code></p></blockquote>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "612-a-block-at-an-item-content-column-ends-its-paragraph-before-an-unclosed-fence-8.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <ol start=\"10\">\n    <li>para | t | <code>\ncode</code></li>\n  </ol>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-15.crv": "<blockquote>\n  <ul>\n    <li>para *[A]: b tail</li>\n  </ul>\n</blockquote>",
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-3.crv": "<ul>\n  <li>a<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a>\n    <ul>\n      <li>para</li>\n    </ul>\n  </li>\n</ul>\n<p>x</p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>n more<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "614-a-quoted-item-comment-ends-the-quote-before-an-unclosed-fence-3.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>para -\ncode<code></code></p></blockquote>\n  <div>\n    <div>\n      <p>after <strong>b</strong></p>\n    </div>\n  </div>\n</aside>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-10.crv": "<ul>\n  <li>\n    <blockquote><p>para {<span class=\"tag\"><strong>#x</strong></span>} tail</p></blockquote>\n  </li>\n</ul>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-11.crv": "<blockquote>\n  <ul>\n    <li>\n      <blockquote><p>para [r]: /u tail</p></blockquote>\n    </li>\n  </ul>\n</blockquote>\n<p>[r][]</p>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>d 1. para</dd>\n</dl>\n<p>x</p>\n<p><a href=\"/u\">r</a></p>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-3.crv": "<p>x</p>\n<p><a href=\"/u\">r</a> <a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>d - para<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-4.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>d - para</p>\n    <p>more</p>\n  </dd>\n</dl>\n<p><a href=\"/u\">r</a></p>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>d - para</p>\n    <h1 id=\"H\">H</h1>\n  </dd>\n</dl>\n<p>x</p>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-6.crv": "<dl>\n  <dt>t</dt>\n  <dd>d - para</dd>\n</dl>\n<p>x</p>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-7.crv": "<dl>\n  <dt>t</dt>\n  <dd>d - para *[A]: b x</dd>\n</dl>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-8.crv": "<ul>\n  <li>\n    <blockquote><p>para [r]: /u tail</p></blockquote>\n  </li>\n</ul>\n<p>[r][]</p>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-9.crv": "<ul>\n  <li>\n    <blockquote><p>para [^f]: n tail</p></blockquote>\n  </li>\n</ul>",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase.crv": "<dl>\n  <dt>t</dt>\n  <dd>d - para</dd>\n</dl>\n<p>x</p>\n<p><a href=\"/u\">r</a></p>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-11.crv": "<ul>\n  <li>\n    <blockquote><p>a b [r]: /u x</p></blockquote>\n  </li>\n</ul>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-12.crv": "<ul>\n  <li>\n    <blockquote><p>para</p></blockquote>\n  </li>\n</ul>\n<p>tail<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>n - sub<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-14.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <blockquote><p>para # H</p></blockquote>\n  </dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-15.crv": "<dl>\n  <dt>t</dt>\n  <dd>para # H</dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-16.crv": "<dl>\n  <dt>t</dt>\n  <dd>para —</dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-17.crv": "<dl>\n  <dt>t</dt>\n  <dd>para | a |</dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-19.crv": "<dl>\n  <dt>t</dt>\n  <dd>para ^ cap</dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-2.crv": "<ul>\n  <li>\n    <blockquote><p>para more</p></blockquote>\n    x\n  </li>\n</ul>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-20.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <blockquote><p>para ^ cap</p></blockquote>\n  </dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-23.crv": "<ul>\n  <li>\n    <blockquote><p>para more</p></blockquote>\n    <pre><code></code></pre>\n  </li>\n</ul>\n<p>x</p>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-25.crv": "<ul>\n  <li>\n    <blockquote><p>para more</p></blockquote>\n    <pre><code></code></pre>\n  </li>\n</ul>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>para - li</li>\n    </ul>\n  </dd>\n</dl>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv": "<ul>\n  <li>\n    <dl>\n      <dt>t</dt>\n      <dd>para - li</dd>\n    </dl>\n  </li>\n</ul>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-8.crv": "<ul>\n  <li>\n    <blockquote><p>a b [r]: /u</p></blockquote>\n  </li>\n</ul>",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-9.crv": "<blockquote>\n  <dl>\n    <dt>t <code></code></dt>\n  </dl>\n</blockquote>",
+    "617-csv-and-tsv-table-bodies-4.crv": "<table>\n  <thead>\n    <tr><th scope=\"col\">Name</th><th scope=\"col\">Note</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>A</td><td>one two</td></tr>\n  </tbody>\n</table>",
+    "617-csv-and-tsv-table-bodies-5.crv": "<table>\n  <tbody>\n    <tr><th scope=\"row\">Item</th><th scope=\"row\">Qty</th></tr>\n    <tr><td>Apple</td><td>2</td></tr>\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td>2</td></tr>\n  </tfoot>\n</table>",
+    "617-csv-and-tsv-table-bodies-6.crv": "",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
     "81-paragraph-interruption-10.crv": "<p>text 2. y 3. z</p>",
@@ -3327,8 +3588,6 @@
     "374-a-collected-definition-closes-the-item-paragraph-3.crv": "1. a\n+\nmore tail\n\n[^f]: note\n",
     "374-a-collected-definition-closes-the-item-paragraph-4.crv": "- a\n\ntail\n\nsee[^f]\n\n[^f]: note more\n",
     "374-a-collected-definition-closes-the-item-paragraph.crv": "- a\n\nmore tail\n\n[r]: /u\n",
-    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line-2.crv": "* \\[d]: text\n",
-    "379-a-reference-definition-cannot-take-its-destination-from-the-next-line.crv": "* \\[d]: :::\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-2.crv": "* * u % :\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-3.crv": "* * u % :\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-5.crv": "* * +\n\n:\n\n[d]: u\n",
@@ -3365,7 +3624,10 @@
     "421-a-sigil-fence-takes-its-attribute-line.crv": "{#poem .verse}\n::: |\nRoses are red,\n  Violets are blue.\n:::\n",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-4.crv": "see[^n]\n\n[^n]: intro\n\n  > quote ordinary line\n",
     "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-6.crv": "intro # heading\n",
+    "422-a-recognized-opener-in-a-body-needs-no-blank-line-above-it-7.crv": ":: term\n: definition > quote\n",
     "424-a-definition-body-s-separator-width-sets-its-content-column-7.crv": ":: term wrapped on\n: definition\n",
+    "426-below-a-definition-body-s-column-the-body-ends-2.crv": ":: term\n: definition > quote\n",
+    "426-below-a-definition-body-s-column-the-body-ends-3.crv": ":: term\n: definition # H\n",
     "426-below-a-definition-body-s-column-the-body-ends-4.crv": ":: term\n: definition more\n",
     "43-abbreviations.crv": "The HTML spec is essential reading.\n",
     "430-below-a-definition-body-s-column-an-invisible-line-folds-as-text-2.crv": ":: t\n: d [^f]: n tail\n\nSee[^f]\n",
@@ -3447,7 +3709,6 @@
     "461-a-column-0-line-after-a-description-hosted-note-is-a-document-sibling.crv": ":: t\n: {empty}\n\ntail\n\n[^f]: note - nested\n",
     "463-a-bare-closer-does-not-reach-inside-a-braced-inline.crv": "~/xy\\~/\n",
     "468-an-underscore-pair-split-across-a-line-break-is-escaped.crv": "{/x/}\\_y z_ w\n",
-    "469-an-empty-link-destination-is-not-a-link-3.crv": "[x]( “t”)\n",
     "47-numbered-cross-references-11.crv": "![a](a.jpg)\n^ x\n",
     "47-numbered-cross-references-2.crv": "![one](a.jpg)\n^ Figure : one\n\n![two](b.jpg)\n^ Figure : two\n",
     "47-numbered-cross-references-3.crv": "{#fig-sun}\n![A sunset](sun.jpg)\n^ Figure : A sunset\n\nSee </#fig-sun> for the colors.\n",
@@ -3644,6 +3905,59 @@
     "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "| a | b |\n| ^ | c |\n| < | d y |\n",
     "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "| ^ | < |\n",
     "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "| a | b |\n| < | c y |\n",
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing-2.crv": "::: note\n> quote `\n> code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing-3.crv": "::: note\n- item `\n  code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "604-an-unclosed-fence-under-an-open-paragraph-in-a-container-opens-nothing.crv": "::: note\npara `\ncode`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "605-an-autolink-a-cross-reference-or-a-comment-is-atomic-to-every-outside-delimiter-2.crv": "{~a https://x~y~>z b~}\n",
+    "607-a-quoted-comment-or-attribute-line-closes-the-quote-s-paragraph-3.crv": "::: note\n> para more text `\n> code`\n:::\n\nafter *b*\n",
+    "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing-2.crv": "::: note\n> a b c d `\n> code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing.crv": "::: note\n> para more `\n> code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "609-an-escaped-cross-reference-spelling-stays-literal.crv": "</#id>\n\nx </#x~>y> y\n",
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-5.crv": "::: note\n- para\n- text `\n  code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-6.crv": "::: note\npara - %% c `\ncode``\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "610-an-item-comment-or-attribute-line-closes-the-item-s-paragraph-7.crv": "::: note\n> para - %% c `\n> code``\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "611-a-table-row-or-a-definition-under-a-paragraph-ends-it-before-an-unclosed-fence-4.crv": "::: note\n> para | t `\n> code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "612-a-block-at-an-item-content-column-ends-its-paragraph-before-an-unclosed-fence-8.crv": "::: note\n10. para | t | `\n    code`\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-14.crv": "- > - para\n+\ntail\n\n[^f]: n\n",
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-15.crv": "> - para *[A]: b tail\n",
+    "613-a-definition-or-attribute-line-in-a-nested-container-leaves-no-paragraph-for-an-unmarked-line-3.crv": "- a[^f]\n  - para\n\nx\n\n[^f]: n more\n",
+    "614-a-quoted-item-comment-ends-the-quote-before-an-unclosed-fence-3.crv": "::: note\n> para - %% c `\n> code``\n\n::::\n:::::\nafter *b*\n:::::\n::::\n:::\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-10.crv": "- > para {#x} tail\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-11.crv": "> - > para [r]: /u tail\n\n[r][]\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-2.crv": ":: t\n: d 1. para\n\nx\n\n[r][]\n\n[r]: /u\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-3.crv": "x\n\n[r][] [^n]\n\n[r]: /u\n\n[^n]: d - para\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-4.crv": ":: t\n: d - para\n\n  more\n\n[r][]\n\n[r]: /u\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-5.crv": ":: t\n: d - para\n\n  # H\n\nx\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-6.crv": ":: t\n: d - para\n\nx\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-7.crv": ":: t\n: d - para *[A]: b x\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-8.crv": "- > para [r]: /u tail\n\n[r][]\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase-9.crv": "- > para [^f]: n tail\n",
+    "615-a-line-past-a-body-s-column-is-read-in-the-body-and-a-quote-does-not-rebase.crv": ":: t\n: d - para\n\nx\n\n[r][]\n\n[r]: /u\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-11.crv": "- > a b [r]: /u x\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-12.crv": "- > para\n\ntail[^f]\n\n[^f]: n - sub\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-14.crv": ":: t\n: > para # H\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-15.crv": ":: t\n: para # H\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-16.crv": ":: t\n: para —\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-17.crv": ":: t\n: para | a |\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-19.crv": ":: t\n: para ^ cap\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-2.crv": "- > para more\n  %% c\n  x\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-20.crv": ":: t\n: > para ^ cap\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-23.crv": "- > para more\n  %% c\n  ```\n  ```\n\nx\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-25.crv": "- > para more\n  %%%\n\n  %%%\n  ```\n  ```\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-26.crv": "x[^c]\n\n:: t\n: {empty}\n\ntail\n\n[^c]: para\n\n  > q\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-3.crv": "x[^c]\n\n:: t\n: {empty}\n\n[^c]: para\n\n  # H\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-5.crv": ":: t\n: - para - li\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv": "- :: t\n  : para - li\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-8.crv": "- > a b [r]: /u\n",
+    "616-a-line-is-read-in-the-container-whose-column-it-reaches-9.crv": "> :: t ``\n",
+    "617-csv-and-tsv-table-bodies-10.crv": "{footer-rows=1}\n| last |\n",
+    "617-csv-and-tsv-table-bodies-2.crv": "{header-rows=0}\n| A | B |\n| \\^ | <x> |\n",
+    "617-csv-and-tsv-table-bodies-4.crv": "|= Name |= Note |\n| A | one two |\n",
+    "617-csv-and-tsv-table-bodies-5.crv": "{footer-rows=1}\n|= Item |= Qty |\n| Apple | 2 |\n| Total | 2 |\n",
+    "617-csv-and-tsv-table-bodies-6.crv": "\n",
+    "617-csv-and-tsv-table-bodies-8.crv": "|= a |= b |= |\n| 1 | | |\n| 2 | 3 | 4 |\n",
+    "617-csv-and-tsv-table-bodies-9.crv": "|= a |\n| |\n",
+    "617-csv-and-tsv-table-bodies.crv": "{aligns=left,right,right}\n|= Item |= Qty |= Price |\n| Apple | 12 | 0.40 |\n| Pear, green | 3 | 0.55 |\n^ Stock on hand\n",
     "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
     "63-table-multi-line-cell-continuation.crv": "|= Feature |= Description |\n| Complex | A long description that continues across lines. |\n| Simple | Single line. |\n",
     "64-table-rowspan-with-multi-line-content-2.crv": "| a more | b |\n| ^ | c d |\n",
