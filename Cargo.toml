@@ -59,7 +59,7 @@ stamp = []
 # scripts/pinned-spec-commit.py resolves the revision, or the registry release
 # tag, to the spec the corpus gate runs against. See
 # docs/engine-pin.md.
-carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "df3ea6cec232460d44e81b2182623a678377aef3" }
+carve = { package = "carve-lang", git = "https://github.com/markup-carve/carve-rs", rev = "ec2dba44983947ef1ca92f1f771b37c2e6c9db12" }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }
