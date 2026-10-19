@@ -77,6 +77,9 @@ struct RenderConfig {
     /// Ordered rather than a map so a render is reproducible from the object
     /// the caller passed, in the order they wrote it.
     labels: Vec<(String, String)>,
+    /// Pad table columns in the Carve writer (PART 11 aligned form). Only
+    /// `toCarveWithOptions` reads it.
+    align_tables: bool,
 }
 
 impl Default for RenderConfig {
@@ -95,6 +98,7 @@ impl Default for RenderConfig {
             mention_url: None,
             tag_url: None,
             labels: Vec::new(),
+            align_tables: false,
         }
     }
 }
@@ -108,7 +112,8 @@ impl RenderConfig {
             .with_positions(self.positions)
             .with_lowercase_heading_ids(self.lowercase_heading_ids)
             .with_ascii_heading_ids(self.ascii_heading_ids)
-            .with_mode(self.mode);
+            .with_mode(self.mode)
+            .with_align_tables(self.align_tables);
         // No `with_` builder for this one upstream; the field is public.
         options.smart_typography = self.smart_typography;
         if let Some(profile) = &self.profile {
@@ -914,7 +919,7 @@ export interface IncludeContext {
   stack: string[];
   depth: number;
 }
-export type IncludeDenial = "outside-root" | "not-found" | "no-root" | "include-denied" | "include-unresolved";
+export type IncludeDenial = "outside-root" | "not-found" | "no-root" | "include-denied" | "include-non-text" | "include-unresolved";
 export interface IncludeOptions {
   resolve: (path: string, context: IncludeContext) => string | { source: string; id?: string } | { denial: IncludeDenial } | null;
   sourcePath?: string;
@@ -928,7 +933,8 @@ export interface IncludeExpansion {
   json: string;
   warnings: { rule: string; message: string; file: string | null }[];
   suppressedWarnings: number;
-  dependencies: { id: string; resolved: boolean; denial: IncludeDenial | null }[];
+  /** A `include-non-text` refusal reports `denial: null`, like NUL content. */
+  dependencies: { id: string; resolved: boolean; denial: Exclude<IncludeDenial, "include-non-text"> | null }[];
   chargedBytes: number;
   resolverErrors: { path: string; message: string }[];
 }
@@ -978,6 +984,8 @@ export interface RenderOptions {
   mentionUrl?: string;
   tagUrl?: string;
   labels?: Record<string, string>;
+  /** Pad table columns in `toCarveWithOptions` output. Other targets ignore it. */
+  alignTables?: boolean;
 }
 export interface StaticRenderOptions extends RenderOptions {
   renderers?: {
@@ -1162,6 +1170,63 @@ fn js_error(message: String) -> JsValue {
 pub fn parse_source_layout_json(source: &str) -> String {
     carve::parse_with_source_layout(source).1
 }
+
+/// Find the lines of `@region:name` in a file's text with the engine's own
+/// marker rules (spec I1b), so an editor jumping to a region agrees with
+/// expansion.
+///
+/// `mode` is `"carve"` (only `%% #region` markers) or `"code"` (the
+/// source-comment forms too, as a `@code` include reads them). Returns the
+/// 1-based inclusive content lines `{ start, end }`; an empty region has
+/// `end === start - 1`. A missing region or a malformed or unpaired marker
+/// throws an `IncludeRegionError` whose `rule` is `include-region-invalid`.
+#[cfg(feature = "includes")]
+#[wasm_bindgen(js_name = selectIncludeRegion, unchecked_return_type = "IncludeRegion")]
+pub fn select_include_region(
+    source: &str,
+    name: &str,
+    #[wasm_bindgen(unchecked_param_type = "IncludeRegionMode")] mode: &str,
+) -> Result<JsValue, JsValue> {
+    let mode = match mode {
+        "carve" => carve::IncludeRegionMode::Carve,
+        "code" => carve::IncludeRegionMode::Code,
+        other => {
+            return Err(js_sys::TypeError::new(&format!(
+                "carve: unknown region mode {other:?} (expected \"carve\" or \"code\")"
+            ))
+            .into())
+        }
+    };
+    match carve::select_include_region(source, name, mode) {
+        Ok(region) => {
+            let object = js_sys::Object::new();
+            js_sys::Reflect::set(&object, &"start".into(), &(region.start as f64).into())?;
+            js_sys::Reflect::set(&object, &"end".into(), &(region.end as f64).into())?;
+            Ok(object.into())
+        }
+        Err(error) => {
+            let js_error = js_sys::Error::new(&format!("Include region \"{name}\" is invalid."));
+            js_error.set_name("IncludeRegionError");
+            let _ = js_sys::Reflect::set(&js_error, &"rule".into(), &error.rule().into());
+            Err(js_error.into())
+        }
+    }
+}
+
+#[cfg(feature = "includes")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_INCLUDE_REGION: &str = r#"
+export type IncludeRegionMode = "carve" | "code";
+/** 1-based inclusive content lines; an empty region has `end === start - 1`. */
+export interface IncludeRegion {
+  start: number;
+  end: number;
+}
+export interface IncludeRegionError extends Error {
+  name: "IncludeRegionError";
+  rule: "include-region-invalid";
+}
+"#;
 
 /// Expand `{{ path }}` include directives (spec PART 9 §19) through a JS
 /// resolver, and hand back the expanded tree as AST JSON.
@@ -1467,10 +1532,12 @@ fn resolved_from_js(
             "not-found" => Err(Ok(carve::IncludeDenial::NotFound)),
             "no-root" => Err(Ok(carve::IncludeDenial::NoRoot)),
             "include-denied" => Err(Ok(carve::IncludeDenial::Denied)),
+            "include-non-text" => Err(Ok(carve::IncludeDenial::NonText)),
             "include-unresolved" => Err(Ok(carve::IncludeDenial::Unresolved)),
             other => Err(Err(format!(
                 "`resolve` returned an unknown denial {other:?} (supported: \"outside-root\", \
-                 \"not-found\", \"no-root\", \"include-denied\", \"include-unresolved\")"
+                 \"not-found\", \"no-root\", \"include-denied\", \"include-non-text\", \
+                 \"include-unresolved\")"
             ))),
         };
     }
@@ -2787,7 +2854,8 @@ fn render_with_options(
 /// do not consult. `renderers` is refused for the reason
 /// [`to_html_with_options`] refuses it.
 ///
-/// [`to_carve_with_options`] is narrower again and reads `profile` alone: the
+/// [`to_carve_with_options`] is narrower again and reads `profile` and
+/// `alignTables` alone: the
 /// engine's canonical writer is parse-only by contract, so extensions and
 /// `smartTypography` are inert there. They are accepted rather than refused
 /// because one options object is meant to serve every target.
@@ -2839,7 +2907,7 @@ pub fn to_ansi_with_options(
 
 /// Write canonical Carve with an options object.
 ///
-/// `profile` is the only option this target reads; see
+/// `profile` and `alignTables` are the only options this target reads; see
 /// [`to_markdown_with_options`] for why.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toCarveWithOptions, skip_typescript)]
@@ -3214,6 +3282,7 @@ impl RenderRequest {
             mention_url: string_field(&options, "mentionUrl")?,
             tag_url: string_field(&options, "tagUrl")?,
             labels: string_map_field(&options, "labels")?,
+            align_tables: bool_field(&options, "alignTables")?.unwrap_or(false),
         };
         let full = bool_field(&options, "full")?.unwrap_or(false);
         let named = extension_names_field(&options)?;

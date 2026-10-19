@@ -1,7 +1,7 @@
 import {
   expandIncludes, lintAccessibility, lintCarve, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
-  createSourcePatch, applySourcePatch, ParserSession, type AccessibilityDiagnostic,
-  type IncludeExpansion, type LintWarning, type RenderResult,
+  createSourcePatch, applySourcePatch, ParserSession, selectIncludeRegion, toCarveWithOptions,
+  type AccessibilityDiagnostic, type IncludeExpansion, type IncludeRegion, type LintWarning, type RenderResult,
 } from '@markup-carve/carve-wasm'
 const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
   resolve: (path, context) => ({ source: context.stack.join('/') + path, id: path }),
@@ -20,6 +20,12 @@ a11y.map(item => item.startUtf16 === null ? -1 : item.startUtf16)
 void perCode
 expanded.dependencies.map(dependency => dependency.denial)
 toHtmlWithOptions('body', { rawHtml: false, profile: 'comment', asciiHeadingIds: 'fold' })
+toCarveWithOptions('|a|b|', { alignTables: true })
+const region: IncludeRegion = selectIncludeRegion('%% #region a\nx\n%% #endregion\n', 'a', 'code')
+void region.end
+expandIncludes('{{ bin }}', { resolve: () => ({ denial: 'include-non-text' }) })
+// @ts-expect-error A region mode is "carve" or "code".
+selectIncludeRegion('body', 'a', 'markdown')
 toHtmlWithRenderers('body', { renderers: { diagrams: { mermaid: source => source }, math: (tex, display) => display ? tex : '' } })
 applySourcePatch('a', createSourcePatch('a', 'b', 'refactor', 'change'))
 // @ts-expect-error Report strictness is a boolean.

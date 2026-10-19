@@ -390,6 +390,13 @@ jobs:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
         run: node --stack-size=4000 tests/corpus.mjs
 
+      # The spec's shared table-alignment rows sit beside the corpus in the
+      # same checkout (markup-carve/carve#3333).
+      - name: Aligned tables and include regions
+        env:
+          CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
+        run: node tests/align-tables-regions.mjs
+
       # The REVERSE direction, which nothing here measured until
       # markup-carve/carve-wasm#53. Every job above renders `.crv` forward and
       # compares against a committed golden; `htmlToCarve`'s `roundtrip` mode is

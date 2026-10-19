@@ -255,10 +255,19 @@ What those targets actually read is narrower than HTML's list: `profile` and
 concerns the engine's other renderers do not consult. `renderers` is refused
 there as it is on `toHtmlWithOptions`.
 
-`toCarveWithOptions` is narrower again and reads `profile` alone. The canonical
-writer is parse-only by contract, so extensions and `smartTypography` are inert
-there; they are accepted rather than refused so that one options object can be
-handed to every target.
+`toCarveWithOptions` is narrower again and reads `profile` and `alignTables`
+alone. The canonical writer is parse-only by contract, so extensions and
+`smartTypography` are inert there; they are accepted rather than refused so that
+one options object can be handed to every target.
+
+`alignTables: true` pads table columns to a shared width (the PART 11 aligned
+form, `carve fmt --align-tables`). The aligned source renders to the same HTML
+as the canonical one, and the default writer turns it back into canonical form:
+
+```js
+toCarveWithOptions('|= Name |= Score |\n| Ada | 9 |\n', { alignTables: true })
+// '|= Name |= Score |\n| Ada   | 9      |\n'
+```
 
 It has a second exception the other targets do not. The canonical writer can
 refuse a tree on its own account, apart from any profile, and that arrives as an
@@ -486,6 +495,9 @@ defeat it without one and only the depth limit stops the recursion. `null`
 refuses the directive as `not-found`, and `{ denial }` refuses it in one of the
 classes §19 names: `outside-root`, `not-found`, `no-root`, `include-denied`,
 `include-unresolved`. The class reaches the caller on the dependency.
+`{ denial: 'include-non-text' }` is for a file that was read but is not
+well-formed UTF-8: it warns under `include-non-text` and, like NUL content,
+leaves `denial: null` on the dependency.
 
 `ctx` carries `{ sourcePath, stack, depth }`. `stack` is the include chain, root
 first, and its last entry is the file containing the directive - which is what
@@ -518,6 +530,25 @@ charged, which is otherwise unobservable from outside.
 The tree carries no positions. Expansion merges nodes from several files, and a
 span on a node that came from a child would point into a source the caller
 never passed.
+
+#### Include regions
+
+`selectIncludeRegion(source, name, mode)` finds `@region:name` in a file's text
+with the engine's marker rules (spec I1b), so an editor that jumps to a region
+lands where expansion would cut. `mode` is `'carve'`, where only
+`%% #region` / `%% #endregion` are markers, or `'code'`, which also reads the
+source-comment forms (`// #region`, `-- #region`, `/* #region */`,
+`<!-- #region -->`) the way a `@code` include does.
+
+```js
+const file = '%% #region setup\na\nb\n%% #endregion\n'
+selectIncludeRegion(file, 'setup', 'carve') // { start: 2, end: 3 }
+```
+
+The result is the 1-based, inclusive range of content lines; an empty region
+has `end === start - 1`. A missing region, or a malformed or unpaired marker
+anywhere in the file, throws an error named `IncludeRegionError` whose `rule`
+is `include-region-invalid`, the warning expansion reports for the same file.
 ### Re-parsing while someone types
 
 `parseSnapshot(source)` parses a document and keeps what a later `reparse` needs.
@@ -713,7 +744,7 @@ const html: string = toHtml('_Hello_')
 | `toMarkdownWithOptions` | `(source: string, options?: object \| null) => string` | Markdown under the same options object. Throws `ProfileViolationError` when a profile rejects the document |
 | `toPlainTextWithOptions` | `(source: string, options?: object \| null) => string` | Plain text under the same options object |
 | `toAnsiWithOptions` | `(source: string, options?: object \| null) => string` | ANSI text under the same options object |
-| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` only. Throws `ProfileViolationError` when a profile rejects the document, or `CarveWriteError` when the writer itself refuses the tree |
+| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` and `alignTables` only. Throws `ProfileViolationError` when a profile rejects the document, or `CarveWriteError` when the writer itself refuses the tree |
 | `parseJsonWithOptions` | `(source: string, options?: object \| null) => string` | The AST as JSON under the same options object; positions are always on |
 | `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded losses: `raw-format-dropped`, and `destination-denied` for each link, autolink or image URL whose scheme is denied and blanked (the HTML keeps the empty attribute). `losses` is capped by `maximum`, so read `totalsByCode` rather than counting the array when `truncated` is true. Strict mode throws `RenderLossError` ("render would lose N nodes"), which carries the same three fields |
 | `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
@@ -737,6 +768,7 @@ const html: string = toHtml('_Hello_')
 | `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree; throws `Error` when nesting exceeds the importer limit |
 | `htmlToAst` | `(html: string, mode?: string) => MigrationResult` | Import HTML straight to the tree; `{ value, report }` with the tree in `value` |
 | `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
+| `selectIncludeRegion` | `(source: string, name: string, mode: 'carve' \| 'code') => IncludeRegion` | Content lines `{ start, end }` of `@region:name`; throws `IncludeRegionError` (`rule: 'include-region-invalid'`) |
 | `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree, parsedSourceBytes }` |
 | `ParserSession` | `new (source: string)` | Retained parsing state with `snapshot()`, `edit(changes: string)` and `free()` |
 | `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |
