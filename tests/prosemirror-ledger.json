@@ -2672,6 +2672,18 @@
       "degraded:document",
       "degraded:table_source_format"
     ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv": [
+      "degraded:document",
+      "degraded:figure_group"
+    ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-9.crv": [
+      "degraded:document",
+      "degraded:figure_group"
+    ],
     "62-smart-typography-escapes-and-code.crv": [
       "degraded:document",
       "degraded:escaped_text"
@@ -3284,6 +3296,9 @@
     "617-csv-and-tsv-table-bodies-4.crv": "<table>\n  <thead>\n    <tr><th scope=\"col\">Name</th><th scope=\"col\">Note</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>A</td><td>one two</td></tr>\n  </tbody>\n</table>",
     "617-csv-and-tsv-table-bodies-5.crv": "<table>\n  <tbody>\n    <tr><th scope=\"row\">Item</th><th scope=\"row\">Qty</th></tr>\n    <tr><td>Apple</td><td>2</td></tr>\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td>2</td></tr>\n  </tfoot>\n</table>",
     "617-csv-and-tsv-table-bodies-6.crv": "",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv": "<ul>\n  <li>^ cap\n    <figure>\n      <blockquote><p>q</p></blockquote>\n      <figcaption>cap more</figcaption>\n    </figure>\n  </li>\n  <li>c</li>\n</ul>",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv": "<ul>\n  <li>\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n      <p>cap</p>\n    </div>\n  </li>\n  <li>c</li>\n</ul>",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-9.crv": "<ul>\n  <li>\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n    </div>\n    <p>^ cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
     "81-paragraph-interruption-10.crv": "<p>text 2. y 3. z</p>",
@@ -3958,6 +3973,9 @@
     "617-csv-and-tsv-table-bodies-8.crv": "|= a |= b |= |\n| 1 | | |\n| 2 | 3 | 4 |\n",
     "617-csv-and-tsv-table-bodies-9.crv": "|= a |\n| |\n",
     "617-csv-and-tsv-table-bodies.crv": "{aligns=left,right,right}\n|= Item |= Qty |= Price |\n| Apple | 12 | 0.40 |\n| Pear, green | 3 | 0.55 |\n^ Stock on hand\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv": "- ^ cap\n+\n> q\n^ cap more\n- c\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv": "- :::\n  ![a](b.png)\n\n  cap\n  :::\n- c\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-9.crv": "- :::\n  ![a](b.png)\n  :::\n\n  ^ cap\n\n- c\n",
     "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
     "63-table-multi-line-cell-continuation.crv": "|= Feature |= Description |\n| Complex | A long description that continues across lines. |\n| Simple | Single line. |\n",
     "64-table-rowspan-with-multi-line-content-2.crv": "| a more | b |\n| ^ | c d |\n",
