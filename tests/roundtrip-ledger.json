@@ -611,6 +611,7 @@
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-9.crv": "<blockquote>\n  <dl>\n    <dt>t <code></code></dt>\n  </dl>\n</blockquote>",
     "617-csv-and-tsv-table-bodies-4.crv": "<table>\n  <thead>\n    <tr><th scope=\"col\">Name</th><th scope=\"col\">Note</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>A</td><td>one two</td></tr>\n  </tbody>\n</table>",
     "617-csv-and-tsv-table-bodies-6.crv": "",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv": "<ul>\n  <li>^ cap\n    <figure>\n      <blockquote><p>q</p></blockquote>\n      <figcaption>cap more</figcaption>\n    </figure>\n  </li>\n  <li>c</li>\n</ul>",
     "68-nested-containers-3.crv": "<p>Outer</p>\n<p>Inner</p>",
     "70-blocks-that-render-to-nothing-3.crv": "<p>body</p>",
     "71-attribute-edge-cases-18.crv": "<p><span id=\"b2\" class=\"a1\" k3=\"v\">x</span></p>",
