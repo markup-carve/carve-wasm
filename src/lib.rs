@@ -77,6 +77,9 @@ struct RenderConfig {
     /// Ordered rather than a map so a render is reproducible from the object
     /// the caller passed, in the order they wrote it.
     labels: Vec<(String, String)>,
+    /// Pad table columns in the Carve writer (PART 11 aligned form). Only
+    /// `toCarveWithOptions` reads it.
+    align_tables: bool,
 }
 
 impl Default for RenderConfig {
@@ -95,6 +98,7 @@ impl Default for RenderConfig {
             mention_url: None,
             tag_url: None,
             labels: Vec::new(),
+            align_tables: false,
         }
     }
 }
@@ -108,7 +112,8 @@ impl RenderConfig {
             .with_positions(self.positions)
             .with_lowercase_heading_ids(self.lowercase_heading_ids)
             .with_ascii_heading_ids(self.ascii_heading_ids)
-            .with_mode(self.mode);
+            .with_mode(self.mode)
+            .with_align_tables(self.align_tables);
         // No `with_` builder for this one upstream; the field is public.
         options.smart_typography = self.smart_typography;
         if let Some(profile) = &self.profile {
@@ -885,7 +890,9 @@ export function astJsonToAnsi(json: string, options?: RenderOptions | null): str
 #[cfg(feature = "lint")]
 #[wasm_bindgen(typescript_custom_section)]
 const TS_LINT: &str = r#"
-export function lintCarveWithOptions(source: string, options?: RenderOptions | null): LintWarning[];
+export function lintCarveWithOptions(source: string, options: LintOptions & { includes: LintIncludeOptions }): IncludeLintWarning[];
+export function lintCarveWithOptions(source: string, options?: (RenderOptions & { includes?: undefined }) | null): LintWarning[];
+export function lintCarveWithOptions(source: string, options?: LintOptions | null): IncludeLintWarning[];
 "#;
 
 #[cfg(feature = "reports")]
@@ -914,7 +921,7 @@ export interface IncludeContext {
   stack: string[];
   depth: number;
 }
-export type IncludeDenial = "outside-root" | "not-found" | "no-root" | "include-denied" | "include-unresolved";
+export type IncludeDenial = "outside-root" | "not-found" | "no-root" | "include-denied" | "include-non-text" | "include-unresolved";
 export interface IncludeOptions {
   resolve: (path: string, context: IncludeContext) => string | { source: string; id?: string } | { denial: IncludeDenial } | null;
   sourcePath?: string;
@@ -928,7 +935,8 @@ export interface IncludeExpansion {
   json: string;
   warnings: { rule: string; message: string; file: string | null }[];
   suppressedWarnings: number;
-  dependencies: { id: string; resolved: boolean; denial: IncludeDenial | null }[];
+  /** A `include-non-text` refusal reports `denial: null`, like NUL content. */
+  dependencies: { id: string; resolved: boolean; denial: Exclude<IncludeDenial, "include-non-text"> | null }[];
   chargedBytes: number;
   resolverErrors: { path: string; message: string }[];
 }
@@ -978,6 +986,8 @@ export interface RenderOptions {
   mentionUrl?: string;
   tagUrl?: string;
   labels?: Record<string, string>;
+  /** Pad table columns in `toCarveWithOptions` output. Other targets ignore it. */
+  alignTables?: boolean;
 }
 export interface StaticRenderOptions extends RenderOptions {
   renderers?: {
@@ -1003,6 +1013,24 @@ export interface LintWarning {
   start: number;
   /** 0-based UTF-16 code unit offset into the source, exclusive. */
   end: number;
+  /** The included file the finding arose in; null for the document itself. */
+  file: string | null;
+  /** The include directives that reached `file`, top-level first. */
+  includedBy: { file: string; line: number; column: number }[];
+}
+/** The `includes` option of `lintCarveWithOptions`: `IncludeOptions` without `extensions`. */
+export type LintIncludeOptions = Omit<IncludeOptions, "extensions">;
+export interface LintOptions extends RenderOptions {
+  /** Follow include directives through `resolve` and lint the included Carve files too. */
+  includes?: LintIncludeOptions;
+}
+/**
+ * A finding from a lint that followed includes. `start` and `end` are null on
+ * findings from another file, since they would index a text the caller did not pass.
+ */
+export interface IncludeLintWarning extends Omit<LintWarning, "start" | "end"> {
+  start: number | null;
+  end: number | null;
 }
 
 export interface ProfileViolation {
@@ -1162,6 +1190,63 @@ fn js_error(message: String) -> JsValue {
 pub fn parse_source_layout_json(source: &str) -> String {
     carve::parse_with_source_layout(source).1
 }
+
+/// Find the lines of `@region:name` in a file's text with the engine's own
+/// marker rules (spec I1b), so an editor jumping to a region agrees with
+/// expansion.
+///
+/// `mode` is `"carve"` (only `%% #region` markers) or `"code"` (the
+/// source-comment forms too, as a `@code` include reads them). Returns the
+/// 1-based inclusive content lines `{ start, end }`; an empty region has
+/// `end === start - 1`. A missing region or a malformed or unpaired marker
+/// throws an `IncludeRegionError` whose `rule` is `include-region-invalid`.
+#[cfg(feature = "includes")]
+#[wasm_bindgen(js_name = selectIncludeRegion, unchecked_return_type = "IncludeRegion")]
+pub fn select_include_region(
+    source: &str,
+    name: &str,
+    #[wasm_bindgen(unchecked_param_type = "IncludeRegionMode")] mode: &str,
+) -> Result<JsValue, JsValue> {
+    let mode = match mode {
+        "carve" => carve::IncludeRegionMode::Carve,
+        "code" => carve::IncludeRegionMode::Code,
+        other => {
+            return Err(js_sys::TypeError::new(&format!(
+                "carve: unknown region mode {other:?} (expected \"carve\" or \"code\")"
+            ))
+            .into())
+        }
+    };
+    match carve::select_include_region(source, name, mode) {
+        Ok(region) => {
+            let object = js_sys::Object::new();
+            js_sys::Reflect::set(&object, &"start".into(), &(region.start as f64).into())?;
+            js_sys::Reflect::set(&object, &"end".into(), &(region.end as f64).into())?;
+            Ok(object.into())
+        }
+        Err(error) => {
+            let js_error = js_sys::Error::new(&format!("Include region \"{name}\" is invalid."));
+            js_error.set_name("IncludeRegionError");
+            let _ = js_sys::Reflect::set(&js_error, &"rule".into(), &error.rule().into());
+            Err(js_error.into())
+        }
+    }
+}
+
+#[cfg(feature = "includes")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_INCLUDE_REGION: &str = r#"
+export type IncludeRegionMode = "carve" | "code";
+/** 1-based inclusive content lines; an empty region has `end === start - 1`. */
+export interface IncludeRegion {
+  start: number;
+  end: number;
+}
+export interface IncludeRegionError extends Error {
+  name: "IncludeRegionError";
+  rule: "include-region-invalid";
+}
+"#;
 
 /// Expand `{{ path }}` include directives (spec PART 9 §19) through a JS
 /// resolver, and hand back the expanded tree as AST JSON.
@@ -1467,10 +1552,12 @@ fn resolved_from_js(
             "not-found" => Err(Ok(carve::IncludeDenial::NotFound)),
             "no-root" => Err(Ok(carve::IncludeDenial::NoRoot)),
             "include-denied" => Err(Ok(carve::IncludeDenial::Denied)),
+            "include-non-text" => Err(Ok(carve::IncludeDenial::NonText)),
             "include-unresolved" => Err(Ok(carve::IncludeDenial::Unresolved)),
             other => Err(Err(format!(
                 "`resolve` returned an unknown denial {other:?} (supported: \"outside-root\", \
-                 \"not-found\", \"no-root\", \"include-denied\", \"include-unresolved\")"
+                 \"not-found\", \"no-root\", \"include-denied\", \"include-non-text\", \
+                 \"include-unresolved\")"
             ))),
         };
     }
@@ -2185,7 +2272,9 @@ pub fn apply_profile(
 #[cfg(feature = "lint")]
 #[wasm_bindgen(js_name = lintCarve, unchecked_return_type = "LintWarning[]")]
 pub fn lint_carve(source: &str) -> Result<JsValue, JsValue> {
-    lint_warnings(carve::lint_carve(source), source)
+    let found = carve::lint_carve(source);
+    let own = found.len();
+    lint_warnings(found, source, own)
 }
 
 /// Offsets into one source, translated to UTF-16 code units.
@@ -2240,18 +2329,26 @@ fn utf16_offsets(
 }
 
 /// The JS array both lint entry points return.
+///
+/// The first `own` findings are the document's own; only their offsets index
+/// `source`. The rest come from included files, so their `start`/`end` are null.
 #[cfg(feature = "lint")]
-fn lint_warnings(found: Vec<carve::LintWarning>, source: &str) -> Result<JsValue, JsValue> {
+fn lint_warnings(
+    found: Vec<carve::LintWarning>,
+    source: &str,
+    own: usize,
+) -> Result<JsValue, JsValue> {
     let units = utf16_offsets(
         source,
         found
             .iter()
+            .take(own)
             .flat_map(|warning| [warning.start, warning.end])
             .collect(),
         false,
     );
     let warnings = js_sys::Array::new();
-    for warning in found {
+    for (index, warning) in found.into_iter().enumerate() {
         let entry = js_sys::Object::new();
         js_sys::Reflect::set(
             &entry,
@@ -2277,12 +2374,30 @@ fn lint_warnings(found: Vec<carve::LintWarning>, source: &str) -> Result<JsValue
         // language indexes strings in UTF-16 code units, and the engine's own
         // note on the field says the unit follows the host (#164).
         for (key, offset) in [("start", warning.start), ("end", warning.end)] {
-            js_sys::Reflect::set(
-                &entry,
-                &JsValue::from_str(key),
-                &JsValue::from_f64(units[&offset] as f64),
-            )?;
+            let value = if index < own {
+                JsValue::from_f64(units[&offset] as f64)
+            } else {
+                JsValue::NULL
+            };
+            js_sys::Reflect::set(&entry, &JsValue::from_str(key), &value)?;
         }
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("file"),
+            &match &warning.file {
+                Some(file) => JsValue::from_str(file),
+                None => JsValue::NULL,
+            },
+        )?;
+        let chain = js_sys::Array::new();
+        for site in &warning.included_by {
+            let item = js_sys::Object::new();
+            js_sys::Reflect::set(&item, &"file".into(), &site.file.as_str().into())?;
+            js_sys::Reflect::set(&item, &"line".into(), &(site.line as f64).into())?;
+            js_sys::Reflect::set(&item, &"column".into(), &(site.column as f64).into())?;
+            chain.push(&item);
+        }
+        js_sys::Reflect::set(&entry, &JsValue::from_str("includedBy"), &chain)?;
         warnings.push(&entry.into());
     }
     Ok(warnings.into())
@@ -2298,15 +2413,90 @@ pub fn lint_carve_with_options(
     source: &str,
     #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<JsValue, JsValue> {
+    #[cfg(feature = "includes")]
+    let includes = lint_include_request(options.as_ref())?;
+    #[cfg(not(feature = "includes"))]
+    if let Some(object) = options.as_ref() {
+        let value: &JsValue = object.as_ref();
+        if !value.is_null()
+            && !value.is_undefined()
+            && !js_sys::Reflect::get(object, &JsValue::from_str("includes"))?.is_undefined()
+        {
+            return Err(type_error(
+                "carve: this build has no `includes` feature, so lint cannot follow includes",
+            ));
+        }
+    }
     let Some(request) = RenderRequest::read(options)? else {
         return lint_carve(source);
     };
     let owned = request.extension_boxes();
     let engine_options = request.engine_options(&owned);
-    lint_warnings(
-        carve::lint_carve_with_options(source, &engine_options),
-        source,
-    )
+    let found = carve::lint_carve_with_options(source, &engine_options);
+    let own = found.len();
+    #[cfg(feature = "includes")]
+    if let Some(includes) = includes {
+        let failures: Rc<RefCell<Vec<ResolverFailure>>> = Rc::default();
+        let resolver = js_resolver(includes.resolve.clone(), failures);
+        let mut include_options = carve::IncludeOptions::new().with_resolver(&resolver);
+        for ext in &owned {
+            include_options = include_options.with_extension(ext.as_ref());
+        }
+        if let Some(path) = &includes.source_path {
+            include_options = include_options.with_source_path(path.clone());
+        }
+        if let Some(depth) = includes.max_depth {
+            include_options = include_options.with_max_depth(depth);
+        }
+        if let Some(bytes) = includes.max_bytes {
+            include_options = include_options.with_max_bytes(bytes);
+        }
+        if let Some(calls) = includes.max_resolver_calls {
+            include_options = include_options.with_max_resolver_calls(calls);
+        }
+        if let Some(warnings) = includes.max_warnings {
+            include_options = include_options.with_max_warnings(warnings);
+        }
+        let engine_options = request
+            .engine_options(&owned)
+            .with_lint_includes(include_options);
+        // The engine lists the document's own findings first, so linting it
+        // alone above tells them apart from the included files' findings.
+        return lint_warnings(
+            carve::lint_carve_with_options(source, &engine_options),
+            source,
+            own,
+        );
+    }
+    lint_warnings(found, source, own)
+}
+
+/// The `includes` member of a lint options object, if the caller passed one.
+#[cfg(all(feature = "lint", feature = "includes"))]
+fn lint_include_request(
+    options: Option<&js_sys::Object>,
+) -> Result<Option<IncludeRequest>, JsValue> {
+    let Some(options) = options else {
+        return Ok(None);
+    };
+    let value: &JsValue = options.as_ref();
+    if value.is_null() || value.is_undefined() {
+        return Ok(None);
+    }
+    let includes = js_sys::Reflect::get(options, &JsValue::from_str("includes"))?;
+    if includes.is_undefined() || includes.is_null() {
+        return Ok(None);
+    }
+    let includes = includes
+        .dyn_into::<js_sys::Object>()
+        .map_err(|_| type_error("carve: `includes` must be an object with a `resolve` function"))?;
+    let extensions = js_sys::Reflect::get(&includes, &JsValue::from_str("extensions"))?;
+    if !extensions.is_undefined() {
+        return Err(type_error(
+            "carve: lint takes `extensions` from the outer options, not from `includes`",
+        ));
+    }
+    IncludeRequest::read(&includes).map(Some)
 }
 
 /// The accessibility diagnostics, a second family beside `lintCarve`.
@@ -2787,7 +2977,8 @@ fn render_with_options(
 /// do not consult. `renderers` is refused for the reason
 /// [`to_html_with_options`] refuses it.
 ///
-/// [`to_carve_with_options`] is narrower again and reads `profile` alone: the
+/// [`to_carve_with_options`] is narrower again and reads `profile` and
+/// `alignTables` alone: the
 /// engine's canonical writer is parse-only by contract, so extensions and
 /// `smartTypography` are inert there. They are accepted rather than refused
 /// because one options object is meant to serve every target.
@@ -2839,7 +3030,7 @@ pub fn to_ansi_with_options(
 
 /// Write canonical Carve with an options object.
 ///
-/// `profile` is the only option this target reads; see
+/// `profile` and `alignTables` are the only options this target reads; see
 /// [`to_markdown_with_options`] for why.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toCarveWithOptions, skip_typescript)]
@@ -3214,6 +3405,7 @@ impl RenderRequest {
             mention_url: string_field(&options, "mentionUrl")?,
             tag_url: string_field(&options, "tagUrl")?,
             labels: string_map_field(&options, "labels")?,
+            align_tables: bool_field(&options, "alignTables")?.unwrap_or(false),
         };
         let full = bool_field(&options, "full")?.unwrap_or(false);
         let named = extension_names_field(&options)?;

@@ -1,7 +1,7 @@
 import {
-  expandIncludes, lintAccessibility, lintCarve, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
-  createSourcePatch, applySourcePatch, ParserSession, type AccessibilityDiagnostic,
-  type IncludeExpansion, type LintWarning, type RenderResult,
+  expandIncludes, lintAccessibility, lintCarve, lintCarveWithOptions, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
+  createSourcePatch, applySourcePatch, ParserSession, selectIncludeRegion, toCarveWithOptions,
+  type AccessibilityDiagnostic, type IncludeExpansion, type IncludeLintWarning, type IncludeRegion, type LintOptions, type LintWarning, type RenderResult,
 } from '@markup-carve/carve-wasm'
 const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
   resolve: (path, context) => ({ source: context.stack.join('/') + path, id: path }),
@@ -15,11 +15,29 @@ const perCode: number = report.totalsByCode['raw-format-dropped']
 // string a JS caller holds.
 const warnings: LintWarning[] = lintCarve('body')
 warnings.map(warning => 'x'.slice(warning.start, warning.end))
+warnings.map(warning => warning.includedBy.map(site => site.file + warning.file))
+const chained: IncludeLintWarning[] = lintCarveWithOptions('body', { includes: { resolve: () => null, maxDepth: 4 } })
+chained.map(warning => warning.start === null ? -1 : warning.start)
+// @ts-expect-error Offsets of a lint that follows includes may be null.
+const notNull: number = lintCarveWithOptions('body', { includes: { resolve: () => null } })[0].start
+void notNull
+const lintOptions: LintOptions = { includes: { resolve: () => null } }
+// @ts-expect-error A LintOptions value may carry includes, so its offsets may be null.
+const maybeNull: number = lintCarveWithOptions('body', lintOptions)[0].start
+void maybeNull
+const plain: LintWarning[] = lintCarveWithOptions('body', { extensions: [] })
+void plain
 const a11y: AccessibilityDiagnostic[] = lintAccessibility('body')
 a11y.map(item => item.startUtf16 === null ? -1 : item.startUtf16)
 void perCode
 expanded.dependencies.map(dependency => dependency.denial)
 toHtmlWithOptions('body', { rawHtml: false, profile: 'comment', asciiHeadingIds: 'fold' })
+toCarveWithOptions('|a|b|', { alignTables: true })
+const region: IncludeRegion = selectIncludeRegion('%% #region a\nx\n%% #endregion\n', 'a', 'code')
+void region.end
+expandIncludes('{{ bin }}', { resolve: () => ({ denial: 'include-non-text' }) })
+// @ts-expect-error A region mode is "carve" or "code".
+selectIncludeRegion('body', 'a', 'markdown')
 toHtmlWithRenderers('body', { renderers: { diagrams: { mermaid: source => source }, math: (tex, display) => display ? tex : '' } })
 applySourcePatch('a', createSourcePatch('a', 'b', 'refactor', 'change'))
 // @ts-expect-error Report strictness is a boolean.

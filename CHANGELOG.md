@@ -9,7 +9,29 @@ their own.
 
 ## [Unreleased]
 
-## [0.1.8] - 2026-10-18
+## [0.1.9] - 2026-10-23
+
+### Breaking
+
+- The carve-lang 0.1.11 pin changes how continuation markers, quote-prefixed
+  `+`, description separators and fences in nested containers parse, so HTML
+  and AST output change for documents using those shapes. `>+ text` is now a
+  paragraph. Lint reports new rule ids, among them `unclosed-code-fence`,
+  `continuation-marker-refused`, `list-marker-below-content-column`,
+  `description-separator-below-content-column`, `ordered-list-split-by-indent`,
+  `consumed-key-near-miss` and `region-marker-renders-as-text` (#181).
+
+### Improvements
+
+- `toCarveWithOptions` honors `alignTables` and pads table columns
+  (#181, markup-carve/carve#3333).
+- `selectIncludeRegion(source, name, mode)` finds an `@region` with the
+  engine's marker rules, in `carve` or `code` mode (#181).
+- An include resolver can refuse a file as `include-non-text` (#181).
+- `lintCarveWithOptions` takes `includes` to lint included files through a
+  resolver. Every finding carries `file` and `includedBy` (#181).
+- Includes can embed a file or region as a code block with `@code` (#181).
+- The rendering-only build is back under 40% of the full package (#177).
 
 ### Breaking
 
@@ -447,7 +469,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.8...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/markup-carve/carve-wasm/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/markup-carve/carve-wasm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/markup-carve/carve-wasm/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/markup-carve/carve-wasm/compare/v0.1.5...v0.1.6

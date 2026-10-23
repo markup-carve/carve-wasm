@@ -289,18 +289,13 @@ jobs:
           # measurement, which is far enough that the feature gates could stop
           # cutting most of what they cut and still pass. Move this only with
           # the measured ratio in the commit message.
-          #
-          # TEMPORARILY 43%. carve-lang 0.1.9 links the regex engine into every
-          # render through smart-quote direction (markup-carve/carve-rs#2771),
-          # which puts this build at 41.3%. Back to 40% once a carve-lang
-          # release with that fix is pinned (#177).
           if [ "$full_bytes" -lt 100000 ] || [ "$render_bytes" -lt 100000 ]; then
             echo "::error::a wasm artifact measured under 100000 bytes gzip, so this gate measured nothing"
             exit 1
           fi
           echo "rendering-only share: $((render_bytes * 1000 / full_bytes))/1000 of the full artifact"
-          if [ $((render_bytes * 100)) -ge $((full_bytes * 43)) ]; then
-            echo "::error::rendering-only wasm is no longer at least 57% smaller than the full artifact ($render_bytes of $full_bytes bytes gzip)"
+          if [ $((render_bytes * 100)) -ge $((full_bytes * 40)) ]; then
+            echo "::error::rendering-only wasm is no longer at least 60% smaller than the full artifact ($render_bytes of $full_bytes bytes gzip)"
             exit 1
           fi
 
@@ -389,6 +384,13 @@ jobs:
         env:
           CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
         run: node --stack-size=4000 tests/corpus.mjs
+
+      # The spec's shared table-alignment rows sit beside the corpus in the
+      # same checkout (markup-carve/carve#3333).
+      - name: Aligned tables and include regions
+        env:
+          CARVE_SPEC_CORPUS: ${{ github.workspace }}/spec/tests/corpus
+        run: node tests/align-tables-regions.mjs
 
       # The REVERSE direction, which nothing here measured until
       # markup-carve/carve-wasm#53. Every job above renders `.crv` forward and

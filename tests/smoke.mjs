@@ -714,8 +714,33 @@ assert.deepEqual(lintCarve('# Fine\n\ntext\n'), [])
 const warnings = lintCarve('# Heading\n\n{.orphan}\n')
 assert.equal(warnings.length, 1, 'a block attribute reaching no block should warn')
 assert.equal(warnings[0].rule, 'unattached-block-attribute')
-for (const key of ['line', 'column', 'rule', 'message', 'start', 'end']) {
+for (const key of ['line', 'column', 'rule', 'message', 'start', 'end', 'file', 'includedBy']) {
   assert.ok(key in warnings[0], `a warning should carry ${key}`)
+}
+assert.equal(warnings[0].file, null)
+assert.deepEqual(warnings[0].includedBy, [])
+
+// Lint through includes. The expected findings are what `carve lint
+// --include-root` 0.1.11 prints for the same four files.
+{
+  const files = new Map([
+    ['child.crv', 'Child.\n\n{{ grand.crv }}\n'],
+    ['grand.crv', '\u00e9 [x](#nope)\n'],
+  ])
+  const resolve = (path) => path === 'bin.crv' ? { denial: 'include-non-text' } : (files.get(path) ?? null)
+  const root = '\u00e9 [y](#gone)\n\n{{ child.crv }}\n\n{{ missing.crv }}\n\n{{ bin.crv }}\n'
+  const brief = (found) => found.map(({ rule, line, column, start, end, file, includedBy }) =>
+    [rule, line, column, start, end, file, includedBy.map((s) => `${s.file}:${s.line}:${s.column}`).join(' > ')])
+  assert.deepEqual(brief(lintCarveWithOptions(root, { includes: { resolve, sourcePath: 'root.crv' } })), [
+    ['broken-fragment-link', 1, 3, 2, 12, null, ''],
+    ['broken-fragment-link', 1, 3, null, null, 'grand.crv', 'root.crv:3:1 > child.crv:3:1'],
+    ['include-unresolved', 5, 1, null, null, null, ''],
+    ['include-non-text', 7, 1, null, null, null, ''],
+  ])
+  // Without `includes` no resolver runs and only the document's own finding remains.
+  assert.deepEqual(brief(lintCarveWithOptions(root, {})), [['broken-fragment-link', 1, 3, 2, 12, null, '']])
+  assert.throws(() => lintCarveWithOptions(root, { includes: {} }), TypeError)
+  assert.throws(() => lintCarveWithOptions(root, { includes: { resolve, extensions: [] } }), TypeError)
 }
 
 // The second diagnostic family, with its own rule ids and its own severity.
