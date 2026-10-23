@@ -98,6 +98,10 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "154-under-indented-definition-attaches-over-indented-definition-folds.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace-2.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -889,6 +893,10 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": [
       "degraded:document",
       "degraded:smart_punctuation",
@@ -1177,10 +1185,6 @@
       "degraded:document",
       "degraded:soft_break"
     ],
-    "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
     "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1345,6 +1349,10 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1357,11 +1365,31 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-16.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-17.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": [
       "degraded:document",
       "degraded:soft_break"
     ],
     "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-7.crv": [
       "degraded:document",
       "degraded:soft_break"
     ],
@@ -2625,10 +2653,6 @@
       "degraded:document",
       "degraded:soft_break"
     ],
-    "616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv": [
-      "degraded:document",
-      "degraded:soft_break"
-    ],
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-8.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -2676,6 +2700,22 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-18.crv": [
+      "degraded:document",
+      "degraded:figure_group"
+    ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-24.crv": [
+      "degraded:document",
+      "degraded:figure_group"
+    ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-30.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-31.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv": [
       "degraded:document",
       "degraded:figure_group"
@@ -2688,9 +2728,355 @@
       "degraded:document",
       "degraded:escaped_text"
     ],
+    "620-generated-container-documents-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-12.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-13.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-15.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-19.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-20.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-23.crv": [
+      "degraded:document"
+    ],
+    "620-generated-container-documents-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "620-generated-container-documents-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-8.crv": [
+      "degraded:document",
+      "degraded:figure_group"
+    ],
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-9.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "627-a-refused-marker-leaves-an-open-fence-s-blank-payload.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "63-table-multi-line-cell-continuation.crv": [
       "degraded:cell_wrap",
       "degraded:document"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-12.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-13.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-14.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-19.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-20.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-24.crv": [
+      "degraded:cell_wrap",
+      "degraded:document"
+    ],
+    "632-a-continuation-marker-uses-its-container-column-9.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-12.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-13.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-14.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-16.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-19.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-20.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text-8.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "634-a-refused-continuation-plus-remains-text.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "636-a-tab-indented-nested-list-starts-at-its-marker.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "637-definition-body-note-and-fence-owner-boundaries-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "637-definition-body-note-and-fence-owner-boundaries-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "637-definition-body-note-and-fence-owner-boundaries-4.crv": [
+      "degraded:document"
+    ],
+    "637-definition-body-note-and-fence-owner-boundaries-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "639-a-folded-fence-run-leaves-a-later-paragraph-loose.crv": [
+      "degraded:document",
+      "degraded:soft_break"
     ],
     "64-table-rowspan-with-multi-line-content-2.crv": [
       "degraded:cell_wrap",
@@ -2703,6 +3089,94 @@
     "64-table-rowspan-with-multi-line-content.crv": [
       "degraded:cell_wrap",
       "degraded:document"
+    ],
+    "640-a-folded-child-fence-keeps-the-below-column-line-in-its-paragraph.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-11.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-7.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-5.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "651-a-stacked-first-block-plus-takes-a-follower-only-at-column-zero-or-its-line-s-column.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
     ],
     "70-blocks-that-render-to-nothing-3.crv": [
       "degraded:document",
@@ -2841,6 +3315,7 @@
     "150-abbreviation-title-escapes-its-markup-characters.crv": "<p>The HTML spec.</p>",
     "151-indented-ordered-marker-content-column-includes-the-marker-indent.crv": "<ol>\n  <li>y | x |</li>\n</ol>",
     "154-under-indented-definition-attaches-over-indented-definition-folds-3.crv": "<ul>\n  <li>one\n    <dl>\n      <dt>term  :  def</dt>\n    </dl>\n  </li>\n</ul>",
+    "154-under-indented-definition-attaches-over-indented-definition-folds.crv": "<ul>\n  <li>one\n    <dl>\n      <dt>term :  def</dt>\n    </dl>\n  </li>\n</ul>",
     "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace-2.crv": "<ul>\n  <li>one\n    <dl>\n      <dt>term wrapped</dt>\n    </dl>\n  </li>\n</ul>",
     "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace.crv": "<ul>\n  <li>one\n    <dl>\n      <dt>term wrapped</dt>\n    </dl>\n  </li>\n</ul>",
     "157-indented-attribute-line-stays-literal-2.crv": "<p>{.todo} - one - two</p>",
@@ -2964,6 +3439,7 @@
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-29.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <blockquote><p>a + b | tail</p></blockquote>\n  </dd>\n</dl>",
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-3.crv": "<ul>\n  <li>a\n    p1 p2\n  </li>\n</ul>\n<blockquote><p>q</p></blockquote>",
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-4.crv": "<ul>\n  <li>a\n    <blockquote><p>x y</p></blockquote>\n  </li>\n  <li>next</li>\n</ul>",
+    "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-5.crv": "<ul>\n  <li>a +</li>\n  <li>x</li>\n  <li>y</li>\n</ul>",
     "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": "<p>—\tyaml title: x</p>\n<hr>\n<p>body</p>",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position-2.crv": "<blockquote>\n  <blockquote><p># deep</p></blockquote>\n</blockquote>\n<blockquote><p>a # heading</p></blockquote>",
     "349-a-container-whose-table-ends-on-a-continuation-row-7.crv": "<ul>\n  <li>a + b | tail</li>\n</ul>",
@@ -3008,8 +3484,7 @@
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-2.crv": "<div class=\"n\">\n  <p>r - [d]: u</p>\n</div>\n<p>[go][d]</p>",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-3.crv": "<blockquote><p>r - [^f]: t</p></blockquote>\n<p>see[^f]</p>",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container.crv": "<blockquote><p>r - [d]: u</p></blockquote>\n<p>[go][d]</p>",
-    "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b c</li>\n    </ul>\n  </li>\n</ul>",
-    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": "<ul>\n  <li>x\n    <ul>\n      <li>L p</li>\n    </ul>\n  </li>\n</ul>",
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": "<ul>\n  <li>x\n    <ul>\n      <li>L + p</li>\n    </ul>\n  </li>\n</ul>",
     "384-a-continuation-marker-attaches-only-a-flush-left-block-8.crv": "<ul>\n  <li>x\n    <ul>\n      <li>L +</li>\n    </ul>\n  </li>\n</ul>",
     "389-a-boolean-attribute-does-not-start-with-an-underscore-3.crv": "<p>{_foo} para</p>",
     "394-a-leading-escaped-caret-keeps-its-escape.crv": "<p><img src=\"b.png\" alt=\"a\"> ^ not a caption</p>",
@@ -3039,11 +3514,17 @@
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-2.crv": "<figure>\n  <img src=\"/u\" alt=\"a\">\n  <figcaption>cap one continued</figcaption>\n</figure>",
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-3.crv": "<ul>\n  <li>![a][r] ^ cap</li>\n</ul>",
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth.crv": "<p>![a][r] ^ cap one continued</p>",
-    "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": "<ul>\n  <li>intro more</li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-11.crv": "<blockquote><p>intro</p></blockquote>\n<p>+ more</p>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": "<ul>\n  <li>intro + more</li>\n</ul>",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-14.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-15.crv": "<ul>\n  <li>x\n    <blockquote><p>q ZZZ</p></blockquote>\n  </li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-16.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-17.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "<ul>\n  <li>x\n    <blockquote><p>q +</p></blockquote>\n  </li>\n</ul>",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "<blockquote><p>q + - m</p></blockquote>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-2.crv": "<p>+ more</p>\n<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>intro<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-4.crv": "<p>+ more</p>\n<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>intro<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-7.crv": "<dl>\n  <dt>term</dt>\n  <dd>intro + more</dd>\n</dl>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": "<p>see<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>+ flush<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": "<blockquote><p>+ flush</p></blockquote>",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-6.crv": "<blockquote><p>+ flush</p></blockquote>",
@@ -3065,6 +3546,7 @@
     "447-the-host-does-not-change-which-column-a-definition-reaches-17.crv": "<dl>\n  <dt>t</dt>\n  <dd>d [r]: /url</dd>\n</dl>\n<p>See [r][].</p>",
     "447-the-host-does-not-change-which-column-a-definition-reaches-18.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>a more</li>\n    </ul>\n  </dd>\n</dl>",
     "447-the-host-does-not-change-which-column-a-definition-reaches-19.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <p>d</p>\n    <blockquote><p>q tail</p></blockquote>\n  </dd>\n</dl>",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>a\n+\nmore</li>\n    </ul>\n  </dd>\n</dl>\n<p>See <a href=\"/url\">r</a>.</p>",
     "448-a-marker-folds-into-a-quote-below-it-2.crv": "<ul>\n  <li>\n    <blockquote>\n      <ul>\n        <li>x - m</li>\n      </ul>\n    </blockquote>\n  </li>\n</ul>",
     "448-a-marker-folds-into-a-quote-below-it-3.crv": "<ul>\n  <li>a\n    <blockquote>\n      <ul>\n        <li>x p - m</li>\n      </ul>\n    </blockquote>\n  </li>\n</ul>",
     "448-a-marker-folds-into-a-quote-below-it-4.crv": "<ul>\n  <li>a\n    <blockquote><p>q - m</p></blockquote>\n  </li>\n</ul>",
@@ -3290,15 +3772,123 @@
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-23.crv": "<ul>\n  <li>\n    <blockquote><p>para more</p></blockquote>\n    <pre><code></code></pre>\n  </li>\n</ul>\n<p>x</p>",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-25.crv": "<ul>\n  <li>\n    <blockquote><p>para more</p></blockquote>\n    <pre><code></code></pre>\n  </li>\n</ul>",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-5.crv": "<dl>\n  <dt>t</dt>\n  <dd>\n    <ul>\n      <li>para - li</li>\n    </ul>\n  </dd>\n</dl>",
-    "616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv": "<ul>\n  <li>\n    <dl>\n      <dt>t</dt>\n      <dd>para - li</dd>\n    </dl>\n  </li>\n</ul>",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-8.crv": "<ul>\n  <li>\n    <blockquote><p>a b [r]: /u</p></blockquote>\n  </li>\n</ul>",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-9.crv": "<blockquote>\n  <dl>\n    <dt>t <code></code></dt>\n  </dl>\n</blockquote>",
     "617-csv-and-tsv-table-bodies-4.crv": "<table>\n  <thead>\n    <tr><th scope=\"col\">Name</th><th scope=\"col\">Note</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>A</td><td>one two</td></tr>\n  </tbody>\n</table>",
     "617-csv-and-tsv-table-bodies-5.crv": "<table>\n  <tbody>\n    <tr><th scope=\"row\">Item</th><th scope=\"row\">Qty</th></tr>\n    <tr><td>Apple</td><td>2</td></tr>\n  </tbody>\n  <tfoot>\n    <tr><td>Total</td><td>2</td></tr>\n  </tfoot>\n</table>",
     "617-csv-and-tsv-table-bodies-6.crv": "",
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv": "<ul>\n  <li>^ cap\n    <figure>\n      <blockquote><p>q</p></blockquote>\n      <figcaption>cap more</figcaption>\n    </figure>\n  </li>\n  <li>c</li>\n</ul>",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-18.crv": "<ul>\n  <li>\n    <ul>\n      <li>text</li>\n    </ul>\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n      <p>cap</p>\n    </div>\n  </li>\n  <li>c</li>\n</ul>",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-24.crv": "<ul>\n  <li>text\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n      <p>cap</p>\n    </div>\n  </li>\n  <li>c</li>\n</ul>",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-30.crv": "<ul>\n  <li>\n    <ul>\n      <li>text $$ x $$</li>\n    </ul>\n    <p>^ cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-31.crv": "<ul>\n  <li>\n    <ul>\n      <li>text <img src=\"x.png\" alt=\"i\"></li>\n    </ul>\n    <p>^ cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv": "<ul>\n  <li>\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n      <p>cap</p>\n    </div>\n  </li>\n  <li>c</li>\n</ul>",
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-9.crv": "<ul>\n  <li>\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n    </div>\n    <p>^ cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
+    "620-generated-container-documents-10.crv": "<blockquote><p>::: | :::</p></blockquote>",
+    "620-generated-container-documents-12.crv": "<blockquote>\n  <ol>\n    <li>\n      <dl>\n        <dt>t : para</dt>\n      </dl>\n    </li>\n  </ol>\n</blockquote>",
+    "620-generated-container-documents-13.crv": "<pre><code></code></pre>\n<ul>\n  <li>\n    <blockquote>\n      <dl>\n        <dt>t <code></code></dt>\n      </dl>\n    </blockquote>\n  </li>\n</ul>",
+    "620-generated-container-documents-15.crv": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>term : definition</dt>\n      </dl>\n    </li>\n  </ul>\n</blockquote>",
+    "620-generated-container-documents-19.crv": "<ul>\n  <li>\n    <dl>\n      <dt>t :</dt>\n    </dl>\n  </li>\n</ul>",
+    "620-generated-container-documents-2.crv": "<dl>\n  <dt>t ::</dt>\n</dl>",
+    "620-generated-container-documents-20.crv": "<ul>\n  <li>\n    <ul>\n      <li>\n        <div class=\"line-block\">\n\n        </div>\n      </li>\n    </ul>\n    <div>\n      <p>para tail</p>\n    </div>\n  </li>\n</ul>",
+    "620-generated-container-documents-3.crv": "<ul>\n  <li>\n    <blockquote>\n      <dl>\n        <dt>t</dt>\n      </dl>\n    </blockquote>\n  </li>\n</ul>\n<blockquote><p>: d [^f]: n tail</p></blockquote>",
+    "620-generated-container-documents-4.crv": "<blockquote>\n  <dl>\n    <dt>c # H</dt>\n  </dl>\n</blockquote>",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-2.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head ~~~ a ~~~</li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-3.crv": "<ol>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ol>",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-4.crv": "<blockquote>\n  <ul>\n    <li><p>outer</p>\n      <ul>\n        <li>head <code>\na\n</code></li>\n      </ul>\n      <p>tail</p>\n    </li>\n  </ul>\n</blockquote>",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-10.crv": "<ul>\n  <li>x\n    <div class=\"figure\">\n      <p class=\"admonition-title\">t</p>\n      <p>hi</p>\n    </div>\n  </li>\n</ul>\n<p>^ cap - c</p>",
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-8.crv": "<ul>\n  <li>x\n    <div>\n      <img src=\"b.png\" alt=\"a\">\n      <p>cap</p>\n    </div>\n  </li>\n  <li>c</li>\n</ul>",
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-9.crv": "<ul>\n  <li>x\n    <div class=\"figure\">\n      <p class=\"div-label\">label</p>\n      <p>hi</p>\n    </div>\n  </li>\n</ul>\n<p>^ cap - c</p>",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-2.crv": "<ul>\n  <li>\n    <ul>\n      <li>text ~~~ x</li>\n    </ul>\n    <p>cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-3.crv": "<ul>\n  <li>\n    <ul>\n      <li>text <img src=\"x.png\" alt=\"i\"> x</li>\n    </ul>\n    <p>cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-4.crv": "<ul>\n  <li>\n    <ul>\n      <li>text <code>\nx\ncap</code></li>\n    </ul>\n  </li>\n  <li>c</li>\n</ul>",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight.crv": "<ul>\n  <li>\n    <ul>\n      <li>text <code>\nx</code></li>\n    </ul>\n    <p>cap</p>\n  </li>\n  <li><p>c</p></li>\n</ul>",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-2.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-3.crv": "<ol>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ol>",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-4.crv": "<blockquote>\n  <ul>\n    <li><p>outer</p>\n      <ul>\n        <li>head <code>\na\n</code></li>\n      </ul>\n      <p>tail</p>\n    </li>\n  </ul>\n</blockquote>",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-5.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head more <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-6.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n</code></p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-10.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n```</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-11.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n```</code></p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-2.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n</code></p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-3.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n</code></p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-4.crv": "<ol>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n</code></p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ol>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-5.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n</code></p>\n        <p>tail</p>\n        <p>more</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-6.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head ~~~ a ~~~</p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-7.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-8.crv": "<ul>\n  <li><p>outer</p>\n    <ul>\n      <li>head <code>\na\n</code></li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open.crv": "<ul>\n  <li>outer\n    <ul>\n      <li><p>head <code>\na\n</code></p>\n        <p>tail</p>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-5.crv": "<ul>\n  <li>\n    <ul>\n      <li>\n        <pre><code>\n</code></pre>\n      </li>\n    </ul>\n    <p>+ tail</p>\n  </li>\n</ul>",
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-7.crv": "<ul>\n  <li>\n    <ol>\n      <li>\n        <pre><code>\n</code></pre>\n      </li>\n    </ol>\n    <p>+ tail</p>\n  </li>\n</ul>",
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-8.crv": "<ul>\n  <li>\n    <ul class=\"task-list\">\n      <li><input type=\"checkbox\" disabled> \n        <pre><code class=\"language-js\">    x\n\n</code></pre>\n      </li>\n    </ul>\n    <p>+ tail</p>\n  </li>\n</ul>",
+    "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-3.crv": "<ul>\n  <li>\n    <pre><code>a\n</code></pre>\n  </li>\n</ul>\n<p>+ x</p>",
+    "627-a-refused-marker-leaves-an-open-fence-s-blank-payload.crv": "<ul>\n  <li>\n    <pre><code></code></pre>\n  </li>\n</ul>\n<p>+ x</p>",
+    "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-2.crv": "<ul>\n  <li>\n    <ul>\n      <li>\n        <div class=\"d\">\n\n        </div>\n      </li>\n    </ul>\n    + tail\n  </li>\n</ul>",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-2.crv": "<blockquote><p>q +</p></blockquote>",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-3.crv": "<ul>\n  <li>a +</li>\n</ul>\n<p>para</p>",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6.crv": "<blockquote>\n  <blockquote><p>q + para</p></blockquote>\n</blockquote>",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7.crv": "<blockquote>\n  <blockquote><p>q +</p></blockquote>\n</blockquote>",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one.crv": "<blockquote><p>q +</p></blockquote>\n<p>para</p>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-10.crv": "<p>&gt; + q</p>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-11.crv": "<p>&gt;&gt;+ q</p>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12.crv": "<p>&gt;+ q</p>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-4.crv": "<blockquote>\n  <blockquote><p>q + - s</p></blockquote>\n</blockquote>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-5.crv": "<blockquote><p>q + para</p></blockquote>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-7.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +</li>\n    </ul>\n  </li>\n</ul>\n<blockquote><p>q</p></blockquote>",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b + para</li>\n    </ul>\n  </li>\n</ul>",
+    "632-a-continuation-marker-uses-its-container-column-11.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +\n        <blockquote><p>q</p></blockquote>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "632-a-continuation-marker-uses-its-container-column-12.crv": "<ul>\n  <li>foo\n    <ul class=\"task-list\">\n      <li><input type=\"checkbox\" disabled aria-label=\"task +\"> task +</li>\n    </ul>\n    <ul>\n      <li>x</li>\n    </ul>\n  </li>\n</ul>",
+    "632-a-continuation-marker-uses-its-container-column-13.crv": "<ul>\n  <li>a +</li>\n  <li>b</li>\n</ul>",
+    "632-a-continuation-marker-uses-its-container-column-14.crv": "<blockquote>\n  <ul>\n    <li>a +</li>\n  </ul>\n</blockquote>",
+    "632-a-continuation-marker-uses-its-container-column-19.crv": "<ul>\n  <li><p>a</p>\n    <ul>\n      <li>b +</li>\n    </ul>\n    <p>tail</p>\n  </li>\n</ul>",
+    "632-a-continuation-marker-uses-its-container-column-20.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +</li>\n    </ul>\n  </li>\n</ul>",
+    "632-a-continuation-marker-uses-its-container-column-9.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +</li>\n    </ul>\n  </li>\n</ul>\n<blockquote><p>q</p></blockquote>",
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-2.crv": "<ul>\n  <li>a +</li>\n  <li>b</li>\n</ul>",
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-3.crv": "<ul>\n  <li>foo\n    <ul class=\"task-list\">\n      <li><input type=\"checkbox\" disabled aria-label=\"task +\"> task +</li>\n    </ul>\n    <ol>\n      <li>x</li>\n    </ol>\n  </li>\n</ul>",
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-4.crv": "<ul>\n  <li>foo\n    <ul>\n      <li>b +\n        <ul>\n          <li>x</li>\n        </ul>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-11.crv": "<ul>\n  <li>foo\n    <ul class=\"task-list\">\n      <li><input type=\"checkbox\" disabled aria-label=\"task +\"> task +</li>\n    </ul>\n    <ul>\n      <li>x</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-12.crv": "<ul>\n  <li>foo\n    <ul class=\"task-list\">\n      <li><input type=\"checkbox\" disabled aria-label=\"task +\"> task +</li>\n    </ul>\n    <ul>\n      <li>x</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-13.crv": "<blockquote>\n  <ul>\n    <li>a +</li>\n  </ul>\n</blockquote>",
+    "634-a-refused-continuation-plus-remains-text-14.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +</li>\n      <li>c</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-16.crv": "<ul>\n  <li>foo\n    <ul class=\"task-list\">\n      <li><input type=\"checkbox\" disabled aria-label=\"task + q\"> task + q</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-19.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b + left</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-2.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-20.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b +</li>\n    </ul>\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-7.crv": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n    x +\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text-8.crv": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <pre><code></code></pre>\n      </li>\n    </ul>\n    x +\n  </li>\n</ul>",
+    "634-a-refused-continuation-plus-remains-text.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b + tail</li>\n    </ul>\n  </li>\n</ul>",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-2.crv": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>a Q - b</li>\n    </ul>\n  </blockquote>\n</blockquote>",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-3.crv": "<ol>\n  <li>ordered &gt; &gt; quote +</li>\n</ol>\n<ul>\n  <li>item</li>\n</ul>",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-4.crv": "<ol>\n  <li>ordered &gt; &gt; quote Q</li>\n</ol>\n<ul>\n  <li>item</li>\n</ul>",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text.crv": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>a + - b</li>\n    </ul>\n  </blockquote>\n</blockquote>",
+    "636-a-tab-indented-nested-list-starts-at-its-marker.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b c</li>\n    </ul>\n  </li>\n</ul>",
+    "637-definition-body-note-and-fence-owner-boundaries-2.crv": "<dl>\n  <dt>t</dt>\n  <dd>a <code>\n</code></dd>\n</dl>",
+    "637-definition-body-note-and-fence-owner-boundaries-6.crv": "<dl>\n  <dt>m</dt>\n  <dd>l <code>\ne\n</code></dd>\n</dl>",
+    "639-a-folded-fence-run-leaves-a-later-paragraph-loose.crv": "<ul>\n  <li><p>o <code>\n</code></p>\n    <p>t</p>\n  </li>\n</ul>",
+    "640-a-folded-child-fence-keeps-the-below-column-line-in-its-paragraph.crv": "<ul>\n  <li>o\n    <ul>\n      <li>h <code>\n</code></li>\n    </ul>\n  </li>\n</ul>",
+    "641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line-2.crv": "<ul>\n  <li><p>o <code>\nx</code></p>\n    <p>t</p>\n  </li>\n</ul>",
+    "641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line.crv": "<ul>\n  <li><p>h <code></code></p>\n    <p>b <code></code></p>\n  </li>\n</ul>",
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-2.crv": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>t</dt>\n      </dl>\n    </li>\n  </ul>\n  <p>:  d :  b</p>\n</blockquote>",
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-3.crv": "<blockquote><p>:  d :  b</p></blockquote>",
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation.crv": "<blockquote><p>:  d :  b</p></blockquote>",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-11.crv": "<blockquote>\n  <p>a +</p>\n  <blockquote><p>q</p></blockquote>\n</blockquote>",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-3.crv": "<p>&gt;+ q</p>",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-4.crv": "<p>&gt;&gt;+ q</p>",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-5.crv": "<blockquote><p>&gt;+ q</p></blockquote>",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-6.crv": "<p>&gt;&gt; + q</p>",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-7.crv": "<blockquote><p>q &gt;+ para</p></blockquote>",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-2.crv": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <blockquote><p>+ b</p></blockquote>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-3.crv": "<ul>\n  <li>a\n    <ul>\n      <li>\n        <blockquote><p>+ b</p></blockquote>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-4.crv": "<blockquote>\n  <blockquote><p>+ &gt; q</p></blockquote>\n</blockquote>",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-5.crv": "<ul>\n  <li>a\n    <blockquote>\n      <blockquote><p>+ &gt; q</p></blockquote>\n    </blockquote>\n  </li>\n</ul>",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column.crv": "<ul>\n  <li>\n    <blockquote><p>+ b</p></blockquote>\n  </li>\n</ul>",
+    "651-a-stacked-first-block-plus-takes-a-follower-only-at-column-zero-or-its-line-s-column.crv": "<ul>\n  <li>\n    <ul>\n      <li>\n        <blockquote><p>+ b</p></blockquote>\n      </li>\n    </ul>\n  </li>\n</ul>",
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-2.crv": "<blockquote>\n  <ul>\n    <li>\n      <blockquote><p>+ - s</p></blockquote>\n    </li>\n  </ul>\n</blockquote>",
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-3.crv": "<ul>\n  <li>\n    <blockquote>\n      <blockquote><p>+ - s</p></blockquote>\n    </blockquote>\n  </li>\n</ul>",
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host.crv": "<blockquote>\n  <ul>\n    <li>\n      <blockquote>\n        <p>q</p>\n        <blockquote><p>+ - s</p></blockquote>\n      </blockquote>\n    </li>\n  </ul>\n</blockquote>",
+    "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": "<ul>\n  <li>\n    <blockquote>\n      <blockquote><p>+ q</p></blockquote>\n    </blockquote>\n  </li>\n</ul>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
     "81-paragraph-interruption-10.crv": "<p>text 2. y 3. z</p>",
@@ -3349,6 +3939,7 @@
     "152-leading-attribute-brace-before-an-inline-span-stays-literal-2.crv": "x{.k title=“`\"} y`\n\nx{title=“[a”}](u)\n\nx{*a { b*} c\n",
     "152-leading-attribute-brace-before-an-inline-span-stays-literal-3.crv": "x*{title=“`\"} y`\n\n*x*{title=`} y\n",
     "154-under-indented-definition-attaches-over-indented-definition-folds-3.crv": "- one\n  :: term  :  def\n",
+    "154-under-indented-definition-attaches-over-indented-definition-folds.crv": "- one\n  :: term :  def\n",
     "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace-2.crv": "- one\n  :: term wrapped\n",
     "156-wrapped-definition-term-continuation-below-the-content-column-strips-leading-whitespace.crv": "- one\n  :: term wrapped\n",
     "157-indented-attribute-line-stays-literal-2.crv": "{.todo} - one - two\n",
@@ -3544,6 +4135,7 @@
     "326-a-column-0-line-after-a-container-s-last-block-when-that-block-left-no-paragraph-open-29.crv": ":: t\n: > a + b | tail\n",
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-3.crv": "- a\n+\np1 p2\n\n> q\n",
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-4.crv": "- a\n  > x y\n- next\n",
+    "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-5.crv": "- a +\n- x\n- y\n",
     "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": "—\tyaml title: x\n\n---\n\nbody\n",
     "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-4.crv": "| a `b c | d` |\n",
     "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-5.crv": "| x y | a `b c` |\n",
@@ -3607,14 +4199,13 @@
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-3.crv": "* * u % :\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-5.crv": "* * +\n\n:\n\n[d]: u\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-6.crv": "* * +\n  :\n\n[d]: u\n",
-    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-8.crv": "* * +\n\n%%\n\n:\n\n[d]: u\n",
+    "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item-8.crv": "* * +\n\n  %%\n\n:\n\n[d]: u\n",
     "381-a-resumed-lazy-run-belongs-to-the-innermost-marker-line-item.crv": "* * u % :\n",
     "382-a-marker-line-link-definition-is-collected-where-no-paragraph-is-open-2.crv": "para * [d]: u\n",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-2.crv": "::: n\nr - [d]: u\n:::\n\n[go][d]\n",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container-3.crv": "> r - [^f]: t\n\nsee[^f]\n",
     "383-a-lazy-marker-line-s-definition-defines-nothing-in-any-container.crv": "> r - [d]: u\n\n[go][d]\n",
-    "384-a-continuation-marker-attaches-only-a-flush-left-block-6.crv": "- a\n  - b c\n",
-    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": "- x\n  - L p\n",
+    "384-a-continuation-marker-attaches-only-a-flush-left-block-7.crv": "- x\n  - L + p\n",
     "384-a-continuation-marker-attaches-only-a-flush-left-block-8.crv": "- x\n  - L +\n",
     "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag-2.crv": "<!– a comment →\n",
     "385-a-hyphen-run-opening-a-word-after-whitespace-is-a-flag.crv": "git log --oneline and --force-with-lease stay literal.\n\nBut pages 1–10, the Mon–Fri window, a–– b—– and a – b all convert.\n",
@@ -3655,11 +4246,17 @@
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-2.crv": "![a][r]\n^ cap one continued\n\n[r]: /u\n",
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth-3.crv": "- ![a][r] ^ cap\n",
     "434-an-unresolved-image-gives-its-whole-caption-slot-back-at-any-depth.crv": "![a][r] ^ cap one continued\n",
-    "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": "- intro more\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-11.crv": "> intro\n\n+ more\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-13.crv": "- intro + more\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-14.crv": "- x\n  > q +\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-15.crv": "- x\n  > q ZZZ\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-16.crv": "- x\n  > q +\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-17.crv": "- x\n  > q +\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "- x\n  > q +\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "> q + - m\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-2.crv": "+ more\n\nsee[^a]\n\n[^a]: intro\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-4.crv": "+ more\n\nsee[^a]\n\n[^a]: intro\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-7.crv": ":: term\n: intro + more\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-3.crv": "see[^a]\n\n[^a]: + flush\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-5.crv": "> + flush\n",
     "437-a-leading-continuation-marker-in-a-footnote-body-or-a-quote-is-text-6.crv": "> + flush\n",
@@ -3685,7 +4282,7 @@
     "447-the-host-does-not-change-which-column-a-definition-reaches-17.crv": ":: t\n: d [r]: /url\n\nSee [r][].\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-18.crv": ":: t\n: - a more\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-19.crv": ":: t\n: d\n\n  > q tail\n",
-    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": ":: t\n: - a\n    more\n\nSee [r][].\n\n[r]: /url\n",
+    "447-the-host-does-not-change-which-column-a-definition-reaches-20.crv": ":: t\n: - a\n    +\n    more\n\nSee [r][].\n\n[r]: /url\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-24.crv": "- a\n+\nmore\n\nSee [r][].\n\n[r]: /b\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-7.crv": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  - a\n",
     "447-the-host-does-not-change-which-column-a-definition-reaches-8.crv": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  :: t\n  : d\n",
@@ -3962,7 +4559,6 @@
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-26.crv": "x[^c]\n\n:: t\n: {empty}\n\ntail\n\n[^c]: para\n\n  > q\n",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-3.crv": "x[^c]\n\n:: t\n: {empty}\n\n[^c]: para\n\n  # H\n",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-5.crv": ":: t\n: - para - li\n",
-    "616-a-line-is-read-in-the-container-whose-column-it-reaches-7.crv": "- :: t\n  : para - li\n",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-8.crv": "- > a b [r]: /u\n",
     "616-a-line-is-read-in-the-container-whose-column-it-reaches-9.crv": "> :: t ``\n",
     "617-csv-and-tsv-table-bodies-10.crv": "{footer-rows=1}\n| last |\n",
@@ -3974,13 +4570,126 @@
     "617-csv-and-tsv-table-bodies-9.crv": "|= a |\n| |\n",
     "617-csv-and-tsv-table-bodies.crv": "{aligns=left,right,right}\n|= Item |= Qty |= Price |\n| Apple | 12 | 0.40 |\n| Pear, green | 3 | 0.55 |\n^ Stock on hand\n",
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-14.crv": "- ^ cap\n+\n> q\n^ cap more\n- c\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-18.crv": "- - text\n  :::\n  ![a](b.png)\n\n  cap\n  :::\n- c\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-24.crv": "- text\n  :::\n  ![a](b.png)\n\n  cap\n  :::\n- c\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-30.crv": "- - text $$ x $$\n\n  ^ cap\n\n- c\n",
+    "618-captions-in-list-items-do-not-create-a-paragraph-gap-31.crv": "- - text ![i](x.png)\n\n  ^ cap\n\n- c\n",
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-8.crv": "- :::\n  ![a](b.png)\n\n  cap\n  :::\n- c\n",
     "618-captions-in-list-items-do-not-create-a-paragraph-gap-9.crv": "- :::\n  ![a](b.png)\n  :::\n\n  ^ cap\n\n- c\n",
     "62-smart-typography-escapes-and-code.crv": "Escaped \\-> and \\.\\.\\. stay; code `a -- b ...` stays.\n",
+    "620-generated-container-documents-10.crv": "> ::: | :::\n",
+    "620-generated-container-documents-12.crv": "> 1. :: t : para\n",
+    "620-generated-container-documents-13.crv": "```\n```\n\n- > :: t ``\n",
+    "620-generated-container-documents-15.crv": "> - :: term : definition\n",
+    "620-generated-container-documents-19.crv": "- :: t :\n",
+    "620-generated-container-documents-2.crv": ":: t ::\n",
+    "620-generated-container-documents-20.crv": "- - ::: |\n\n    :::\n  :::\n  para tail\n  :::\n",
+    "620-generated-container-documents-23.crv": "- a\n\n[r][]\n\n[r]: /url\n\n[^f]: t\n",
+    "620-generated-container-documents-3.crv": "- > :: t\n\n> : d [^f]: n tail\n",
+    "620-generated-container-documents-4.crv": "> :: c # H\n",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-2.crv": "- outer\n\n  - head ~~~ a ~~~\n\n  tail\n",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-3.crv": "1. outer\n\n   - head `\n     a\n     `\n\n   tail\n",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-4.crv": "> - outer\n>\n>   - head `\n>     a\n>     `\n>\n>   tail\n",
+    "621-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item.crv": "- outer\n\n  - head `\n    a\n    `\n\n  tail\n",
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-10.crv": "- x\n  ::: figure \"t\"\n  hi\n  :::\n\n^ cap - c\n",
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-8.crv": "- x\n  :::\n  ![a](b.png)\n\n  cap\n  :::\n- c\n",
+    "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-9.crv": "- x\n  ::: figure [label]\n  hi\n  :::\n\n^ cap - c\n",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-2.crv": "- - text ~~~ x\n\n  cap\n\n- c\n",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-3.crv": "- - text ![i](x.png) x\n\n  cap\n\n- c\n",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-4.crv": "- - text `\n    x\n    cap`\n- c\n",
+    "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight.crv": "- - text `\n    x`\n\n  cap\n\n- c\n",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-2.crv": "- outer\n\n  - head `\n    a\n    `\n\n  tail\n",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-3.crv": "1. outer\n\n   - head `\n     a\n     `\n\n   tail\n",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-4.crv": "> - outer\n>\n>   - head `\n>     a\n>     `\n>\n>   tail\n",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-5.crv": "- outer\n\n  - head more `\n    a\n    `\n\n  tail\n",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-6.crv": "- outer\n  - head `\n    a\n    `\n\n    tail\n",
+    "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column.crv": "- outer\n\n  - head `\n    a\n    `\n\n  tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-10.crv": "- outer\n\n  - head `\n    a\n    ```\n\n  tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-11.crv": "- outer\n  - head `\n    a\n    ```\n\n    tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-2.crv": "- outer\n  - head `\n    a\n    `\n\n    tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-3.crv": "- outer\n  - head `\n    a\n    `\n\n    tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-4.crv": "1. outer\n   - head `\n     a\n     `\n\n     tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-5.crv": "- outer\n  - head `\n    a\n    `\n\n    tail\n\n    more\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-6.crv": "- outer\n  - head ~~~ a ~~~\n\n    tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-7.crv": "- outer\n\n  - head `\n    a\n    `\n\n  tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open-8.crv": "- outer\n\n  - head `\n    a\n    `\n\n  tail\n",
+    "625-a-fence-closer-outside-the-child-folds-and-leaves-the-child-open.crv": "- outer\n  - head `\n    a\n    `\n\n    tail\n",
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-5.crv": "- - ```\n\n    ```\n\n  + tail\n",
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-7.crv": "- 1. ```\n\n     ```\n\n  + tail\n",
+    "626-an-indented-plus-below-a-nested-fence-stays-content-at-every-depth-8.crv": "- - [ ] ```js\n        x\n\n    ```\n\n  + tail\n",
+    "627-a-refused-marker-leaves-an-open-fence-s-blank-payload-3.crv": "- ```\n  a\n  ```\n\n+ x\n",
+    "627-a-refused-marker-leaves-an-open-fence-s-blank-payload.crv": "- ```\n  ```\n\n+ x\n",
+    "628-a-column-zero-marker-below-an-open-div-attaches-beside-the-div-2.crv": "- - ::: d\n\n    :::\n  + tail\n",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-2.crv": "> q +\n",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-3.crv": "- a +\n\npara\n",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-6.crv": "> > q + para\n",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one-7.crv": "> > q +\n",
+    "629-a-dangling-plus-marker-adds-nothing-and-a-nested-quote-reads-it-like-an-unnested-one.crv": "> q +\n\npara\n",
     "63-table-multi-line-cell-continuation.crv": "|= Feature |= Description |\n| Complex | A long description that continues across lines. |\n| Simple | Single line. |\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-10.crv": "\\> + q\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-11.crv": ">>+ q\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-12.crv": ">+ q\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-4.crv": "> > q + - s\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-5.crv": "> q + para\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener-7.crv": "- a\n  - b +\n\n> q\n",
+    "630-a-continuation-marker-stands-alone-at-column-zero-or-right-after-a-block-opener.crv": "- a\n  - b + para\n",
+    "632-a-continuation-marker-uses-its-container-column-11.crv": "- a\n  - b +\n    > q\n",
+    "632-a-continuation-marker-uses-its-container-column-12.crv": "- foo\n  - [ ] task +\n  - x\n",
+    "632-a-continuation-marker-uses-its-container-column-13.crv": "- a +\n- b\n",
+    "632-a-continuation-marker-uses-its-container-column-14.crv": "> - a +\n",
+    "632-a-continuation-marker-uses-its-container-column-19.crv": "- a\n\n  - b +\n\n  tail\n",
+    "632-a-continuation-marker-uses-its-container-column-20.crv": "- a\n  - b +\n",
+    "632-a-continuation-marker-uses-its-container-column-24.crv": "- a\n  | h |\n  | v text |\n",
+    "632-a-continuation-marker-uses-its-container-column-9.crv": "- a\n  - b +\n\n> q\n",
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-2.crv": "- a +\n- b\n",
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-3.crv": "- foo\n  - [ ] task +\n  1. x\n",
+    "633-a-first-block-marker-on-an-indented-opener-reads-two-columns-4.crv": "- foo\n  - b +\n    - x\n",
+    "634-a-refused-continuation-plus-remains-text-11.crv": "- foo\n  - [ ] task +\n  - x\n",
+    "634-a-refused-continuation-plus-remains-text-12.crv": "- foo\n  - [ ] task +\n  - x\n",
+    "634-a-refused-continuation-plus-remains-text-13.crv": "> - a +\n",
+    "634-a-refused-continuation-plus-remains-text-14.crv": "- a\n  - b +\n  - c\n",
+    "634-a-refused-continuation-plus-remains-text-16.crv": "- foo\n  - [ ] task + q\n",
+    "634-a-refused-continuation-plus-remains-text-19.crv": "- a\n  - b + left\n",
+    "634-a-refused-continuation-plus-remains-text-2.crv": "- a\n  - b +\n",
+    "634-a-refused-continuation-plus-remains-text-20.crv": "- a\n  - b +\n",
+    "634-a-refused-continuation-plus-remains-text-7.crv": "- a\n  - ```\n    ```\n  x +\n",
+    "634-a-refused-continuation-plus-remains-text-8.crv": "- a\n  - ```\n    ```\n  x +\n",
+    "634-a-refused-continuation-plus-remains-text.crv": "- a\n  - b + tail\n",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-2.crv": "> > - a Q - b\n",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-3.crv": "1. ordered > > quote +\n\n- item\n",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text-4.crv": "1. ordered > > quote Q\n\n- item\n",
+    "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text.crv": "> > - a + - b\n",
+    "636-a-tab-indented-nested-list-starts-at-its-marker.crv": "- a\n  - b c\n",
+    "637-definition-body-note-and-fence-owner-boundaries-2.crv": ":: t\n: a `\n  `\n",
+    "637-definition-body-note-and-fence-owner-boundaries-3.crv": ". d\n\n[^n]: e - a\n",
+    "637-definition-body-note-and-fence-owner-boundaries-4.crv": ". d\n  - a\n\n[^n]: e\n",
+    "637-definition-body-note-and-fence-owner-boundaries-6.crv": ":: m\n: l `\n  e\n  `\n",
+    "639-a-folded-fence-run-leaves-a-later-paragraph-loose.crv": "- o `\n  `\n\n  t\n",
     "64-table-rowspan-with-multi-line-content-2.crv": "| a more | b |\n| ^ | c d |\n",
     "64-table-rowspan-with-multi-line-content-3.crv": "| a more | b d |\n| ^ | c |\n",
     "64-table-rowspan-with-multi-line-content.crv": "|= Category |= Item |\n| Fresh Fruits from local farms | Apple |\n| ^ | Banana |\n",
+    "640-a-folded-child-fence-keeps-the-below-column-line-in-its-paragraph.crv": "- o\n  - h `\n    `\n",
+    "641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line-2.crv": "- o `\n  x`\n\n  t\n",
+    "641-an-unclosed-fence-run-with-no-closer-in-its-item-does-not-hide-a-blank-line.crv": "- h ``\n\n  b ``\n",
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-2.crv": "> - :: t\n>\n> :  d :  b\n",
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-3.crv": "> :  d :  b\n",
+    "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation.crv": "> :  d :  b\n",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-11.crv": "> a +\n>\n> > q\n",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-3.crv": ">+ q\n",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-4.crv": ">>+ q\n",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-5.crv": "> >+ q\n",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-6.crv": ">> + q\n",
+    "646-a-quote-prefixed-plus-takes-one-space-after-each-quote-marker-and-attaches-a-quote-7.crv": "> q >+ para\n",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-2.crv": "- a\n  - > + b\n",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-3.crv": "- a\n  - > + b\n",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-4.crv": "> > + > q\n",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column-5.crv": "- a\n  > > + > q\n",
+    "649-a-first-block-plus-refuses-a-follower-at-an-intervening-column.crv": "- > + b\n",
+    "651-a-stacked-first-block-plus-takes-a-follower-only-at-column-zero-or-its-line-s-column.crv": "- - > + b\n",
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-2.crv": "> - > + - s\n",
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-3.crv": "- > > + - s\n",
+    "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host.crv": "> - > q\n>   >\n>   > > + - s\n",
+    "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": "- > > + q\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",
     "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;\\<=>?@[\\\\]^_\\`{|}~ done\n",
     "73-parenthesized-ordered-marker.crv": "(1) First (2) Second\n",

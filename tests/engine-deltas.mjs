@@ -3,7 +3,7 @@
 // is a difference the artifact actually carries rather than a restatement of
 // the engine's changelog.
 import assert from 'node:assert/strict'
-import { expandIncludes, lintCarve, parseJson, toCarve, toHtml, toPlainText } from './engine.mjs'
+import { astJsonToHtml, expandIncludes, lintCarve, parseJson, toCarve, toHtml, toPlainText } from './engine.mjs'
 
 // `|{.r}`, five bytes, panicked the table check (carve-rs#2341). A panic
 // reaches a wasm caller as `unreachable`, which is indistinguishable from an
@@ -98,3 +98,18 @@ for (const [format, body] of [
 // A list item's continuation blocks keep the item's content column.
 assert.equal(toPlainText('- first\n\n  continuation\n'), '- first\n\n  continuation\n')
 console.log('wasm artifact: carve-lang 0.1.10 delta cases pass')
+
+// Engine 0.1.11. Expected outputs are what the carve-rs 0.1.11 CLI prints for
+// the same input.
+{
+  const [fence] = lintCarve('```js\ncode\n')
+  assert.deepEqual([fence.rule, fence.line, fence.column], ['unclosed-code-fence', 1, 1])
+  // A quote-prefixed `+` needs a space after the `>`.
+  assert.equal(toHtml('>+ text\n'), '<p>&gt;+ text</p>')
+  // A region of a source file included as a code block.
+  const files = new Map([['code.js', 'intro\n// #region s\nlet x = 1;\n// #endregion\n']])
+  const expanded = expandIncludes('{{ code.js @code @region:s }}\n', { resolve: (path) => files.get(path) ?? null })
+  assert.deepEqual(expanded.warnings, [])
+  assert.equal(astJsonToHtml(expanded.json), '<pre><code>let x = 1;\n</code></pre>')
+}
+console.log('wasm artifact: carve-lang 0.1.11 delta cases pass')
