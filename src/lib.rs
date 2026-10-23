@@ -891,7 +891,8 @@ export function astJsonToAnsi(json: string, options?: RenderOptions | null): str
 #[wasm_bindgen(typescript_custom_section)]
 const TS_LINT: &str = r#"
 export function lintCarveWithOptions(source: string, options: LintOptions & { includes: LintIncludeOptions }): IncludeLintWarning[];
-export function lintCarveWithOptions(source: string, options?: RenderOptions | null): LintWarning[];
+export function lintCarveWithOptions(source: string, options?: (RenderOptions & { includes?: undefined }) | null): LintWarning[];
+export function lintCarveWithOptions(source: string, options?: LintOptions | null): IncludeLintWarning[];
 "#;
 
 #[cfg(feature = "reports")]
