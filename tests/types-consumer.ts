@@ -1,7 +1,7 @@
 import {
-  expandIncludes, lintAccessibility, lintCarve, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
+  expandIncludes, lintAccessibility, lintCarve, lintCarveWithOptions, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
   createSourcePatch, applySourcePatch, ParserSession, selectIncludeRegion, toCarveWithOptions,
-  type AccessibilityDiagnostic, type IncludeExpansion, type IncludeRegion, type LintWarning, type RenderResult,
+  type AccessibilityDiagnostic, type IncludeExpansion, type IncludeLintWarning, type IncludeRegion, type LintWarning, type RenderResult,
 } from '@markup-carve/carve-wasm'
 const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
   resolve: (path, context) => ({ source: context.stack.join('/') + path, id: path }),
@@ -15,6 +15,12 @@ const perCode: number = report.totalsByCode['raw-format-dropped']
 // string a JS caller holds.
 const warnings: LintWarning[] = lintCarve('body')
 warnings.map(warning => 'x'.slice(warning.start, warning.end))
+warnings.map(warning => warning.includedBy.map(site => site.file + warning.file))
+const chained: IncludeLintWarning[] = lintCarveWithOptions('body', { includes: { resolve: () => null, maxDepth: 4 } })
+chained.map(warning => warning.start === null ? -1 : warning.start)
+// @ts-expect-error Offsets of a lint that follows includes may be null.
+const notNull: number = lintCarveWithOptions('body', { includes: { resolve: () => null } })[0].start
+void notNull
 const a11y: AccessibilityDiagnostic[] = lintAccessibility('body')
 a11y.map(item => item.startUtf16 === null ? -1 : item.startUtf16)
 void perCode

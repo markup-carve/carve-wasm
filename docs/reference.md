@@ -419,8 +419,10 @@ source order and a tree carrying none prints them in label order.
 points get whatever their producer built.
 
 `lintCarve` returns the degradation diagnostics as
-`{ line, column, rule, message, start, end }`, with the rule ids carve-js and
-carve-php use for the same triggers.
+`{ line, column, rule, message, start, end, file, includedBy }`, with the rule
+ids carve-js and carve-php use for the same triggers. `file` is `null` and
+`includedBy` is empty unless the lint followed includes (see
+[Linting included files](#linting-included-files)).
 
 #### Which unit each offset counts in
 
@@ -549,6 +551,32 @@ The result is the 1-based, inclusive range of content lines; an empty region
 has `end === start - 1`. A missing region, or a malformed or unpaired marker
 anywhere in the file, throws an error named `IncludeRegionError` whose `rule`
 is `include-region-invalid`, the warning expansion reports for the same file.
+
+#### Linting included files
+
+`lintCarveWithOptions` follows include directives when the options carry
+`includes`: the same synchronous `resolve`, `sourcePath` and budgets
+(`maxDepth`, `maxBytes`, `maxResolverCalls`, `maxWarnings`) that
+`expandIncludes` takes. The extensions come from the outer options.
+
+```js
+const files = new Map([['child.crv', '[x](#nope)\n']])
+lintCarveWithOptions('{{ child.crv }}\n\n{{ gone.crv }}\n', {
+  includes: { resolve: (path) => files.get(path) ?? null, sourcePath: 'book.crv' },
+})
+// [{ rule: 'broken-fragment-link', line: 1, column: 1, start: null, end: null,
+//    file: 'child.crv', includedBy: [{ file: 'book.crv', line: 1, column: 1 }], ... },
+//  { rule: 'include-unresolved', line: 3, column: 1, start: null, end: null,
+//    file: null, includedBy: [], ... }]
+```
+
+The document's own findings come first, with `start` and `end` in UTF-16 code
+units. Findings from an included file name that `file` as `resolve` identified
+it and list the `includedBy` chain of directive sites, top-level first. Their
+`start` and `end` are `null`, since the offsets would index a text the caller
+did not pass. A directive that stays literal is reported too, under the rule
+expansion uses: `include-unresolved`, `include-cycle`, `include-non-text` and
+the others. These findings are the ones `carve lint --include-root` prints.
 ### Re-parsing while someone types
 
 `parseSnapshot(source)` parses a document and keeps what a later `reparse` needs.
@@ -759,7 +787,7 @@ const html: string = toHtml('_Hello_')
 | `astJsonToAnsi` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to ANSI-styled text |
 | `applyProfile` | `(json: string, profile: string, options?: object \| null) => ProfileFilterResult` | Filter an AST-JSON document through a profile, keeping the tree and what the filter did |
 | `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share. `start` / `end` are UTF-16 code units, so they index a JS string |
-| `lintCarveWithOptions` | `(source: string, options?: object \| null) => LintWarning[]` | The same linter for the extension set the host renders with |
+| `lintCarveWithOptions` | `(source: string, options?: LintOptions \| null) => LintWarning[]` | The same linter for the extension set the host renders with; with `includes`, also lints included files and returns `IncludeLintWarning[]` |
 | `lintAccessibility` | `(source: string) => AccessibilityDiagnostic[]` | The second diagnostic family, with its own rule ids and a severity. `startOffset` / `endOffset` are codepoints, not the UTF-16 units `lintCarve` counts; `startUtf16` / `endUtf16` index a JS string |
 | `stampCarve` | `(formatted: string, generatedBy: string, form?: "line" \| "block") => string` | Write the provenance marker `readStamp` reads |
 | `sanitizeSvg` | `(source: string, options?: object \| null) => SanitizeResult` | Sanitize an SVG document; strict unless an option says otherwise |
