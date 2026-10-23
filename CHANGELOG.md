@@ -25,13 +25,15 @@ their own.
 
 - `toCarveWithOptions` honors `alignTables` and pads table columns
   (#181, markup-carve/carve#3333).
-- `selectIncludeRegion(source, name, mode)` finds an `@region` with the
-  engine's marker rules, in `carve` or `code` mode (#181).
+- `selectIncludeRegion(source, name, mode)` finds a named include region with
+  the engine's marker rules, in `carve` or `code` mode (#181).
 - An include resolver can refuse a file as `include-non-text` (#181).
 - `lintCarveWithOptions` takes `includes` to lint included files through a
   resolver. Every finding carries `file` and `includedBy` (#181).
-- Includes can embed a file or region as a code block with `@code` (#181).
+- Includes can embed a file or region as a code block (#181).
 - The rendering-only build is back under 40% of the full package (#177).
+
+## [0.1.8] - 2026-10-18
 
 ### Breaking
 
