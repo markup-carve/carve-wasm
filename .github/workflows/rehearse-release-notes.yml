@@ -25,7 +25,7 @@ jobs:
     steps:
       # The gate scripts come from the dispatched ref; only CHANGELOG.md is taken
       # from changelog_ref, so an older ref without the scripts still works.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
