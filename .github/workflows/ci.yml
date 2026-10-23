@@ -50,12 +50,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # fetch-depth: 0 is required. The guard runs `merge-base --is-ancestor`
       # against main, which needs the history to be there.
       - name: Check out carve-rs
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve-rs
           path: carve-rs
@@ -89,7 +89,7 @@ jobs:
       # bumps it deliberately, and being behind it is cleared by the action this
       # step recommends.
       - name: Check out carve-rb
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve-rb
           path: carve-rb
@@ -127,7 +127,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
@@ -150,7 +150,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
@@ -179,7 +179,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: wasm32-unknown-unknown
@@ -202,7 +202,7 @@ jobs:
           # not the same build.
           version: 'v0.15.0'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
       - run: npm ci --ignore-scripts
@@ -212,7 +212,7 @@ jobs:
         id: playwright
         run: echo "version=$(node -p "require('./package-lock.json').packages['node_modules/playwright'].version")" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
@@ -225,7 +225,7 @@ jobs:
         run: node tests/consumers.mjs
       - name: Measure startup, rendering, edits and memory
         run: node scripts/benchmark.mjs
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: benchmark-results
           path: benchmark-results.json
@@ -347,7 +347,7 @@ jobs:
       # here. That is what corpus-drift below reports, and it is why deleting
       # corpus-drift would turn this into a loosening rather than a re-aiming.
       - name: Check out carve-rs
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve-rs
           path: carve-rs
@@ -364,7 +364,7 @@ jobs:
           echo "spec=$spec" >> "$GITHUB_OUTPUT"
 
       - name: Check out the spec corpus that engine was written against
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve
           ref: ${{ steps.pin.outputs.spec }}
@@ -421,7 +421,7 @@ jobs:
       # gated rather than building a second one: two builds would be two
       # artifacts, and the drift number would be about the one nothing else
       # looked at.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ci-pkg
           path: pkg/
@@ -445,7 +445,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Read rust-version from Cargo.toml
         id: msrv
         run: |
@@ -489,20 +489,20 @@ jobs:
     timeout-minutes: 20
     needs: test
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Check out the spec corpus at main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve
           path: spec
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
 
       - name: Download the wasm package the corpus gate ran over
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ci-pkg
           path: pkg

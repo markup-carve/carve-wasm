@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@stable
         with:
@@ -55,7 +55,7 @@ jobs:
           # not the same build.
           version: 'v0.15.0'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
 
@@ -104,7 +104,7 @@ jobs:
       # is reported by the corpus-drift job in ci.yml, on every push, every pull
       # request and a daily schedule.
       - name: Check out carve-rs
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve-rs
           path: carve-rs
@@ -121,7 +121,7 @@ jobs:
           echo "spec=$spec" >> "$GITHUB_OUTPUT"
 
       - name: Check out the spec corpus that engine was written against
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: markup-carve/carve
           ref: ${{ steps.pin.outputs.spec }}
@@ -162,7 +162,7 @@ jobs:
       # its own. A second build would be a second artifact, and the one that was
       # measured would not be the one uploaded.
       - name: Upload the verified package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: verified-package
           path: release-artifact/package/
@@ -174,9 +174,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
@@ -296,7 +296,7 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ env.RELEASE_TAG }}
 
@@ -313,13 +313,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: bash tools/run-release-notes-gate.sh "$RELEASE_TAG"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
       - name: Download the verified package
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: verified-package
           path: pkg
@@ -390,7 +390,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Create the tag unless it already exists
         run: |
