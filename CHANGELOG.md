@@ -9,6 +9,12 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-10-24
+
+### Improvements
+
+- Update to the published carve-rs 0.1.12 engine. Table spans, wrapped attributes, and continuation markers follow the latest spec rules. Markdown output reports four new loss codes: `markdown-container-flattened`, `markdown-caption-flattened`, `markdown-attributes-dropped`, and `raw-html-escaped` (#185).
+
 ## [0.1.9] - 2026-10-23
 
 ### Breaking
@@ -471,7 +477,8 @@ version a reader can be upgrading from.
   publish job declares that gate in `needs:`, so a tarball that renders the spec
   corpus differently cannot reach the registry.
 
-[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.9...HEAD
+[Unreleased]: https://github.com/markup-carve/carve-wasm/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/markup-carve/carve-wasm/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/markup-carve/carve-wasm/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/markup-carve/carve-wasm/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/markup-carve/carve-wasm/compare/v0.1.6...v0.1.7
