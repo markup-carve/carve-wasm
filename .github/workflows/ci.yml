@@ -361,6 +361,8 @@ jobs:
         run: |
           spec="$(python3 scripts/pinned-spec-commit.py \
             --engine carve-rs --manifest Cargo.toml --lock Cargo.lock)"
+          # The corpus is unchanged since the engine gitlink; this pins the spec release notes.
+          spec="$(cat spec-corpus-revision.txt)"
           echo "spec=$spec" >> "$GITHUB_OUTPUT"
 
       - name: Check out the spec corpus that engine was written against

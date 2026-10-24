@@ -306,6 +306,11 @@
       "degraded:document",
       "degraded:smart_punctuation"
     ],
+    "19-smart-typography-dashes-and-quotes-35.crv": [
+      "degraded:document",
+      "degraded:escaped_text",
+      "degraded:smart_punctuation"
+    ],
     "19-smart-typography-dashes-and-quotes-4.crv": [
       "degraded:document",
       "degraded:smart_punctuation",
@@ -3174,9 +3179,27 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "653-a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct-10.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
     "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": [
       "degraded:document",
       "degraded:soft_break"
+    ],
+    "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "659-table-spans-keep-alignment-defaults-in-physical-columns-5.crv": [
+      "degraded:table_row_groups"
+    ],
+    "659-table-spans-keep-alignment-defaults-in-physical-columns-9.crv": [
+      "degraded:table_row_groups"
     ],
     "70-blocks-that-render-to-nothing-3.crv": [
       "degraded:document",
@@ -3888,7 +3911,10 @@
     "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-2.crv": "<blockquote>\n  <ul>\n    <li>\n      <blockquote><p>+ - s</p></blockquote>\n    </li>\n  </ul>\n</blockquote>",
     "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-3.crv": "<ul>\n  <li>\n    <blockquote>\n      <blockquote><p>+ - s</p></blockquote>\n    </blockquote>\n  </li>\n</ul>",
     "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host.crv": "<blockquote>\n  <ul>\n    <li>\n      <blockquote>\n        <p>q</p>\n        <blockquote><p>+ - s</p></blockquote>\n      </blockquote>\n    </li>\n  </ul>\n</blockquote>",
+    "653-a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct-10.crv": "<blockquote>\n  <ul>\n    <li>a {.c } para</li>\n  </ul>\n</blockquote>",
     "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": "<ul>\n  <li>\n    <blockquote>\n      <blockquote><p>+ q</p></blockquote>\n    </blockquote>\n  </li>\n</ul>",
+    "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>Term</dt>\n      <dd>Def :  under</dd>\n    </dl>\n  </li>\n</ul>",
+    "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>Term</dt>\n      <dd>Def :  under</dd>\n    </dl>\n  </li>\n</ul>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
     "81-paragraph-interruption-10.crv": "<p>text 2. y 3. z</p>",
@@ -3990,6 +4016,7 @@
     "19-smart-typography-dashes-and-quotes-32.crv": "“‘word’” and ‘“word”’\n",
     "19-smart-typography-dashes-and-quotes-33.crv": "Il dit “ oui ” hier.\n",
     "19-smart-typography-dashes-and-quotes-34.crv": "a　”q”\n",
+    "19-smart-typography-dashes-and-quotes-35.crv": "Exclude “\\/trunk/app/config/”.\n\nsee “https://example.org/” here\n\nthe ‘tmp/’ folder, and/“or” too\n",
     "19-smart-typography-dashes-and-quotes-4.crv": "(‘q’) [‘q’] =‘q’ :‘q’ -‘q’ /‘q’\n",
     "19-smart-typography-dashes-and-quotes-5.crv": "{‘q’}\n",
     "19-smart-typography-dashes-and-quotes-6.crv": "the ’70s and ’24’ and ‘word’\n",
@@ -4689,7 +4716,10 @@
     "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-2.crv": "> - > + - s\n",
     "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host-3.crv": "- > > + - s\n",
     "652-a-quote-s-first-block-plus-refuses-a-list-follower-in-every-host.crv": "> - > q\n>   >\n>   > > + - s\n",
+    "653-a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct-10.crv": "> - a {.c } para\n",
     "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": "- > > + q\n",
+    "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": "- item\n  :: Term\n  : Def :  under\n",
+    "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": "- item\n  :: Term\n  : Def :  under\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",
     "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;\\<=>?@[\\\\]^_\\`{|}~ done\n",
     "73-parenthesized-ordered-marker.crv": "(1) First (2) Second\n",

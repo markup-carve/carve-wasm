@@ -42,9 +42,9 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 
 [[package]]
 name = "carve-lang"
-version = "0.1.11"
+version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "753b90fbe80fab43887d5d559996c153347d9631452bbcb8d0283aad6dfa7ef8"
+checksum = "7d8b848d58033b0e059f4cd3f7d92319d9c659b7fcdf8c21b2e10b6f88d0436f"
 dependencies = [
  "html5ever",
  "markup5ever_rcdom",
@@ -59,7 +59,7 @@ dependencies = [
 
 [[package]]
 name = "carve-wasm"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "carve-lang",
  "js-sys",
