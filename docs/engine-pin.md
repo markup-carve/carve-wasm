@@ -3,7 +3,7 @@
 The manifest pins an exact published `carve-lang` version:
 
 ```toml
-carve = { package = "carve-lang", version = "=0.1.11" }
+carve = { package = "carve-lang", version = "=0.1.13" }
 ```
 
 A merged carve-rs revision is accepted too, in the form
