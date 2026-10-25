@@ -1219,7 +1219,6 @@
       "degraded:soft_break"
     ],
     "390-a-table-cell-s-marker-run-ends-at-a-space-5.crv": [
-      "degraded:document",
       "degraded:escaped_text"
     ],
     "394-a-leading-escaped-caret-keeps-its-escape.crv": [
@@ -3201,11 +3200,16 @@
     "659-table-spans-keep-alignment-defaults-in-physical-columns-9.crv": [
       "degraded:table_row_groups"
     ],
+    "665-a-styled-display-math-span-takes-a-caption-across-one-blank-line.crv": [
+      "degraded:document",
+      "dropped:caption_number"
+    ],
     "70-blocks-that-render-to-nothing-3.crv": [
       "degraded:document",
       "dropped:abbreviation_def"
     ],
     "72-escape-coverage-2.crv": [
+      "degraded:document",
       "degraded:escaped_text"
     ],
     "72-escape-coverage.crv": [
@@ -3915,6 +3919,7 @@
     "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": "<ul>\n  <li>\n    <blockquote>\n      <blockquote><p>+ q</p></blockquote>\n    </blockquote>\n  </li>\n</ul>",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>Term</dt>\n      <dd>Def :  under</dd>\n    </dl>\n  </li>\n</ul>",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>Term</dt>\n      <dd>Def :  under</dd>\n    </dl>\n  </li>\n</ul>",
+    "665-a-styled-display-math-span-takes-a-caption-across-one-blank-line.crv": "<figure>\n  <p><span class=\"math display boxed\" data-k=\"v\" role=\"math\">\\[x+y\\]</span></p>\n  <figcaption>Equation : Sum</figcaption>\n</figure>",
     "73-parenthesized-ordered-marker.crv": "<p>(1) First (2) Second</p>",
     "75-list-nesting-and-looseness-8.crv": "<ul>\n  <li>item # H</li>\n</ul>",
     "81-paragraph-interruption-10.crv": "<p>text 2. y 3. z</p>",
@@ -4239,7 +4244,6 @@
     "386-the-doubled-run-is-the-canonical-arrow-in-both-families.crv": "Canonical: ← → ↔ and ⇐ ⇒ ⇔\n\nDeprecated but still rendered: ← → ↔\n\nNot an arrow: key => value stays literal, and p ≤ q is a comparison.\n",
     "387-a-braced-hyphen-pair-is-an-en-dash.crv": "The bare run is flag-shaped and stays literal: a ---(p) b.\n\nThe braced form converts wherever it stands: a –(p) b, x–y, –start.\n",
     "389-a-boolean-attribute-does-not-start-with-an-underscore-3.crv": "{_foo} para\n",
-    "390-a-table-cell-s-marker-run-ends-at-a-space-5.crv": "| = a |\n",
     "394-a-leading-escaped-caret-keeps-its-escape.crv": "![a](b.png) ^ not a caption\n",
     "401-a-marker-at-an-item-content-column-opens-a-sublist-first-in-the-item-or-not-3.crv": "| a |\n\npara - s1\n",
     "403-an-idle-escape-does-not-spread-from-the-occurrence-that-needed-one.crv": "{.note} This paragraph.\n",
@@ -4720,7 +4724,9 @@
     "654-a-quote-follower-below-stacked-quote-openers-in-an-item-is-read-at-its-raw-column-2.crv": "- > > + q\n",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": "- item\n  :: Term\n  : Def :  under\n",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": "- item\n  :: Term\n  : Def :  under\n",
+    "665-a-styled-display-math-span-takes-a-caption-across-one-blank-line.crv": "$$`x+y`{.boxed data-k=v}\n^ Equation : Sum\n",
     "70-blocks-that-render-to-nothing-3.crv": ":::\nbody\n:::\n",
+    "72-escape-coverage-2.crv": "\\a and \\« and a\\b\n",
     "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;\\<=>?@[\\\\]^_\\`{|}~ done\n",
     "73-parenthesized-ordered-marker.crv": "(1) First (2) Second\n",
     "75-list-nesting-and-looseness-8.crv": "- item # H\n",
