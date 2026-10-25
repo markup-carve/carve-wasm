@@ -9,6 +9,21 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-10-25
+
+Task lists carry progress and blocked states through the WASM binding. Rendering and import follow the 0.1.13 engine fixes.
+
+### Fixes
+
+- List items stay open after line comments. Empty link destinations keep literal tabs, and Markdown destinations keep escaped parentheses (#188).
+- HTML import preserves header rowspans and empty header alignment. Markdown export reports a dropped title on a fence without a language (#188).
+
+### Improvements
+
+- Progress `[/]` and blocked `[!]` tasks render and round trip; `[_]` is accepted as an open task alias (#188).
+
+**Full Changelog**: https://github.com/markup-carve/carve-wasm/compare/v0.1.10...v0.1.11
+
 ## [0.1.10] - 2026-10-24
 
 ### Improvements
