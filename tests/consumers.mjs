@@ -12,7 +12,9 @@ const pkg = resolve(process.env.CARVE_WASM_PKG || join(root, 'pkg'))
 const work = join(root, 'consumer-artifact')
 rmSync(work, { recursive: true, force: true })
 mkdirSync(work, { recursive: true })
-const packed = JSON.parse(execFileSync('npm', ['pack', '--json', '--pack-destination', work], { cwd: pkg, encoding: 'utf8' }))[0]
+// npm 12 keys `pack --json` by package name; earlier npm returns an array.
+const packJson = JSON.parse(execFileSync('npm', ['pack', '--json', '--pack-destination', work], { cwd: pkg, encoding: 'utf8' }))
+const packed = Array.isArray(packJson) ? packJson[0] : Object.values(packJson)[0]
 writeFileSync(join(work, 'package.json'), JSON.stringify({ private: true, type: 'module' }))
 execFileSync('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', join(work, packed.filename)], { cwd: work, stdio: 'inherit' })
 cpSync(join(root, 'tests/types-consumer.ts'), join(work, 'consumer.ts'))
