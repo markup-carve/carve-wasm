@@ -70,6 +70,19 @@ if (!CORPUS) {
 // bigger number.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 
+// The spec stores each edge-case section in its own file under edge-cases/
+// (markup-carve/carve#4132); a page that is gone as a file is read from there.
+const pagePaths = (examplesDir, page) => {
+  const dir = join(examplesDir, page.slice(0, -3))
+  let files
+  try {
+    files = readdirSync(dir).filter((name) => name.endsWith('.md')).sort()
+  } catch {
+    return [join(examplesDir, page)]
+  }
+  return files.length > 0 ? files.map((name) => join(dir, name)) : [join(examplesDir, page)]
+}
+
 // One pair per `carve` fence inside a `::: compare` block, which is what the
 // generator writes: a block may declare several, so counting BLOCKS would report
 // fewer declared pairs than the corpus holds (markup-carve/carve#2824). The
@@ -78,8 +91,7 @@ const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 const declaredCorpusSize = (corpusDir) => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
   let declared = 0
-  for (const page of EXAMPLE_PAGES) {
-    const path = join(examplesDir, page)
+  for (const path of EXAMPLE_PAGES.flatMap((page) => pagePaths(examplesDir, page))) {
     let blob
     try {
       blob = readFileSync(path, 'utf8')

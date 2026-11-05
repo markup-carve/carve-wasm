@@ -1,6 +1,7 @@
 import {
   expandIncludes, lintAccessibility, lintCarve, lintCarveWithOptions, toHtmlWithReport, toHtmlWithOptions, toHtmlWithRenderers,
   createSourcePatch, applySourcePatch, ParserSession, selectIncludeRegion, toCarveWithOptions,
+  decisionTrace, decisionTraceJsonLines, type TraceRecord,
   type AccessibilityDiagnostic, type IncludeExpansion, type IncludeLintWarning, type IncludeRegion, type LintOptions, type LintWarning, type RenderResult,
 } from '@markup-carve/carve-wasm'
 const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
@@ -9,6 +10,7 @@ const expanded: IncludeExpansion = expandIncludes('{{ child }}', {
 })
 const report: RenderResult = toHtmlWithReport('body')
 report.losses.map(loss => loss.pos?.startOffset)
+report.losses.map(loss => (loss.file ?? '') + (loss.includedBy ?? []).map(site => site.line).join())
 // The per-code totals a truncated report has to be read through.
 const perCode: number = report.totalsByCode['raw-format-dropped']
 // The lint family's own pair, in UTF-16 code units, which is what indexes the
@@ -26,6 +28,12 @@ const lintOptions: LintOptions = { includes: { resolve: () => null } }
 const maybeNull: number = lintCarveWithOptions('body', lintOptions)[0].start
 void maybeNull
 const plain: LintWarning[] = lintCarveWithOptions('body', { extensions: [] })
+const captions: LintWarning[] = lintCarveWithOptions('body', { captionLookingParagraph: true })
+void captions
+const trace: TraceRecord[] = decisionTrace('- a\n')
+trace.map(record => record.rule === null ? record.step : record.rule)
+const traceLines: string = decisionTraceJsonLines('- a\n')
+void traceLines
 void plain
 const a11y: AccessibilityDiagnostic[] = lintAccessibility('body')
 a11y.map(item => item.startUtf16 === null ? -1 : item.startUtf16)

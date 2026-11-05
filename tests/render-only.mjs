@@ -86,6 +86,8 @@ for (const name of [
   'readStamp',
   'stampCarve',
   'needsReview',
+  'decisionTrace',
+  'decisionTraceJsonLines',
   'fromDjot',
   'fromBbcode',
   'migrateDjot',

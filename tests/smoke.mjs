@@ -31,6 +31,8 @@ import {
   lintCarveWithOptions,
   markdownToAstJson,
   needsReview,
+  decisionTrace,
+  decisionTraceJsonLines,
   parseLocator,
   parseSourceLayoutJson,
   sanitizeSvg,
@@ -786,6 +788,28 @@ assert.equal(needsReview('# Plain\n', '1.0.0'), true)
   assert.throws(() => stampCarve('# Plain\n', 'my-app 1.2', 'nope'), TypeError)
   // Stamping twice replaces the marker rather than stacking two.
   assert.equal(stampCarve(stamped, 'my-app 1.3'), stampCarve('# Plain\n', 'my-app 1.3'))
+}
+
+// The block decision trace: records without the header, JSON lines with it.
+{
+  const records = decisionTrace('- a\n\n  b\n')
+  assert.deepEqual(records.map((record) => [record.line, record.owner, record.form]), [
+    [1, 'doc/item:1', 'item'],
+    [2, 'doc/item:1', 'blank'],
+    [3, 'doc/item:1', 'text'],
+  ])
+  const lines = decisionTraceJsonLines('- a\n').trimEnd().split('\n').map((line) => JSON.parse(line))
+  assert.deepEqual(lines[0], { trace: 'carve-decision-trace', version: 1, engine: 'carve-rs' })
+  assert.deepEqual(lines.slice(1), decisionTrace('- a\n'))
+}
+
+// Caption hints are opt-in.
+{
+  const source = '![alt](a.png)\n\nFigure 1: A cat.\n'
+  const rules = (options) => lintCarveWithOptions(source, options).map((warning) => warning.rule)
+  assert.ok(!rules({}).includes('caption-looking-paragraph'))
+  assert.ok(rules({ captionLookingParagraph: true }).includes('caption-looking-paragraph'))
+  assert.throws(() => lintCarveWithOptions(source, { captionLookingParagraph: 'yes' }), TypeError)
 }
 
 // The SVG sanitizer, strict by default.

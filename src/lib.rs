@@ -361,6 +361,19 @@ fn render_report_to_js(result: carve::RenderResult<String>) -> Result<JsValue, J
     )
 }
 
+#[cfg(any(feature = "lint", feature = "reports"))]
+fn include_sites_to_js(sites: &[carve::includes::IncludeSite]) -> Result<JsValue, JsValue> {
+    let chain = js_sys::Array::new();
+    for site in sites {
+        let item = js_sys::Object::new();
+        js_sys::Reflect::set(&item, &"file".into(), &site.file.as_str().into())?;
+        js_sys::Reflect::set(&item, &"line".into(), &(site.line as f64).into())?;
+        js_sys::Reflect::set(&item, &"column".into(), &(site.column as f64).into())?;
+        chain.push(&item);
+    }
+    Ok(chain.into())
+}
+
 // Takes the fields it encodes rather than a `carve::RenderResult`, so the error
 // path need not build one; a field added to that struct upstream would otherwise
 // stop this binding compiling on the next pin bump.
@@ -402,6 +415,12 @@ fn render_report_fields_to_js(
         js_sys::Reflect::set(&item, &"target".into(), &loss.target.as_str().into())?;
         js_sys::Reflect::set(&item, &"nodeType".into(), &loss.node_type.as_str().into())?;
         js_sys::Reflect::set(&item, &"message".into(), &loss.message.into())?;
+        if let Some(file) = &loss.file {
+            js_sys::Reflect::set(&item, &"file".into(), &file.as_str().into())?;
+        }
+        if let Some(sites) = &loss.included_by {
+            js_sys::Reflect::set(&item, &"includedBy".into(), &include_sites_to_js(sites)?)?;
+        }
         if let Some(pos) = loss.pos {
             let value = js_sys::Object::new();
             for (key, number) in [
@@ -891,7 +910,7 @@ export function astJsonToAnsi(json: string, options?: RenderOptions | null): str
 #[wasm_bindgen(typescript_custom_section)]
 const TS_LINT: &str = r#"
 export function lintCarveWithOptions(source: string, options: LintOptions & { includes: LintIncludeOptions }): IncludeLintWarning[];
-export function lintCarveWithOptions(source: string, options?: (RenderOptions & { includes?: undefined }) | null): LintWarning[];
+export function lintCarveWithOptions(source: string, options?: (LintOptions & { includes?: undefined }) | null): LintWarning[];
 export function lintCarveWithOptions(source: string, options?: LintOptions | null): IncludeLintWarning[];
 "#;
 
@@ -956,6 +975,10 @@ export interface RenderLoss {
   nodeType: string;
   message: string;
   pos?: SourcePosition;
+  /** The included file the lost content came from; absent for the document itself. */
+  file?: string;
+  /** The include directives that reached `file`, top-level first. */
+  includedBy?: { file: string; line: number; column: number }[];
 }
 export interface RenderResult {
   value: string;
@@ -1023,6 +1046,8 @@ export type LintIncludeOptions = Omit<IncludeOptions, "extensions">;
 export interface LintOptions extends RenderOptions {
   /** Follow include directives through `resolve` and lint the included Carve files too. */
   includes?: LintIncludeOptions;
+  /** Report a paragraph beside an image or table that looks like its caption. Off by default. */
+  captionLookingParagraph?: boolean;
 }
 /**
  * A finding from a lint that followed includes. `start` and `end` are null on
@@ -2269,6 +2294,41 @@ pub fn apply_profile(
 ///
 /// Built as JS objects rather than a JSON string: a message carries arbitrary
 /// document text, and hand-rolled JSON escaping is where that goes wrong.
+/// The block decision trace (format version 1): one record per source line
+/// from the ownership walk, without the header record.
+#[cfg(feature = "trace")]
+#[wasm_bindgen(js_name = decisionTrace, unchecked_return_type = "TraceRecord[]")]
+pub fn decision_trace(source: &str) -> Result<JsValue, JsValue> {
+    let records = js_sys::Array::new();
+    for line in carve::decision_trace(source).lines().skip(1) {
+        records.push(&js_sys::JSON::parse(line)?);
+    }
+    Ok(records.into())
+}
+
+/// The decision trace as JSON lines, header first, as `carve trace` prints it.
+#[cfg(feature = "trace")]
+#[wasm_bindgen(js_name = decisionTraceJsonLines)]
+pub fn decision_trace_json_lines(source: &str) -> String {
+    carve::decision_trace(source)
+}
+
+#[cfg(feature = "trace")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_TRACE: &str = r#"
+export interface TraceRecord {
+  line: number;
+  step: "INPUT" | "S1" | "S2" | "S4" | "S5";
+  owner: string;
+  rule: string | null;
+  form: string;
+  cell?: string;
+  closed?: number;
+  reached?: string;
+  plus?: number;
+}
+"#;
+
 #[cfg(feature = "lint")]
 #[wasm_bindgen(js_name = lintCarve, unchecked_return_type = "LintWarning[]")]
 pub fn lint_carve(source: &str) -> Result<JsValue, JsValue> {
@@ -2389,15 +2449,11 @@ fn lint_warnings(
                 None => JsValue::NULL,
             },
         )?;
-        let chain = js_sys::Array::new();
-        for site in &warning.included_by {
-            let item = js_sys::Object::new();
-            js_sys::Reflect::set(&item, &"file".into(), &site.file.as_str().into())?;
-            js_sys::Reflect::set(&item, &"line".into(), &(site.line as f64).into())?;
-            js_sys::Reflect::set(&item, &"column".into(), &(site.column as f64).into())?;
-            chain.push(&item);
-        }
-        js_sys::Reflect::set(&entry, &JsValue::from_str("includedBy"), &chain)?;
+        js_sys::Reflect::set(
+            &entry,
+            &JsValue::from_str("includedBy"),
+            &include_sites_to_js(&warning.included_by)?,
+        )?;
         warnings.push(&entry.into());
     }
     Ok(warnings.into())
@@ -2411,7 +2467,7 @@ fn lint_warnings(
 #[wasm_bindgen(js_name = lintCarveWithOptions, skip_typescript)]
 pub fn lint_carve_with_options(
     source: &str,
-    #[wasm_bindgen(unchecked_param_type = "RenderOptions | null")] options: Option<js_sys::Object>,
+    #[wasm_bindgen(unchecked_param_type = "LintOptions | null")] options: Option<js_sys::Object>,
 ) -> Result<JsValue, JsValue> {
     #[cfg(feature = "includes")]
     let includes = lint_include_request(options.as_ref())?;
@@ -2427,11 +2483,18 @@ pub fn lint_carve_with_options(
             ));
         }
     }
+    let caption_hints = match options.as_ref() {
+        Some(object) if !JsValue::from(object.clone()).is_null() => {
+            bool_field(object, "captionLookingParagraph")?.unwrap_or(false)
+        }
+        _ => false,
+    };
     let Some(request) = RenderRequest::read(options)? else {
         return lint_carve(source);
     };
     let owned = request.extension_boxes();
-    let engine_options = request.engine_options(&owned);
+    let mut engine_options = request.engine_options(&owned);
+    engine_options.lint_caption_looking_paragraph = caption_hints;
     let found = carve::lint_carve_with_options(source, &engine_options);
     let own = found.len();
     #[cfg(feature = "includes")]
@@ -2457,9 +2520,10 @@ pub fn lint_carve_with_options(
         if let Some(warnings) = includes.max_warnings {
             include_options = include_options.with_max_warnings(warnings);
         }
-        let engine_options = request
+        let mut engine_options = request
             .engine_options(&owned)
             .with_lint_includes(include_options);
+        engine_options.lint_caption_looking_paragraph = caption_hints;
         // The engine lists the document's own findings first, so linting it
         // alone above tells them apart from the included files' findings.
         return lint_warnings(
