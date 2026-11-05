@@ -43,12 +43,12 @@ const BEHIND = new Map(
     entry.html,
   ]),
 )
-for (const [name, html] of BEHIND) {
-  assert.ok(names.includes(name), `corpus-behind.json declares ${name}, which this corpus does not hold`)
-  const golden = trimmed(join(CORPUS, `${name.slice(0, -4)}.html`))
-  assert.notEqual(golden, html, `${name} now matches the corpus; drop it from corpus-behind.json`)
-  assert.equal(render(name), html, `${name} moved from the HTML corpus-behind.json declares`)
-}
+// Checked after the count below is logged: the drift job reads that line.
+const behindFindings = [...BEHIND].flatMap(([name, html]) => {
+  if (!names.includes(name)) return [`${name}: not in this corpus`]
+  if (trimmed(join(CORPUS, `${name.slice(0, -4)}.html`)) === html) return [`${name}: now matches the corpus, drop it`]
+  return render(name) === html ? [] : [`${name}: moved from the declared HTML`]
+})
 const mismatches = names
   .filter((name) => !BEHIND.has(name))
   .filter((name) => render(name) !== trimmed(join(CORPUS, `${name.slice(0, -4)}.html`)))
@@ -65,6 +65,7 @@ assert.equal(
   `${mismatches.length}/${names.length} corpus documents differ: ${mismatches.slice(0, 10).join(', ')}`,
 )
 console.log(`corpus: ${names.length - BEHIND.size}/${names.length} documents byte-identical through the wasm artifact at ${packageUnderTest}, ${BEHIND.size} declared behind as the engine declares them`)
+assert.deepEqual(behindFindings, [], 'tests/corpus-behind.json no longer describes the engine')
 
 // ---------------------------------------------------------------------------
 // The same corpus, through `parseJson` rather than `toHtml`.
