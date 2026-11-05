@@ -81,7 +81,8 @@ try {
   die(`npm pack failed in ${pkgDir}: ${error.stderr || error.message}`)
 }
 
-const [meta] = packed
+// npm 12 keys `pack --json` by package name; earlier npm returns an array.
+const [meta] = Array.isArray(packed) ? packed : Object.values(packed)
 const tarball = join(workDir, meta.filename)
 const digest = createHash('sha256').update(readFileSync(tarball)).digest('hex')
 

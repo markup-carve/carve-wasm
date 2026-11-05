@@ -93,7 +93,8 @@ const walk = (node, visit) => {
     for (const value of node) walk(value, visit)
   } else if (node && typeof node === 'object') {
     if (typeof node.type === 'string') visit(node)
-    for (const value of Object.values(node)) walk(value, visit)
+    // `attrs.keyValues` maps authored keys to strings, so `{type=text}` is no node.
+    for (const [key, value] of Object.entries(node)) if (key !== 'keyValues') walk(value, visit)
   }
 }
 
