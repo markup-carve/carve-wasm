@@ -33,7 +33,25 @@ import { CORPUS, names } from './corpus-source.mjs'
 const trimmed = (path) => readFileSync(path, 'utf8').replace(/\n+$/, '')
 const render = (name) => toHtml(readFileSync(join(CORPUS, name), 'utf8')).replace(/\n+$/, '')
 
-const mismatches = names.filter((name) => render(name) !== trimmed(join(CORPUS, `${name.slice(0, -4)}.html`)))
+// The pairs the pinned engine declares behind the corpus (BEHIND_ON_PAIR in
+// carve-rs tests/corpus.rs), copied with the HTML the engine renders today.
+// Each entry fails both ways: the output must equal the declared HTML and still
+// differ from the golden, so a fix upstream forces the entry out here too.
+const BEHIND = new Map(
+  JSON.parse(readFileSync(new URL('./corpus-behind.json', import.meta.url), 'utf8')).map((entry) => [
+    `${entry.name}.crv`,
+    entry.html,
+  ]),
+)
+for (const [name, html] of BEHIND) {
+  assert.ok(names.includes(name), `corpus-behind.json declares ${name}, which this corpus does not hold`)
+  const golden = trimmed(join(CORPUS, `${name.slice(0, -4)}.html`))
+  assert.notEqual(golden, html, `${name} now matches the corpus; drop it from corpus-behind.json`)
+  assert.equal(render(name), html, `${name} moved from the HTML corpus-behind.json declares`)
+}
+const mismatches = names
+  .filter((name) => !BEHIND.has(name))
+  .filter((name) => render(name) !== trimmed(join(CORPUS, `${name.slice(0, -4)}.html`)))
 
 if (mismatches.length > 0) {
   const [first] = mismatches
@@ -46,7 +64,7 @@ assert.equal(
   0,
   `${mismatches.length}/${names.length} corpus documents differ: ${mismatches.slice(0, 10).join(', ')}`,
 )
-console.log(`corpus: ${names.length}/${names.length} documents byte-identical through the wasm artifact at ${packageUnderTest}`)
+console.log(`corpus: ${names.length - BEHIND.size}/${names.length} documents byte-identical through the wasm artifact at ${packageUnderTest}, ${BEHIND.size} declared behind as the engine declares them`)
 
 // ---------------------------------------------------------------------------
 // The same corpus, through `parseJson` rather than `toHtml`.
@@ -93,7 +111,8 @@ const walk = (node, visit) => {
     for (const value of node) walk(value, visit)
   } else if (node && typeof node === 'object') {
     if (typeof node.type === 'string') visit(node)
-    for (const value of Object.values(node)) walk(value, visit)
+    // `attrs.keyValues` maps authored keys to strings, so `{type=text}` is no node.
+    for (const [key, value] of Object.entries(node)) if (key !== 'keyValues') walk(value, visit)
   }
 }
 
