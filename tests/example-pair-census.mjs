@@ -10,7 +10,7 @@
 
 import assert from 'node:assert/strict'
 
-import { censusComparePairs, countDeclaredPairs } from './lib/example-pair-census.mjs'
+import { censusComparePairs, countDeclaredPairs, countUniqueInputs } from './lib/example-pair-census.mjs'
 
 const page = [
   '::: compare',
@@ -72,5 +72,15 @@ const modified = countDeclaredPairs([
   '::::',
 ])
 assert.equal(modified, 1, `got ${modified} pairs for a modified block, want 1`)
+
+// Three authored pairs become two fixtures: an exact repeat is omitted, while
+// a byte-modified copy is a separate document despite identical source text.
+const repeated = censusComparePairs([
+  '::: compare', '```carve', 'same', '```', '```html', '<p>same</p>', '```',
+  '```carve', 'same', '```', '```html', '<p>same</p>', '```', ':::',
+  '::: compare bom', '```carve', 'same', '```', '```html', '<p>same</p>', '```', ':::',
+]).blocks
+assert.equal(repeated.reduce((total, block) => total + block.carve, 0), 3)
+assert.equal(countUniqueInputs(repeated), 2)
 
 console.log('example pair census: 3 declared pairs from one compare block, nested and outside fences ignored')

@@ -12,10 +12,11 @@
 // originals, because they carry the incidents the rules came from.
 
 import assert from 'node:assert/strict'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { spawnSync } from 'node:child_process'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { censusComparePairs } from './lib/example-pair-census.mjs'
+import { censusComparePairs, countUniqueInputs } from './lib/example-pair-census.mjs'
 
 const CORPUS = process.env.CARVE_SPEC_CORPUS
 
@@ -64,10 +65,12 @@ if (!CORPUS) {
 // checkout, reached the same way this file already reaches
 // resources/ast-schema.json.
 //
-// Counting the source also leaves no literal here to go stale: adding an
-// example upstream moves the expectation on the next spec checkout, without
-// anyone editing this file. A hardcoded 1053 would be this same defect with a
-// bigger number.
+// Counting the source also leaves no literal here to go stale: adding a new
+// input upstream moves the expectation on the next spec checkout, without
+// anyone editing this file. The generator emits one fixture for each unique
+// input after byte modifiers in current spec revisions. Older pinned revisions
+// write every authored pair; the checked-out generator selects which count is
+// the exact expectation for that revision.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 
 // The spec stores each edge-case section in its own file under edge-cases/
@@ -91,6 +94,7 @@ const pagePaths = (examplesDir, page) => {
 const declaredCorpusSize = (corpusDir) => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
   let declared = 0
+  const allBlocks = []
   for (const path of EXAMPLE_PAGES.flatMap((page) => pagePaths(examplesDir, page))) {
     let blob
     try {
@@ -116,6 +120,7 @@ const declaredCorpusSize = (corpusDir) => {
           JSON.stringify({ carve: block.carve, html: block.html }),
       )
       declared += block.carve
+      allBlocks.push(block)
     }
     assert.ok(openFence === null, `unclosed fence in ${path}`)
   }
@@ -124,7 +129,7 @@ const declaredCorpusSize = (corpusDir) => {
     `the corpus source pages under ${examplesDir} declare no ::: compare blocks at all; ` +
       'that is a wiring problem, not a corpus of size zero.',
   )
-  return declared
+  return { authored: declared, unique: countUniqueInputs(allBlocks) }
 }
 
 let entries
@@ -149,14 +154,31 @@ const names = entries
 // EQUALITY, not a floor. A floor cannot tell a whole corpus from a truncated or
 // stale one, and truncation is the failure being guarded against.
 const declared = declaredCorpusSize(CORPUS)
+const specRoot = join(CORPUS, '..', '..')
+// The spec changed its generator contract in this commit. Use ancestry rather
+// than the generator's source spelling, which can change without behavior.
+const DEDUP_COMMIT = '99240528d533f1ded3f2d34e4dabad45a61b14ed'
+const git = (...args) => spawnSync('git', ['-C', specRoot, ...args], { encoding: 'utf8' })
+// Synthetic population tests have no Git checkout and use the original layout.
+let deduplicates = false
+if (existsSync(join(specRoot, '.git'))) {
+  const shallow = git('rev-parse', '--is-shallow-repository')
+  assert.equal(shallow.status, 0, shallow.stderr)
+  assert.equal(shallow.stdout.trim(), 'false', 'the spec checkout needs full history to select its generator contract')
+  if (git('cat-file', '-e', `${DEDUP_COMMIT}^{commit}`).status === 0) {
+    const ancestor = git('merge-base', '--is-ancestor', DEDUP_COMMIT, 'HEAD')
+    assert.ok(ancestor.status === 0 || ancestor.status === 1, ancestor.stderr)
+    deduplicates = ancestor.status === 0
+  }
+}
+const expected = deduplicates ? declared.unique : declared.authored
 assert.equal(
   names.length,
-  declared,
-  `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ${declared}. ` +
-    'Every carve fence in a ::: compare block in resources/examples/{core,extensions,edge-cases}.md ' +
-    'becomes one corpus pair, so a difference means the corpus checked out here is not the one those pages ' +
-    'describe - a truncated or stale checkout, a wrong CARVE_SPEC_CORPUS, or a corpus that needs ' +
-    'regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
+  expected,
+  `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ` +
+    `${declared.authored} authored pairs and ${declared.unique} unique inputs. This spec generator ` +
+    `writes ${deduplicates ? 'unique inputs' : 'every authored pair'}, so a different count means the corpus is truncated, stale, ` +
+    'or needs regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
 )
 
 export { CORPUS, names, declared }
