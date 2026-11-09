@@ -67,7 +67,8 @@ if (!CORPUS) {
 // Counting the source also leaves no literal here to go stale: adding a new
 // input upstream moves the expectation on the next spec checkout, without
 // anyone editing this file. The generator emits one fixture for each unique
-// input after byte modifiers; repeated authored pairs do not add fixtures.
+// input after byte modifiers in current spec revisions. Older pinned revisions
+// write every authored pair, so both layouts are accepted by this gate.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 
 // The spec stores each edge-case section in its own file under edge-cases/
@@ -151,12 +152,11 @@ const names = entries
 // EQUALITY, not a floor. A floor cannot tell a whole corpus from a truncated or
 // stale one, and truncation is the failure being guarded against.
 const declared = declaredCorpusSize(CORPUS)
-assert.equal(
-  names.length,
-  declared.unique,
+assert.ok(
+  names.length === declared.authored || names.length === declared.unique,
   `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ` +
-    `${declared.authored} authored pairs and ${declared.unique} unique inputs. The spec writes one ` +
-    'fixture per unique input, so a difference means the corpus checked out here is truncated, stale, ' +
+    `${declared.authored} authored pairs and ${declared.unique} unique inputs. Spec revisions write ` +
+    'either every authored pair or one fixture per unique input, so a different count means the corpus is truncated, stale, ' +
     'or needs regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
 )
 
