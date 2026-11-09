@@ -15,7 +15,7 @@ import assert from 'node:assert/strict'
 import { readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
-import { censusComparePairs } from './lib/example-pair-census.mjs'
+import { censusComparePairs, countUniqueInputs } from './lib/example-pair-census.mjs'
 
 const CORPUS = process.env.CARVE_SPEC_CORPUS
 
@@ -64,10 +64,10 @@ if (!CORPUS) {
 // checkout, reached the same way this file already reaches
 // resources/ast-schema.json.
 //
-// Counting the source also leaves no literal here to go stale: adding an
-// example upstream moves the expectation on the next spec checkout, without
-// anyone editing this file. A hardcoded 1053 would be this same defect with a
-// bigger number.
+// Counting the source also leaves no literal here to go stale: adding a new
+// input upstream moves the expectation on the next spec checkout, without
+// anyone editing this file. The generator emits one fixture for each unique
+// input after byte modifiers; repeated authored pairs do not add fixtures.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 
 // The spec stores each edge-case section in its own file under edge-cases/
@@ -91,6 +91,7 @@ const pagePaths = (examplesDir, page) => {
 const declaredCorpusSize = (corpusDir) => {
   const examplesDir = join(corpusDir, '..', '..', 'resources', 'examples')
   let declared = 0
+  const allBlocks = []
   for (const path of EXAMPLE_PAGES.flatMap((page) => pagePaths(examplesDir, page))) {
     let blob
     try {
@@ -116,6 +117,7 @@ const declaredCorpusSize = (corpusDir) => {
           JSON.stringify({ carve: block.carve, html: block.html }),
       )
       declared += block.carve
+      allBlocks.push(block)
     }
     assert.ok(openFence === null, `unclosed fence in ${path}`)
   }
@@ -124,7 +126,7 @@ const declaredCorpusSize = (corpusDir) => {
     `the corpus source pages under ${examplesDir} declare no ::: compare blocks at all; ` +
       'that is a wiring problem, not a corpus of size zero.',
   )
-  return declared
+  return { authored: declared, unique: countUniqueInputs(allBlocks) }
 }
 
 let entries
@@ -151,12 +153,11 @@ const names = entries
 const declared = declaredCorpusSize(CORPUS)
 assert.equal(
   names.length,
-  declared,
-  `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ${declared}. ` +
-    'Every carve fence in a ::: compare block in resources/examples/{core,extensions,edge-cases}.md ' +
-    'becomes one corpus pair, so a difference means the corpus checked out here is not the one those pages ' +
-    'describe - a truncated or stale checkout, a wrong CARVE_SPEC_CORPUS, or a corpus that needs ' +
-    'regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
+  declared.unique,
+  `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ` +
+    `${declared.authored} authored pairs and ${declared.unique} unique inputs. The spec writes one ` +
+    'fixture per unique input, so a difference means the corpus checked out here is truncated, stale, ' +
+    'or needs regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
 )
 
 export { CORPUS, names, declared }
