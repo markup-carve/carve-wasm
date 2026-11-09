@@ -15,12 +15,23 @@ const fixtures = process.env.CARVE_SPEC_TABLE_ALIGNMENT ??
 if (fixtures && existsSync(fixtures)) {
   const cases = JSON.parse(readFileSync(fixtures, 'utf8'))
   assert.ok(cases.length >= 13, `${cases.length} alignment fixtures`)
-  for (const { name, canonical, aligned } of cases) {
-    assert.equal(toCarveWithOptions(canonical, { alignTables: true }), aligned, name)
+  // Roundtrip rows keep their separator only under --roundtrip; the canonical
+  // writer spells their head with `|=` cells (CARVE-P11-066). Same table as
+  // carve-rs tests/table_alignment_fixtures.rs.
+  const canonicalHeads = {
+    'authored separator': ['|= A |= B |\n| x | yy |\n', '|= A |= B |\n| x  | yy |\n'],
+    'separator colons': ['|={<} A |={>} B |\n| x | right |\n', '|={<} A |={>} B |\n| x     | right |\n'],
+  }
+  for (const row of cases) {
+    const { name } = row
+    const roundtripRow = /^Roundtrip row/.test(row.note ?? '')
+    assert.equal(roundtripRow, name in canonicalHeads, `${name}: roundtrip rows and canonicalHeads disagree`)
+    const [canonical, aligned] = canonicalHeads[name] ?? [row.canonical, row.aligned]
+    assert.equal(toCarveWithOptions(row.canonical, { alignTables: true }), aligned, name)
     assert.equal(toCarveWithOptions(aligned, { alignTables: true }), aligned, `${name} fixed point`)
     assert.equal(toCarveWithOptions(aligned, { alignTables: false }), canonical, `${name} off`)
     assert.equal(toCarve(aligned), canonical, `${name} default`)
-    assert.equal(toHtml(aligned), toHtml(canonical), `${name} HTML`)
+    assert.equal(toHtml(aligned), toHtml(row.canonical), `${name} HTML`)
   }
   console.log(`table alignment: ${cases.length} fixtures byte-identical`)
 } else if (process.env.CI) {

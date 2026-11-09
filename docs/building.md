@@ -79,6 +79,7 @@ with `--no-default-features` and keeps `toHtml`, `toHtmlFull` and
 | `other-renderers` | Markdown, plain text, ANSI and Carve rendering |
 | `lint` | Source diagnostics |
 | `stamp` | Stamp inspection |
+| `trace` | Block decision trace |
 | `other-imports` | Djot and BBCode import |
 | `prosemirror` | Editor document conversion |
 | `source-patches` | Source patch creation and replay |
