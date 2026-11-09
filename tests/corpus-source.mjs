@@ -12,7 +12,7 @@
 // originals, because they carry the incidents the rules came from.
 
 import assert from 'node:assert/strict'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
 import { censusComparePairs, countUniqueInputs } from './lib/example-pair-census.mjs'
@@ -68,7 +68,8 @@ if (!CORPUS) {
 // input upstream moves the expectation on the next spec checkout, without
 // anyone editing this file. The generator emits one fixture for each unique
 // input after byte modifiers in current spec revisions. Older pinned revisions
-// write every authored pair, so both layouts are accepted by this gate.
+// write every authored pair; the checked-out generator selects which count is
+// the exact expectation for that revision.
 const EXAMPLE_PAGES = ['core.md', 'extensions.md', 'edge-cases.md']
 
 // The spec stores each edge-case section in its own file under edge-cases/
@@ -152,11 +153,18 @@ const names = entries
 // EQUALITY, not a floor. A floor cannot tell a whole corpus from a truncated or
 // stale one, and truncation is the failure being guarded against.
 const declared = declaredCorpusSize(CORPUS)
-assert.ok(
-  names.length === declared.authored || names.length === declared.unique,
+const generatorPath = join(CORPUS, '..', '..', 'scripts', 'generate-corpus.mjs')
+// Older test fixtures contain just the example pages and corpus. Their
+// generator contract is the original one-fixture-per-authored-pair layout.
+const generator = existsSync(generatorPath) ? readFileSync(generatorPath, 'utf8') : ''
+const deduplicates = generator.includes('const byInput = new Map()')
+const expected = deduplicates ? declared.unique : declared.authored
+assert.equal(
+  names.length,
+  expected,
   `${names.length} corpus pairs under ${CORPUS}, but the spec's example pages declare ` +
-    `${declared.authored} authored pairs and ${declared.unique} unique inputs. Spec revisions write ` +
-    'either every authored pair or one fixture per unique input, so a different count means the corpus is truncated, stale, ' +
+    `${declared.authored} authored pairs and ${declared.unique} unique inputs. This spec generator ` +
+    `writes ${deduplicates ? 'unique inputs' : 'every authored pair'}, so a different count means the corpus is truncated, stale, ` +
     'or needs regenerating (npm run corpus:build in the spec repository). It does not mean this run was clean.',
 )
 
