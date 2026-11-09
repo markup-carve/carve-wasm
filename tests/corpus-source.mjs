@@ -12,6 +12,7 @@
 // originals, because they carry the incidents the rules came from.
 
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 
@@ -153,11 +154,23 @@ const names = entries
 // EQUALITY, not a floor. A floor cannot tell a whole corpus from a truncated or
 // stale one, and truncation is the failure being guarded against.
 const declared = declaredCorpusSize(CORPUS)
-const generatorPath = join(CORPUS, '..', '..', 'scripts', 'generate-corpus.mjs')
-// Older test fixtures contain just the example pages and corpus. Their
-// generator contract is the original one-fixture-per-authored-pair layout.
-const generator = existsSync(generatorPath) ? readFileSync(generatorPath, 'utf8') : ''
-const deduplicates = generator.includes('const byInput = new Map()')
+const specRoot = join(CORPUS, '..', '..')
+// The spec changed its generator contract in this commit. Use ancestry rather
+// than the generator's source spelling, which can change without behavior.
+const DEDUP_COMMIT = '99240528d533f1ded3f2d34e4dabad45a61b14ed'
+const git = (...args) => spawnSync('git', ['-C', specRoot, ...args], { encoding: 'utf8' })
+// Synthetic population tests have no Git checkout and use the original layout.
+let deduplicates = false
+if (existsSync(join(specRoot, '.git'))) {
+  const shallow = git('rev-parse', '--is-shallow-repository')
+  assert.equal(shallow.status, 0, shallow.stderr)
+  assert.equal(shallow.stdout.trim(), 'false', 'the spec checkout needs full history to select its generator contract')
+  if (git('cat-file', '-e', `${DEDUP_COMMIT}^{commit}`).status === 0) {
+    const ancestor = git('merge-base', '--is-ancestor', DEDUP_COMMIT, 'HEAD')
+    assert.ok(ancestor.status === 0 || ancestor.status === 1, ancestor.stderr)
+    deduplicates = ancestor.status === 0
+  }
+}
 const expected = deduplicates ? declared.unique : declared.authored
 assert.equal(
   names.length,

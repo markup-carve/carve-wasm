@@ -128,6 +128,7 @@ jobs:
           repository: markup-carve/carve
           ref: ${{ steps.pin.outputs.spec }}
           path: spec
+          fetch-depth: 0
 
       # The tag is the version being published, so it is the version the
       # package must carry. A mismatch publishes a number nobody asked for, and

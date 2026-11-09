@@ -38,19 +38,6 @@ try {
     assert.notEqual(result.status, 0, 'invalid source must fail')
     assert.match(result.stderr, message)
   }
-  const duplicated = '::: compare\n```carve\nsame\n```\n```html\n<p>same</p>\n```\n```carve\nsame\n```\n```html\n<p>same</p>\n```\n:::\n'
-  writeFileSync(join(examples, 'core.md'), duplicated)
-  mkdirSync(join(root, 'scripts'))
-  const generator = join(root, 'scripts', 'generate-corpus.mjs')
-  writeFileSync(generator, 'const byInput = new Map()\n')
-  rmSync(join(corpus, 'second.crv'))
-  rmSync(join(corpus, 'second.html'))
-  result = run()
-  assert.equal(result.status, 0, 'the deduplicating generator writes one fixture', result.stderr)
-  writeFileSync(generator, '// older generator writes every authored pair\n')
-  result = run()
-  assert.notEqual(result.status, 0, 'the older generator must reject the same truncated corpus')
-  assert.match(result.stderr, /2 authored pairs and 1 unique inputs/)
 } finally {
   rmSync(root, { recursive: true, force: true })
 }

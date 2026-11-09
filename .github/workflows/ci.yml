@@ -371,6 +371,7 @@ jobs:
           repository: markup-carve/carve
           ref: ${{ steps.pin.outputs.spec }}
           path: spec
+          fetch-depth: 0
 
       # The corpus runs with explicit stack headroom. `parseJson` recurses once
       # per nesting level and the engine accepts 200 levels, so the deepest
@@ -498,6 +499,7 @@ jobs:
         with:
           repository: markup-carve/carve
           path: spec
+          fetch-depth: 0
 
       - uses: actions/setup-node@v7
         with:
