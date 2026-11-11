@@ -198,16 +198,20 @@ fn build_extensions(keys: &[String]) -> Vec<Box<dyn carve::CarveExtension>> {
 ///
 /// The five targets differ only in which of these is called, so the options an
 /// entry point was handed are assembled once and the target is a parameter.
-type TargetRender = fn(&str, &carve::Options<'_>) -> Result<String, carve::ProfileViolationError>;
+///
+/// Markdown refuses with `CarveWriteError` when a roundtrip carrier cannot be
+/// spelled; the other targets refuse with `ProfileViolationError` only.
+type TargetRender<E = carve::ProfileViolationError> =
+    fn(&str, &carve::Options<'_>) -> Result<String, E>;
 
 /// Render to one target with the named extensions plus the given symbol map.
-fn render_target(
+fn render_target<E>(
     source: &str,
     keys: &[String],
     symbols: &SymbolPairs,
     config: &RenderConfig,
-    render: TargetRender,
-) -> Result<String, carve::ProfileViolationError> {
+    render: TargetRender<E>,
+) -> Result<String, E> {
     // `Options` borrows each extension, so the owned boxes must outlive it;
     // they live in this frame, alongside the render call.
     let owned = build_extensions(keys);
@@ -2109,11 +2113,11 @@ pub fn ast_json_to_carve(json: &str) -> Result<String, JsValue> {
 /// them, mirroring the pair [`render_with_options`] holds for the source-taking
 /// entry points.
 #[cfg(all(feature = "ast-json", feature = "other-renderers"))]
-fn ast_json_to_text(
+fn ast_json_to_text<E: std::fmt::Debug>(
     json: &str,
     options: Option<js_sys::Object>,
     plain: fn(&carve::Document) -> Result<String, carve::RenderDepthError>,
-    render: fn(&carve::Document, &carve::Options<'_>) -> Result<String, carve::RenderDepthError>,
+    render: fn(&carve::Document, &carve::Options<'_>) -> Result<String, E>,
 ) -> Result<String, JsValue> {
     let doc = carve::from_json(json)
         .map_err(|error| js_error(format!("carve: invalid AST JSON: {error:?}")))?;
@@ -3006,11 +3010,11 @@ pub fn to_html_with_options(
 /// `plain` is the target's own no-options entry point, which keeps the fast
 /// path a caller who passed nothing already had.
 #[cfg(feature = "other-renderers")]
-fn render_with_options(
+fn render_with_options<E: Into<carve::CarveWriteError>>(
     source: &str,
     options: Option<js_sys::Object>,
     plain: fn(&str) -> String,
-    render: TargetRender,
+    render: TargetRender<E>,
 ) -> Result<String, JsValue> {
     let Some(request) = RenderRequest::read(options)? else {
         return Ok(plain(source));
@@ -3022,7 +3026,7 @@ fn render_with_options(
         &request.config,
         render,
     )
-    .map_err(profile_violation_error)
+    .map_err(|error| carve_write_error(error.into()))
 }
 
 /// Render to Markdown with the same options object as
@@ -3846,7 +3850,7 @@ mod tests {
     const DENIED: &str = "# Heading\n\n![alt](x.png)\n";
 
     #[cfg(feature = "other-renderers")]
-    fn filtered(render: super::TargetRender) -> String {
+    fn filtered<E: std::fmt::Debug>(render: super::TargetRender<E>) -> String {
         render_target(
             DENIED,
             &[],
@@ -3858,7 +3862,7 @@ mod tests {
     }
 
     #[cfg(feature = "other-renderers")]
-    fn unfiltered(render: super::TargetRender) -> String {
+    fn unfiltered<E: std::fmt::Debug>(render: super::TargetRender<E>) -> String {
         render_target(
             DENIED,
             &[],
@@ -4193,6 +4197,9 @@ mod tests {
             carve::try_to_markdown_with_options,
         )
         .unwrap_err();
+        let carve::CarveWriteError::Profile(error) = error else {
+            panic!("expected a profile refusal, got {error:?}");
+        };
         assert_eq!(error.violations.len(), 1);
         assert_eq!(error.violations[0].reason, "max_length_exceeded");
         assert!(render_target(
