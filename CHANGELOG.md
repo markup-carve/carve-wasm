@@ -9,6 +9,26 @@ their own.
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-11-12
+
+Rendering, import and lint follow the published carve-rs 0.1.14 engine and the carve 0.1.14 spec.
+
+### Breaking
+
+- HTML import no longer reads `data-djot-*` roundtrip carriers, `data-djot-src` included; only `data-carve-*` is read (markup-carve/carve#5735).
+- Lint configuration and suppression directives accept only `heading-level-skip`, and `lintAccessibility` reports a heading jump under that id; `a11y/heading-jump` is retired (markup-carve/carve#5735, #197).
+- `toMarkdownWithOptions` and `astJsonToMarkdown` throw `CarveWriteError` when a roundtrip carrier cannot be spelled (#195).
+- Letter and roman ordered-list markers with a dot need two spaces after the marker; HTML import writes that spelling (markup-carve/carve#4828, #192).
+
+### Improvements
+
+- Update to the published carve-rs 0.1.14 engine: one attach rule for `+`, braced table cell alignment (`|={>}`), `***` and native `|=` headers in the canonical writer, and first-line `---` frontmatter that runs to the end of the document without a closer (#192, #195, #197).
+- `decisionTrace` and `decisionTraceJsonLines` return the block decision trace, behind a new default `trace` feature (#192).
+- `lintCarveWithOptions` takes `captionLookingParagraph` for the opt-in `caption-looking-paragraph` hint (#192).
+- Render loss reports name the included `file` and the `includedBy` chain for losses in included content (#192).
+
+**Full Changelog**: https://github.com/markup-carve/carve-wasm/compare/v0.1.11...v0.1.12
+
 ## [0.1.11] - 2026-10-25
 
 Task lists carry progress and blocked states through the WASM binding. Rendering and import follow the 0.1.13 engine fixes.
