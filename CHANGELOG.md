@@ -15,7 +15,7 @@ Rendering, import and lint follow the published carve-rs 0.1.14 engine and the c
 
 ### Breaking
 
-- HTML import no longer reads `data-djot-*` roundtrip carriers, `data-djot-src` included; only `data-carve-*` is read (markup-carve/carve#5735).
+- HTML import no longer reads `data-djot-*` roundtrip carriers, `data-djot-src` included; only `data-carve-*` is read (markup-carve/carve#5735, markup-carve/carve-rs#4195).
 - Lint configuration and suppression directives accept only `heading-level-skip`, and `lintAccessibility` reports a heading jump under that id; `a11y/heading-jump` is retired (markup-carve/carve#5735, #197).
 - `toMarkdownWithOptions` and `astJsonToMarkdown` throw `CarveWriteError` when a roundtrip carrier cannot be spelled (#195).
 - Letter and roman ordered-list markers with a dot need two spaces after the marker; HTML import writes that spelling (markup-carve/carve#4828, #192).
