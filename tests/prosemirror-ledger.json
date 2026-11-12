@@ -335,6 +335,110 @@
       "degraded:document",
       "degraded:soft_break"
     ],
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave-2.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave-3.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave-4.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1072-a-comment-span-under-a-marker-line-note-leaves-no-paragraph-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1073-a-verse-lead-under-an-indented-opener-is-measured-per-frame-2.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1073-a-verse-lead-under-an-indented-opener-is-measured-per-frame-4.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1073-a-verse-lead-under-an-indented-opener-is-measured-per-frame.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-2.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-3.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-4.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-6.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open.crv": [
+      "degraded:document",
+      "degraded:soft_break"
+    ],
+    "1077-a-column-after-an-astral-character-is-one-code-point-3.crv": [
+      "degraded:document",
+      "degraded:smart_punctuation",
+      "degraded:soft_break"
+    ],
+    "1077-a-column-after-an-astral-character-is-one-code-point-4.crv": [
+      "degraded:document",
+      "degraded:non_breaking_space"
+    ],
+    "108-security-hardening-12.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
+    "108-security-hardening-2.crv": [
+      "degraded:destination-denied"
+    ],
+    "108-security-hardening-3.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
+    "108-security-hardening-4.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
+    "108-security-hardening-5.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
+    "108-security-hardening-7.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
+    "108-security-hardening.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
     "109-link-destination-parentheses-balance-4.crv": [
       "degraded:document",
       "degraded:soft_break"
@@ -1288,20 +1392,17 @@
       "degraded:document"
     ],
     "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-4.crv": [
-      "degraded:cell_wrap",
-      "degraded:document"
+      "degraded:cell_wrap"
     ],
     "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-5.crv": [
-      "degraded:cell_wrap",
-      "degraded:document"
+      "degraded:cell_wrap"
     ],
     "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold.crv": [
       "degraded:cell_wrap",
       "degraded:document"
     ],
     "355-a-container-whose-table-ends-on-a-joined-header-row-2.crv": [
-      "degraded:cell_wrap",
-      "degraded:document"
+      "degraded:cell_wrap"
     ],
     "355-a-container-whose-table-ends-on-a-joined-header-row-3.crv": [
       "degraded:cell_wrap",
@@ -2133,6 +2234,10 @@
       "degraded:document",
       "degraded:smart_punctuation"
     ],
+    "536-a-denied-destination-takes-one-render-loss-row-per-sink.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
+    ],
     "538-multiple-table-bodies-have-positional-source-metadata.crv": [
       "degraded:table_row_groups"
     ],
@@ -2298,12 +2403,10 @@
       "degraded:escaped_text"
     ],
     "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-33.crv": [
-      "degraded:cell_wrap",
-      "degraded:document"
+      "degraded:cell_wrap"
     ],
     "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-34.crv": [
-      "degraded:cell_wrap",
-      "degraded:document"
+      "degraded:cell_wrap"
     ],
     "590-a-closed-fence-in-a-nested-child-leaves-no-paragraph-open-4.crv": [
       "degraded:document",
@@ -2776,6 +2879,10 @@
     "659-table-spans-keep-alignment-defaults-in-physical-columns-20.crv": [
       "degraded:escaped_text"
     ],
+    "659-table-spans-keep-alignment-defaults-in-physical-columns-4.crv": [
+      "degraded:document",
+      "degraded:table_cell"
+    ],
     "659-table-spans-keep-alignment-defaults-in-physical-columns-5.crv": [
       "degraded:table_row_groups"
     ],
@@ -2857,6 +2964,10 @@
     ],
     "711-a-bang-before-a-link-is-escaped.crv": [
       "degraded:escaped_text"
+    ],
+    "716-url-sinks-reject-schemes-after-emitted-value-normalization-2.crv": [
+      "degraded:destination-denied",
+      "degraded:document"
     ],
     "719-combined-emphasis-finds-a-later-nonempty-closer-2.crv": [
       "degraded:document",
@@ -3527,7 +3638,8 @@
       "degraded:document",
       "degraded:soft_break"
     ],
-    "855-invisible-lines-after-a-plus-are-skipped-and-the-first-visible-line-decides-3.crv": [
+    "855-attribute-hardening-probes-the-value-as-emitted-5.crv": [
+      "degraded:destination-denied",
       "degraded:document"
     ],
     "856-a-continuation-cell-past-the-last-column-is-a-new-cell-2.crv": [
@@ -4106,6 +4218,9 @@
     "945-a-column-0-comment-before-a-sibling-keeps-the-blank-that-loosens-the-list-2.crv": [
       "degraded:document"
     ],
+    "945-a-column-0-comment-before-a-sibling-keeps-the-blank-that-loosens-the-list-4.crv": [
+      "degraded:document"
+    ],
     "945-a-column-0-comment-before-a-sibling-keeps-the-blank-that-loosens-the-list.crv": [
       "degraded:document"
     ],
@@ -4129,6 +4244,10 @@
       "degraded:document",
       "dropped:abbreviation_def"
     ],
+    "952-native-head-rows-with-span-placeholders-2.crv": [
+      "degraded:document",
+      "degraded:table_cell"
+    ],
     "952-native-head-rows-with-span-placeholders-5.crv": [
       "degraded:document",
       "degraded:escaped_text"
@@ -4136,6 +4255,10 @@
     "952-native-head-rows-with-span-placeholders-8.crv": [
       "degraded:document",
       "degraded:escaped_text"
+    ],
+    "953-a-deprecated-cell-alignment-prefix-reads-as-its-braced-run-3.crv": [
+      "degraded:document",
+      "degraded:table_cell"
     ],
     "955-a-quote-plus-after-a-quote-attached-paragraph-is-a-letter-2.crv": [
       "degraded:document",
@@ -4397,6 +4520,17 @@
     "1067-a-comment-fence-line-inside-a-braced-comment-run-is-run-text.crv": "<ul>\n  <li> plain</li>\n</ul>",
     "1069-a-comment-run-after-a-glued-attribute-keeps-its-written-column-2.crv": "<blockquote>\n  <ol>\n    <li id=\"i\">{% b b %}</li>\n  </ol>\n</blockquote>",
     "1069-a-comment-run-after-a-glued-attribute-keeps-its-written-column.crv": "<ul>\n  <li class=\"g\">{% b b %}</li>\n</ul>",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-2.crv": "<ul>\n  <li>a\n    <ul>\n      <li>b </li>\n    </ul>\n  </li>\n</ul>",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-3.crv": "<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>p <a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-4.crv": "<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>p</p>\n      <dl>\n        <dt>t</dt>\n        <dd>pre </dd>\n      </dl>\n      <p><a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written.crv": "<ul>\n  <li>b </li>\n</ul>",
+    "1072-a-comment-span-under-a-marker-line-note-leaves-no-paragraph-4.crv": "<blockquote>\n  <blockquote>\n    <ul>\n      <li></li>\n    </ul>\n    <p>z plain</p>\n  </blockquote>\n</blockquote>\n<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>a<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-2.crv": "<blockquote>\n  <ul>\n    <li>\n      <dl>\n        <dt>t</dt>\n        <dd></dd>\n      </dl>\n      z plain\n    </li>\n  </ul>\n</blockquote>\n<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>a<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-3.crv": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <dl>\n          <dt>t</dt>\n          <dd>d</dd>\n        </dl>\n        z plain\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-4.crv": "<blockquote>\n  <ul>\n    <li>\n      <ul>\n        <li>\n          <dl>\n            <dt>t</dt>\n            <dd>d</dd>\n          </dl>\n          z plain\n        </li>\n      </ul>\n    </li>\n  </ul>\n</blockquote>",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-6.crv": "<blockquote>\n  <blockquote>\n    <dl>\n      <dt>t</dt>\n      <dd></dd>\n    </dl>\n    <p>z plain</p>\n  </blockquote>\n</blockquote>\n<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>a<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open.crv": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>\n        <dl>\n          <dt>t</dt>\n          <dd></dd>\n        </dl>\n        z plain\n      </li>\n    </ul>\n  </blockquote>\n</blockquote>\n<p>x<a id=\"fnref1\" href=\"#fn1\" role=\"doc-noteref\"><sup>1</sup></a></p>\n<section role=\"doc-endnotes\" aria-label=\"Footnotes\">\n  <hr>\n  <ol>\n    <li id=\"fn1\">\n      <p>a<a href=\"#fnref1\" role=\"doc-backlink\" aria-label=\"Back to reference\">↩</a></p>\n    </li>\n  </ol>\n</section>",
+    "1077-a-column-after-an-astral-character-is-one-code-point-3.crv": "<p>{title=“😀”}{.b .c} p</p>",
     "109-link-destination-parentheses-balance-4.crv": "<p>[t](url more)</p>",
     "134-footnote-definition-requires-an-inline-body.crv": "<p>Use [^a].</p>\n<p>[^a]: First</p>",
     "150-abbreviation-title-escapes-its-markup-characters.crv": "<p>The HTML spec.</p>",
@@ -4703,11 +4837,6 @@
     "591-a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base-3.crv": "<ul>\n  <li>\n    <div class=\"box\">\n      <pre><code></code></pre>\n    </div>\n  </li>\n</ul>\n<p>x y</p>\n<div>\n  <p>after</p>\n</div>",
     "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-2.crv": "<dl>\n  <dt>term</dt>\n</dl>\n<p>+ : d</p>",
     "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-3.crv": "<dl>\n  <dt>A term that</dt>\n</dl>\n<p>wraps + : d</p>",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-2.crv": "<table>\n  <tbody>\n    <tr><td></td><td>b y</td></tr>\n  </tbody>\n</table>",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-3.crv": "<table>\n  <tbody>\n    <tr><td colspan=\"2\">a</td></tr>\n    <tr><td></td><td>b y</td></tr>\n  </tbody>\n</table>",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "<table>\n  <tbody>\n    <tr><td rowspan=\"2\">a</td><td>b</td></tr>\n    <tr><td>c</td></tr>\n    <tr><td></td><td>d y</td></tr>\n  </tbody>\n</table>",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "<table>\n  <tbody>\n    <tr><td colspan=\"2\"></td></tr>\n  </tbody>\n</table>",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "<table>\n  <tbody>\n    <tr><td>a</td><td>b</td></tr>\n    <tr><td></td><td>c y</td></tr>\n  </tbody>\n</table>",
     "605-an-autolink-a-cross-reference-or-a-comment-is-atomic-to-every-outside-delimiter-2.crv": "<p><del>a https://x~y</del><ins>z b</ins></p>",
     "607-a-quoted-comment-or-attribute-line-closes-the-quote-s-paragraph-3.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>para more text</p></blockquote>\n  <pre><code>code\n:::\nafter *b*\n</code></pre>\n</aside>",
     "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing-2.crv": "<aside class=\"admonition note\" aria-label=\"Note\">\n  <blockquote><p>a b c d</p></blockquote>\n  <pre><code>code\n::::\n:::\nafter *b*\n</code></pre>\n</aside>",
@@ -4788,6 +4917,7 @@
     "653-a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct.crv": "<ul>\n  <li>a {.c } para</li>\n</ul>",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": "<ul>\n  <li>item\n    <dl>\n      <dt>Term</dt>\n      <dd>Def :  under</dd>\n    </dl>\n  </li>\n</ul>",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": "<ul>\n  <li><p>item</p>\n    <dl>\n      <dt>Term</dt>\n      <dd>Def :  under</dd>\n    </dl>\n  </li>\n</ul>",
+    "659-table-spans-keep-alignment-defaults-in-physical-columns-4.crv": "<table>\n  <thead>\n    <tr><th scope=\"col\" colspan=\"2\" style=\"text-align: right;\">Wide</th><th scope=\"col\" style=\"text-align: center;\">Last</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">a</td><td>b</td><td style=\"text-align: center;\">c</td></tr>\n  </tbody>\n</table>",
     "662-a-tab-after-a-comment-marker-stays-in-its-text.crv": "<p>a b</p>",
     "665-a-styled-display-math-span-takes-a-caption-across-one-blank-line.crv": "<figure>\n  <p><span class=\"math display boxed\" data-k=\"v\" role=\"math\">\\[x+y\\]</span></p>\n  <figcaption>Equation : Sum</figcaption>\n</figure>",
     "669-lazy-text-stays-in-an-unclosed-quoted-admonition.crv": "<blockquote>\n  <aside class=\"admonition note\" aria-label=\"Note\">\n    <p>a b</p>\n  </aside>\n</blockquote>",
@@ -5004,6 +5134,7 @@
     "946-a-nested-quote-after-a-quoted-list-leaves-a-marker-line-lazy-4.crv": "<blockquote>\n  <blockquote>\n    <ul>\n      <li>a</li>\n    </ul>\n    <blockquote><p>c - tail</p></blockquote>\n  </blockquote>\n</blockquote>",
     "946-a-nested-quote-after-a-quoted-list-leaves-a-marker-line-lazy.crv": "<blockquote>\n  <ul>\n    <li>a</li>\n  </ul>\n  <blockquote><p>c - tail</p></blockquote>\n</blockquote>",
     "95-abbreviation-definition-interrupts-a-paragraph.crv": "<p>The HTML spec is long.</p>",
+    "952-native-head-rows-with-span-placeholders-2.crv": "<table>\n  <thead>\n    <tr><th scope=\"col\" colspan=\"2\" style=\"text-align: right;\">Price</th><th scope=\"col\" style=\"text-align: center;\">Stock</th></tr>\n  </thead>\n  <tbody>\n    <tr><td style=\"text-align: right;\">12.50</td><td>EUR</td><td style=\"text-align: center;\">3</td></tr>\n  </tbody>\n</table>",
     "955-a-quote-plus-after-a-quote-attached-paragraph-is-a-letter-2.crv": "<blockquote>\n  <p>q</p>\n  <p>+ r</p>\n</blockquote>",
     "957-an-indented-quoted-item-keeps-a-lazy-line-at-its-base.crv": "<ul>\n  <li>\n    <blockquote><p>a b</p></blockquote>\n  </li>\n</ul>",
     "959-a-braced-comment-that-starts-a-continuation-line-is-at-block-position-2.crv": "<ul>\n  <li>pre {% a b %}</li>\n</ul>",
@@ -5065,7 +5196,7 @@
     "1026-a-literal-bracket-region-cuts-an-inner-attribute.crv": "[t[x](/u){title=“]”}y](/z)\n",
     "1026-abbreviations-test-rendered-adjacency-across-inline-nodes-2.crv": "w{*HTML*}\n",
     "1026-abbreviations-test-rendered-adjacency-across-inline-nodes.crv": "[w[HTML](u)]()\n",
-    "1026-an-escaped-row-closer-stays-in-an-open-code-span-3.crv": "| a `b c\\|` |\n",
+    "1026-an-escaped-row-closer-stays-in-an-open-code-span-3.crv": "| a `b c\\|` |\n+ |\n",
     "1027-a-region-marker-between-items-splits-the-list.crv": "- a\n\n%% #region x\n\n\n\n- b\n",
     "1029-a-quoted-note-run-uses-the-lazy-line-written-column.crv": ">\n\nsee[^a]\n\n[^a]: {#i \\.y}\n",
     "1030-a-refused-brace-run-keeps-a-following-plus-literal.crv": "- \\{.x .y}\n+\nzq\n",
@@ -5126,6 +5257,31 @@
     "1067-a-comment-fence-line-inside-a-braced-comment-run-is-run-text.crv": "- {% a\n   %%%\n   z %} plain\n",
     "1069-a-comment-run-after-a-glued-attribute-keeps-its-written-column-2.crv": "> 1.{#i} \\{% b b %}\n",
     "1069-a-comment-run-after-a-glued-attribute-keeps-its-written-column.crv": "-{.g} \\{% b b %}\n",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-2.crv": "- a\n  - b {% x\n     %}\n",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-3.crv": "x[^n]\n\n[^n]: p {% x\n   %}\n",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written-4.crv": "x[^n]\n\n[^n]: p\n\n  :: t\n  : pre {% x\n     %}\n",
+    "1070-a-lazy-comment-opener-is-measured-where-its-brace-is-written.crv": "- b {% x\n   %}\n",
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave-2.crv": "- a\n  ::: |\n      x\n  :::\n",
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave-3.crv": ":: t\n: d\n\n  ::: |\n      x\n  :::\n",
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave-4.crv": "> - a\n>   ::: |\n>       x\n>   :::\n",
+    "1071-a-tabbed-verse-line-keeps-the-lead-its-frames-leave.crv": "- a\n  ::: |\n      x\n  :::\n",
+    "1072-a-comment-span-under-a-marker-line-note-leaves-no-paragraph-4.crv": "> > - %%%\n> >   %%%\n> >\n> > z plain\n\nx[^n]\n\n[^n]: a\n",
+    "1073-a-verse-lead-under-an-indented-opener-is-measured-per-frame-2.crv": "- a\n  ::: |\n     x\n  :::\n",
+    "1073-a-verse-lead-under-an-indented-opener-is-measured-per-frame-4.crv": "> - a\n>   ::: |\n>      x\n>   :::\n",
+    "1073-a-verse-lead-under-an-indented-opener-is-measured-per-frame.crv": "- a\n  ::: |\n     x\n  :::\n",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-2.crv": "> - :: t\n>   : %%%\n>     %%%\n>   z plain\n\nx[^n]\n\n[^n]: a\n",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-3.crv": "> > - :: t\n> >   : d\n> >\n> >     %%%\n> >     %%%\n> >   z plain\n",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-4.crv": "> - - :: t\n>     : d\n>\n>       %%%\n>       %%%\n>     z plain\n",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open-6.crv": "> > :: t\n> > : %%%\n> >   %%%\n> >\n> > z plain\n\nx[^n]\n\n[^n]: a\n",
+    "1076-a-line-that-ends-a-span-in-an-item-s-description-leaves-the-item-s-paragraph-open.crv": "> > - :: t\n> >   : %%%\n> >     %%%\n> >   z plain\n\nx[^n]\n\n[^n]: a\n",
+    "1077-a-column-after-an-astral-character-is-one-code-point-3.crv": "{title=“😀”}{.b .c} p\n",
+    "1077-a-column-after-an-astral-character-is-one-code-point-4.crv": "::: |\n😀   x\n:::\n",
+    "108-security-hardening-12.crv": "Text.\n\n[x]: /u\n\n[y]:\n",
+    "108-security-hardening-3.crv": "[a]()\n",
+    "108-security-hardening-4.crv": "[b]()\n",
+    "108-security-hardening-5.crv": "[c]()\n\n<ms-msdt:/id>\n",
+    "108-security-hardening-7.crv": "![logo]()\n",
+    "108-security-hardening.crv": "[click here]()\n",
     "109-link-destination-parentheses-balance-4.crv": "[t](url more)\n",
     "134-footnote-definition-requires-an-inline-body.crv": "Use [^a].\n\n[^a]\\: First\n",
     "15-heading-ids-4.crv": "# Don’t repeat yourself\n\n# Step 1 -> done…\n",
@@ -5202,13 +5358,13 @@
     "228-a-line-at-a-footnote-definition-s-own-column-followed-by-non-blank-text-forms-its-own-tight-block.crv": "- a\n\nsee[^f]\n\n[^f]: x more\n",
     "231-a-tab-after-a-heading-quote-or-caption-marker-leaves-the-line-as-prose-2.crv": "![Moon](m.jpg) ^\tFigure 1\n",
     "232-two-dashes-are-not-a-thematic-break.crv": "a\n\n–\n\nb\n",
-    "237-a-continuation-row-carries-no-trailing-text.crv": "| a c | b d |\n",
+    "237-a-continuation-row-carries-no-trailing-text.crv": "| a c | b d |\n+ | |\n",
     "239-a-link-definition-written-before-a-footnote-stays-before-it-2.crv": "see[^b] and[^a]\n\n[^a]: ay\n\n[^b]: bee\n",
     "24-generic-divs-2.crv": "::: {.sidebar} not a div\n\n:::\n\n:::\n",
     "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it-2.crv": "- a +\n\nx\n",
     "246-the-continuation-marker-at-an-item-s-own-column-and-what-follows-it.crv": "- a +\n\nsee [t][r]\n\n[r]: /u\n",
     "248-an-attribute-name-admits-no-colon.crv": "[a]{xlink:href=u}\n\n[b]{k:v=“q”}\n\n[c]{.sm:hover}\n\n[d]{#a:b}\n\n[e]{.ok xml:lang=en}\n",
-    "249-trailing-whitespace-after-a-block-marker-4.crv": "| a c | b d |\n",
+    "249-trailing-whitespace-after-a-block-marker-4.crv": "| a c | b d |\n+ | |\n",
     "25-definition-lists-4.crv": ":: term\n: A definition wrapped onto the next line.\n",
     "25-definition-lists-6.crv": ":: A term that\n\nwraps onto the next line : its definition\n",
     "250-line-endings-and-a-byte-order-mark-2.crv": "# Title\n\na b\n",
@@ -5228,9 +5384,9 @@
     "256-table-cell-padding-must-be-a-space-10.crv": "| a | b |\n| \t— | \t— |\n| 1 | 2 |\n",
     "256-table-cell-padding-must-be-a-space-11.crv": "| a | b |\n| \t— | \t— |\n| 1 | 2 |\n",
     "256-table-cell-padding-must-be-a-space-12.crv": "| a | b |\n| —\t | —\t |\n| 1 | 2 |\n",
-    "256-table-cell-padding-must-be-a-space-15.crv": "| a \tx | b y |\n",
-    "256-table-cell-padding-must-be-a-space-16.crv": "| a x\t | b y\t |\n",
-    "256-table-cell-padding-must-be-a-space-17.crv": "| a x | b y |\n",
+    "256-table-cell-padding-must-be-a-space-15.crv": "| a \tx | b y |\n+ | |\n",
+    "256-table-cell-padding-must-be-a-space-16.crv": "| a x\t | b y\t |\n+ | |\n",
+    "256-table-cell-padding-must-be-a-space-17.crv": "| a x | b y |\n+ | |\n",
     "257-link-and-image-title-slots-must-be-a-space-2.crv": "[t](/u \t“T”)\n",
     "257-link-and-image-title-slots-must-be-a-space-3.crv": "[t](/u\t “T”)\n",
     "257-link-and-image-title-slots-must-be-a-space-4.crv": "![a](/p.png\t“T”)\n",
@@ -5326,18 +5482,18 @@
     "327-a-continuation-marker-attaches-one-block-and-the-boundary-is-that-block-s-extent-4.crv": "- a\n  > x y\n- next\n",
     "329-a-floating-attribute-is-scoped-to-the-container-that-holds-it-6.crv": ":: t\n: d {.k #x} tail\n",
     "330-a-tab-after-a-fence-or-a-frontmatter-opener-depends-on-where-it-sits-3.crv": "—\tyaml title: x\n\n***\n\nbody\n",
-    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-4.crv": "| a `b c | d` |\n",
-    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-5.crv": "| x y | a `b c` |\n",
-    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe.crv": "| a `b c` |\n",
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-4.crv": "| a `b c | d` |\n+ |\n",
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe-5.crv": "| x y | a `b c` |\n+ | |\n",
+    "333-a-continuation-row-s-open-run-and-an-escaped-closing-pipe.crv": "| a `b c` |\n+ |\n",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position-2.crv": "> > \\# deep\n\n> a # heading\n",
     "343-an-escaped-hash-keeps-its-escape-at-a-container-s-content-position.crv": "> \\# heading\n>\n> C# is a language\n\n- \\# heading\n- \\#tag rest\n",
     "345-a-line-block-s-hard-break-keeps-its-backslash-3.crv": "::: |\na  \nb\n:::\n",
     "346-a-line-block-s-last-body-line-keeps-its-backslash-2.crv": "::: |\na  \\\n:::\n",
     "348-a-closed-inline-construct-spanning-a-verse-boundary-5.crv": "::: |\n*Roses are red,\n  Violets are blue.*\n:::\n",
-    "349-a-container-whose-table-ends-on-a-continuation-row-3.crv": "> | a b |\n\ntail\n",
-    "349-a-container-whose-table-ends-on-a-continuation-row-5.crv": ":: t\n: > | a b |\n\ntail\n",
-    "349-a-container-whose-table-ends-on-a-continuation-row-6.crv": ":: t\n: | a b |\n\ntail\n",
-    "349-a-container-whose-table-ends-on-a-continuation-row.crv": "- | a b |\n\ntail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row-3.crv": "> | a b |\n> + |\n\ntail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row-5.crv": ":: t\n: > | a b |\n  > + |\n\ntail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row-6.crv": ":: t\n: | a b |\n  + |\n\ntail\n",
+    "349-a-container-whose-table-ends-on-a-continuation-row.crv": "- | a b |\n  + |\n\ntail\n",
     "350-a-definition-at-a-container-s-content-column-2.crv": "- a\n\nx[^f]\n\n[^f]: t tail\n",
     "350-a-definition-at-a-container-s-content-column-3.crv": "- a tail\n\n[r][]\n\n[r]: /u\n",
     "350-a-definition-at-a-container-s-content-column-4.crv": "- a tail\n",
@@ -5355,18 +5511,15 @@
     "352-a-bracketed-construct-s-identifiers-stay-on-one-line-3.crv": "![a][r\nx] ^ cap\n",
     "352-a-bracketed-construct-s-identifiers-stay-on-one-line-4.crv": "![a](/i q) ^ cap\n",
     "352-a-bracketed-construct-s-identifiers-stay-on-one-line-5.crv": "x [a y\n\nz\n",
-    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-2.crv": "| a |\n|= b c |\n",
-    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-4.crv": "| a |\n",
-    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-5.crv": "| a | b |\n",
-    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold.crv": "|= a cont |= b |\n",
-    "355-a-container-whose-table-ends-on-a-joined-header-row-2.crv": "- | a |\n\ntail\n",
-    "355-a-container-whose-table-ends-on-a-joined-header-row-3.crv": "> |= a b |\n\ntail\n",
-    "355-a-container-whose-table-ends-on-a-joined-header-row.crv": "- |= a b |\n\ntail\n",
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold-2.crv": "| a |\n|= b c |\n+ |\n",
+    "354-a-continuation-row-joins-the-row-above-it-whatever-its-cells-hold.crv": "|= a cont |= b |\n+ | |\n",
+    "355-a-container-whose-table-ends-on-a-joined-header-row-3.crv": "> |= a b |\n> + |\n\ntail\n",
+    "355-a-container-whose-table-ends-on-a-joined-header-row.crv": "- |= a b |\n  + |\n\ntail\n",
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-10.crv": "> > a tail\n",
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-11.crv": "> > # H\n> >\n> > a tail\n",
     "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-12.crv": "> > | a |\n>\n> # H\n>\n> > + b | tail\n",
-    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-8.crv": "> > | a b |\n\ntail\n",
-    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-9.crv": "> > > | a b |\n\ntail\n",
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-8.crv": "> > | a b |\n> > + |\n\ntail\n",
+    "356-a-quote-inside-a-quote-is-asked-what-it-ends-on-9.crv": "> > > | a b |\n> > > + |\n\ntail\n",
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-2.crv": "- a tail\n  %% c\n",
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-4.crv": "- a\n\nx[^f]\n\n[^f]: t more tail\n",
     "357-a-block-at-a-container-s-content-column-ends-the-paragraph-whatever-it-renders-6.crv": "- a “T” tail\n\n[r][]\n\n[r]: /u\n",
@@ -5435,7 +5588,7 @@
     "435-the-continuation-marker-s-column-gate-reaches-every-container-15.crv": "- x\n  > q ZZZ\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-18.crv": "- x\n  > q +\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-19.crv": "> q + - m\n",
-    "435-the-continuation-marker-s-column-gate-reaches-every-container-3.crv": "see[^a]\n\n[^a]: intro more\n\n  %% c\n",
+    "435-the-continuation-marker-s-column-gate-reaches-every-container-3.crv": "%% c\n\nsee[^a]\n\n[^a]: intro more\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container-6.crv": ":: term\n: intro more\n\n%% c\n",
     "435-the-continuation-marker-s-column-gate-reaches-every-container.crv": "%% c\n\nsee[^a]\n\n[^a]: intro more\n",
     "442-a-marker-folds-only-strictly-between-the-item-s-base-and-content-column-3.crv": "- lead\n  - {empty}\n\nSee [t][].\n\n[t]: /t\n",
@@ -5459,9 +5612,9 @@
     "447-the-host-does-not-change-which-column-a-definition-reaches-8.crv": "See [r][] and [^f].\n\n[r]: /url\n\n[^f]: b\n\n  :: t\n  : d\n",
     "448-a-marker-folds-into-a-quote-below-it-3.crv": "- a\n  > - x p\n  - m\n",
     "448-a-marker-folds-into-a-quote-below-it-9.crv": "- a p\n  - m\n",
-    "449-a-comment-below-a-description-body-s-column-ends-the-body-13.crv": ":: t\n: x more\n\n  %% c\n",
+    "449-a-comment-below-a-description-body-s-column-ends-the-body-13.crv": ":: t\n: x more\n\n%% c\n",
     "449-a-comment-below-a-description-body-s-column-ends-the-body-5.crv": ":: t\n: x z\n\n%% c\n",
-    "449-a-comment-below-a-description-body-s-column-ends-the-body-8.crv": ":: t\n: x more\n\n  %% c\n",
+    "449-a-comment-below-a-description-body-s-column-ends-the-body-8.crv": ":: t\n: x more\n\n%% c\n",
     "45-inline-extensions-11.crv": "[HTML]{abbr=Custom}\n",
     "45-inline-extensions-5.crv": ":1[x] :a1[x]\n",
     "45-inline-extensions-9.crv": "[*Ctrl*+C]{#copy .shortcut kbd data-key=copy onclick=alert(1)} [x]{kbd onclick=alert(1)}\n",
@@ -5540,7 +5693,7 @@
     "506-comment-columns-and-surviving-list-items-4.crv": "- intro\n- next\n\n%% c\n",
     "506-comment-columns-and-surviving-list-items-5.crv": "- intro tail\n\n%% a\n\n%% b\n",
     "506-comment-columns-and-surviving-list-items-6.crv": "- intro tail\n  %% a\n\n%% b\n",
-    "506-comment-columns-and-surviving-list-items-7.crv": "- intro tail\n  %% a\n  %% b\n",
+    "506-comment-columns-and-surviving-list-items-7.crv": "- intro tail\n  %% a\n\n%% b\n",
     "506-comment-columns-and-surviving-list-items.crv": "- intro tail\n\n%% c\n",
     "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-10.crv": "- head\n\n  ::: note\n  a - second\n  :::\n",
     "507-a-list-marker-in-a-raised-colon-container-folds-into-its-open-paragraph-11.crv": "- head\n\n  :::\n  a - second\n  :::\n",
@@ -5561,6 +5714,7 @@
     "523-a-link-title-crosses-a-soft-wrap-and-an-attribute-value-does-not-6.crv": "[a][r]\n\n[r]: /u “t u”\n",
     "527-a-tab-does-not-open-the-title-slot-2.crv": "![a](/i\t“t”)\n",
     "527-a-tab-does-not-open-the-title-slot.crv": "[a](/u\t“t”)\n",
+    "536-a-denied-destination-takes-one-render-loss-row-per-sink.crv": "[report me]() and ![report me too]()\n",
     "546-every-name-lookup-compares-case-exactly-5.crv": "{#Fig}\n![upper](upper.png)\n^ Figure : upper\n\n{#fig}\n![lower](lower.png)\n^ Figure : lower\n\n{#Eq}\n$$`x`\n^ Equation : upper\n\n{#eq}\n$$`y`\n^ Equation : lower\n\n</#Fig>, </#fig>, </#FIG>, </#Eq>, </#eq>, </#EQ>.\n",
     "551-a-link-destination-is-opaque-to-the-bracket-scan-10.crv": "a [[http://u/\\]](http://u/])\n",
     "552-a-braced-comment-does-not-decide-a-quote-2.crv": "{{%  %}“q”\n",
@@ -5594,17 +5748,15 @@
     "580-a-quote-or-a-term-at-a-marker-line-note-s-body-column-opens-in-the-note.crv": "- {empty}\n\n[^n]: text\n\n  > q after [^n]\n",
     "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note-2.crv": "- {empty}\n\nafter [^n]\n\n[^n]: text more\n\n  %% c\n\n  ```\n  code\n  ```\n",
     "586-a-comment-closes-a-marker-line-note-s-paragraph-and-an-unclosed-fence-below-it-opens-in-the-note.crv": "- {empty}\n\nafter [^n]\n\n[^n]: text more\n\n  %% c\n\n  ```\n  code\n  ```\n",
-    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-33.crv": "| x | y |\n",
-    "589-an-explicitly-delimited-row-of-blank-cells-is-a-table-34.crv": "| |\n| |\n",
     "590-a-closed-fence-in-a-nested-child-leaves-no-paragraph-open-4.crv": "- a\n  - child text\n  ```\n  ```\n\nafter\n",
     "591-a-code-line-left-of-an-authored-base-fence-opener-is-measured-from-that-base-3.crv": "- ::: box\n  ```\n  ```\n  :::\n\nx y\n\n:::\nafter\n:::\n",
     "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-2.crv": ":: term\n\n+ : d\n",
     "593-a-table-row-ends-a-description-body-and-a-lone-plus-folds-into-a-term-3.crv": ":: A term that\n\nwraps + : d\n",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-2.crv": "| ^ | b y |\n",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-3.crv": "| a | < |\n| ^ | b y |\n",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "| a | b |\n| ^ | c |\n| < | d y |\n",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "| ^ | < |\n",
-    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "| a | b |\n| < | c y |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-2.crv": "| ^ | b y |\n+ x | |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-3.crv": "| a | < |\n| ^ | b y |\n+ x | |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-4.crv": "| a | b |\n| ^ | c |\n| < | d y |\n+ x | |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into-5.crv": "| ^ | < |\n+ x y | |\n",
+    "594-a-continuation-on-a-span-marker-joins-the-cell-the-marker-resolves-into.crv": "| a | b |\n| < | c y |\n+ x | |\n",
     "605-an-autolink-a-cross-reference-or-a-comment-is-atomic-to-every-outside-delimiter-2.crv": "{~a https://x~y~>z b~}\n",
     "607-a-quoted-comment-or-attribute-line-closes-the-quote-s-paragraph-3.crv": "::: note\n> para more text\n\n```\ncode\n:::\nafter *b*\n```\n:::\n",
     "608-an-unclosed-fence-under-a-multi-line-quote-paragraph-in-a-container-opens-nothing-2.crv": "::: note\n> a b c d\n\n```\ncode\n::::\n:::\nafter *b*\n```\n:::\n",
@@ -5668,13 +5820,13 @@
     "622-a-caption-after-a-continuation-marker-fence-stays-with-the-fence-9.crv": "- x\n  ::: figure [label]\n  hi\n  :::\n\n^ cap - c\n",
     "623-a-lazily-folded-fence-opener-line-does-not-keep-a-list-tight-3.crv": "- - text ![i](x.png) x\n\n  cap\n\n- c\n",
     "624-a-fence-run-folded-into-a-child-paragraph-loosens-the-outer-item-when-it-closes-at-the-outer-column-5.crv": "- outer\n  - head more\n    ```\n    a\n    ```\n  ```\n\n  tail\n  ```\n",
-    "63-table-multi-line-cell-continuation.crv": "|= Feature |= Description |\n| Complex | A long description that continues across lines. |\n| Simple | Single line. |\n",
+    "63-table-multi-line-cell-continuation.crv": "|= Feature |= Description |\n| Complex | A long description that continues across lines. |\n+ | |\n+ | |\n| Simple | Single line. |\n",
     "630-a-continuation-marker-stands-alone-at-an-open-marker-column-or-right-after-a-block-opener-11.crv": ">>+ q\n",
     "630-a-continuation-marker-stands-alone-at-an-open-marker-column-or-right-after-a-block-opener-12.crv": ">+ q\n",
     "630-a-continuation-marker-stands-alone-at-an-open-marker-column-or-right-after-a-block-opener-4.crv": "> > q + - s\n",
     "630-a-continuation-marker-stands-alone-at-an-open-marker-column-or-right-after-a-block-opener-5.crv": "> q + para\n",
     "632-a-continuation-marker-uses-its-container-column-14.crv": "> - a +\n",
-    "632-a-continuation-marker-uses-its-container-column-24.crv": "- a\n  | h |\n  | v text |\n",
+    "632-a-continuation-marker-uses-its-container-column-24.crv": "- a\n  | h |\n  | v text |\n  + |\n",
     "634-a-refused-continuation-plus-remains-text-11.crv": "- foo\n  - [ ] task +\n  - x\n",
     "634-a-refused-continuation-plus-remains-text-16.crv": "- foo\n  - [ ] task + q\n",
     "634-a-refused-continuation-plus-remains-text-7.crv": "- a\n  - ```\n    ```\n  x +\n",
@@ -5685,9 +5837,9 @@
     "635-a-refused-plus-without-the-inner-quote-prefix-renders-as-text.crv": "> > - a +\n>\n> - b\n",
     "636-a-tab-indented-nested-list-starts-at-its-marker.crv": "- a\n  - b c\n",
     "637-definition-body-note-and-fence-owner-boundaries-4.crv": ". d\n  - a\n\n[^n]: e\n",
-    "64-table-rowspan-with-multi-line-content-2.crv": "| a more | b |\n| ^ | c d |\n",
-    "64-table-rowspan-with-multi-line-content-3.crv": "| a more | b d |\n| ^ | c |\n",
-    "64-table-rowspan-with-multi-line-content.crv": "|= Category |= Item |\n| Fresh Fruits from local farms | Apple |\n| ^ | Banana |\n",
+    "64-table-rowspan-with-multi-line-content-2.crv": "| a more | b |\n| ^ | c d |\n+ | |\n",
+    "64-table-rowspan-with-multi-line-content-3.crv": "| a more | b d |\n+ | |\n| ^ | c |\n",
+    "64-table-rowspan-with-multi-line-content.crv": "|= Category |= Item |\n| Fresh Fruits from local farms | Apple |\n+ | |\n+ | |\n| ^ | Banana |\n",
     "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-2.crv": "> - :: t\n>\n> :  d :  b\n",
     "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation-3.crv": "> :  d :  b\n",
     "642-a-lazy-colon-shaped-line-in-a-quote-paragraph-keeps-no-indentation.crv": "> :  d :  b\n",
@@ -5711,6 +5863,7 @@
     "653-a-wrapped-attribute-line-opened-at-a-container-s-column-is-one-construct.crv": "- a {.c } para\n",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body-4.crv": "- item\n  :: Term\n  : Def :  under\n",
     "657-a-description-separator-left-of-its-item-s-column-folds-into-the-definition-body.crv": "- item\n\n  :: Term\n  : Def :  under\n",
+    "659-table-spans-keep-alignment-defaults-in-physical-columns-4.crv": "|={>} Wide | < |={~} Last |\n| a | b | c |\n",
     "662-a-tab-after-a-comment-marker-stays-in-its-text.crv": "a b\n\n%% \tx\n",
     "665-a-styled-display-math-span-takes-a-caption-across-one-blank-line.crv": "$$`x+y`{.boxed data-k=v}\n^ Equation : Sum\n",
     "668-escaped-space-in-inline-text.crv": "a b\n",
@@ -5727,6 +5880,7 @@
     "705-unicode-whitespace-ends-a-link-destination.crv": "[t](u v) and [ok](u-v)\n\n[r]: https://e.com /path [text][r] and [text][okref]\n\n[okref]: https://e.com/path\n",
     "706-an-invalid-attribute-block-leaves-a-definition-as-prose.crv": "[a]: /u {#} [a][] and [b][]\n\n[b]: /v {.ok}\n",
     "707-a-reference-definition-needs-a-separator-before-its-destination.crv": "[a]:/u [a][] and [b][]\n\n[b]: /v\n",
+    "716-url-sinks-reject-schemes-after-emitted-value-normalization-2.crv": "[x]()\n",
     "719-combined-emphasis-finds-a-later-nonempty-closer-2.crv": "/**/ /**/\n",
     "72-escape-coverage-2.crv": "\\a and \\« and a\\b\n",
     "72-escape-coverage.crv": "!\\\"#$%&\\'()*+,-./:;\\<=>?@[\\\\]^_\\`{|}~ done\n",
@@ -5755,11 +5909,11 @@
     "782-a-first-block-plus-hands-its-block-to-the-host-as-the-host-reads-it-3.crv": ">\n\nsee[^a]\n\n[^a]: tail flush\n",
     "782-a-first-block-plus-hands-its-block-to-the-host-as-the-host-reads-it-4.crv": "see[^a]\n\n[^a]: ~s~ flush\n",
     "782-a-first-block-plus-hands-its-block-to-the-host-as-the-host-reads-it.crv": "see[^a]\n\n[^a]: tail flush\n",
-    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-2.crv": "| a c` | d x | y` | b |\n",
-    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-3.crv": "| a c x | b d` y` |\n",
-    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-4.crv": "| a x p | b y` q | r` | c |\n",
-    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-5.crv": "| a `c x ` y | b z |\n",
-    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row.crv": "| a c` x | y` | b |\n",
+    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-2.crv": "| a c` | d x | y` | b |\n+ | |\n+ | |\n",
+    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-3.crv": "| a c x | b d` y` |\n+ | |\n+ | |\n",
+    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-4.crv": "| a x p | b y` q | r` | c |\n+ | | |\n+ | | |\n",
+    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row-5.crv": "| a `c x ` y | b z |\n+ | |\n+ | |\n",
+    "783-a-verbatim-run-a-continuation-row-opens-stays-open-into-the-next-continuation-row.crv": "| a c` x | y` | b |\n+ | |\n+ | |\n",
     "784-the-rest-of-a-split-combined-token-is-read-again-as-inline-content-2.crv": "x a/*b~/{///}*\n",
     "785-a-comment-inside-a-split-combined-token-is-removed-before-pairing-5.crv": "/x /{*a %% b*}/ y\n",
     "785-a-comment-inside-a-split-combined-token-is-removed-before-pairing-8.crv": "> /x /{*a b %% c*}/ y\n",
@@ -5788,8 +5942,8 @@
     "794-the-equals-of-a-comparison-neither-opens-nor-closes-a-highlight.crv": "=a ≤ b= =a ≥ b=\n",
     "796-a-hyphen-run-at-the-start-of-a-span-is-a-flag-3.crv": "a *– x* b, a *x–y* b and 2*–x\n",
     "796-a-hyphen-run-at-the-start-of-a-span-is-a-flag.crv": "a *--x* b, a /--x/ b, a _---x_ b and a /*--x*/ b\n",
-    "797-an-indented-continuation-row-continues-the-table-above-2.crv": "| v t |\n\n- | a b |\n",
-    "797-an-indented-continuation-row-continues-the-table-above.crv": "| h |\n| v text |\n",
+    "797-an-indented-continuation-row-continues-the-table-above-2.crv": "| v t |\n+ |\n\n- | a b |\n  + |\n",
+    "797-an-indented-continuation-row-continues-the-table-above.crv": "| h |\n| v text |\n+ |\n",
     "798-the-equals-of-a-not-equal-sign-neither-opens-nor-closes-a-highlight-2.crv": "=a≠ b\n",
     "798-the-equals-of-a-not-equal-sign-neither-opens-nor-closes-a-highlight-3.crv": "=a ≠ b= and =c=\n",
     "798-the-equals-of-a-not-equal-sign-neither-opens-nor-closes-a-highlight-4.crv": "=a ≠= b=\n",
@@ -5886,12 +6040,12 @@
     "855-a-line-below-an-unclosed-fence-in-a-described-item-keeps-its-lazy-line.crv": ":: t\n: - ```\n    ```\n\n  x tail\n",
     "855-a-marker-past-a-term-ends-its-note-2.crv": "more - x\n\n[^n]\n\n[^n]: :: t\n",
     "855-a-refused-plus-after-an-attached-block-ends-nothing.crv": "- o\n  > q + r\n",
-    "855-invisible-lines-after-a-plus-are-skipped-and-the-first-visible-line-decides-3.crv": "- {empty}\n- b\n\n%% c\n",
-    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-2.crv": "| a b d | | c e |\n",
-    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-3.crv": "| a b |\n",
-    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-4.crv": "| a | x |\n| b c | \\^ |\n",
-    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-5.crv": "|= a b |= c |\n| d | e |\n",
-    "856-a-continuation-cell-past-the-last-column-is-a-new-cell.crv": "| a c | b d | e |\n",
+    "855-attribute-hardening-probes-the-value-as-emitted-5.crv": "[x]()\n",
+    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-2.crv": "| a b d | | c e |\n+ | | |\n+ | | |\n",
+    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-3.crv": "| a b |\n+ |\n",
+    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-4.crv": "| a | x |\n| b c | \\^ |\n+ | |\n",
+    "856-a-continuation-cell-past-the-last-column-is-a-new-cell-5.crv": "|= a b |= c |\n+ | |\n| d | e |\n",
+    "856-a-continuation-cell-past-the-last-column-is-a-new-cell.crv": "| a c | b d | e |\n+ | | |\n",
     "856-a-hard-break-is-whitespace-to-a-typography-flank-2.crv": "x –\\\ny\n",
     "856-a-hard-break-is-whitespace-to-a-typography-flank-3.crv": "x – y\n",
     "856-a-hard-break-is-whitespace-to-a-typography-flank-4.crv": "“a-” b\n",
@@ -5941,9 +6095,9 @@
     "869-a-comment-at-the-start-of-content-counts-as-nothing-for-quotes-3.crv": "{% c %}{% d %}‘word\n",
     "869-a-comment-at-the-start-of-content-counts-as-nothing-for-quotes-4.crv": "a {%  %}’word\n",
     "869-a-comment-at-the-start-of-content-counts-as-nothing-for-quotes.crv": "{%  %}‘word\n",
-    "870-a-caption-host-and-a-continuation-cell-read-what-the-block-holds-2.crv": "| < |= a | c |\n",
+    "870-a-caption-host-and-a-continuation-cell-read-what-the-block-holds-2.crv": "| < |= a | c |\n+ | | |\n",
     "870-a-caption-host-and-a-continuation-cell-read-what-the-block-holds-5.crv": "![a](/i) {% c %} ^ cap\n",
-    "870-a-caption-host-and-a-continuation-cell-read-what-the-block-holds.crv": "|= a | < |= c |\n",
+    "870-a-caption-host-and-a-continuation-cell-read-what-the-block-holds.crv": "|= a | < |= c |\n+ | | |\n",
     "870-an-abbreviation-does-not-match-in-a-mention-or-an-inline-literal-2.crv": "!`A`{.c} and A\n",
     "870-an-abbreviation-does-not-match-in-a-mention-or-an-inline-literal-3.crv": "# @AB and !`AB`\n",
     "870-an-abbreviation-does-not-match-in-a-mention-or-an-inline-literal-4.crv": "| @A | !`A B` | A |\n",
@@ -5953,7 +6107,7 @@
     "872-the-third-confirmation-round-s-model-findings-15.crv": "{~p~>xb~}\n",
     "872-the-third-confirmation-round-s-model-findings-5.crv": "{#t}\n| b |\n^ #y\n\n</#t>\n",
     "872-the-third-confirmation-round-s-model-findings-6.crv": "| b |\n^ *a*\n",
-    "873-a-delimited-body-s-overlapping-header-and-footer-make-no-header-cells-2.crv": "|= a |\n| ^ | c |\n",
+    "873-a-delimited-body-s-overlapping-header-and-footer-make-no-header-cells-2.crv": "|= a |\n| ^ | c |\n+ | |\n",
     "873-a-delimited-body-s-overlapping-header-and-footer-make-no-header-cells.crv": "{header-rows=2 footer-rows=1}\n| a |\n| b |\n",
     "873-an-item-on-a-note-marker-line-takes-its-plus-at-its-own-marker-column-2.crv": "r[^n]\n\n[^n]: - a + p\n",
     "874-a-lazy-line-in-a-note-does-not-keep-the-note-host-open-2.crv": "- :: t\n  : {empty}\n+\nm\n\n[^3]\n\n[^3]: a z\n\n  ```\n  c\n  ```\n",
@@ -6027,14 +6181,17 @@
     "938-a-braced-comment-before-a-flag-opener-counts-as-nothing-2.crv": "{% c %}(1–10) and {% c %}((–x))\n",
     "944-a-quoted-span-after-a-hosted-span-s-closer-leaves-the-follower-outside-6.crv": "> > - %%%\n> >   %%%\n> >\n> > %%%\n> > %%%\n> >\n> > x t\n",
     "945-a-column-0-comment-before-a-sibling-keeps-the-blank-that-loosens-the-list-2.crv": "- %%%\n  %%%\n- c\n\n%% z\n",
+    "945-a-column-0-comment-before-a-sibling-keeps-the-blank-that-loosens-the-list-4.crv": "> - a\n>\n>   %% y\n>\n> - c\n>\n> %% z\n",
     "945-a-column-0-comment-before-a-sibling-keeps-the-blank-that-loosens-the-list.crv": "- a\n\n  %% y\n\n- c\n\n%% z\n",
     "946-a-nested-quote-after-a-quoted-list-leaves-a-marker-line-lazy-2.crv": "> 1. a\n>\n> > c 1. tail\n",
     "946-a-nested-quote-after-a-quoted-list-leaves-a-marker-line-lazy-3.crv": "> - a\n>\n> > c - tail\n",
     "946-a-nested-quote-after-a-quoted-list-leaves-a-marker-line-lazy-4.crv": "> > - a\n> >\n> > > c - tail\n",
     "946-a-nested-quote-after-a-quoted-list-leaves-a-marker-line-lazy.crv": "> - a\n>\n> > c - tail\n",
     "95-abbreviation-definition-interrupts-a-paragraph.crv": "The HTML spec is long.\n",
+    "952-native-head-rows-with-span-placeholders-2.crv": "|={>} Price | < |={~} Stock |\n| 12.50 | EUR | 3 |\n",
     "952-native-head-rows-with-span-placeholders-5.crv": "| << |\n",
     "952-native-head-rows-with-span-placeholders-8.crv": "| =^ |\n",
+    "953-a-deprecated-cell-alignment-prefix-reads-as-its-braced-run-3.crv": "|= Name | < |= Qty |\n| pen | < | 3 |\n",
     "955-a-quote-plus-after-a-quote-attached-paragraph-is-a-letter-2.crv": "> q\n>\n> + r\n",
     "957-an-indented-quoted-item-keeps-a-lazy-line-at-its-base.crv": "- > a b\n",
     "959-a-braced-comment-that-starts-a-continuation-line-is-at-block-position-2.crv": "- pre \\{% a b %}\n",

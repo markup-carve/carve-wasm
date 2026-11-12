@@ -2569,7 +2569,7 @@ fn lint_include_request(
 
 /// The accessibility diagnostics, a second family beside `lintCarve`.
 ///
-/// Its own rule ids (`a11y/image-alt`, `a11y/heading-jump`) and its own
+/// Its own rule ids (`a11y/image-alt`, `heading-level-skip`) and its own
 /// severity, which `lintCarve` has no field for. Offsets are `null` when the
 /// node that triggered the rule carried no position.
 #[cfg(feature = "lint")]

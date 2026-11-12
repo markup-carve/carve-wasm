@@ -756,7 +756,7 @@ assert.deepEqual(lintAccessibility('# One\n\n![alt](x.png)\n'), [])
 
   const jump = lintAccessibility('# One\n\n### Three\n')
   assert.equal(jump.length, 1)
-  assert.equal(jump[0].rule, 'a11y/heading-jump')
+  assert.equal(jump[0].rule, 'heading-level-skip')
   assert.equal(jump[0].severity, 'warning')
 }
 
