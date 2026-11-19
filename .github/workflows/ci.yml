@@ -177,6 +177,7 @@ jobs:
           fi
 
   test:
+    if: github.head_ref != 'next2' && github.base_ref != 'next2' && github.ref_name != 'next2'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:

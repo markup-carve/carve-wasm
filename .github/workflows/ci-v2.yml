@@ -2,12 +2,13 @@ name: Carve 0.2 WASM
 
 on:
   pull_request:
-    branches: [next2]
+    branches: [main, next2]
   push:
     branches: [next2]
 
 jobs:
   test:
+    if: github.head_ref == 'next2' || github.base_ref == 'next2' || github.ref_name == 'next2'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
