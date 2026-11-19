@@ -76,41 +76,52 @@ test('source patches keep UTF-8 boundaries and stale-source refusal', () => {
 
 test('pending engine capabilities fail with clear availability errors', () => {
   const tree = wasm.parse('Hello')
-  assert.throws(() => wasm.write(tree, 'carve'), /carve writer not available yet/)
   assert.throws(() => wasm.toMarkdown('Hello'), /markdown writer not available yet/)
   assert.throws(() => wasm.toMarkdownWithOptions('Hello', {}), /markdown writer not available yet/)
   assert.throws(() => wasm.toPlainText('Hello'), /plain writer not available yet/)
   assert.throws(() => wasm.toPlainTextWithOptions('Hello', {}), /plain writer not available yet/)
   assert.throws(() => wasm.toAnsi('Hello'), /ansi writer not available yet/)
   assert.throws(() => wasm.toAnsiWithOptions('Hello', {}), /ansi writer not available yet/)
-  assert.throws(() => wasm.toCarveWithOptions('Hello', {}), /carve writer not available yet/)
-  assert.throws(() => wasm.toCarvePatch('Hello'), /carve writer not available yet/)
-  assert.throws(() => wasm.formatWithDiagnostics('Hello'), /carve writer not available yet/)
-  assert.throws(() => wasm.importDocument('<p>Hello</p>', 'html'), /importDocument not available yet/)
-  assert.throws(() => wasm.extensions(), /extensions not available yet/)
   assert.throws(() => wasm.parseWithLayout('Hello'), /parseWithLayout is not available/)
   assert.throws(() => wasm.migrateTree({ type: 'document', children: [] }), /migrateTree is not available/)
   assert.throws(() => wasm.write(tree, 'carve', { nope: true }), /unknown option/)
   assert.throws(() => wasm.format('Hello', { nope: true }), /unknown option/)
 })
 
-test('C2-W-001: source writer pending upstream issue 4327', { skip: 'carve writer not registered' }, () => {
-  wasm.toCarve('Hello')
+// C2-W-035: the canonical writer writes a heading with `=`.
+test('C2-W-001 source writer and format', () => {
+  assert.equal(wasm.toCarve('# Hi'), '= Hi\n')
+  assert.equal(wasm.toCarveWithOptions('# Hi', {}), '= Hi\n')
+  assert.equal(wasm.write(wasm.parse('# Hi'), 'carve'), '= Hi\n')
+  assert.equal(wasm.formatWithDiagnostics('# Hi').source, '= Hi\n')
+  assert.equal(wasm.toCarvePatch('# Hi').edits[0].replacement, '= Hi\n')
 })
-test('C2-W-001: Markdown writer pending upstream issue 4327', { skip: 'markdown writer not registered' }, () => {
+
+test('C2-T-005 importDocument imports HTML', () => {
+  const imported = wasm.importDocument('<p>Hello <strong>world</strong></p>', 'html')
+  assert.equal(imported.source, 'Hello *world*\n')
+  assert.equal(imported.tree.type, 'document')
+  assert.deepEqual(imported.diagnostics, [])
+})
+
+test('C2-X-039 standard extensions are selected by name', () => {
+  assert.ok(wasm.extensions().includes('carve.tabs'))
+  assert.equal(wasm.render(':wiki[Page]', { extensions: ['carve.wiki'] }), '<p>Page</p>')
+  const source = '::: tabs\n::: tab {title=A}\nx\n:::\n:::\n'
+  const html = wasm.render(source, { extensions: ['carve.tabs'], renderers: { 'carve.tabs': 'standard' } })
+  assert.ok(html.includes('class="tabs"'))
+  assert.throws(() => wasm.render('x', { extensions: ['math-block'] }), /extensions/)
+  assert.throws(() => wasm.render('x', { renderers: { 'carve.tabs': 'host' } }), /standard/)
+})
+
+test('C2-W-001: Markdown writer pending upstream issues 4327 and 4349', { skip: 'markdown writer not registered' }, () => {
   wasm.toMarkdown('Hello')
 })
-test('C2-W-001: plain writer pending upstream issue 4327', { skip: 'plain writer not registered' }, () => {
+test('C2-W-001: plain writer pending upstream issues 4327 and 4349', { skip: 'plain writer not registered' }, () => {
   wasm.toPlainText('Hello')
 })
-test('C2-W-001: ANSI writer pending upstream issue 4327', { skip: 'ansi writer not registered' }, () => {
+test('C2-W-001: ANSI writer pending upstream issues 4327 and 4349', { skip: 'ansi writer not registered' }, () => {
   wasm.toAnsi('Hello')
-})
-test('C2-M-080: HTML importer pending upstream issue 4328', { skip: 'importDocument unsupported' }, () => {
-  wasm.importDocument('<p>Hello</p>', 'html')
-})
-test('C2-X-052: extensions pending upstream issue 4329', { skip: 'extension host unsupported' }, () => {
-  wasm.extensions()
 })
 test('C2-A-003: parseWithLayout pending upstream issue 4334', { skip: 'layout sidecar unsupported' }, () => {
   wasm.parseWithLayout('Hello')

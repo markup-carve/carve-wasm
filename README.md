@@ -20,6 +20,6 @@ The render default is secure: `rawHtml` is false and the engine applies its URL 
 
 ## Pending engine capabilities
 
-The source, Markdown, plain text and ANSI writer entry points remain exposed. They use the 0.2 writer registry and report that the writer is unavailable until the Rust engine registers it. HTML is available. HTML import and extension registration are also pending upstream. The original 0.1 importer, editor, AST patch, merge, trace, stamp and ProseMirror contracts are not part of the 0.2 engine API. The local UTF-8 source patch utility remains available.
+`toCarve` and `format` run the canonical writer, and `importDocument(html, 'html')` imports HTML. The Markdown, plain text and ANSI writer entry points remain exposed; they use the 0.2 writer registry and report that the writer is unavailable until the Rust engine registers it. The `extensions` option selects the engine's standard extensions, which `extensions()` lists (`carve.tabs`, `carve.wiki`, `carve.cite`, `carve.imgFence.img`, `carve.imgFence.image`), and `renderers: { name: 'standard' }` turns on a standard renderer. Host extension code has no form on the JSON boundary (C2-T-010). The original 0.1 importer, editor, AST patch, merge, trace, stamp and ProseMirror contracts are not part of the 0.2 engine API. The local UTF-8 source patch utility remains available.
 
 See [building](docs/building.md), [compatibility](docs/compatibility.md), and [the exact engine pin](docs/engine-pin.md).
