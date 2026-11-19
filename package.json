@@ -5,7 +5,7 @@
   "engines": { "node": ">=22.12" },
   "scripts": {
     "build": "node scripts/build-package.mjs",
-    "test": "node tests/smoke.mjs",
+    "test": "node --test tests/v2.mjs && node tests/v2-browser.mjs",
     "test:consumers": "node tests/consumers.mjs",
     "test:deltas": "node tests/engine-deltas.mjs",
     "test:shapes": "node tests/report-shape.mjs && node tests/diagnostic-offsets.mjs && node tests/example-pair-census.mjs && node tests/corpus-population.mjs",

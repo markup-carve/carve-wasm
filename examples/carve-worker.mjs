@@ -1,32 +1,19 @@
-import init, { ParserSession, toHtmlWithOptions } from '@markup-carve/carve-wasm/web'
+import init, { parse, render } from '../pkg/web/carve_wasm.js'
 
 const ready = init()
-let session
-self.onmessage = async ({ data: { id, action, source, changes } }) => {
+self.onmessage = async ({ data: { id, action, source, options } }) => {
   try {
     await ready
     let value
     switch (action) {
-      case 'open': {
-        const next = new ParserSession(source)
-        session?.free()
-        session = next
-        value = JSON.parse(session.snapshot())
-        break
-      }
-      case 'edit':
-        if (!session) throw new Error('Open a document before editing')
-        value = JSON.parse(session.edit(JSON.stringify(changes)))
+      case 'parse':
+        value = parse(source, options)
         break
       case 'render':
-        value = toHtmlWithOptions(source, { rawHtml: false, profile: 'comment' })
+        value = render(source, options)
         break
-      case 'close':
-        session?.free()
-        session = undefined
-        value = null
-        break
-      default: throw new Error('Unknown worker action')
+      default:
+        throw new Error('Unknown worker action')
     }
     self.postMessage({ id, value })
   } catch (error) {
