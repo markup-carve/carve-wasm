@@ -9,6 +9,16 @@ their own.
 
 ## [Unreleased]
 
+### Breaking
+
+- Port the WASM binding to the unreleased Carve 0.2 Rust engine and its JSON call boundary. Parsing, rendering, lint and tree JSON now use the 0.2 option, diagnostic and AST contracts.
+- Keep source, Markdown, plain text and ANSI writer entry points, with a clear unavailable-writer error until their 0.2 writers are registered. HTML import and extension registration also report their pending engine support.
+
+### Improvements
+
+- Default to `rawHtml: false` and the 0.2 URL policy for safe rendering.
+- Pin the 0.2 engine to an exact Git commit and exercise the generated Node package.
+
 ## [0.1.12] - 2026-11-12
 
 Rendering, import and lint follow the published carve-rs 0.1.14 engine and the carve 0.1.14 spec.
