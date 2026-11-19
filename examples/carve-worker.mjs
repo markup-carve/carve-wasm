@@ -1,4 +1,4 @@
-import init, { parse, render } from '../pkg/web/carve_wasm.js'
+import init, { parse, render } from '../web/carve_wasm.js'
 
 const ready = init()
 self.onmessage = async ({ data: { id, action, source, options } }) => {

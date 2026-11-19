@@ -23,10 +23,19 @@ jobs:
         with:
           version: 'v0.15.0'
       - run: cargo fmt --check
-      - run: cargo test --locked
+      - run: cargo test --locked -- --test-threads=4
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo test --locked --no-default-features -- --test-threads=4
         env:
           CARGO_BUILD_JOBS: '4'
       - run: cargo check --locked --target wasm32-unknown-unknown
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo clippy --locked --target wasm32-unknown-unknown -- -D warnings
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo clippy --locked --target wasm32-unknown-unknown --no-default-features -- -D warnings
         env:
           CARGO_BUILD_JOBS: '4'
       - run: npm ci --ignore-scripts
@@ -35,3 +44,11 @@ jobs:
           CARGO_BUILD_JOBS: '4'
       - run: npx playwright install --with-deps chromium
       - run: npm test
+      - uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve-rs
+          ref: dd5f0e7ac90856c220c6a6afdc6b56dba8817844
+          path: engine
+      - run: npm run test:conformance
+        env:
+          CARVE_V2_EXAMPLES: engine/v2/spec-conformance/examples.json

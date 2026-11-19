@@ -10,12 +10,13 @@ try {
   const page = await browser.newPage()
   await page.goto(`http://127.0.0.1:${address.port}/tests/v2-browser.html`)
   const result = await page.evaluate(async () => {
+    const bundled = await import('/pkg/carve_wasm.js')
     const wasm = await import('/pkg/web/carve_wasm.js')
     await wasm.default()
     const renderOnly = await import('/pkg/render/carve_wasm.js')
     await renderOnly.default()
     const tree = wasm.parse('# Browser')
-    const worker = new Worker('/examples/carve-worker.mjs', { type: 'module' })
+    const worker = new Worker('/pkg/examples/carve-worker.mjs', { type: 'module' })
     const reply = await new Promise((resolve, reject) => {
       worker.onmessage = event => resolve(event.data)
       worker.onerror = reject
@@ -24,6 +25,7 @@ try {
     worker.terminate()
     return {
       html: wasm.render('# Browser'),
+      bundledHtml: bundled.render('# Browser'),
       treeType: tree.type,
       safe: wasm.render('```=html\n<script>alert(1)</script>\n```'),
       reply,
@@ -32,6 +34,7 @@ try {
     }
   })
   assert.match(result.html, /<h1>Browser<\/h1>/)
+  assert.equal(result.bundledHtml, result.html)
   assert.equal(result.treeType, 'document')
   assert.ok(!result.safe.includes('<script>'))
   assert.equal(result.reply.value, '<p>a <strong>b</strong></p>')

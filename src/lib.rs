@@ -37,7 +37,11 @@ fn error_from_response(error: &Value) -> JsValue {
     exception.into()
 }
 
-#[cfg(any(feature = "other-renderers", feature = "html-import"))]
+#[cfg(any(
+    feature = "other-renderers",
+    feature = "html-import",
+    feature = "reports"
+))]
 fn unavailable(error: &JsValue) -> bool {
     js_sys::Reflect::get(error, &JsValue::from_str("message"))
         .ok()
@@ -64,8 +68,18 @@ fn source_call(name: &str, source: &str, options: Option<JsValue>) -> Result<Val
 
 #[cfg(any(feature = "ast-json", feature = "includes", feature = "lint"))]
 fn field(value: Value, name: &str) -> Result<JsValue, JsValue> {
-    serde_wasm_bindgen::to_value(value.get(name).unwrap_or(&Value::Null))
-        .map_err(|e| js_sys::Error::new(&format!("cannot encode {name}: {e}")).into())
+    value_to_js(value.get(name).unwrap_or(&Value::Null))
+}
+
+#[cfg(any(
+    feature = "ast-json",
+    feature = "reports",
+    feature = "html-import",
+    feature = "includes",
+    feature = "lint"
+))]
+fn value_to_js(value: &Value) -> Result<JsValue, JsValue> {
+    js_sys::JSON::parse(&value.to_string())
 }
 
 fn text_field(value: Value, name: &str) -> Result<String, JsValue> {
@@ -94,8 +108,13 @@ pub fn parse(source: &str, options: Option<JsValue>) -> Result<JsValue, JsValue>
 #[cfg(feature = "ast-json")]
 #[wasm_bindgen(js_name = parseWithDiagnostics)]
 pub fn parse_with_diagnostics(source: &str, options: Option<JsValue>) -> Result<JsValue, JsValue> {
-    serde_wasm_bindgen::to_value(&source_call("parseWithDiagnostics", source, options)?)
-        .map_err(|e| js_sys::Error::new(&e.to_string()).into())
+    value_to_js(&source_call("parseWithDiagnostics", source, options)?)
+}
+
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(js_name = parseWithLayout)]
+pub fn parse_with_layout(source: &str, options: Option<JsValue>) -> Result<JsValue, JsValue> {
+    value_to_js(&source_call("parseWithLayout", source, options)?)
 }
 
 /// Render source to HTML. The engine's 0.2 default refuses raw HTML.
@@ -107,8 +126,7 @@ pub fn render(source: &str, options: Option<JsValue>) -> Result<String, JsValue>
 #[cfg(feature = "reports")]
 #[wasm_bindgen(js_name = renderWithDiagnostics)]
 pub fn render_with_diagnostics(source: &str, options: Option<JsValue>) -> Result<JsValue, JsValue> {
-    serde_wasm_bindgen::to_value(&source_call("renderWithDiagnostics", source, options)?)
-        .map_err(|e| js_sys::Error::new(&e.to_string()).into())
+    value_to_js(&source_call("renderWithDiagnostics", source, options)?)
 }
 
 #[cfg(feature = "lint")]
@@ -145,6 +163,14 @@ pub fn decode_tree(tree_json: &str) -> Result<JsValue, JsValue> {
     )
 }
 
+#[cfg(feature = "ast-json")]
+#[wasm_bindgen(js_name = migrateTree)]
+pub fn migrate_tree(tree: JsValue) -> Result<JsValue, JsValue> {
+    let tree: Value = serde_wasm_bindgen::from_value(tree)
+        .map_err(|e| js_sys::TypeError::new(&format!("invalid tree: {e}")))?;
+    value_to_js(&run(json!({"call": "migrateTree", "tree": tree}))?)
+}
+
 #[cfg(feature = "includes")]
 #[wasm_bindgen(js_name = includeDependencies)]
 pub fn include_dependencies(tree: JsValue, file: Option<String>) -> Result<JsValue, JsValue> {
@@ -176,11 +202,43 @@ pub fn write(tree: JsValue, target: &str, options: Option<JsValue>) -> Result<St
     }
 }
 
+#[cfg(feature = "reports")]
+#[wasm_bindgen(js_name = writeWithDiagnostics)]
+pub fn write_with_diagnostics(
+    tree: JsValue,
+    target: &str,
+    options: Option<JsValue>,
+) -> Result<JsValue, JsValue> {
+    let tree: Value = serde_wasm_bindgen::from_value(tree)
+        .map_err(|e| js_sys::TypeError::new(&format!("invalid tree: {e}")))?;
+    match run(
+        json!({"call": "writeWithDiagnostics", "tree": tree, "target": target, "options": input_options(options)?}),
+    ) {
+        Ok(value) => value_to_js(&value),
+        Err(error) if unavailable(&error) => {
+            Err(js_sys::Error::new(&format!("{target} writer not available yet")).into())
+        }
+        Err(error) => Err(error),
+    }
+}
+
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = format)]
 pub fn format(source: &str, options: Option<JsValue>) -> Result<String, JsValue> {
     match source_call("format", source, options) {
         Ok(value) => text_field(value, "source"),
+        Err(error) if unavailable(&error) => {
+            Err(js_sys::Error::new("carve writer not available yet").into())
+        }
+        Err(error) => Err(error),
+    }
+}
+
+#[cfg(feature = "reports")]
+#[wasm_bindgen(js_name = formatWithDiagnostics)]
+pub fn format_with_diagnostics(source: &str, options: Option<JsValue>) -> Result<JsValue, JsValue> {
+    match source_call("formatWithDiagnostics", source, options) {
+        Ok(value) => value_to_js(&value),
         Err(error) if unavailable(&error) => {
             Err(js_sys::Error::new("carve writer not available yet").into())
         }
@@ -199,9 +257,11 @@ pub fn to_html_with_options(source: &str, options: Option<JsValue>) -> Result<St
 }
 
 #[cfg(feature = "other-renderers")]
-fn target_source(source: &str, target: &str) -> Result<String, JsValue> {
+fn target_source(source: &str, target: &str, options: Option<JsValue>) -> Result<String, JsValue> {
     let tree = source_call("parse", source, None)?;
-    let response = run(json!({"call": "write", "tree": tree["tree"], "target": target}));
+    let response = run(
+        json!({"call": "write", "tree": tree["tree"], "target": target, "options": input_options(options)?}),
+    );
     match response {
         Ok(value) => text_field(value, "output"),
         Err(error) if unavailable(&error) => {
@@ -214,22 +274,58 @@ fn target_source(source: &str, target: &str) -> Result<String, JsValue> {
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toMarkdown)]
 pub fn to_markdown(source: &str) -> Result<String, JsValue> {
-    target_source(source, "markdown")
+    target_source(source, "markdown", None)
+}
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toMarkdownWithOptions)]
+pub fn to_markdown_with_options(source: &str, options: Option<JsValue>) -> Result<String, JsValue> {
+    target_source(source, "markdown", options)
 }
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toPlainText)]
 pub fn to_plain_text(source: &str) -> Result<String, JsValue> {
-    target_source(source, "plain")
+    target_source(source, "plain", None)
+}
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toPlainTextWithOptions)]
+pub fn to_plain_text_with_options(
+    source: &str,
+    options: Option<JsValue>,
+) -> Result<String, JsValue> {
+    target_source(source, "plain", options)
 }
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toAnsi)]
 pub fn to_ansi(source: &str) -> Result<String, JsValue> {
-    target_source(source, "ansi")
+    target_source(source, "ansi", None)
+}
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toAnsiWithOptions)]
+pub fn to_ansi_with_options(source: &str, options: Option<JsValue>) -> Result<String, JsValue> {
+    target_source(source, "ansi", options)
 }
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = toCarve)]
 pub fn to_carve(source: &str) -> Result<String, JsValue> {
     format(source, None)
+}
+#[cfg(feature = "other-renderers")]
+#[wasm_bindgen(js_name = toCarveWithOptions)]
+pub fn to_carve_with_options(source: &str, options: Option<JsValue>) -> Result<String, JsValue> {
+    format(source, options)
+}
+
+#[cfg(all(feature = "source-patches", feature = "other-renderers"))]
+#[wasm_bindgen(js_name = toCarvePatch)]
+pub fn to_carve_patch(source: &str) -> Result<JsValue, JsValue> {
+    let formatted = format(source, None)?;
+    serde_wasm_bindgen::to_value(&source_patch::create(
+        source,
+        &formatted,
+        source_patch::SourceEditKind::Formatting,
+        "canonical-format",
+    ))
+    .map_err(|e| js_sys::Error::new(&e.to_string()).into())
 }
 
 /// The 0.2 extension host currently rejects registrations.
@@ -244,8 +340,7 @@ pub fn extensions() -> Result<JsValue, JsValue> {
 pub fn import_document(source: &str, format: &str) -> Result<JsValue, JsValue> {
     let result = run(json!({"call": "importDocument", "source": source, "from": format}));
     match result {
-        Ok(value) => serde_wasm_bindgen::to_value(&value)
-            .map_err(|e| js_sys::Error::new(&e.to_string()).into()),
+        Ok(value) => value_to_js(&value),
         Err(error) if unavailable(&error) => {
             Err(js_sys::Error::new("importDocument not available yet: carve-rs issue 4328").into())
         }

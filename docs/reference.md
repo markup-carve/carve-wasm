@@ -7,18 +7,22 @@ The binding uses the Rust engine's JSON boundary. Calls use 0.2 names, options a
 | `call(requestJson)` | JSON response text, with `ok` or `error` |
 | `parse(source, options?)` | 0.2 tree |
 | `parseWithDiagnostics(source, options?)` | tree, diagnostics, suppressed count |
+| `parseWithLayout(source, options?)` | tree, layout sidecar and record when the engine supports it |
 | `render(source, options?)` | HTML string |
 | `renderWithDiagnostics(source, options?)` | HTML, diagnostics, suppressed count |
 | `lint(source, options?)` | diagnostic entries |
 | `renderTree(tree, options?)` | HTML string |
 | `encodeTree(tree)`, `decodeTree(json)` | JSON text or a 0.2 tree |
+| `migrateTree(oldTree)` | 2.0 tree and record when the engine supports it |
 | `includeDependencies(tree, file?)` | dependency entries |
 | `write(tree, target, options?)` | registered writer output |
+| `writeWithDiagnostics(tree, target, options?)` | writer output and diagnostic record |
 | `format(source, options?)` | canonical source, when its writer is registered |
+| `formatWithDiagnostics(source, options?)` | canonical source and diagnostic record |
 
-`toHtml` and `toHtmlWithOptions` are aliases for `render`. `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve` retain their entry points. Their writers are not registered yet and they throw a clear availability error. `importDocument` and `extensions` similarly report their pending Rust APIs.
+`toHtml` and `toHtmlWithOptions` are aliases for `render`. `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve` retain their entry points, including their `WithOptions` forms. Their writers are not registered yet and they throw a clear availability error. `toCarvePatch` likewise waits on the source writer. `importDocument` and `extensions` report their pending Rust APIs.
 
-`write` accepts `html`, `carve`, `markdown`, `plain`, or `ansi` as a target. HTML is currently registered. A target's output can depend on options such as `roundtrip`, `profile`, and `strictLosses`; the Rust engine validates which options each call reads.
+`write` accepts `html`, `carve`, `markdown`, `plain`, or `ansi` as a target. HTML is currently registered. The writer calls read format options such as `alignTables` and `normalize`; render policy options such as `rawHtml` belong to `render` and `renderWithDiagnostics`. The Rust engine refuses options that a call does not read.
 
 ## Rendering policy
 
@@ -34,4 +38,4 @@ The JSON `includes` option takes a file-system root in the Rust engine. That res
 
 ## Tree and patch data
 
-Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must be migrated before `decodeTree`. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no incremental session, AST patch, AST merge, ProseMirror, trace, or stamp calls.
+Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must be migrated before `decodeTree`; the Rust `migrateTree` call is pending in issue 4335. `parseWithLayout`, needed for source-preserving editor work, is pending in issue 4334. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no incremental session, AST patch, AST merge, ProseMirror, trace, or stamp calls.
