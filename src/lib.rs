@@ -50,7 +50,7 @@ fn unavailable(error: &JsValue) -> bool {
 }
 
 fn run(request: Value) -> Result<Value, JsValue> {
-    let response = carve2::api::json::call(&request.to_string());
+    let response = carve::api::json::call(&request.to_string());
     let result: Value = serde_json::from_str(&response)
         .map_err(|e| js_sys::Error::new(&format!("invalid engine response: {e}")))?;
     if let Some(error) = result.get("error") {
@@ -95,7 +95,7 @@ fn text_field(value: Value, name: &str) -> Result<String, JsValue> {
 #[cfg(feature = "ast-json")]
 #[wasm_bindgen(js_name = call)]
 pub fn call(request: &str) -> String {
-    carve2::api::json::call(request)
+    carve::api::json::call(request)
 }
 
 /// Parse source to a 0.2 tree.
@@ -328,11 +328,18 @@ pub fn to_carve_patch(source: &str) -> Result<JsValue, JsValue> {
     .map_err(|e| js_sys::Error::new(&e.to_string()).into())
 }
 
-/// The 0.2 extension host currently rejects registrations.
+/// The standard extensions the `extensions` option enables by name (C2-X-039).
+/// Host extensions take host code, which the JSON boundary has no form for.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = extensions)]
 pub fn extensions() -> Result<JsValue, JsValue> {
-    Err(js_sys::Error::new("extensions not available yet: carve-rs issue 4329").into())
+    value_to_js(&json!([
+        "carve.cite",
+        "carve.imgFence.image",
+        "carve.imgFence.img",
+        "carve.tabs",
+        "carve.wiki"
+    ]))
 }
 
 #[cfg(feature = "html-import")]
@@ -341,9 +348,10 @@ pub fn import_document(source: &str, format: &str) -> Result<JsValue, JsValue> {
     let result = run(json!({"call": "importDocument", "source": source, "from": format}));
     match result {
         Ok(value) => value_to_js(&value),
-        Err(error) if unavailable(&error) => {
-            Err(js_sys::Error::new("importDocument not available yet: carve-rs issue 4328").into())
-        }
+        Err(error) if unavailable(&error) => Err(js_sys::Error::new(&format!(
+            "importDocument not available yet for {format}"
+        ))
+        .into()),
         Err(error) => Err(error),
     }
 }

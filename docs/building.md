@@ -12,4 +12,4 @@ npm test
 
 The build emits bundler, Node and browser packages under `pkg/`. `npm test` exercises the built Node artifact. The 0.2 CI workflow checks Rust formatting, native tests, the WASM target and that artifact. The previous 0.1 corpus, editor and importer tests stay in the branch history; their APIs are not part of this 0.2 package.
 
-For the pinned 0.2 render examples, set `CARVE_V2_EXAMPLES` to `v2/spec-conformance/examples.json` from the exact engine commit, then run `npm run test:conformance`. The binding currently passes 504 of 505 render examples. `html-69` is a named skip for the Rust engine's static math bug, issue 4333.
+For the pinned 0.2 render examples, set `CARVE_V2_EXAMPLES` to `spec-conformance/examples.json` from the exact engine commit, then run `npm run test:conformance`. The binding passes all 505 render examples.

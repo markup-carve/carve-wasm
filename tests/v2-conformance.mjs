@@ -11,11 +11,8 @@ const rows = JSON.parse(readFileSync(file, 'utf8')).examples.filter(row =>
   row.kind === 'render' && typeof row.expected?.html === 'string'
 )
 
-// The pinned Rust engine has one open render bug. The skipped row is never an
-// expected output for the binding and becomes active when the engine pin moves.
-const behind = new Set(['html-69']) // carve-rs issue 4333, C2-H-168
 for (const row of rows) {
-  test(`0.2 ${row.id}`, { skip: behind.has(row.id) ? 'carve-rs issue 4333' : false }, () => {
+  test(`0.2 ${row.id}`, () => {
     assert.equal(wasm.render(row.input, row.options), row.expected.html)
   })
 }
