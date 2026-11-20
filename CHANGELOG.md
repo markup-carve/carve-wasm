@@ -13,7 +13,7 @@ their own.
 
 - Building the 0.2 binding now requires Rust 1.88 or newer, matching its pinned engine (markup-carve/carve-rs#4444).
 - Port the WASM binding to the unreleased Carve 0.2 Rust engine and its JSON call boundary. Parsing, rendering, lint and tree JSON now use the 0.2 option, diagnostic and AST contracts.
-- Keep the Markdown, plain text and ANSI writer entry points, with a clear unavailable-writer error until their 0.2 writers are registered.
+- Keep the Markdown, plain text and ANSI writer entry points, now backed by the registered 0.2 writers.
 
 ### Improvements
 
@@ -22,6 +22,7 @@ their own.
 - Pin the renamed engine: the `carve-lang` crate on carve-rs `next2` at `7fb7c249`, where `carve2` used to be, built without its file-system feature.
 - `toCarve`, `format`, `write(tree, 'carve')` and `importDocument(html, 'html')` work against the engine's canonical writer and HTML importer.
 - `extensions()` lists the standard extensions that the `extensions` and `renderers` options select.
+- The new engine pin makes `parseWithLayout` and `migrateTree` available.
 
 ## [0.1.12] - 2026-11-12
 
