@@ -29,7 +29,7 @@ source-patches = []
 # scripts/pinned-spec-commit.py resolves the revision, or the registry release
 # tag, to the spec the corpus gate runs against. See
 # docs/engine-pin.md.
-carve = { git = "https://github.com/markup-carve/carve-rs", rev = "e2aaf1d212efecb2940703a59055a54c2e28f591", package = "carve-lang", default-features = false }
+carve = { git = "https://github.com/markup-carve/carve-rs", rev = "388348a0ffcc54e508a37af1a6952c01cb16e137", package = "carve-lang", default-features = false }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }
