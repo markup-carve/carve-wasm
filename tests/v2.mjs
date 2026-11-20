@@ -74,16 +74,15 @@ test('source patches keep UTF-8 boundaries and stale-source refusal', () => {
   assert.throws(() => wasm.applySourcePatch('stale', patch))
 })
 
-test('pending engine capabilities fail with clear availability errors', () => {
+test('engine capabilities return output and reject invalid options', () => {
   const tree = wasm.parse('Hello')
-  assert.throws(() => wasm.toMarkdown('Hello'), /markdown writer not available yet/)
-  assert.throws(() => wasm.toMarkdownWithOptions('Hello', {}), /markdown writer not available yet/)
-  assert.throws(() => wasm.toPlainText('Hello'), /plain writer not available yet/)
-  assert.throws(() => wasm.toPlainTextWithOptions('Hello', {}), /plain writer not available yet/)
-  assert.throws(() => wasm.toAnsi('Hello'), /ansi writer not available yet/)
-  assert.throws(() => wasm.toAnsiWithOptions('Hello', {}), /ansi writer not available yet/)
-  assert.throws(() => wasm.parseWithLayout('Hello'), /parseWithLayout is not available/)
-  assert.throws(() => wasm.migrateTree({ type: 'document', children: [] }), /migrateTree is not available/)
+  assert.equal(wasm.toMarkdown('Hello'), 'Hello\n')
+  assert.equal(wasm.toMarkdownWithOptions('Hello', {}), 'Hello\n')
+  assert.equal(wasm.toPlainText('Hello'), 'Hello\n')
+  assert.equal(wasm.toPlainTextWithOptions('Hello', {}), 'Hello\n')
+  assert.equal(typeof wasm.toAnsi('Hello'), 'string')
+  assert.equal(typeof wasm.toAnsiWithOptions('Hello', {}), 'string')
+  assert.ok(wasm.parseWithLayout('Hello').tree)
   assert.throws(() => wasm.write(tree, 'carve', { nope: true }), /unknown option/)
   assert.throws(() => wasm.format('Hello', { nope: true }), /unknown option/)
 })
@@ -114,18 +113,21 @@ test('C2-X-039 standard extensions are selected by name', () => {
   assert.throws(() => wasm.render('x', { renderers: { 'carve.tabs': 'host' } }), /standard/)
 })
 
-test('C2-W-001: Markdown writer pending upstream issues 4327 and 4349', { skip: 'markdown writer not registered' }, () => {
-  wasm.toMarkdown('Hello')
+test('C2-W-001: Markdown writer returns Markdown', () => {
+  assert.equal(wasm.toMarkdown('Hello'), 'Hello\n')
 })
-test('C2-W-001: plain writer pending upstream issues 4327 and 4349', { skip: 'plain writer not registered' }, () => {
-  wasm.toPlainText('Hello')
+test('C2-W-001: plain writer returns text', () => {
+  assert.equal(wasm.toPlainText('Hello'), 'Hello\n')
 })
-test('C2-W-001: ANSI writer pending upstream issues 4327 and 4349', { skip: 'ansi writer not registered' }, () => {
-  wasm.toAnsi('Hello')
+test('C2-W-001: ANSI writer returns text', () => {
+  assert.match(wasm.toAnsi('Hello'), /Hello/)
 })
-test('C2-A-003: parseWithLayout pending upstream issue 4334', { skip: 'layout sidecar unsupported' }, () => {
-  wasm.parseWithLayout('Hello')
+test('C2-A-003: parseWithLayout returns a sidecar', () => {
+  const result = wasm.parseWithLayout('Hello')
+  assert.equal(result.tree.type, 'document')
+  assert.equal(result.layout.version, 2)
 })
-test('C2-A-178: migrateTree pending upstream issue 4335', { skip: 'tree migration unsupported' }, () => {
-  wasm.migrateTree({ type: 'document', children: [] })
+test('C2-A-178: migrateTree upgrades a 1.2 document', () => {
+  const result = wasm.migrateTree({ type: 'document', astVersion: '1.2', children: [] })
+  assert.equal(result.tree.astVersion, '2.0')
 })
