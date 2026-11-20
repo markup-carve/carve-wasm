@@ -108,6 +108,13 @@ test('C2-X-039 standard extensions are selected by name', () => {
   assert.throws(() => wasm.render('x', { renderers: { 'carve.tabs': 'host' } }), /standard/)
 })
 
+test('navigation extensions are listed and selectable', () => {
+  for (const name of ["carve.autolink", "carve.externalLinks", "carve.headingLevelShift", "carve.headingNumbers", "carve.headingPermalinks", "carve.headingReference", "carve.linkPolicy", "carve.toc", "carve.tocPlacement"]) {
+    assert.ok(wasm.extensions().includes(name), name)
+    assert.equal(wasm.render('Hi', { extensions: [name] }), '<p>Hi</p>')
+  }
+})
+
 test('C2-W-001: Markdown writer is registered', () => {
   assert.equal(wasm.toMarkdown('Hello'), 'Hello\n')
   assert.equal(wasm.toMarkdownWithOptions('Hello', {}), 'Hello\n')
