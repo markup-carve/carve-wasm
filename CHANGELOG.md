@@ -11,6 +11,7 @@ their own.
 
 ### Breaking
 
+- Building the 0.2 binding now requires Rust 1.88 or newer, matching its pinned engine (markup-carve/carve-rs#4444).
 - Port the WASM binding to the unreleased Carve 0.2 Rust engine and its JSON call boundary. Parsing, rendering, lint and tree JSON now use the 0.2 option, diagnostic and AST contracts.
 - Keep the Markdown, plain text and ANSI writer entry points, with a clear unavailable-writer error until their 0.2 writers are registered.
 

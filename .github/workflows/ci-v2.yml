@@ -48,7 +48,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: markup-carve/carve-rs
-          ref: 7fb7c24956298e78bc4716ff7e0e1fb96e60ecdf
+          ref: e2aaf1d212efecb2940703a59055a54c2e28f591
           path: engine
       - run: npm run test:conformance
         env:

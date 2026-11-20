@@ -2,6 +2,8 @@
 
 This branch binds the unreleased Carve 0.2 Rust engine to WebAssembly for Node and browsers. The Rust engine is pinned to an exact commit on its `next2` branch. There is no 0.2 registry release yet.
 
+Building this branch requires Rust 1.88 or newer.
+
 ## Use
 
 Build the package locally with `npm run build`. Node can load the generated package synchronously. Browser modules initialize the web entry first.

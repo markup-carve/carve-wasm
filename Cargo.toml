@@ -2,7 +2,7 @@
 name = "carve-wasm"
 version = "0.1.12"
 edition = "2021"
-rust-version = "1.85"
+rust-version = "1.88"
 description = "WASM bindings for the Carve parser and HTML renderer."
 license = "MIT"
 repository = "https://github.com/markup-carve/carve-wasm"
@@ -29,7 +29,7 @@ source-patches = []
 # scripts/pinned-spec-commit.py resolves the revision, or the registry release
 # tag, to the spec the corpus gate runs against. See
 # docs/engine-pin.md.
-carve = { git = "https://github.com/markup-carve/carve-rs", rev = "7fb7c24956298e78bc4716ff7e0e1fb96e60ecdf", package = "carve-lang", default-features = false }
+carve = { git = "https://github.com/markup-carve/carve-rs", rev = "e2aaf1d212efecb2940703a59055a54c2e28f591", package = "carve-lang", default-features = false }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }
