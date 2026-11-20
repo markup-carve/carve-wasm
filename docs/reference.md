@@ -32,7 +32,7 @@ The binding uses the Rust engine's JSON boundary. Calls use 0.2 names, options a
 render(source, { rawHtml: true })
 ```
 
-The 0.2 options are `headingIds`, `mode`, `profile`, `rawHtml`, `urlPolicy`, `sections`, `smartTypography`, `sourceLines`, `strictLosses`, `roundtrip`, `symbols`, `labels`, `social`, `includes`, `extensions`, and `renderers`, when the operation reads them. `alignTables` and `normalize` belong to formatting and writing. Unknown, invalid, and unused options are refused. The JSON boundary currently accepts only empty `extensions` and `renderers` values because it cannot carry host code.
+The 0.2 options are `headingIds`, `mode`, `profile`, `rawHtml`, `urlPolicy`, `sections`, `smartTypography`, `sourceLines`, `strictLosses`, `roundtrip`, `symbols`, `labels`, `social`, `includes`, `extensions`, and `renderers`, when the operation reads them. `alignTables` and `normalize` belong to formatting and writing. Unknown, invalid, and unused options are refused. `extensions` takes the standard extension names that `extensions()` lists, and `renderers` maps one of them to `"standard"`; host extension code has no form on the JSON boundary (C2-T-010).
 
 The JSON `includes` option takes a file-system root in the Rust engine. That resolver is unavailable in a browser. For browser includes, pass a resolved tree once the extension host supports a resolver callback. The raw JSON boundary remains useful for `includeDependencies` on a tree.
 
