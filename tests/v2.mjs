@@ -98,6 +98,8 @@ test('C2-T-005 importDocument imports HTML', () => {
 
 test('C2-X-039 standard extensions are selected by name', () => {
   assert.ok(wasm.extensions().includes('carve.tabs'))
+  for (const name of wasm.extensions()) wasm.render('Hi', { extensions: [name] })
+  assert.ok(wasm.render('::: details\nBody\n:::\n', { extensions: ['carve.details'], renderers: { 'carve.details': 'standard' } }).includes('<details>'))
   assert.equal(wasm.render(':wiki[Page]', { extensions: ['carve.wiki'] }), '<p>Page</p>')
   const source = '::: tabs\n::: tab {title=A}\nx\n:::\n:::\n'
   const html = wasm.render(source, { extensions: ['carve.tabs'], renderers: { 'carve.tabs': 'standard' } })
