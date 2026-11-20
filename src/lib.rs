@@ -334,6 +334,15 @@ pub fn to_carve_patch(source: &str) -> Result<JsValue, JsValue> {
 #[wasm_bindgen(js_name = extensions)]
 pub fn extensions() -> Result<JsValue, JsValue> {
     value_to_js(&json!([
+        "carve.autolink",
+        "carve.externalLinks",
+        "carve.headingLevelShift",
+        "carve.headingNumbers",
+        "carve.headingPermalinks",
+        "carve.headingReference",
+        "carve.linkPolicy",
+        "carve.toc",
+        "carve.tocPlacement",
         "carve.cite",
         "carve.codeCallouts",
         "carve.codeGroup",
