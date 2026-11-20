@@ -1,0 +1,71 @@
+name: Carve 0.2 WASM
+
+on:
+  pull_request:
+    branches: [main, next2]
+  push:
+    branches: [next2]
+
+jobs:
+  msrv:
+    name: Build on the declared MSRV
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.88.0
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - name: Check on Rust 1.88
+        run: |
+          cargo +1.88.0 check --locked
+          cargo +1.88.0 check --locked --target wasm32-unknown-unknown
+
+  test:
+    if: github.head_ref == 'next2' || github.base_ref == 'next2' || github.ref_name == 'next2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          version: 'v0.15.0'
+      - run: cargo fmt --check
+      - run: cargo test --locked -- --test-threads=4
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo test --locked --no-default-features -- --test-threads=4
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo check --locked --target wasm32-unknown-unknown
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo clippy --locked --target wasm32-unknown-unknown -- -D warnings
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: cargo clippy --locked --target wasm32-unknown-unknown --no-default-features -- -D warnings
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: npm ci --ignore-scripts
+      - run: npm run build -- --no-opt
+        env:
+          CARGO_BUILD_JOBS: '4'
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - uses: actions/checkout@v4
+        with:
+          repository: markup-carve/carve-rs
+          ref: 284c05f30da3a00a0e7a1fd42fea9f5ce430d6dd
+          path: engine
+      - run: npm run test:conformance
+        env:
+          CARVE_V2_EXAMPLES: engine/spec-conformance/examples.json

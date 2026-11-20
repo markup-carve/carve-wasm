@@ -2,7 +2,7 @@
 name = "carve-wasm"
 version = "0.1.12"
 edition = "2021"
-rust-version = "1.75"
+rust-version = "1.88"
 description = "WASM bindings for the Carve parser and HTML renderer."
 license = "MIT"
 repository = "https://github.com/markup-carve/carve-wasm"
@@ -13,56 +13,23 @@ include = ["/src/**/*", "/Cargo.toml", "/README.md", "/LICENSE"]
 crate-type = ["cdylib", "rlib"]
 
 [features]
-# Keep the published package's API backward-compatible. Browser hosts that only
-# render Carve to HTML can omit every other capability with
-# `--no-default-features`.
-default = [
-    "ast-json",
-    "ast-merge",
-    "ast-patches",
-    "html-import",
-    "includes",
-    "incremental",
-    "lint",
-    "markdown-import",
-    "other-imports",
-    "other-renderers",
-    "prosemirror",
-    "reports",
-    "source-patches",
-    "stamp",
-    "trace",
-]
+# The full development package includes the 0.2 operations currently exposed by
+# the engine. The render-only entry uses --no-default-features.
+default = ["ast-json", "html-import", "includes", "lint", "other-renderers", "reports", "source-patches"]
 ast-json = []
-# Three-way merge of PART 12 trees.
-ast-merge = []
-# Tree-level patch creation and replay, including the reversible pair.
-ast-patches = []
 html-import = []
-# `{{ path }}` expansion. Needs a host that can resolve a path synchronously,
-# which a browser fetching over the network cannot.
 includes = []
-# Snapshot parsing and edit-validated re-parse, for an editor host.
-incremental = []
 lint = []
-markdown-import = []
-# The importers a Markdown-shaped host does not need: Djot and BBCode.
-other-imports = []
 other-renderers = []
-# The ProseMirror/CarveKit bridge. A rendering-only host does not edit.
-prosemirror = []
 reports = []
 source-patches = []
-stamp = []
-# The block decision trace a host prints to debug block ownership.
-trace = []
 
 [dependencies]
 # Pin an exact Git revision or registry version.
 # scripts/pinned-spec-commit.py resolves the revision, or the registry release
 # tag, to the spec the corpus gate runs against. See
 # docs/engine-pin.md.
-carve = { package = "carve-lang", version = "=0.1.14" }
+carve = { git = "https://github.com/markup-carve/carve-rs", rev = "284c05f30da3a00a0e7a1fd42fea9f5ce430d6dd", package = "carve-lang", default-features = false }
 wasm-bindgen = "0.2"
 js-sys = "0.3"
 serde = { version = "1", features = ["derive"] }
