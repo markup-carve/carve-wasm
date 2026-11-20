@@ -1,6 +1,6 @@
 # Building the Carve 0.2 WASM package
 
-Use Rust 1.85 or later with the `wasm32-unknown-unknown` target, Node 22 or later, and wasm-pack 0.15.0. The engine is fetched from its pinned Git commit. No registry release is needed.
+Use Rust 1.88 or later with the `wasm32-unknown-unknown` target, Node 22 or later, and wasm-pack 0.15.0. The engine is fetched from its pinned Git commit. No registry release is needed.
 
 ```sh
 export CARGO_BUILD_JOBS=4
