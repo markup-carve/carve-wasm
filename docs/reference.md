@@ -32,9 +32,22 @@ The binding uses the Rust engine's JSON boundary. Calls use 0.2 names, options a
 render(source, { rawHtml: true })
 ```
 
-The 0.2 options are `headingIds`, `mode`, `profile`, `rawHtml`, `urlPolicy`, `sections`, `smartTypography`, `sourceLines`, `strictLosses`, `roundtrip`, `symbols`, `labels`, `social`, `includes`, `extensions`, and `renderers`, when the operation reads them. `alignTables` and `normalize` belong to formatting and writing. Unknown, invalid, and unused options are refused. `extensions` takes the standard extension names that `extensions()` lists, and `renderers` maps one of them to `"standard"`; host extension code has no form on the JSON boundary (C2-T-010).
+The 0.2 options are `headingIds`, `mode`, `profile`, `rawHtml`, `urlPolicy`, `sections`, `smartTypography`, `sourceLines`, `strictLosses`, `roundtrip`, `symbols`, `labels`, `social`, `headingShift`, `includes`, `extensions`, and `renderers`, when the operation reads them. `alignTables` and `normalize` belong to formatting and writing. Unknown, invalid, and unused options are refused. `extensions` takes the standard extension names that `extensions()` lists, and `renderers` maps one of them to `"standard"`; host extension code has no form on the JSON boundary (C2-T-010).
 
-The JSON `includes` option takes a file-system root in the Rust engine. That resolver is unavailable in a browser. For browser includes, pass a resolved tree once the extension host supports a resolver callback. The raw JSON boundary remains useful for `includeDependencies` on a tree.
+## Includes
+
+The package is built without file-system access, so the host supplies included files. `includes` on `parse`, `parseWithDiagnostics`, `parseWithLayout`, `render`, `renderWithDiagnostics`, `lint`, `format` and `formatWithDiagnostics` takes a synchronous resolver, alone or as `{ resolver, file?, depth?, bytes? }`, the same shape as carve-js's `IncludeConfig`:
+
+```js
+const files = { 'part.crv': 'Included *text*.' }
+const resolver = ({ path }) =>
+  path in files ? { text: files[path], id: path } : { error: 'not_found' }
+
+render('{{ part.crv }}', { includes: { resolver, file: 'main.crv' } })
+// <p>Included <strong>text</strong>.</p>
+```
+
+The resolver receives `{ path, section?, options, from? }` for each directive and returns `{ text, id }`, where `text` is a string or a `Uint8Array` of UTF-8, or `{ error }` with `not_found`, `outside_root`, `unreadable` or `non_text`. A resolver that throws or returns another shape counts as `unreadable`. The engine applies its own include rules: the cycle check, the depth and byte limits (`depth` and `bytes` only lower them), region and section selection, and include diagnostics with the included file. `file` is the id of the top-level document, which a cycle can return to. `call(requestJson)` takes no resolver, since JSON text has none; there `includes` is `{"root": DIR}`, which this build refuses. `includeDependencies(tree)` lists the include directives of a tree, so a host can fetch the files before it parses.
 
 ## Tree and patch data
 

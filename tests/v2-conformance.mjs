@@ -16,5 +16,5 @@ for (const row of rows) {
     assert.equal(wasm.render(row.input, row.options), row.expected.html)
   })
 }
-assert.equal(rows.length, 505, 'conformance population changed; review the engine pin')
+assert.equal(rows.length, 512, 'conformance population changed; review the engine pin')
 assert.ok(rows.some(row => row.id === 'html-69'))

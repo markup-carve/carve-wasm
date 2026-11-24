@@ -3,6 +3,8 @@
 use serde_json::{json, Value};
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "includes")]
+mod host_includes;
 #[cfg(feature = "source-patches")]
 mod source_patch;
 
@@ -50,8 +52,11 @@ fn unavailable(error: &JsValue) -> bool {
 }
 
 fn run(request: Value) -> Result<Value, JsValue> {
-    let response = carve::api::json::call(&request.to_string());
-    let result: Value = serde_json::from_str(&response)
+    respond(&carve::api::json::call(&request.to_string()))
+}
+
+fn respond(response: &str) -> Result<Value, JsValue> {
+    let result: Value = serde_json::from_str(response)
         .map_err(|e| js_sys::Error::new(&format!("invalid engine response: {e}")))?;
     if let Some(error) = result.get("error") {
         return Err(error_from_response(error));
@@ -62,8 +67,29 @@ fn run(request: Value) -> Result<Value, JsValue> {
         .ok_or_else(|| js_sys::Error::new("engine response has no result").into())
 }
 
+#[cfg(not(feature = "includes"))]
 fn source_call(name: &str, source: &str, options: Option<JsValue>) -> Result<Value, JsValue> {
     run(json!({"call": name, "source": source, "options": input_options(options)?}))
+}
+
+/// A host resolver in `includes` goes to the engine beside the JSON request.
+#[cfg(feature = "includes")]
+fn source_call(name: &str, source: &str, options: Option<JsValue>) -> Result<Value, JsValue> {
+    let (options, includes) = match options {
+        Some(options) => {
+            let (options, includes) = host_includes::split(options)?;
+            (Some(options), includes)
+        }
+        None => (None, None),
+    };
+    let request = json!({"call": name, "source": source, "options": input_options(options)?});
+    match includes {
+        Some(includes) => respond(&carve::api::json::call_with_includes(
+            &request.to_string(),
+            includes,
+        )),
+        None => run(request),
+    }
 }
 
 #[cfg(any(feature = "ast-json", feature = "includes", feature = "lint"))]
@@ -336,7 +362,6 @@ pub fn extensions() -> Result<JsValue, JsValue> {
     value_to_js(&json!([
         "carve.autolink",
         "carve.externalLinks",
-        "carve.headingLevelShift",
         "carve.headingNumbers",
         "carve.headingPermalinks",
         "carve.headingReference",
