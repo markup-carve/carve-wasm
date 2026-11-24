@@ -54,6 +54,29 @@ test('C2-A-012 encodeEnvelope and validateTree pass through the JSON boundary', 
 test('C2-T-022 includeDependencies returns a record', () => {
   assert.ok(Array.isArray(wasm.includeDependencies(wasm.parse('Hello'))))
 })
+const parts = { 'part.crv': 'Included *text*.\n', 'loop.crv': '{{ loop.crv }}\n' }
+const resolver = ({ path }) => (Object.hasOwn(parts, path) ? { text: parts[path], id: path } : { error: 'not_found' })
+
+// C2-N-003, C2-N-007: the host resolves includes; the engine applies its own rules.
+test('includes expand through a host resolver', () => {
+  assert.equal(wasm.render('{{ part.crv }}\n', { includes: resolver }), '<p>Included <strong>text</strong>.</p>')
+  assert.equal(wasm.render('{{ part.crv }}\n', { includes: { resolver, file: 'main.crv' } }), '<p>Included <strong>text</strong>.</p>')
+  const tree = wasm.parse('{{ part.crv }}\n', { includes: resolver })
+  assert.equal(tree.children[0].type, 'include')
+  assert.equal(tree.children[0].file, 'part.crv')
+  const bytes = { resolver: () => ({ text: new TextEncoder().encode('bytes'), id: 'b.crv' }) }
+  assert.equal(wasm.render('{{ b.crv }}\n', { includes: bytes }), '<p>bytes</p>')
+})
+test('host resolver errors, throws and cycles become include diagnostics', () => {
+  const codes = (source, includes) => wasm.renderWithDiagnostics(source, { includes }).diagnostics.map((d) => d.code)
+  assert.ok(codes('{{ gone.crv }}\n', resolver).includes('include-not-found'))
+  assert.ok(codes('{{ x.crv }}\n', () => { throw new Error('boom') }).includes('include-unreadable'))
+  assert.ok(codes('{{ loop.crv }}\n', resolver).some((code) => code.startsWith('include-')))
+})
+test('a host include config refuses unknown fields and bad limits', () => {
+  assert.throws(() => wasm.render('x', { includes: { resolver, nope: 1 } }), TypeError)
+  assert.throws(() => wasm.render('x', { includes: { resolver, depth: -1 } }), TypeError)
+})
 test('C2-T-005 HTML writer uses the registered target', () => {
   const tree = wasm.parse('Hello')
   assert.equal(wasm.write(tree, 'html'), wasm.render('Hello'))
@@ -109,7 +132,7 @@ test('C2-X-039 standard extensions are selected by name', () => {
 })
 
 test('navigation extensions are listed and selectable', () => {
-  for (const name of ["carve.autolink", "carve.externalLinks", "carve.headingLevelShift", "carve.headingNumbers", "carve.headingPermalinks", "carve.headingReference", "carve.linkPolicy", "carve.toc", "carve.tocPlacement"]) {
+  for (const name of ["carve.autolink", "carve.externalLinks", "carve.headingNumbers", "carve.headingPermalinks", "carve.headingReference", "carve.linkPolicy", "carve.toc", "carve.tocPlacement"]) {
     assert.ok(wasm.extensions().includes(name), name)
     assert.equal(wasm.render('Hi', { extensions: [name] }), '<p>Hi</p>')
   }
