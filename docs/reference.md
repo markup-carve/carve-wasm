@@ -73,6 +73,21 @@ render('{{ part.crv }}', { includes: { resolver, file: 'main.crv' } })
 
 The resolver receives `{ path, section?, options, from? }` for each directive and returns `{ text, id }`, where `text` is a string or a `Uint8Array` of UTF-8, or `{ error }` with `not_found`, `outside_root`, `unreadable` or `non_text`. A resolver that throws or returns another shape counts as `unreadable`. The engine applies its own include rules: the cycle check, the depth and byte limits (`depth` and `bytes` only lower them), region and section selection, and include diagnostics with the included file. `file` is the id of the top-level document, which a cycle can return to. `call(requestJson)` takes no resolver, since JSON text has none; there `includes` is `{"root": DIR}`, which this build refuses. `includeDependencies(tree)` lists the include directives of a tree, so a host can fetch the files before it parses.
 
+## ProseMirror / Tiptap bridge
+
+The engine's ProseMirror bridge (`carve::api::prosemirror`) writes and reads the schema of the carve-grammars Tiptap kit, so a document the kit saves loads here and the other way round. It is in the full package (feature `prosemirror`) and not in the rendering-only build.
+
+```js
+const { doc, blanked } = toProseMirror(source)   // or a 0.2 tree; editor.commands.setContent(doc)
+const saved = proseMirrorToCarve(editor.getJSON()) // canonical Carve source
+const tree = fromProseMirror(editor.getJSON())     // the 0.2 tree
+```
+
+- `toProseMirror(sourceOrTree, options?)` returns `{ doc, json, blanked }`. A node the editor content model cannot hold becomes a `carveBlock` or `carveInline` atom that carries it whole. A link or image destination the URL policy denies is `null` in the editor attribute and kept in `carve`; `blanked` lists those destinations.
+- `fromProseMirror(doc, options?)` returns the tree, and `proseMirrorToCarve(doc, options?)` the source. `doc` is an object or JSON text. A node or mark with no Carve node throws a `ProseMirrorError`; a tree the reader refuses throws a `CarveTreeError`.
+- `fromProseMirrorWithReport(doc, options?)` returns `{ tree, origins, pointers, ignored }`: per top-level block the index of the loaded block it came from (`null` for a block the editor added), the JSON pointer of the editor node for each tree path (to place a lint finding), and each attribute the save did not read, such as a `textAlign`.
+- `options`: `urlPolicy` (`{ deny: [...] }` or `{ allow: [...] }`, as for rendering) and `mapping`, the application's own nodes and marks: `{ nodes: { placeholderToken: { as: 'span', class: 'placeholder', attributes: ['name'] } }, marks: { ... } }`. A mapped node saves as a span or div of that class with its attributes as key/value pairs, and loads back as the host node.
+
 ## Tree and patch data
 
-Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must pass through `migrateTree` before `decodeTree`; `parseWithLayout` returns the source layout sidecar. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no AST patch, AST merge, ProseMirror, trace, or stamp calls.
+Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must pass through `migrateTree` before `decodeTree`; `parseWithLayout` returns the source layout sidecar. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no AST patch, AST merge, trace, or stamp calls.

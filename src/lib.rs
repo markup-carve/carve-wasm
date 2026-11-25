@@ -7,6 +7,8 @@ use wasm_bindgen::prelude::*;
 mod host_includes;
 #[cfg(all(feature = "reports", feature = "includes", feature = "other-renderers"))]
 mod host_render;
+#[cfg(feature = "prosemirror")]
+mod prosemirror;
 #[cfg(feature = "ast-json")]
 mod session;
 #[cfg(feature = "source-patches")]
