@@ -61,4 +61,8 @@ test('a node with no Carve node throws', () => {
     error => error instanceof Error && error.name === 'ProseMirrorError' && /mention/.test(error.message),
   )
   assert.throws(() => wasm.proseMirrorToCarve('{'), Error)
+  assert.throws(
+    () => wasm.fromProseMirror({ type: 'doc', content: [{ type: 'carveBlock', attrs: { carve: { type: 'nope' } } }] }),
+    error => error.name === 'CarveTreeError' && error.category === 'ast-json-invalid' && typeof error.status === 'number',
+  )
 })

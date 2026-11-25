@@ -9,14 +9,19 @@ use wasm_bindgen::prelude::*;
 
 fn error(e: &ProseMirrorError) -> JsValue {
     let exception = js_sys::Error::new(&e.to_string());
-    exception.set_name(match e {
-        ProseMirrorError::Carve(carve) => carve.spec_name(),
-        _ => "ProseMirrorError",
-    });
+    match e {
+        ProseMirrorError::Carve(carve) => {
+            exception.set_name(carve.spec_name());
+            // The fields the JSON calls' errors carry (C2-T-040).
+            let _ = js_sys::Reflect::set(&exception, &"category".into(), &carve.category().into());
+            let _ = js_sys::Reflect::set(&exception, &"status".into(), &carve.status().into());
+        }
+        _ => exception.set_name("ProseMirrorError"),
+    }
     exception.into()
 }
 
-fn options(value: Option<JsValue>) -> Result<ProseMirrorOptions, JsValue> {
+fn read_options(value: Option<JsValue>) -> Result<ProseMirrorOptions, JsValue> {
     let value: Value = match value {
         Some(v) if !v.is_null() && !v.is_undefined() => serde_wasm_bindgen::from_value(v)
             .map_err(|e| js_sys::TypeError::new(&format!("invalid options: {e}")))?,
@@ -59,9 +64,9 @@ fn tree_to_js(tree: &api::Tree) -> Result<JsValue, JsValue> {
 #[wasm_bindgen(js_name = toProseMirror, unchecked_return_type = "ProseMirrorResult")]
 pub fn to_prose_mirror(
     #[wasm_bindgen(unchecked_param_type = "string | object")] input: JsValue,
-    #[wasm_bindgen(unchecked_param_type = "ProseMirrorOptions")] options_value: Option<JsValue>,
+    options: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
-    let options = options(options_value)?;
+    let options = read_options(options)?;
     let rendered = bridge::to_prosemirror_with(&tree(&input)?, &options).map_err(|e| error(&e))?;
     js_sys::JSON::parse(
         &json!({"doc": rendered.doc, "json": rendered.json, "blanked": rendered.blanked})
@@ -74,9 +79,9 @@ pub fn to_prose_mirror(
 #[wasm_bindgen(js_name = fromProseMirror)]
 pub fn from_prose_mirror(
     #[wasm_bindgen(unchecked_param_type = "string | object")] doc: JsValue,
-    #[wasm_bindgen(unchecked_param_type = "ProseMirrorOptions")] options_value: Option<JsValue>,
+    options: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
-    let options = options(options_value)?;
+    let options = read_options(options)?;
     let saved =
         bridge::from_prosemirror_with_report(&doc_json(&doc)?, &options).map_err(|e| error(&e))?;
     tree_to_js(&saved.tree)
@@ -93,9 +98,9 @@ pub fn from_prose_mirror(
 )]
 pub fn from_prose_mirror_with_report(
     #[wasm_bindgen(unchecked_param_type = "string | object")] doc: JsValue,
-    #[wasm_bindgen(unchecked_param_type = "ProseMirrorOptions")] options_value: Option<JsValue>,
+    options: Option<JsValue>,
 ) -> Result<JsValue, JsValue> {
-    let options = options(options_value)?;
+    let options = read_options(options)?;
     let saved =
         bridge::from_prosemirror_with_report(&doc_json(&doc)?, &options).map_err(|e| error(&e))?;
     let ignored: Vec<Value> = saved
@@ -115,9 +120,9 @@ pub fn from_prose_mirror_with_report(
 #[wasm_bindgen(js_name = proseMirrorToCarve)]
 pub fn prose_mirror_to_carve(
     #[wasm_bindgen(unchecked_param_type = "string | object")] doc: JsValue,
-    #[wasm_bindgen(unchecked_param_type = "ProseMirrorOptions")] options_value: Option<JsValue>,
+    options: Option<JsValue>,
 ) -> Result<String, JsValue> {
-    let options = options(options_value)?;
+    let options = read_options(options)?;
     bridge::prosemirror_to_carve_with(&doc_json(&doc)?, &options, &WriteOptions::default())
         .map_err(|e| error(&e))
 }
