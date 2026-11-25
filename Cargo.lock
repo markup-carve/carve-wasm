@@ -43,13 +43,13 @@ checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
 [[package]]
 name = "carve-lang"
 version = "0.1.14"
-source = "git+https://github.com/markup-carve/carve-rs?rev=0969f713ec3cb5cba234ace19a1dc6e936f093ce#0969f713ec3cb5cba234ace19a1dc6e936f093ce"
+source = "git+https://github.com/markup-carve/carve-rs?rev=8809210e1128462d0ae44d9fcf5410f80197d452#8809210e1128462d0ae44d9fcf5410f80197d452"
 dependencies = [
+ "aho-corasick",
  "bumpalo",
  "caseless",
  "comrak",
  "html5ever",
- "jotdown",
  "markup5ever_rcdom",
  "regex",
  "regex-syntax",
@@ -189,12 +189,6 @@ name = "jetscii"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47f142fe24a9c9944451e8349de0a56af5f3e7226dc46f3ed4d4ecc0b85af75e"
-
-[[package]]
-name = "jotdown"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "206bf4773a58f2a051a24fb77cb6c5eeaa84403c0dc5d072ec460ed1648db594"
 
 [[package]]
 name = "js-sys"
