@@ -5,7 +5,7 @@
   "engines": { "node": ">=22.12" },
   "scripts": {
     "build": "node scripts/build-package.mjs",
-    "test": "node --test --test-concurrency=4 tests/v2.mjs && node tests/v2-browser.mjs",
+    "test": "node --test --test-concurrency=4 tests/v2.mjs tests/v2-editor.mjs && node tests/v2-browser.mjs",
     "test:conformance": "node --test --test-concurrency=4 tests/v2-conformance.mjs",
     "test:consumers": "node tests/consumers.mjs",
     "test:deltas": "node tests/engine-deltas.mjs",

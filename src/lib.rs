@@ -5,6 +5,10 @@ use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "includes")]
 mod host_includes;
+#[cfg(all(feature = "reports", feature = "includes", feature = "other-renderers"))]
+mod host_render;
+#[cfg(feature = "ast-json")]
+mod session;
 #[cfg(feature = "source-patches")]
 mod source_patch;
 
@@ -208,6 +212,54 @@ pub fn include_dependencies(tree: JsValue, file: Option<String>) -> Result<JsVal
     )
 }
 
+/// The 1-based inclusive content lines `{ start, end }` of `@region:name` with
+/// the engine's marker rules. `mode` is `"carve"` or `"code"`, which also reads
+/// the source-comment markers. An empty region has `end === start - 1`. A
+/// missing region or a malformed or unmatched marker throws an
+/// `IncludeRegionError` whose `rule` is `include-region-invalid`.
+#[cfg(feature = "includes")]
+#[wasm_bindgen(js_name = selectIncludeRegion, unchecked_return_type = "IncludeRegion")]
+pub fn select_include_region(
+    source: &str,
+    name: &str,
+    #[wasm_bindgen(unchecked_param_type = "IncludeRegionMode")] mode: &str,
+) -> Result<JsValue, JsValue> {
+    let code = match mode {
+        "carve" => false,
+        "code" => true,
+        other => {
+            return Err(js_sys::TypeError::new(&format!(
+                "carve: unknown region mode {other:?} (expected \"carve\" or \"code\")"
+            ))
+            .into())
+        }
+    };
+    match carve::include::region_lines(source, name, code) {
+        Ok((start, end)) => value_to_js(&json!({"start": start, "end": end})),
+        Err(reason) => {
+            let error = js_sys::Error::new(&format!("Include region \"{name}\" {reason}."));
+            error.set_name("IncludeRegionError");
+            let _ = js_sys::Reflect::set(&error, &"rule".into(), &"include-region-invalid".into());
+            Err(error.into())
+        }
+    }
+}
+
+#[cfg(feature = "includes")]
+#[wasm_bindgen(typescript_custom_section)]
+const TS_INCLUDE_REGION: &str = r#"
+export type IncludeRegionMode = "carve" | "code";
+/** 1-based inclusive content lines; an empty region has `end === start - 1`. */
+export interface IncludeRegion {
+  start: number;
+  end: number;
+}
+export interface IncludeRegionError extends Error {
+  name: "IncludeRegionError";
+  rule: "include-region-invalid";
+}
+"#;
+
 /// Route every output target through the 0.2 writer registry.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = write)]
@@ -354,49 +406,52 @@ pub fn to_carve_patch(source: &str) -> Result<JsValue, JsValue> {
     .map_err(|e| js_sys::Error::new(&e.to_string()).into())
 }
 
+#[cfg(feature = "other-renderers")]
+const STANDARD_EXTENSIONS: &[&str] = &[
+    "carve.autolink",
+    "carve.externalLinks",
+    "carve.headingNumbers",
+    "carve.headingPermalinks",
+    "carve.headingReference",
+    "carve.linkPolicy",
+    "carve.toc",
+    "carve.tocPlacement",
+    "carve.cite",
+    "carve.codeCallouts",
+    "carve.codeGroup",
+    "carve.colorSwatch",
+    "carve.details",
+    "carve.fencedRender.abc",
+    "carve.fencedRender.chart",
+    "carve.fencedRender.d2",
+    "carve.fencedRender.graphviz",
+    "carve.fencedRender.mermaid",
+    "carve.fencedRender.plantuml",
+    "carve.fencedRender.vega-lite",
+    "carve.fencedRender.wavedrom",
+    "carve.glossary",
+    "carve.imgFence.image",
+    "carve.imgFence.img",
+    "carve.index",
+    "carve.inlineFootnotesToParentheses",
+    "carve.listTable",
+    "carve.mathBlock",
+    "carve.references",
+    "carve.semanticSpan",
+    "carve.smartQuotes",
+    "carve.spoiler",
+    "carve.spoilerBlock",
+    "carve.tabNormalize",
+    "carve.tabs",
+    "carve.wiki",
+];
+
 /// The standard extensions the `extensions` option enables by name (C2-X-039).
 /// Host extensions take host code, which the JSON boundary has no form for.
 #[cfg(feature = "other-renderers")]
 #[wasm_bindgen(js_name = extensions)]
 pub fn extensions() -> Result<JsValue, JsValue> {
-    value_to_js(&json!([
-        "carve.autolink",
-        "carve.externalLinks",
-        "carve.headingNumbers",
-        "carve.headingPermalinks",
-        "carve.headingReference",
-        "carve.linkPolicy",
-        "carve.toc",
-        "carve.tocPlacement",
-        "carve.cite",
-        "carve.codeCallouts",
-        "carve.codeGroup",
-        "carve.colorSwatch",
-        "carve.details",
-        "carve.fencedRender.abc",
-        "carve.fencedRender.chart",
-        "carve.fencedRender.d2",
-        "carve.fencedRender.graphviz",
-        "carve.fencedRender.mermaid",
-        "carve.fencedRender.plantuml",
-        "carve.fencedRender.vega-lite",
-        "carve.fencedRender.wavedrom",
-        "carve.glossary",
-        "carve.imgFence.image",
-        "carve.imgFence.img",
-        "carve.index",
-        "carve.inlineFootnotesToParentheses",
-        "carve.listTable",
-        "carve.mathBlock",
-        "carve.references",
-        "carve.semanticSpan",
-        "carve.smartQuotes",
-        "carve.spoiler",
-        "carve.spoilerBlock",
-        "carve.tabNormalize",
-        "carve.tabs",
-        "carve.wiki"
-    ]))
+    value_to_js(&json!(STANDARD_EXTENSIONS))
 }
 
 #[cfg(feature = "html-import")]

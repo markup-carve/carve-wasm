@@ -19,6 +19,10 @@ The binding uses the Rust engine's JSON boundary. Calls use 0.2 names, options a
 | `writeWithDiagnostics(tree, target, options?)` | writer output and diagnostic record |
 | `format(source, options?)` | canonical source |
 | `formatWithDiagnostics(source, options?)` | canonical source and diagnostic record |
+| `toHtmlWithRenderers(source, options?)` | HTML, diagnostics, suppressed count, with host renderers and transforms |
+| `selectIncludeRegion(source, name, mode)` | `{ start, end }` content lines of a region |
+| `parseSnapshot(source)`, `reparse(source, changesJson)` | JSON text: source, tree, layout and changed ranges |
+| `new ParserSession(source)` | `snapshot()` and `edit(changesJson)`, the same JSON text |
 
 `toHtml` and `toHtmlWithOptions` are aliases for `render`. `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve` use the registered writers, including their `WithOptions` forms. `toCarvePatch`, `importDocument` and `extensions` are also available.
 
@@ -33,6 +37,26 @@ render(source, { rawHtml: true })
 ```
 
 The 0.2 options are `headingIds`, `mode`, `profile`, `rawHtml`, `urlPolicy`, `sections`, `smartTypography`, `sourceLines`, `strictLosses`, `roundtrip`, `symbols`, `labels`, `social`, `headingShift`, `includes`, `extensions`, and `renderers`, when the operation reads them. `alignTables` and `normalize` belong to formatting and writing. Unknown, invalid, and unused options are refused. `extensions` takes the standard extension names that `extensions()` lists, and `renderers` maps one of them to `"standard"`; host extension code has no form on the JSON boundary (C2-T-010).
+
+## Host renderers and transforms
+
+Host code has no form in JSON (C2-T-010), so it is an option of the library calls. `toHtmlWithRenderers` builds an engine host with it and returns `{ html, diagnostics, suppressedDiagnostics }`. `transforms` is a list of functions that each take the resolved tree and return a tree. `renderers` maps a host extension name to a function of the extension node, used in both channels, or to `{ interactive?, static?, version? }`; a standard extension still takes only `"standard"` or `{ standard: { mode } }`. A transform claims the nodes a host renderer renders:
+
+```js
+toHtmlWithRenderers(source, {
+  mode: 'static',
+  transforms: [tree => claimMermaidFences(tree)],
+  renderers: { 'ex.mermaid': { static: node => prerendered.get(node.fallback[0].value) } },
+})
+```
+
+The returned string is inserted as trusted HTML. A callback must be synchronous. A renderer that throws or returns no string leaves the fallback and reports `extension-renderer-failed`; a failed transform keeps the previous tree and reports `extension-transform-failed`. The call reads the render options and an `includes` resolver as `render` does.
+
+## Include regions and editor sessions
+
+`selectIncludeRegion(source, name, mode)` returns the 1-based inclusive content lines `{ start, end }` of `@region:name` with the engine's marker rules; `mode` is `"carve"` or `"code"`, which also reads the source-comment markers. An empty region has `end === start - 1`. A missing region or a malformed or unmatched marker throws an `IncludeRegionError` whose `rule` is `include-region-invalid`.
+
+`parseSnapshot`, `reparse` and `ParserSession` keep the parse state an editor reuses. Changes are a JSON array of `{ range: [start, end], replacement }` in UTF-8 byte offsets; a malformed change throws a `TypeError` and leaves a session unchanged. Each result is JSON text with `source`, `document` (the tree `parse` returns), `sourceLayout`, `changedSource`, `reusedPreviousTree` and `parsedSourceBytes`. Call `free()` on a session when done.
 
 ## Includes
 
@@ -51,4 +75,4 @@ The resolver receives `{ path, section?, options, from? }` for each directive an
 
 ## Tree and patch data
 
-Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must pass through `migrateTree` before `decodeTree`; `parseWithLayout` returns the source layout sidecar. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no incremental session, AST patch, AST merge, ProseMirror, trace, or stamp calls.
+Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must pass through `migrateTree` before `decodeTree`; `parseWithLayout` returns the source layout sidecar. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no AST patch, AST merge, ProseMirror, trace, or stamp calls.
