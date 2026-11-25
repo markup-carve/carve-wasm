@@ -114,6 +114,14 @@ test('toHtmlWithRenderers refuses host code for a standard extension', () => {
     error => error.name === 'CarveOptionError' && /C2-T-010/.test(error.message))
   assert.throws(() => wasm.toHtmlWithRenderers('Hi', { renderers: { 'carve.tabs': 'standard' } }),
     error => error.name === 'CarveOptionError')
+  for (const renderers of [{ 'carve.tabs': { standard: { mode: 'bogus' } } }, { 'carve.details': { standard: { mode: 'aria' } } }]) {
+    const options = { extensions: Object.keys(renderers), renderers }
+    assert.throws(() => wasm.render('Hi', options), error => error.name === 'CarveOptionError')
+    assert.throws(() => wasm.toHtmlWithRenderers('Hi', options), error => error.name === 'CarveOptionError')
+  }
+  const group = '::: code-group\n``` js [a.js]\nx\n```\n:::\n'
+  const aria = { extensions: ['carve.codeGroup'], renderers: { 'carve.codeGroup': { standard: { mode: 'aria' } } } }
+  assert.equal(wasm.toHtmlWithRenderers(group, aria).html, wasm.render(group, aria))
   assert.throws(() => wasm.toHtmlWithRenderers('Hi', { transforms: ['x'] }), error => error.name === 'CarveOptionError')
   assert.throws(() => wasm.toHtmlWithRenderers('Hi', { unknown: true }), error => error.name === 'CarveOptionError')
 })

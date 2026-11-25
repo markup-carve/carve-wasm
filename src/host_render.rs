@@ -321,12 +321,17 @@ pub fn to_html_with_renderers(source: &str, options: Option<JsValue>) -> Result<
     opts.includes = includes;
 
     let mut selected: BTreeMap<String, bool> = BTreeMap::new();
+    let mut standard = serde_json::Map::new();
     let mut host_extensions = Vec::new();
     if renderers.is_object() {
         for name in Object::keys(renderers.unchecked_ref::<Object>()).iter() {
             let name = name.as_string().unwrap_or_default();
             let value = Reflect::get(&renderers, &name.as_str().into())?;
             if let Some(aria) = standard_selection(&value)? {
+                standard.insert(
+                    name.clone(),
+                    from_js(&value).map_err(|e| option_error(js_message(&e)))?,
+                );
                 selected.insert(name, aria);
             } else if crate::STANDARD_EXTENSIONS.contains(&name.as_str()) {
                 return Err(option_error(format!(
@@ -340,22 +345,37 @@ pub fn to_html_with_renderers(source: &str, options: Option<JsValue>) -> Result<
         return Err(option_error("renderers must be an object"));
     }
 
+    // The engine's own option reader checks the extension names and the
+    // standard selections, so this call refuses what `render` refuses.
+    let check = serde_json::json!({
+        "call": "render",
+        "source": "",
+        "options": {"extensions": map.get("extensions").cloned().unwrap_or(Value::Array(Vec::new())), "renderers": standard},
+    });
+    crate::run(check)?;
+
     let mut host = api::Carve::new();
     if let Some(names) = map.get("extensions") {
         for name in strings("extensions", names)? {
-            let aria = selected.remove(&name);
-            host.enable_standard(&name, aria.is_some())
-                .map_err(|e| option_error(e.to_string()))?;
-            if aria == Some(true) {
-                host.enable_standard_tabs_renderer("aria")
-                    .map_err(|e| option_error(e.to_string()))?;
+            match selected.get(&name) {
+                Some(true) if name == "carve.codeGroup" => host
+                    .register(api::extensions::code_group(
+                        api::extensions::CodeGroupOptions {
+                            mode: api::extensions::CodeGroupMode::Aria,
+                            ..Default::default()
+                        },
+                    ))
+                    .map_err(|e| option_error(e.to_string()))?,
+                aria => {
+                    host.enable_standard(&name, aria.is_some())
+                        .map_err(|e| option_error(e.to_string()))?;
+                    if aria == Some(&true) {
+                        host.enable_standard_tabs_renderer("aria")
+                            .map_err(|e| option_error(e.to_string()))?;
+                    }
+                }
             }
         }
-    }
-    if let Some(name) = selected.keys().next() {
-        return Err(option_error(format!(
-            "renderers: {name} is not among the enabled extensions"
-        )));
     }
     for extension in host_extensions {
         host.register_extension(extension)
