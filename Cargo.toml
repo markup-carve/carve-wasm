@@ -15,12 +15,13 @@ crate-type = ["cdylib", "rlib"]
 [features]
 # The full development package includes the 0.2 operations currently exposed by
 # the engine. The render-only entry uses --no-default-features.
-default = ["ast-json", "html-import", "includes", "lint", "other-renderers", "reports", "source-patches"]
+default = ["ast-json", "html-import", "includes", "lint", "other-renderers", "prosemirror", "reports", "source-patches"]
 ast-json = []
 html-import = []
 includes = []
 lint = []
 other-renderers = []
+prosemirror = []
 reports = []
 source-patches = []
 
