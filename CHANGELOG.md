@@ -19,7 +19,7 @@ their own.
 
 - Default to `rawHtml: false` and the 0.2 URL policy for safe rendering.
 - Pin the 0.2 engine to an exact Git commit and exercise the generated Node package.
-- Pin the renamed engine: the `carve-lang` crate on carve-rs `next2` at `388348a0`, where `carve2` used to be, built without its file-system feature.
+- Pin the renamed engine: the `carve-lang` crate on carve-rs `next2` at `8809210e`, where `carve2` used to be, built without its file-system feature.
 - `toCarve`, `format`, `write(tree, 'carve')` and `importDocument(html, 'html')` work against the engine's canonical writer and HTML importer.
 - `extensions()` lists the standard extensions that the `extensions` and `renderers` options select.
 - The new engine pin makes `parseWithLayout` and `migrateTree` available.
