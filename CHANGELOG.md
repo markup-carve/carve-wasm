@@ -9,20 +9,24 @@ their own.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-27
+
 ### Breaking
 
-- Building the 0.2 binding now requires Rust 1.88 or newer, matching its pinned engine (markup-carve/carve-rs#4444).
-- Port the WASM binding to the unreleased Carve 0.2 Rust engine and its JSON call boundary. Parsing, rendering, lint and tree JSON now use the 0.2 option, diagnostic and AST contracts.
-- Keep the Markdown, plain text and ANSI writer entry points, now backed by the registered 0.2 writers.
+- Building the binding now requires Rust 1.88 or newer, matching its engine (markup-carve/carve-rs#4444, #204).
+- Port the WASM binding to the Carve 0.2 Rust engine and its JSON call boundary. Parsing, rendering, lint and tree JSON now use the 0.2 option, diagnostic and AST contracts (#200).
+- Keep the Markdown, plain text and ANSI writer entry points, now backed by the registered 0.2 writers (#200).
 
 ### Improvements
 
-- Default to `rawHtml: false` and the 0.2 URL policy for safe rendering.
-- Pin the 0.2 engine to an exact Git commit and exercise the generated Node package.
-- Pin the renamed engine: the `carve-lang` crate on carve-rs `next2` at `8809210e`, where `carve2` used to be, built without its file-system feature.
-- `toCarve`, `format`, `write(tree, 'carve')` and `importDocument(html, 'html')` work against the engine's canonical writer and HTML importer.
-- `extensions()` lists the standard extensions that the `extensions` and `renderers` options select.
-- The new engine pin makes `parseWithLayout` and `migrateTree` available.
+- Default to `rawHtml: false` and the 0.2 URL policy for safe rendering (#200).
+- Update to the carve-rs 0.2 engine, the `carve-lang` crate, built without its file-system feature (#201, #210).
+- `toCarve`, `format`, `write(tree, 'carve')` and `importDocument(html, 'html')` work against the engine's canonical writer and HTML importer (#201).
+- `extensions()` lists every standard extension that the `extensions` and `renderers` options select (#201, #207).
+- `parseWithLayout` and `migrateTree` are available (#204).
+- Source calls expand `{{ file.crv }}` includes through a synchronous host resolver passed as `includes`, alone or as `{ resolver, file, depth, bytes }`; the engine's include rules, limits and diagnostics apply (#211).
+- `selectIncludeRegion`, `parseSnapshot`, `reparse` and `ParserSession` work again on 0.2, and `toHtmlWithRenderers` takes JS renderers and transforms (#212).
+- `toProseMirror`, `fromProseMirror`, `fromProseMirrorWithReport` and `proseMirrorToCarve` bind the 0.2 ProseMirror bridge, behind the default `prosemirror` feature (#213).
 
 ## [0.1.12] - 2026-11-12
 
