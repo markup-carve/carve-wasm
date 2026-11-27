@@ -2,9 +2,9 @@ name: Carve 0.2 WASM
 
 on:
   pull_request:
-    branches: [main, next2]
+    branches: [main]
   push:
-    branches: [next2]
+    branches: [main]
 
 jobs:
   msrv:
@@ -24,7 +24,6 @@ jobs:
           cargo +1.88.0 check --locked --target wasm32-unknown-unknown
 
   test:
-    if: github.head_ref == 'next2' || github.base_ref == 'next2' || github.ref_name == 'next2'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

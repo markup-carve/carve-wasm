@@ -59,7 +59,7 @@ jobs:
         with:
           repository: markup-carve/carve-rs
           path: carve-rs
-          ref: ${{ (github.head_ref == 'next2' || github.base_ref == 'next2' || github.ref_name == 'next2') && 'next2' || 'main' }}
+          ref: main
           fetch-depth: 0
 
       # --max-age-days 14: since this manifest started naming an exact `rev`,
@@ -72,7 +72,7 @@ jobs:
       - name: Check the pinned engine revision
         run: |
           python3 scripts/check-branch-engine-pin.py \
-            --engine carve-rs --branch ${{ (github.head_ref == 'next2' || github.base_ref == 'next2' || github.ref_name == 'next2') && 'next2' || 'main' }} --max-age-days 14 \
+            --engine carve-rs --branch main --max-age-days 14 \
             --manifest Cargo.toml --lock Cargo.lock
 
       # The sibling binding's pin as a FLOOR. The age check above passes on a
@@ -177,7 +177,8 @@ jobs:
           fi
 
   test:
-    if: github.head_ref != 'next2' && github.base_ref != 'next2' && github.ref_name != 'next2'
+    # The 0.1 package job; main carries the 0.2 binding, which ci-v2.yml tests.
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
