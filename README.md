@@ -1,106 +1,27 @@
-# carve-wasm
+# carve-wasm 0.2 development branch
 
-WebAssembly build of the [Carve](https://markup-carve.github.io/carve/) markup
-renderer, compiled from
-[carve-rs](https://github.com/markup-carve/carve-rs). It runs the Rust
-implementation in browsers and powers the **Rust (WASM)** engine in the
-[Carve playground](https://markup-carve.github.io/carve/playground).
+This branch binds the unreleased Carve 0.2 Rust engine to WebAssembly for Node and browsers. The Rust engine is pinned to an exact commit on its `next2` branch. There is no 0.2 registry release yet.
 
-## Install
+Building this branch requires Rust 1.88 or newer.
 
-```bash
-npm install @markup-carve/carve-wasm
-```
+## Use
 
-## Render Carve
-
-The package root selects synchronous Node bindings in Node and the bundler
-build in browser bundles. The browser bundler must support native WASM imports
-and top-level await. Vite 8.3.2 is tested. See the
-[compatibility guide](docs/compatibility.md) for explicit browser, Node and
-rendering-only imports.
+Build the package locally with `npm run build`. Node can load the generated package synchronously. Browser modules initialize the web entry first.
 
 ```js
-import { toHtml, toHtmlFull, toHtmlWithOptions } from '@markup-carve/carve-wasm'
-
-toHtml('# Hello, Carve!')
-toHtmlFull('# Hello\n\n``` mermaid\ngraph TD; A-->B\n```\n')
-toHtmlWithOptions(source, {
-  extensions: ['glossary', 'table-of-contents'],
-  rawHtml: false,
-  sections: true,
-})
+import init, { render, parse, lint } from './pkg/web/carve_wasm.js'
+await init()
+const html = render('# Hello')
+const tree = parse('# Hello')
+const diagnostics = lint('# Hello')
 ```
 
-`toHtml` uses the core renderer. `toHtmlFull` enables the extension set used
-by the playground preview. `toHtmlWithOptions` lets the caller choose
-extensions and rendering policy. Unknown extension names throw instead of
-silently producing incomplete output.
+`render` returns HTML. `parse` returns a 0.2 tree, and `lint` returns the 0.2 diagnostic record. The raw JSON boundary is available as `call(requestJson)` and returns an engine response with either `ok` or `error`. See [the API reference](docs/reference.md).
 
-Other core targets include `toMarkdown`, `toPlainText`, `toAnsi`, and
-`toCarve`. Each has a `*WithOptions` form.
+The render default is secure: `rawHtml` is false and the engine applies its URL policy. A trusted host may explicitly set `{ rawHtml: true }`. The `mode`, `profile`, `headingIds`, `symbols`, `labels`, `social`, `sections`, `smartTypography`, `sourceLines`, `roundtrip`, `strictLosses`, and `urlPolicy` options follow Carve 0.2.
 
-## Convert existing content
+## Engine capabilities
 
-The package imports HTML, Markdown, Djot, and BBCode. `fromHtml`,
-`fromMarkdown`, `migrateDjot`, and `migrateBbcode` return the converted value
-with a fidelity report. The simpler `fromDjot` and `fromBbcode` helpers return
-only the converted string.
+`toCarve` and `format` run the canonical writer, and `importDocument(html, 'html')` imports HTML. Markdown, plain text and ANSI writers, `parseWithLayout` and `migrateTree` are available through the pinned engine. The `extensions` option selects the engine's standard extensions, which `extensions()` lists (for example `carve.details`, `carve.mathBlock`, `carve.glossary`, `carve.tabs` and the `carve.fencedRender.*` diagram presets), and `renderers: { name: 'standard' }` turns on a standard renderer. Host extension code has no form on the JSON boundary (C2-T-010), so `toHtmlWithRenderers` takes host renderers and transforms as functions. `selectIncludeRegion`, `parseSnapshot`, `reparse` and `ParserSession` serve editors, and `toProseMirror`, `fromProseMirror`, `fromProseMirrorWithReport` and `proseMirrorToCarve` convert to and from a Tiptap editor's ProseMirror document (see `docs/reference.md`). The original 0.1 importer, AST patch, merge, trace and stamp contracts are not part of the 0.2 engine API. That removes the Markdown, Djot and BBCode importers (`fromMarkdown`, `fromDjot`, `migrateDjot`, `fromBbcode`, `migrateBbcode`): Carve 0.2 imports BBCode in carve-js only. The 0.2 engine provides the navigation extensions, including heading numbers, permalinks, table of contents, external links, and autolink. The local UTF-8 source patch utility remains available.
 
-Markdown reports assess supported constructs and report known losses. Inputs
-outside that assessment receive `fidelity-unverified`. Djot and BBCode use the
-conservative fallback except for verified literal text.
-
-```js
-import { fromHtml, fromMarkdown, htmlToAst, htmlToCarve } from '@markup-carve/carve-wasm'
-
-const { value, report } = htmlToCarve('<p>Hello <strong>world</strong></p>', 'safe')
-const { value: ast } = htmlToAst('<p>Hello <b>world</b></p>', 'safe')
-
-fromHtml(html, 'semantic')
-fromMarkdown(markdown)
-```
-
-HTML modes are `safe` (the default), `semantic`, and trusted-only
-`roundtrip`. `htmlToAst` returns the serialized Carve AST without passing it
-through the source writer, so its report can differ from `htmlToCarve` when a
-construct is representable in the tree but not in Carve source.
-
-## Common host APIs
-
-- `extensions()` returns the extension names supported by the bundled engine.
-- `toCarvePatch()` and `applySourcePatch()` create and apply stale-safe UTF-8
-  byte edits.
-- `toHtmlWithSymbols()` resolves configured `:name:` symbols. Symbol values
-  are trusted raw output and must not come from user input.
-- `parseJson()`, `astJsonToHtml()`, and the other AST functions use the PART 12
-  AST JSON shared by Carve implementations.
-- Include expansion calls a synchronous host resolver, records dependencies,
-  and enforces depth, byte, and call budgets. The resolver decides which paths
-  to refuse.
-- `ParserSession` retains a document between edits and can reuse unchanged
-  plain paragraphs. Call `free()` when the editor closes. Tree patches,
-  three-way merge and ProseMirror helpers also support browser editors.
-
-The [complete API and usage reference](docs/reference.md) documents these
-APIs, renderer profiles, resource limits, includes, AST fields, and the
-TypeScript declarations.
-
-## Security
-
-Use `rawHtml: false` with a restrictive profile such as `comment` for
-untrusted documents. Symbols and static renderer callbacks are trusted
-configuration and may emit unescaped HTML. Treat source patches as trusted
-edit instructions, not as signed data. A profile rejection throws.
-
-Carve also enforces URL-scheme and attribute hardening in the renderer. See
-the language [security documentation](https://markup-carve.github.io/carve/security)
-for the complete model.
-
-## Development
-
-Contributor documentation lives under `docs/`:
-
-- [Building and testing](https://github.com/markup-carve/carve-wasm/blob/main/docs/building.md)
-- [The carve-rs engine pin](https://github.com/markup-carve/carve-wasm/blob/main/docs/engine-pin.md)
-- [Release process](https://github.com/markup-carve/carve-wasm/blob/main/docs/releasing.md)
+See [building](docs/building.md), [compatibility](docs/compatibility.md), and [the exact engine pin](docs/engine-pin.md).

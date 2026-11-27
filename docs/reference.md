@@ -1,850 +1,93 @@
-# carve-wasm API and usage reference
+# Carve 0.2 WASM API
 
-This page documents the complete browser API. Start with the [package README](../README.md) for installation and a short example.
+The binding uses the Rust engine's JSON boundary. Calls use 0.2 names, options and error records. A thrown convenience-call error carries `name`, `category`, `status`, and `message`; `call` returns the equivalent JSON response instead.
 
-## Usage
+| Call | Return |
+| --- | --- |
+| `call(requestJson)` | JSON response text, with `ok` or `error` |
+| `parse(source, options?)` | 0.2 tree |
+| `parseWithDiagnostics(source, options?)` | tree, diagnostics, suppressed count |
+| `parseWithLayout(source, options?)` | tree, layout sidecar and record |
+| `render(source, options?)` | HTML string |
+| `renderWithDiagnostics(source, options?)` | HTML, diagnostics, suppressed count |
+| `lint(source, options?)` | diagnostic entries |
+| `renderTree(tree, options?)` | HTML string |
+| `encodeTree(tree)`, `decodeTree(json)` | JSON text or a 0.2 tree |
+| `migrateTree(oldTree)` | 2.0 tree and record |
+| `includeDependencies(tree, file?)` | dependency entries |
+| `write(tree, target, options?)` | registered writer output |
+| `writeWithDiagnostics(tree, target, options?)` | writer output and diagnostic record |
+| `format(source, options?)` | canonical source |
+| `formatWithDiagnostics(source, options?)` | canonical source and diagnostic record |
+| `toHtmlWithRenderers(source, options?)` | HTML, diagnostics, suppressed count, with host renderers and transforms |
+| `selectIncludeRegion(source, name, mode)` | `{ start, end }` content lines of a region |
+| `parseSnapshot(source)`, `reparse(source, changesJson)` | JSON text: source, tree, layout and changed ranges |
+| `new ParserSession(source)` | `snapshot()` and `edit(changesJson)`, the same JSON text |
 
-### HTML migration
+`toHtml` and `toHtmlWithOptions` are aliases for `render`. `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve` use the registered writers, including their `WithOptions` forms. `toCarvePatch`, `importDocument` and `extensions` are also available.
 
-`htmlToCarve(html, mode)` returns `{ value, report }`, using the same HTML5
-import policy and canonical writer as carve-rs. Modes are `safe` (default),
-`semantic`, and trusted-only `roundtrip`.
+`write` accepts `html`, `carve`, `markdown`, `plain`, or `ansi` as a target. The writer calls read format options such as `alignTables` and `normalize`; render policy options such as `rawHtml` belong to `render` and `renderWithDiagnostics`. The Rust engine refuses options that a call does not read.
+
+## Rendering policy
+
+`rawHtml` defaults to false. The engine's `urlPolicy` default denies unsafe schemes. To allow raw HTML for trusted source only:
 
 ```js
-const { value, report } = htmlToCarve('<p>Hello <strong>world</strong></p>', 'safe')
+render(source, { rawHtml: true })
 ```
 
-`htmlToAst(html, mode)` is the same importer returning the TREE instead of the
-source, so a host that wants a tree does not re-parse what the importer just
-wrote. It returns the same `{ value, report }` shape, with `value` holding AST
-JSON.
+The 0.2 options are `headingIds`, `mode`, `profile`, `rawHtml`, `urlPolicy`, `sections`, `smartTypography`, `sourceLines`, `strictLosses`, `roundtrip`, `symbols`, `labels`, `social`, `headingShift`, `includes`, `extensions`, and `renderers`, when the operation reads them. `alignTables` and `normalize` belong to formatting and writing. Unknown, invalid, and unused options are refused. `extensions` takes the standard extension names that `extensions()` lists, and `renderers` maps one of them to `"standard"`; host extension code has no form on the JSON boundary (C2-T-010).
+
+## Host renderers and transforms
+
+Host code has no form in JSON (C2-T-010), so it is an option of the library calls. `toHtmlWithRenderers` builds an engine host with it and returns `{ html, diagnostics, suppressedDiagnostics }`. `transforms` is a list of functions that each take the resolved tree and return a tree. `renderers` maps a host extension name to a function of the extension node, used in both channels, or to `{ interactive?, static?, version? }`; a standard extension still takes only `"standard"` or `{ standard: { mode } }`. A transform claims the nodes a host renderer renders:
 
 ```js
-const { value, report } = htmlToAst('<p>Hello <b>world</b></p>', 'safe')
-astJsonToHtml(value)
-```
-
-> **The report is not always identical, and the difference is the point.**
-> A loss only a WRITER takes is not reported by `htmlToAst`, because no writer
-> ran (PART 12 §16). A `<figure>` wrapping a table, or a table with an explicit
-> head/body/foot grouping, has no Carve spelling: `htmlToCarve` reports
-> `structure-unspellable` for it and `htmlToAst` does not, because the tree
-> keeps the thing the source would have lost.
-
-Portable migration code can use `fromHtml(html, mode)` and
-`fromMarkdown(markdown)`. Both return `{ value, report }`. Version 2 reports use
-the shared fidelity vocabulary. Markdown reports assess supported constructs
-and report known losses; incomplete assessments use `fidelity-unverified` with
-`dropped` / `fallback`. Djot and BBCode use that conservative fallback except
-for verified literal text.
-
-### Core renderer
-
-Renders Carve markup to HTML with no extensions enabled.
-
-The published package is the **bundler** target (webpack, Vite, Rollup, ...):
-the wasm initializes automatically, so the exports are synchronous - no `init()`
-call.
-
-```js
-import { toHtml } from '@markup-carve/carve-wasm'
-
-// The other core targets are toMarkdown, toPlainText, toAnsi, and toCarve,
-// each with a *WithOptions form that takes the options object below.
-
-const html = toHtml('# Hello, Carve!')
-document.body.innerHTML = html
-```
-
-### Source-preserving patches
-
-Tools can prepare canonical formatting as stale-safe UTF-8 byte edits:
-
-```js
-const patch = toCarvePatch(source)
-const formatted = applySourcePatch(source, patch)
-```
-
-`createSourcePatch(source, replacement, kind, code)` prepares the same wire
-shape for another complete replacement. Its ranges are UTF-8 byte offsets. The
-fingerprint and byte length catch accidental staleness; they are not a
-cryptographic signature. Treat a patch as trusted edit instructions.
-
-### Extensions
-
-`extensions()` reports every extension this build accepts. The list comes from
-the engine, so it cannot fall behind what the engine has:
-
-```js
-import { extensions, toHtmlWithOptions } from '@markup-carve/carve-wasm'
-
-extensions()
-// ['autolink', 'citations', 'code-callouts', 'code-group', ...]
-
-toHtmlWithOptions(src, { extensions: ['glossary', 'table-of-contents'] })
-```
-
-Names are kebab-case; snake_case (`math_block`) is accepted too. An unknown name
-throws, because an ignored extension renders as missing behavior that looks
-like a Carve bug.
-
-### Full renderer (preview set)
-
-`toHtmlFull` enables the preview set the playground uses: tab normalisation,
-`<details>` fences, Mermaid diagrams, wikilinks, autolink, list-table, math
-blocks, heading permalinks, citations, code callouts, external-link decoration,
-code groups, and tabs.
-
-It is a curated subset rather than everything registered. Extensions that
-rewrite a document that never asked - `heading-numbers` numbers every heading,
-`table-of-contents` injects a TOC - are wrong for a preview. Name them
-explicitly through `toHtmlWithOptions` when you want them.
-
-```js
-import { toHtmlFull } from '@markup-carve/carve-wasm'
-
-const html = toHtmlFull('# Hello\n\n``` mermaid\ngraph TD; A-->B\n```\n')
-document.body.innerHTML = html
-```
-
-### Symbols
-
-A `:name:` symbol renders its literal `:name:` source unless the name is in the
-**symbols map**. Pass one as a plain object (or a `Map`) to `toHtmlWithSymbols`,
-or as the optional second argument of `toHtmlFull`:
-
-```js
-import { toHtmlWithSymbols } from '@markup-carve/carve-wasm'
-
-toHtmlWithSymbols('Ship it :rocket:', { rocket: '🚀' })
-// => '<p>Ship it 🚀</p>'
-
-toHtmlWithSymbols('Ship it :rocket: :shrug:', { rocket: '🚀' })
-// => '<p>Ship it 🚀 :shrug:</p>'   (an unmapped name stays literal)
-```
-
-The word-boundary guard is unaffected by an active map: `a:b:c`, `10:30:` and
-`me@example.com` never become symbols. Names and values must both be strings; a
-non-string value throws a `TypeError`.
-
-> **Security: symbol values are TRUSTED RAW output.**
-> A mapped value is inserted into the output **unescaped** - the same trust
-> class as a static `renderers` callback. `{ b: '<b>x</b>' }` emits a real
-> `<b>` element, not escaped text. This is deliberate (processor configuration
-> is trusted). **Never build a symbols map out of untrusted / user-supplied
-> input.**
-
-### Section wrappers
-
-A top-level heading is wrapped, along with the content following it up to the
-next same-or-shallower heading, in a `<section>` carrying the heading's id (spec
-PART 9 §13). Only the id moves - `{#install .featured}` gives
-`<section id="install"><h2 class="featured">` - and a heading inside a
-blockquote, div or list item is not wrapped at all.
-
-`toHtmlWithOptions` is the general entry point, and `sections: false` renders
-headings flat with the id back on the `<h*>`:
-
-```js
-import { toHtmlWithOptions } from '@markup-carve/carve-wasm'
-
-toHtmlWithOptions('# A\n\np\n', { sections: false })
-// '<h1 id="A">A</h1>\n<p>p</p>'
-
-toHtmlWithOptions(src, { sections: false, symbols: { rocket: '🚀' }, full: true })
-```
-
-Every field is optional. Omitting the object, or passing `null`, renders with
-defaults, so the three shorthands above use those defaults.
-
-| Field | Default | What it does |
-|---|---|---|
-| `sections` | `true` | Wrap each top-level heading and its content in a `<section>` |
-| `symbols` | none | `:name:` to value, TRUSTED-RAW (see above) |
-| `extensions` | none | Array of registry names; takes precedence over `full` |
-| `full` | `false` | Enable the preview extension set |
-| `rawHtml` | `true` | Emit an explicit passthrough as markup; `false` escapes it |
-| `profile` | none | `full` / `article` / `comment` / `minimal`; rejection throws |
-| `profileBaseHost` | none | The host the profile's link policy counts as internal |
-| `mode` | `interactive` | `static` renders the self-contained form: no client scripts |
-| `sourceLine` | `false` | Stamp top-level blocks with `data-source-line` |
-| `positions` | `false` | Keep source offsets on the nodes |
-| `labels` | none | Override engine-written strings, for a page not in English |
-| `smartTypography` | `glyph` | `"source"` or `false` keeps the author's run instead of the glyph; `{ quotes: false }` keeps the author's quotes and still resolves dashes, ellipses and symbols. `"glyph"` and `true` are the default |
-| `lowercaseHeadingIds` | `false` | Lowercase the generated heading ids |
-| `asciiHeadingIds` | `off` | `fold` transliterates, `strict` guarantees ASCII |
-| `mentionUrl` | none | URL template for `@mention`; `{name}` / `{user}` take the encoded name |
-| `tagUrl` | none | URL template for `#tag`; `{name}` takes the encoded name |
-
-An unrecognized key is ignored, because the object is configuration and a typo
-should not break a render. A recognized key with the wrong type throws a
-`TypeError` instead of being coerced: JS truthiness would read
-`{ sections: 'false' }` as `true`, the opposite of what was written.
-
-`renderers` is the one recognized key `toHtmlWithOptions` refuses; it belongs to
-[`toHtmlWithRenderers`](#static-renderers).
-
-This exists for a host whose CSS or JS assumes rendered blocks are direct
-children of the content container - the `.stack > * + *` spacing idiom,
-`:first-child`, `nth-child()` counting, `element.children` walks - all of which
-stop matching once a wrapper sits in between. It is the one output change that
-breaks a document whose *source* migrated cleanly.
-
-Nothing else changes: ids, collision dedup, `</#id>` cross-references, implicit
-`[Heading][]` references and heading numbering all resolve against the slug
-rather than the element carrying it. The endnotes
-`<section role="doc-endnotes">` is a separate construct and is still emitted.
-
-### Rendering a document you did not write
-
-`rawHtml: false` renders an explicit passthrough - the `=html` raw block and the
-`` `…`{=html} `` inline raw span - as escaped text instead of markup. It is the
-switch carve-js spells `allowRawHtml`.
-
-```js
-toHtmlWithOptions(fromTheReader, { rawHtml: false })
-```
-
-Reach for it whenever the document comes from somewhere other than the person
-running the page: a shared link, a comment field, a pasted file. A passthrough is
-the one construct that puts author-controlled markup on your origin, so leaving
-it on for a document a reader supplied is a way to run their script.
-
-The symbols map is unaffected and stays TRUSTED-RAW either way - it is
-configuration the host wrote, not content the document carries.
-
-### Rendering with a profile
-
-`rawHtml: false` closes the passthrough vector. It does not cap input length,
-deny a construct, or constrain link schemes - that is what a profile is for, and
-the four presets match the ones the spec and the sibling bindings describe.
-
-```js
-toHtmlWithOptions(fromTheReader, { profile: 'comment', rawHtml: false })
-```
-
-**A rejected document throws.** The engine's infallible entry point turns a
-profile rejection - input past `max_length`, or a denied construct when the
-action is Error - into an EMPTY STRING, and a caller cannot tell that from a
-document that legitimately rendered to nothing. This binding renders through the
-fallible one, so a rejection arrives as an `Error` whose `name` is
-`ProfileViolationError` and whose `violations` array carries one message per
-refused construct.
-
-```js
-try {
-  html = toHtmlWithOptions(fromTheReader, { profile: 'comment' })
-} catch (error) {
-  if (error.name === 'ProfileViolationError') report(error.violations)
-}
-```
-
-**Every target takes the profile, not only HTML.** `toMarkdownWithOptions`,
-`toPlainTextWithOptions`, `toAnsiWithOptions`, `toCarveWithOptions` and
-`parseJsonWithOptions` read the same options object, so a document held to a
-profile on its way to HTML is held to it on its way to Markdown or into a stored
-tree. Without them a host could export the same untrusted document unfiltered.
-
-```js
-toMarkdownWithOptions(fromTheReader, { profile: 'comment' })
-```
-
-What those targets actually read is narrower than HTML's list: `profile` and
-`smartTypography` change their output, extensions run, and `symbols`, `labels`,
-`sections`, `sourceLine`, `mode` and the heading-id switches are HTML-side
-concerns the engine's other renderers do not consult. `renderers` is refused
-there as it is on `toHtmlWithOptions`.
-
-`toCarveWithOptions` is narrower again and reads `profile` and `alignTables`
-alone. The canonical writer is parse-only by contract, so extensions and
-`smartTypography` are inert there; they are accepted rather than refused so that
-one options object can be handed to every target.
-
-`alignTables: true` pads table columns to a shared width (the PART 11 aligned
-form, `carve fmt --align-tables`). The aligned source renders to the same HTML
-as the canonical one, and the default writer turns it back into canonical form:
-
-```js
-toCarveWithOptions('|= Name |= Score |\n| Ada | 9 |\n', { alignTables: true })
-// '|= Name |= Score |\n| Ada   | 9      |\n'
-```
-
-It has a second exception the other targets do not. The canonical writer can
-refuse a tree on its own account, apart from any profile, and that arrives as an
-error named `CarveWriteError` carrying `reason` (`depth-exceeded` or
-`source-unspellable`) and `nodeType`. A profile rejection still arrives as
-`ProfileViolationError`, so a caller that only handles the one name will miss
-the other:
-
-```js
-try {
-  return toCarveWithOptions(source, { profile: 'comment' })
-} catch (error) {
-  if (error.name === 'ProfileViolationError') return report(error.violations)
-  if (error.name === 'CarveWriteError') return report([error.reason, error.nodeType])
-  throw error
-}
-```
-
-`applyProfile` runs the same filter over an AST-JSON document and hands back the
-filtered tree instead of HTML, for a host that wants to store, diff or re-render
-what the filter left. `violations` reports what it degraded or stripped, which
-the HTML path discards.
-
-```js
-const { json, violations } = applyProfile(parseJson(fromTheReader), 'comment')
-if (violations.length > 0) tell(violations.map((v) => v.message))
-const html = astJsonToHtml(json)
-```
-
-It reads `profileBaseHost` and `smartTypography` from its options object and
-nothing else. It does **not** enforce the profile's `max_length`, which the
-engine applies to the SOURCE bytes before a parse - a host filtering untrusted
-input still needs that bound on the way in.
-
-### Static renderers
-
-`mode: 'static'` renders the self-contained form, which carries no client
-scripts - so a formula in the document has to be typeset while the HTML is being
-written, by the host. `toHtmlWithRenderers(source, options)` takes the same
-options object plus a `renderers.math` callback and returns
-`{ html, rendererErrors }`.
-
-```js
-import katex from 'katex'
-import { toHtmlWithRenderers } from '@markup-carve/carve-wasm'
-
-const { html, rendererErrors } = toHtmlWithRenderers(source, {
+toHtmlWithRenderers(source, {
   mode: 'static',
-  extensions: ['math-block'],
-  renderers: {
-    math: (tex, display) => katex.renderToString(tex, { displayMode: display }),
-  },
+  transforms: [tree => claimMermaidFences(tree)],
+  renderers: { 'ex.mermaid': { static: node => prerendered.get(node.fallback[0].value) } },
 })
 ```
 
-The callback is called once per ` ```math ` fence, with the TeX source and a
-display flag. Without it, static output keeps the `\[…\]` source for a client to
-typeset later - never blank.
+The returned string is inserted as trusted HTML. A callback must be synchronous. A renderer that throws or returns no string leaves the fallback and reports `extension-renderer-failed`; a failed transform keeps the previous tree and reports `extension-transform-failed`. The call reads the render options and an `includes` resolver as `render` does.
 
-> **Security: what a renderer returns is TRUSTED RAW HTML.**
-> The string is inserted **unescaped**, the same trust class as a `symbols`
-> value. There is one difference worth stating: a symbol value is host
-> configuration keyed by a **name**, while a renderer is host configuration that
-> is **handed document content** and typically echoes some of it back. A host
-> rendering documents it did not author is accepting whatever its renderer makes
-> of that input, so the escaping is the renderer's job.
+## Include regions and editor sessions
 
-**The callback must be synchronous.** wasm-bindgen cannot await across it, so an
-`async` renderer returns a Promise the engine has no way to resolve. That is
-reported as a failure rather than stringified into the document.
+`selectIncludeRegion(source, name, mode)` returns the 1-based inclusive content lines `{ start, end }` of `@region:name` with the engine's marker rules; `mode` is `"carve"` or `"code"`, which also reads the source-comment markers. An empty region has `end === start - 1`. A missing region or a malformed or unmatched marker throws an `IncludeRegionError` whose `rule` is `include-region-invalid`.
 
-`renderers.diagrams` is the same callback one level down, keyed by the fence's
-css class:
+`parseSnapshot`, `reparse` and `ParserSession` keep the parse state an editor reuses. Changes are a JSON array of `{ range: [start, end], replacement }` in UTF-8 byte offsets; a malformed change throws a `TypeError` and leaves a session unchanged. Each result is JSON text with `source`, `document` (the tree `parse` returns), `sourceLayout`, `changedSource`, `reusedPreviousTree` and `parsedSourceBytes`. Call `free()` on a session when done.
+
+## Includes
+
+The package is built without file-system access, so the host supplies included files. `includes` on `parse`, `parseWithDiagnostics`, `parseWithLayout`, `render`, `renderWithDiagnostics`, `lint`, `format` and `formatWithDiagnostics` takes a synchronous resolver, alone or as `{ resolver, file?, depth?, bytes? }`, the same shape as carve-js's `IncludeConfig`:
 
 ```js
-const { html, rendererErrors } = toHtmlWithRenderers(source, {
-  mode: 'static',
-  extensions: ['fenced-render', 'fenced-render-graphviz'],
-  renderers: {
-    diagrams: {
-      mermaid: (source) => prerendered.get(source),
-      graphviz: (source) => dotToSvg(source),
-    },
-  },
-})
+const files = { 'part.crv': 'Included *text*.' }
+const resolver = ({ path }) =>
+  path in files ? { text: files[path], id: path } : { error: 'not_found' }
+
+render('{{ part.crv }}', { includes: { resolver, file: 'main.crv' } })
+// <p>Included <strong>text</strong>.</p>
 ```
 
-Mermaid itself cannot be passed here: its `render` returns a Promise from v10
-on. What a browser host can do is render its diagrams beforehand, by whatever
-async means it likes, and pass the lookup as the one-line callback above.
+The resolver receives `{ path, section?, options, from? }` for each directive and returns `{ text, id }`, where `text` is a string or a `Uint8Array` of UTF-8, or `{ error }` with `not_found`, `outside_root`, `unreadable` or `non_text`. A resolver that throws or returns another shape counts as `unreadable`. The engine applies its own include rules: the cycle check, the depth and byte limits (`depth` and `bytes` only lower them), region and section selection, and include diagnostics with the included file. `file` is the id of the top-level document, which a cycle can return to. `call(requestJson)` takes no resolver, since JSON text has none; there `includes` is `{"root": DIR}`, which this build refuses. `includeDependencies(tree)` lists the include directives of a tree, so a host can fetch the files before it parses.
 
-A fence whose class nobody configured degrades to an escaped source block, and
-that is reported by nothing - the callback is never called, so the binding
-cannot see the miss. A configured key the document never uses is silent for the
-same reason. Keys are checked for shape only: an unknown one is accepted,
-because validating it would mean keeping the list of fence classes by hand here
-until [markup-carve/carve-rs#1670](https://github.com/markup-carve/carve-rs/issues/1670)
-puts the class on the registry entry.
+## ProseMirror / Tiptap bridge
 
-A callback that throws, or returns anything but a string, does not abort the
-render. The node it was called for emits nothing and the failure is reported:
+The engine's ProseMirror bridge (`carve::api::prosemirror`) writes and reads the schema of the carve-grammars Tiptap kit, so a document the kit saves loads here and the other way round. It is in the full package (feature `prosemirror`) and not in the rendering-only build.
 
 ```js
-const { html, rendererErrors } = toHtmlWithRenderers(source, {
-  mode: 'static',
-  extensions: ['math-block'],
-  renderers: { math: () => { throw new Error('bad TeX') } },
-})
-// rendererErrors: [{ renderer: 'math', display: true, source: 'E = mc^2', message: '…bad TeX' }]
+const { doc, blanked } = toProseMirror(source)   // or a 0.2 tree; editor.commands.setContent(doc)
+const saved = proseMirrorToCarve(editor.getJSON()) // canonical Carve source
+const tree = fromProseMirror(editor.getJSON())     // the 0.2 tree
 ```
 
-A diagram failure is an entry in the same array, with `renderer` naming the css
-class and no `display` - that flag is the math callback's second argument.
+- `toProseMirror(sourceOrTree, options?)` returns `{ doc, json, blanked }`. A node the editor content model cannot hold becomes a `carveBlock` or `carveInline` atom that carries it whole. A link or image destination the URL policy denies is `null` in the editor attribute and kept in `carve`; `blanked` lists those destinations.
+- `fromProseMirror(doc, options?)` returns the tree, and `proseMirrorToCarve(doc, options?)` the source. `doc` is an object or JSON text. A node or mark with no Carve node throws a `ProseMirrorError`; a tree the reader refuses throws a `CarveTreeError`.
+- `fromProseMirrorWithReport(doc, options?)` returns `{ tree, origins, pointers, ignored }`: per top-level block the index of the loaded block it came from (`null` for a block the editor added), the JSON pointer of the editor node for each tree path (to place a lint finding), and each attribute the save did not read, such as a `textAlign`.
+- `options`: `urlPolicy` (`{ deny: [...] }` or `{ allow: [...] }`, as for rendering) and `mapping`, the application's own nodes and marks: `{ nodes: { placeholderToken: { as: 'span', class: 'placeholder', attributes: ['name'] } }, marks: { ... } }`. A mapped node saves as a span or div of that class with its attributes as key/value pairs, and loads back as the host node.
 
-That is why this is a separate entry point: `toHtmlWithOptions` returns a bare
-string with nowhere to report a failing callback, and a silently empty figure is
-the degradation `lintCarve` exists to warn about. Every other check is at READ
-time, matching the rest of the options object - a non-callable `math`, a
-non-object `renderers` and a non-callable `diagrams` value all throw a
-`TypeError` before the render starts, so a misconfigured host finds out without
-needing a document that happens to contain a formula.
+## Tree and patch data
 
-### Editing a tree, and reading one back
-
-`parseJson` serializes a document out. `astJsonToHtml` renders one back, and
-`astJsonToCarve` writes one back as source, so a host that reads and changes the tree can display and save the result without a server.
-
-```js
-const tree = JSON.parse(parseJson(source))
-tree.children.unshift({ type: 'heading', level: 1, children: [{ type: 'text', value: 'Added' }] })
-const html = astJsonToHtml(JSON.stringify(tree), { full: true })
-const carve = astJsonToCarve(JSON.stringify(tree))
-```
-
-`astJsonToMarkdown`, `astJsonToPlainText` and `astJsonToAnsi` are the same seam
-for the other targets. Each takes the options object, and the profile filter and
-the `before_render` hooks run as they do on the HTML path. Without them a host
-holding a tree reached Markdown through `astJsonToCarve` and `toMarkdown`: a
-canonical write, a re-parse and a second render for one answer.
-
-A tree carrying something no Carve source can spell is refused by
-`astJsonToCarve` rather than written approximately, and an invalid tree throws
-from either.
-
-Ordering follows the tree. Section 7 orders collected definitions by source
-position, so a tree carrying spans prints its footnote and link definitions in
-source order and a tree carrying none prints them in label order.
-`toMarkdown` parses with positions on and always gets the first; these entry
-points get whatever their producer built.
-
-`lintCarve` returns the degradation diagnostics as
-`{ line, column, rule, message, start, end, file, includedBy }`, with the rule
-ids carve-js and carve-php use for the same triggers. `file` is `null` and
-`includedBy` is empty unless the lint followed includes (see
-[Linting included files](#linting-included-files)).
-
-#### Which unit each offset counts in
-
-Three APIs here carry source offsets and they do not agree, because each follows
-its own contract. Pick by what you are going to do with the number, not by
-which one is shortest:
-
-| API | `start` / `startOffset` | `startUtf16` |
-|---|---|---|
-| `lintCarve`, `lintCarveWithOptions` | **UTF-16 code units** | not emitted |
-| `lintAccessibility` | Unicode **codepoints** | UTF-16 code units |
-| `parseJson` positions | Unicode **codepoints** (PART 12 §4) | not emitted |
-| `reparse`, `ParserSession.edit`, source patches | UTF-8 **bytes** | not emitted |
-
-**To index a JavaScript string, use UTF-16.** `String.prototype.slice` counts
-UTF-16 code units, so neither a byte nor a codepoint offset selects the right
-span once the document leaves ASCII - and inside ASCII all three numbers are
-equal, so a test on English prose will not show the difference. The lint family
-answers in that unit directly; `lintAccessibility` keeps codepoints and carries
-the `Utf16` pair beside them:
-
-```js
-const source = '\u{1F680}\n\n[t][missing]\n'
-const [warning] = lintCarve(source)
-source.slice(warning.start, warning.end)  // "[t][missing]"
-
-const [diagnostic] = lintAccessibility('\u{1F680}\n\n![](x.png)\n')
-source.slice(diagnostic.startOffset, diagnostic.endOffset)  // wrong unit
-source.slice(diagnostic.startUtf16, diagnostic.endUtf16)    // "![](x.png)"
-```
-
-`lintCarve` and `lintCarveWithOptions` answered in UTF-8 bytes before 0.1.6.
-The change is silent on ASCII, so a caller feeding these offsets to a byte-range
-API finds out from a document with an accented character rather than from an
-error.
-
-`parseJson` positions stay in codepoints deliberately: that is the cross-engine
-wire format, not a local convenience, and a consumer comparing trees across
-engines depends on it. The byte offsets are equally deliberate where they
-appear: `reparse` and the source-patch family replace byte ranges, so a
-codepoint there would be a different edit.
-
-### Include expansion
-
-`expandIncludes(source, options)` runs the `{{ path }}` pass (spec PART 9 §19)
-over a document and hands back the expanded tree as AST JSON, alongside the
-warnings and the dependency list a host needs for reporting and file watching.
-
-```js
-import { expandIncludes, astJsonToHtml } from '@markup-carve/carve-wasm'
-
-const files = new Map([['child.crv', 'Included body.\n']])
-
-const { json, warnings, dependencies } = expandIncludes(source, {
-  resolve: (path, ctx) => files.get(path) ?? null,
-})
-document.body.innerHTML = astJsonToHtml(json)
-```
-
-**The resolver has to be synchronous, and that decides who can use this.** A
-browser host that would resolve a path over the network cannot: `fetch` returns
-a Promise and wasm-bindgen cannot await across the call. A host whose files are
-already in memory can - an editor with its open buffers, a bundler, a VFS, a
-test harness. An `async` resolver is not silently ignored: the Promise is
-reported in `resolverErrors` and the directive stays literal, the same way an
-`async` `renderers.math` is handled.
-
-`resolve` returns the child's source as a string, or `{ source, id }` when it
-can name the file canonically. **Supply the id where you have one** - it is what
-the cycle guard compares, so two spellings of one file (`b.crv`, `./b.crv`)
-defeat it without one and only the depth limit stops the recursion. `null`
-refuses the directive as `not-found`, and `{ denial }` refuses it in one of the
-classes §19 names: `outside-root`, `not-found`, `no-root`, `include-denied`,
-`include-unresolved`. The class reaches the caller on the dependency.
-`{ denial: 'include-non-text' }` is for a file that was read but is not
-well-formed UTF-8: it warns under `include-non-text` and, like NUL content,
-leaves `denial: null` on the dependency.
-
-`ctx` carries `{ sourcePath, stack, depth }`. `stack` is the include chain, root
-first, and its last entry is the file containing the directive - which is what
-relative resolution keys off.
-
-| Field | Default | What it does |
-|---|---|---|
-| `resolve` | required | `(path, ctx) => source \| { source, id } \| { denial } \| null` |
-| `sourcePath` | none | Identity of the root document, for cycle detection and warning attribution |
-| `extensions` | none | Registry names to parse each CHILD with; pass the set the parent was parsed with |
-| `maxDepth` | `16` | Transitive include depth |
-| `maxBytes` | `max(1 MB, 8 x source bytes)` | Expanded-source byte budget |
-| `maxResolverCalls` | `1000` | Resolver calls for one expansion |
-| `maxWarnings` | `100` | Warnings retained; one per distinct rule always survives |
-
-Each budget must be a finite integer in `0..4294967295`; fractions, strings,
-negative values and nonfinite numbers throw before the resolver runs.
-
-The budgets are part of the contract rather than a detail. They bound what a
-document of directives can make a host do, and a host serving documents it did
-not write is the one that should lower them.
-
-The result is `{ json, warnings, suppressedWarnings, dependencies,
-chargedBytes, resolverErrors }`. `dependencies` lists every target touched,
-including the ones that did not resolve: a host watching only the files it read
-would never learn that a missing target now exists, so the preview would stay
-stale at the moment the author fixes it. `chargedBytes` is what the budget was
-charged, which is otherwise unobservable from outside.
-
-The tree carries no positions. Expansion merges nodes from several files, and a
-span on a node that came from a child would point into a source the caller
-never passed.
-
-#### Include regions
-
-`selectIncludeRegion(source, name, mode)` finds `@region:name` in a file's text
-with the engine's marker rules (spec I1b), so an editor that jumps to a region
-lands where expansion would cut. `mode` is `'carve'`, where only
-`%% #region` / `%% #endregion` are markers, or `'code'`, which also reads the
-source-comment forms (`// #region`, `-- #region`, `/* #region */`,
-`<!-- #region -->`) the way a `@code` include does.
-
-```js
-const file = '%% #region setup\na\nb\n%% #endregion\n'
-selectIncludeRegion(file, 'setup', 'carve') // { start: 2, end: 3 }
-```
-
-The result is the 1-based, inclusive range of content lines; an empty region
-has `end === start - 1`. A missing region, or a malformed or unpaired marker
-anywhere in the file, throws an error named `IncludeRegionError` whose `rule`
-is `include-region-invalid`, the warning expansion reports for the same file.
-
-#### Linting included files
-
-`lintCarveWithOptions` follows include directives when the options carry
-`includes`: the same synchronous `resolve`, `sourcePath` and budgets
-(`maxDepth`, `maxBytes`, `maxResolverCalls`, `maxWarnings`) that
-`expandIncludes` takes. The extensions come from the outer options.
-
-```js
-const files = new Map([['child.crv', '[x](#nope)\n']])
-lintCarveWithOptions('{{ child.crv }}\n\n{{ gone.crv }}\n', {
-  includes: { resolve: (path) => files.get(path) ?? null, sourcePath: 'book.crv' },
-})
-// [{ rule: 'broken-fragment-link', line: 1, column: 1, start: null, end: null,
-//    file: 'child.crv', includedBy: [{ file: 'book.crv', line: 1, column: 1 }], ... },
-//  { rule: 'include-unresolved', line: 3, column: 1, start: null, end: null,
-//    file: null, includedBy: [], ... }]
-```
-
-The document's own findings come first, with `start` and `end` in UTF-16 code
-units. Findings from an included file name that `file` as `resolve` identified
-it and list the `includedBy` chain of directive sites, top-level first. Their
-`start` and `end` are `null`, since the offsets would index a text the caller
-did not pass. A directive that stays literal is reported too, under the rule
-expansion uses: `include-unresolved`, `include-cycle`, `include-non-text` and
-the others. These findings are the ones `carve lint --include-root` prints.
-### Re-parsing while someone types
-
-`parseSnapshot(source)` parses a document and keeps what a later `reparse` needs.
-`reparse(source, changes)` applies a batch of edits and parses the result. Both
-return one JSON string.
-
-```js
-import { parseSnapshot, reparse } from '@markup-carve/carve-wasm'
-
-const first = JSON.parse(parseSnapshot('# One\n'))
-const next = JSON.parse(reparse(first.source, JSON.stringify([
-  { range: [2, 5], replacement: 'Two' },
-])))
-next.source // '# Two\n'
-```
-
-Each result is `{ source, document, sourceLayout, changedSource,
-reusedPreviousTree, parsedSourceBytes }`. `document` is the PART 12 tree,
-`sourceLayout` is what `parseSourceLayoutJson` produces, and `changedSource`
-contains UTF-8 byte ranges. `parsedSourceBytes` measures the source the engine
-parsed, excluding reused paragraphs.
-
-`reparse` constructs the previous snapshot on every call. Use `ParserSession`
-when an editor needs to retain it between changes:
-
-```js
-import { ParserSession } from '@markup-carve/carve-wasm'
-
-const session = new ParserSession('First paragraph.\n\nSecond paragraph.\n')
-try {
-  const next = JSON.parse(session.edit(JSON.stringify([
-    { range: [0, 5], replacement: 'Other' },
-  ])))
-  console.log(next.reusedPreviousTree, next.parsedSourceBytes)
-} finally {
-  session.free()
-}
-```
-
-`session.snapshot()` returns the current snapshot as JSON. A rejected edit
-leaves the session unchanged. An empty edit list returns the retained snapshot
-with no parsed bytes. Plain-paragraph edits can reuse the previous tree;
-syntax-bearing documents fall back to a full parse. Read `reusedPreviousTree`
-and `parsedSourceBytes` to determine which path ran. Snapshot serialization
-still visits the whole tree.
-
-Edit ranges and source patches use UTF-8 bytes. AST positions from `parseJson`
-use Unicode codepoints; browser `selectionStart` uses UTF-16 code units. Import
-`utf16ToUtf8`, `codepointToUtf8` or `utf8ToUtf16` from the package's `/offsets`
-entry to convert. The helpers reject a boundary inside a surrogate pair or
-UTF-8 sequence. Tests cover emoji, combining marks, CRLF and a leading BOM.
-
-Malformed changes throw `TypeError`: overlapping ranges, an end past the source,
-a range splitting a codepoint, or an offset outside the integer range
-`0..4294967295`. Offsets are checked before conversion to WASM's 32-bit size.
-
-### Tree patches
-
-`createAstPatch(before, after)` is the difference between two PART 12 trees,
-and `applyAstPatch(ast, patch)` replays it. Trees and patches both cross as
-JSON strings, the same way `parseJson` and `astJsonToHtml` hand a tree across.
-
-```js
-import { parseJson, createAstPatch, applyAstPatch } from '@markup-carve/carve-wasm'
-
-const patch = createAstPatch(parseJson('# One\n'), parseJson('# Two\n'))
-applyAstPatch(parseJson('# One\n'), patch) // the '# Two' tree, as JSON
-```
-
-The operations are the position-independent `{ op, path, value }` wire shape,
-so a patch stays meaningful against a tree that moved underneath it. That is
-the opposite trade from `createSourcePatch`, which pins byte ranges and
-fingerprints them against staleness.
-
-The engine's `ast_patch_to_json` and `ast_patch_from_json` have no binding of
-their own. With the patch crossing as JSON they are exactly this pair's
-encoding, and calling them would convert JSON a host already holds.
-
-`createReversibleAstPatch(before, after)` returns
-`{ forward, inverse, beforeFingerprint, afterFingerprint }` as one JSON string,
-and `applyReversibleAstPatch(ast, patch, inverse)` replays either direction.
-
-```js
-const step = createReversibleAstPatch(before, after)
-const redone = applyReversibleAstPatch(before, step)
-const undone = applyReversibleAstPatch(after, step, true)
-```
-
-**The undo stack is yours.** Every entry point here is a pure function that
-owns nothing, so there is no history kept in this package to undo against, and
-a browser host already has somewhere to keep one. What the reversible pair adds
-over two `createAstPatch` calls is the precondition: applying a step to a tree
-whose fingerprint is not the one it was made against throws, so an undo cannot
-land on a document that has moved on.
-
-### Three-way merge
-
-`mergeAst(base, ours, theirs, options)` merges two edits of one document. Two
-people editing one document is a browser problem, so the audience is here.
-
-```js
-import { parseJson, mergeAst } from '@markup-carve/carve-wasm'
-
-const { ok, ast, conflicts } = JSON.parse(mergeAst(base, ours, theirs))
-```
-
-**A conflict is a value, not a throw.** It is the result you asked for: `ok` is
-false, `ast` is null, and `conflicts` says where and why. A throw is for a
-contract you broke, and an unparseable tree still gets one, naming which of the
-three it was.
-
-Each conflict is `{ path, reason, base, ours, theirs }`, with `reason` one of
-`both-changed`, `delete-edit` or `concurrent-sequence-edit`. That shape and
-those names are carve-js's, so a host merging with either engine reads one
-contract. The Rust engine carries no `deleted` flags, so carve-js's optional
-`deleted` field is absent here rather than guessed at.
-
-`options.resolve` answers conflicts while the merge runs:
-
-```js
-const merged = JSON.parse(mergeAst(base, ours, theirs, {
-  resolve: (conflict) => (conflict.path.startsWith('/children/0') ? 'ours' : null),
-}))
-```
-
-It returns `'base'`, `'ours'`, `'theirs'`, `{ value }` to replace the field
-outright, or `null` to leave that conflict standing.
-
-> **The resolver must be synchronous.**
-> A resolver that asks a server, or asks the user, returns a Promise the merge
-> cannot await. That is reported in `resolverErrors` with the conflict's path,
-> and the conflict is left unresolved - never swallowed, and never stringified
-> into the tree. Returning `null` is the supported way to decline; a Promise is
-> a mistake.
-
-### ProseMirror
-
-`toProseMirror(source)` converts Carve to the ProseMirror document shape, and
-`fromProseMirror(doc)` writes one back as canonical Carve source. ProseMirror
-runs in a browser and nowhere else, so this binding is the whole audience for
-the engine's bridge - without it a host wiring a Carve editor either round-trips
-to a server or reimplements the node mapping in JS, where it drifts from the
-engine's.
-
-```js
-const { json, dropped, degraded } = toProseMirror(source)
-editor.commands.setContent(JSON.parse(json))
-const saved = fromProseMirror(JSON.stringify(editor.getJSON()))
-```
-
-`json` is a JSON string, the same choice `parseJson` makes. The two maps are
-`Carve node type -> reason`: `dropped` where the content is gone (an
-abbreviation definition has no editor node), `degraded` where the text survives
-without its node type (a soft break becomes whitespace, smart typography
-resolves to the glyph). The binding compares canonical source before and after
-an immediate round trip, including when a node already reports a loss. A
-change adds `degraded.document` with the reason `Canonical source changes on
-the ProseMirror round trip`. A writer refusal instead reports `Canonical
-source preservation could not be verified`.
-An empty pair of maps means that this immediate round trip preserves canonical
-source, not that subsequent edits in an editor preserve every Carve construct.
-
-A payload the schema map does not describe is refused rather than written
-approximately. Round-tripping normalizes the source the way `toCarve` does, and
-the reported degradations do not come back - `a ... b` returns as `a … b`.
-
-The checked renderers accept only boolean `strict` values and integer
-`maximum` values in `0..4294967295`. Omitted or null arguments use the defaults.
-A string such as `"false"` throws rather than enabling strict mode through
-JavaScript coercion.
-
-### TypeScript
-
-The package ships `.d.ts` declarations. Types are inferred automatically when
-imported from `@markup-carve/carve-wasm`.
-
-```ts
-import { toHtml, toHtmlFull, version } from '@markup-carve/carve-wasm'
-
-console.log(`carve-wasm v${version()}`)
-const html: string = toHtml('_Hello_')
-```
-
-## API
-
-| Export | Signature | Description |
-|--------|-----------|-------------|
-| `toHtml` | `(source: string) => string` | Core renderer, no extensions |
-| `toHtmlWithSymbols` | `(source: string, symbols?: object \| null) => string` | Core renderer + a `:name:` -> value symbols map (values are raw, see above) |
-| `toHtmlFull` | `(source: string, symbols?: object \| null) => string` | Core + common extensions (matches playground), optional symbols map |
-| `toHtmlWithOptions` | `(source: string, options?: object \| null) => string` | General form; see the options table above. Throws `ProfileViolationError` when a profile rejects the document |
-| `toHtmlWithRenderers` | `(source: string, options?: object \| null) => StaticRenderResult` | The options object plus `renderers.math` and `renderers.diagrams`, for `mode: 'static'`; returns `{ html, rendererErrors }` |
-| `toMarkdownWithOptions` | `(source: string, options?: object \| null) => string` | Markdown under the same options object. Throws `ProfileViolationError` when a profile rejects the document, or `CarveWriteError` when a roundtrip carrier cannot be spelled |
-| `toPlainTextWithOptions` | `(source: string, options?: object \| null) => string` | Plain text under the same options object |
-| `toAnsiWithOptions` | `(source: string, options?: object \| null) => string` | ANSI text under the same options object |
-| `toCarveWithOptions` | `(source: string, options?: object \| null) => string` | Canonical Carve under the same options object; reads `profile` and `alignTables` only. Throws `ProfileViolationError` when a profile rejects the document, or `CarveWriteError` when the writer itself refuses the tree |
-| `parseJsonWithOptions` | `(source: string, options?: object \| null) => string` | The AST as JSON under the same options object; positions are always on |
-| `toHtmlWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | HTML plus bounded losses: `raw-format-dropped`, and `destination-denied` for each link, autolink or image URL whose scheme is denied and blanked (the HTML keeps the empty attribute). `losses` is capped by `maximum`, so read `totalsByCode` rather than counting the array when `truncated` is true. A loss in included content names the included `file` and the `includedBy` chain of directive sites. Strict mode throws `RenderLossError` ("render would lose N nodes"), which carries the same three fields |
-| `toMarkdownWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked Markdown render |
-| `toPlainTextWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked plain-text render |
-| `toAnsiWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked ANSI render |
-| `toCarveWithReport` | `(source: string, strict?: boolean, maximum?: number) => RenderResult` | Checked canonical Carve render (lossless) |
-| `parseJson` | `(source: string) => string` | The parsed AST as JSON (PART 12 exchange shape) |
-| `astJsonToHtml` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document; takes the same options object |
-| `astJsonToCarve` | `(json: string) => string` | Write an AST-JSON document back as canonical Carve source |
-| `astJsonToMarkdown` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to Markdown; takes the same options object |
-| `astJsonToPlainText` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to plain text |
-| `astJsonToAnsi` | `(json: string, options?: object \| null) => string` | Render an AST-JSON document to ANSI-styled text |
-| `applyProfile` | `(json: string, profile: string, options?: object \| null) => ProfileFilterResult` | Filter an AST-JSON document through a profile, keeping the tree and what the filter did |
-| `lintCarve` | `(source: string) => LintWarning[]` | Degradation diagnostics, with the rule ids carve-js and carve-php share. `start` / `end` are UTF-16 code units, so they index a JS string |
-| `lintCarveWithOptions` | `(source: string, options?: LintOptions \| null) => LintWarning[]` | The same linter for the extension set the host renders with; with `includes`, also lints included files and returns `IncludeLintWarning[]`. `captionLookingParagraph: true` adds the opt-in `caption-looking-paragraph` hint |
-| `lintAccessibility` | `(source: string) => AccessibilityDiagnostic[]` | The second diagnostic family, with its own rule ids and a severity. `startOffset` / `endOffset` are codepoints, not the UTF-16 units `lintCarve` counts; `startUtf16` / `endUtf16` index a JS string |
-| `stampCarve` | `(formatted: string, generatedBy: string, form?: "line" \| "block") => string` | Write the provenance marker `readStamp` reads |
-| `sanitizeSvg` | `(source: string, options?: object \| null) => SanitizeResult` | Sanitize an SVG document; strict unless an option says otherwise |
-| `parseLocator` | `(loc: string) => ParsedLocator` | Parse a citation locator into label, value and suffix |
-| `parseSourceLayoutJson` | `(source: string) => string` | The PART 12 §13 source-layout sidecar |
-| `markdownToAstJson` | `(source: string) => string` | Import Markdown straight to the tree; throws `Error` when nesting exceeds the importer limit |
-| `htmlToAst` | `(html: string, mode?: string) => MigrationResult` | Import HTML straight to the tree; `{ value, report }` with the tree in `value` |
-| `expandIncludes` | `(source: string, options: object) => IncludeExpansion` | Expand `{{ path }}` through a SYNCHRONOUS `resolve`; returns the tree plus warnings, dependencies and resolver failures |
-| `selectIncludeRegion` | `(source: string, name: string, mode: 'carve' \| 'code') => IncludeRegion` | Content lines `{ start, end }` of `@region:name`; throws `IncludeRegionError` (`rule: 'include-region-invalid'`) |
-| `parseSnapshot` | `(source: string) => string` | Parse and keep what a `reparse` needs; JSON `{ source, document, sourceLayout, changedSource, reusedPreviousTree, parsedSourceBytes }` |
-| `ParserSession` | `new (source: string)` | Retained parsing state with `snapshot()`, `edit(changes: string)` and `free()` |
-| `reparse` | `(source: string, changes: string) => string` | Apply a JSON array of `{ range: [start, end], replacement }` in UTF-8 BYTE offsets and re-parse |
-| `mergeAst` | `(base: string, ours: string, theirs: string, options?: object) => string` | Three-way merge; JSON `{ ok, ast, conflicts, resolverErrors }`, a conflict being a value |
-| `createAstPatch` | `(before: string, after: string) => string` | The difference between two PART 12 trees, as `{ op, path, value }` patch JSON |
-| `applyAstPatch` | `(ast: string, patch: string) => string` | Replay patch JSON onto a tree |
-| `createReversibleAstPatch` | `(before: string, after: string) => string` | The same difference with its inverse and both fingerprints |
-| `applyReversibleAstPatch` | `(ast: string, patch: string, inverse?: boolean) => string` | Replay a reversible patch either way; a fingerprint mismatch throws |
-| `toProseMirror` | `(source: string) => ProseMirrorResult` | Convert to the ProseMirror document shape, with what the model could not hold |
-| `fromProseMirror` | `(doc: string) => string` | Convert a ProseMirror document back to canonical Carve source |
-| `readStamp` | `(source: string) => { version, generatedBy } \| null` | The document's provenance marker, if it carries one |
-| `needsReview` | `(source: string, currentVersion: string) => boolean` | Whether the stamp predates `currentVersion`; unstamped counts as yes |
-| `decisionTrace` | `(source: string) => TraceRecord[]` | The block decision trace (format version 1): one `{ line, step, owner, rule, form }` record per source line, as carve-js `decisionTrace` returns it |
-| `decisionTraceJsonLines` | `(source: string) => string` | The same trace as JSON lines with its header record first, as `carve trace` prints it |
-| `fromDjot` | `(source: string) => string` | Convert Djot source to Carve |
-| `migrateDjot` | `(source: string) => { value, report }` | Convert Djot with a v2 fidelity report |
-| `fromBbcode` | `(source: string) => string` | Convert BBCode source to Carve; throws past the engine's size cap |
-| `migrateBbcode` | `(source: string) => { value, report }` | Convert BBCode with a v2 fidelity report; throws past the engine's size cap |
-| `createSourcePatch` | `(source, replacement, kind, code) => SourcePatch` | Build a minimal UTF-8 byte-range patch |
-| `toCarvePatch` | `(source: string) => SourcePatch` | Preview canonical formatting as a patch |
-| `applySourcePatch` | `(source: string, patch: SourcePatch) => string` | Validate and apply trusted patch instructions |
-| `version` | `() => string` | Returns the carve-wasm package version |
-
-### The parsed AST
-
-`parseJson` returns the document as a JSON string - the [PART 12 exchange
-shape](https://markup-carve.github.io/carve/ast-json), the same tree every Carve
-engine publishes, so a consumer written against one implementation reads
-another's output.
-
-```js
-import { parseJson } from '@markup-carve/carve-wasm'
-
-const ast = JSON.parse(parseJson('# Title\n\nBody[^a].\n\n[^a]: note\n'))
-ast.children.map((n) => n.type) // ['heading', 'paragraph', 'footnote']
-ast.children[0].pos             // { startLine: 1, startColumn: 1, ... }
-```
-
-The root carries exactly `type`, `children` and `srcByteLength`; frontmatter and
-footnote definitions are block nodes inside `children`, not root fields. Every
-node except the root carries `pos` when the engine could place it - 1-based
-lines and columns, 0-based offsets, ends exclusive, counted in Unicode
-**codepoints**, not bytes or UTF-16 units. A node the engine could not place,
-such as reassembled table-cell text, carries no `pos` at all rather than an
-invented one.
-
-A string rather than a JS object: the caller runs `JSON.parse`, which the
-browser does natively and faster than building the object graph across the wasm
-boundary one property at a time - and it keeps the bytes available for a caller
-that stores or forwards them.
-
+Tree JSON uses the Carve 0.2 schema. An old 0.1 tree must pass through `migrateTree` before `decodeTree`; `parseWithLayout` returns the source layout sidecar. `createSourcePatch` and `applySourcePatch` are local UTF-8 byte-range helpers, not engine tree patch calls. The 0.2 API has no AST patch, AST merge, trace, or stamp calls.
