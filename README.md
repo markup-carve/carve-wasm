@@ -1,6 +1,6 @@
 # carve-wasm 0.2 development branch
 
-This branch binds the unreleased Carve 0.2 Rust engine to WebAssembly for Node and browsers. The Rust engine is pinned to an exact commit on its `next2` branch. There is no 0.2 registry release yet.
+This branch binds the unreleased Carve 0.2 Rust engine to WebAssembly for Node and browsers. The Rust engine is pinned to an exact carve-rs commit. There is no 0.2 registry release yet.
 
 Building this branch requires Rust 1.88 or newer.
 
