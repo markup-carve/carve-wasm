@@ -24,7 +24,7 @@ The binding uses the Rust engine's JSON boundary. Calls use 0.2 names, options a
 | `parseSnapshot(source)`, `reparse(source, changesJson)` | JSON text: source, tree, layout and changed ranges |
 | `new ParserSession(source)` | `snapshot()` and `edit(changesJson)`, the same JSON text |
 
-`toHtml` and `toHtmlWithOptions` are aliases for `render`. `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve` use the registered writers, including their `WithOptions` forms. `toCarvePatch`, `importDocument` and `extensions` are also available.
+`toHtml` and `toHtmlWithOptions` are aliases for `render`. `toMarkdown`, `toPlainText`, `toAnsi`, and `toCarve` use the registered writers, including their `WithOptions` forms. `toCarvePatch`, `importDocument` and `extensions` are also available. `importDocument(source, from)` takes `from` as `html`, `markdown`, `gfm` or `djot`.
 
 `write` accepts `html`, `carve`, `markdown`, `plain`, or `ansi` as a target. The writer calls read format options such as `alignTables` and `normalize`; render policy options such as `rawHtml` belong to `render` and `renderWithDiagnostics`. The Rust engine refuses options that a call does not read.
 
